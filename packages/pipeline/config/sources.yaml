@@ -14,7 +14,6 @@ sources:
     adapter: 'GITHUB_API'
     content_kind: 'GOVERNANCE'
     authority: 'OFFICIAL'
-    enabled: false
 
   - url: 'https://build.avax.network/blog'
     source_name: 'Avalanche Builder Hub Blog'

@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "start": "node dist/src/bin/pipeline.js"
   },
   "dependencies": {
+    "dotenv": "^16.4.5",
     "fast-xml-parser": "^5.5.8",
     "js-yaml": "^4.1.1",
     "pg": "^8.16.3",

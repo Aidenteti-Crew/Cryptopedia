@@ -56,4 +56,27 @@ describe('article-repository', () => {
 
     expect(result).toEqual({ inserted: 1, skippedDuplicate: 1 })
   })
+
+  // Regression test: a real ACP author list ("Name ([@handle](url)), ...", x4 co-authors)
+  // exceeded content.article_raw.author's VARCHAR(255) against a real Postgres instance and
+  // aborted the whole insertArticles loop. FakeContentDb doesn't enforce column length, so this
+  // asserts the defensive truncate() call directly rather than relying on a length violation.
+  it('truncates title/author/url fields to their VARCHAR column limits', async () => {
+    const db = new FakeContentDb()
+    const { id: sourceId } = await getOrCreateSource(db.query, {
+      urlHandle: 'https://example.com/feed.atom',
+      name: 'Example',
+      type: 'RSS',
+    })
+
+    await insertArticles(db.query, sourceId, [
+      article({
+        title: 'x'.repeat(600),
+        author: 'y'.repeat(300),
+      }),
+    ])
+
+    expect(db.articles[0]?.title).toHaveLength(500)
+    expect(db.articles[0]?.author).toHaveLength(255)
+  })
 })

@@ -29,6 +29,7 @@ interface ArticleRow {
   title: string
   url: string
   guid: string | null
+  author: string | null
   representative_key: string
   content_raw: string | null
 }
@@ -118,20 +119,21 @@ export class FakeContentDb {
     }
 
     if (normalized.startsWith('INSERT INTO content.article_raw')) {
-      const [id, sourceId, title, url, guid, , , , , , contentRaw, representativeKey] = params as [
-        string,
-        string,
-        string,
-        string,
-        string | null,
-        string | null,
-        string | null,
-        Buffer,
-        string,
-        string | null,
-        string | null,
-        string,
-      ]
+      const [id, sourceId, title, url, guid, , , , , author, contentRaw, representativeKey] =
+        params as [
+          string,
+          string,
+          string,
+          string,
+          string | null,
+          string | null,
+          string | null,
+          Buffer,
+          string,
+          string | null,
+          string | null,
+          string,
+        ]
       const hash = md5Hex(representativeKey)
       const conflict = this.articles.some((row) => md5Hex(row.representative_key) === hash)
       if (conflict) return { rows: [], rowCount: 0 }
@@ -141,6 +143,7 @@ export class FakeContentDb {
         title,
         url,
         guid,
+        author,
         representative_key: representativeKey,
         content_raw: contentRaw,
       })
@@ -190,6 +193,7 @@ export class FakeContentDb {
       title: input.title,
       url: input.url,
       guid: null,
+      author: null,
       representative_key: input.url,
       content_raw: null,
     })

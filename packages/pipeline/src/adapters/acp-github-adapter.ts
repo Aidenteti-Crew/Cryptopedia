@@ -43,10 +43,19 @@ function tableValue(markdown: string, label: string): string | undefined {
   return match?.[1]?.trim()
 }
 
+// ACP author cells are written as "Name ([@handle](https://github.com/handle)), ...". The link
+// target is redundant (the GitHub handle is already visible) and, across 3-4 co-authors, easily
+// pushes the plain-text length past content.article_raw.author's VARCHAR(255) — confirmed against
+// 4 of the 36 real ACPs as of 2026-09-26. Keep the visible text, drop the URL.
+function stripMarkdownLinks(text: string): string {
+  return text.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+}
+
 export function parseAcpMetadata(markdown: string): AcpMetadata {
   const numberText = tableValue(markdown, 'ACP')
   const title = tableValue(markdown, 'Title')
-  const authors = tableValue(markdown, 'Author(s)') ?? tableValue(markdown, 'Authors')
+  const rawAuthors = tableValue(markdown, 'Author(s)') ?? tableValue(markdown, 'Authors')
+  const authors = rawAuthors ? stripMarkdownLinks(rawAuthors) : rawAuthors
   const statusText = tableValue(markdown, 'Status')
   const track = tableValue(markdown, 'Track')
   const status = ACP_STATUSES.find(
