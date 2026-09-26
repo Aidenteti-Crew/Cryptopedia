@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
 import crawler_analysis_db as analysis_db
-from crawler_analysis import AnalyzeRequest, AnalyzeResponse, analyze
+from crawler_analysis import AnalysisInProgressError, AnalyzeRequest, AnalyzeResponse, analyze
 from fastapi import FastAPI, Header, HTTPException
 from loguru import logger
 from pydantic import BaseModel
@@ -89,6 +89,8 @@ async def analyze_crawler(
         raise HTTPException(status_code=503, detail="crawler analysis database is unavailable")
     try:
         return await analyze(request, analysis_db)
+    except AnalysisInProgressError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except asyncio.TimeoutError as exc:
         raise HTTPException(status_code=504, detail="crawler analysis timed out") from exc
     except ValueError as exc:

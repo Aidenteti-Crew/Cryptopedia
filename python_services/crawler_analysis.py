@@ -9,7 +9,8 @@ import os
 import re
 import socket
 from collections.abc import Awaitable, Callable
-from typing import Any, Protocol
+from contextlib import AbstractAsyncContextManager
+from typing import Any, Protocol, cast
 from urllib.parse import urlsplit
 from uuid import UUID
 
@@ -77,7 +78,13 @@ class AnalyzeResponse(BaseModel):
 AnalysisRunner = Callable[[str], Awaitable[str]]
 
 
+class AnalysisInProgressError(RuntimeError):
+    """Raised when another process owns the source-scoped analysis lock."""
+
+
 class AnalysisRepository(Protocol):
+    def source_lock(self, source_id: UUID) -> AbstractAsyncContextManager[bool]: ...
+
     async def get_source_url(self, source_id: UUID) -> str | None: ...
 
     async def get_analysis(self, source_id: UUID) -> dict[str, Any] | None: ...
@@ -192,7 +199,7 @@ async def run_browser_use_analysis(url: str) -> str:
         max_failures=3,
     )
     history = await agent.run()
-    result = history.final_result()
+    result = cast(str | None, history.final_result())
     if not result:
         raise ValueError("browser-use agent returned an empty result")
     return result
@@ -204,30 +211,37 @@ async def analyze(
     runner: AnalysisRunner = run_browser_use_analysis,
 ) -> AnalyzeResponse:
     url = await validate_target_url(request.url)
-    source_url = await repository.get_source_url(request.source_id)
-    if source_url is None:
-        raise ValueError(f"source does not exist: {request.source_id}")
-    if source_url.rstrip("/") != url.rstrip("/"):
-        raise ValueError("request URL does not match the registered source URL")
-    existing = await repository.get_analysis(request.source_id)
-    if existing is not None and not request.force:
-        return AnalyzeResponse(
-            analysis_id=existing["id"],
-            analysis_json=AnalysisJson.model_validate(existing["analysis_json"]),
-        )
+    async with repository.source_lock(request.source_id) as lock_acquired:
+        if not lock_acquired:
+            raise AnalysisInProgressError(f"analysis already in progress: {request.source_id}")
 
-    model_name = os.environ.get("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
-    run_log_id = await repository.create_run_log(request.source_id, model_name)
-    try:
-        raw_output = await asyncio.wait_for(runner(url), timeout=analysis_timeout_seconds())
-        analysis_json = extract_analysis_json(raw_output)
-        analysis_id = await repository.persist_success(
-            source_id=request.source_id,
-            run_log_id=run_log_id,
-            analysis_json=analysis_json.model_dump(),
-            model_name=model_name,
-        )
-    except Exception as exc:
-        await repository.mark_failed(run_log_id, f"{type(exc).__name__}: {exc}")
-        raise
-    return AnalyzeResponse(analysis_id=analysis_id, analysis_json=analysis_json)
+        source_url = await repository.get_source_url(request.source_id)
+        if source_url is None:
+            raise ValueError(f"source does not exist: {request.source_id}")
+        if source_url.rstrip("/") != url.rstrip("/"):
+            raise ValueError("request URL does not match the registered source URL")
+        existing = await repository.get_analysis(request.source_id)
+        if existing is not None and not request.force:
+            return AnalyzeResponse(
+                analysis_id=existing["id"],
+                analysis_json=AnalysisJson.model_validate(existing["analysis_json"]),
+            )
+
+        model_name = os.environ.get("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
+        run_log_id = await repository.create_run_log(request.source_id, model_name)
+        try:
+            raw_output = await asyncio.wait_for(runner(url), timeout=analysis_timeout_seconds())
+            analysis_json = extract_analysis_json(raw_output)
+            analysis_id = await repository.persist_success(
+                source_id=request.source_id,
+                run_log_id=run_log_id,
+                analysis_json=analysis_json.model_dump(),
+                model_name=model_name,
+            )
+        except Exception as exc:
+            try:
+                await repository.mark_failed(run_log_id, f"{type(exc).__name__}: {exc}")
+            except Exception as logging_error:
+                raise exc from logging_error
+            raise
+        return AnalyzeResponse(analysis_id=analysis_id, analysis_json=analysis_json)

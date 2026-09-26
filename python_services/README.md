@@ -9,7 +9,13 @@ FastAPI server for cherry-in-the-haystack Python services.
 poetry install
 
 # Or using pip
-pip install -r requirements.txt
+pip install -r python_services/requirements.txt
+
+# Test and lint dependencies
+pip install -r python_services/requirements-dev.txt
+
+# Browser runtime required by /crawler/analyze
+python -m playwright install chromium
 ```
 
 ## Running
@@ -31,7 +37,8 @@ API_HOST=0.0.0.0 API_PORT=8080 python python_services/api.py
 
 The analysis endpoint requires bearer authentication, an initialized PostgreSQL connection, and
 the separately approved `docs/crawler-autogen-migration.sql`. It reuses a cached analysis unless
-`force=true`, and records new analysis attempts in `core.run_log`.
+`force=true`, records new analysis attempts in `core.run_log`, and returns HTTP 409 while another
+process holds the same source's PostgreSQL advisory lock.
 
 ## Environment Variables
 

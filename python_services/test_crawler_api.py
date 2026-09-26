@@ -5,7 +5,7 @@ from uuid import uuid4
 
 import api as api_module
 import pytest
-from crawler_analysis import AnalysisJson, AnalyzeResponse
+from crawler_analysis import AnalysisInProgressError, AnalysisJson, AnalyzeResponse
 from httpx import ASGITransport, AsyncClient
 
 
@@ -70,3 +70,28 @@ async def test_analyze_endpoint_returns_persisted_result(monkeypatch: pytest.Mon
             )
     assert response.status_code == 200
     assert response.json()["analysis_id"] == str(expected.analysis_id)
+
+
+@pytest.mark.asyncio
+async def test_analyze_endpoint_returns_conflict_for_overlapping_run(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    token = "d" * 32
+    monkeypatch.setenv("CRAWLER_ANALYSIS_API_TOKEN", token)
+    with (
+        patch.object(api_module.analysis_db, "is_ready", return_value=True),
+        patch.object(
+            api_module,
+            "analyze",
+            new=AsyncMock(side_effect=AnalysisInProgressError("analysis already in progress")),
+        ),
+    ):
+        async with AsyncClient(
+            transport=ASGITransport(app=api_module.app), base_url="http://test"
+        ) as client:
+            response = await client.post(
+                "/crawler/analyze",
+                headers={"Authorization": f"Bearer {token}"},
+                json={"source_id": str(uuid4()), "url": "https://build.avax.network/blog"},
+            )
+    assert response.status_code == 409

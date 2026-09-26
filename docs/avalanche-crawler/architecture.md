@@ -241,6 +241,8 @@ browser-use analyze
 - JavaScript 및 알 수 없는 결과 필드는 strict schema에서 거부
 - 성공한 분석과 `core.run_log` 성공 전환은 같은 DB transaction으로 저장
 
+DNS public-address 검사는 Chromium 탐색 전 사전 방어이며 navigation 시점의 DNS rebinding을 완전히 제거하지는 못한다. 운영 환경에서는 crawler 컨테이너의 link-local, RFC1918, loopback 및 클라우드 metadata 대역 egress를 네트워크 정책으로 차단한다.
+
 ### 5.5 X
 
 공식 API 사용을 우선한다. browser-use는 API 사용이 불가능하고 이용 조건을 확인한 경우에만 제한적으로 사용한다.

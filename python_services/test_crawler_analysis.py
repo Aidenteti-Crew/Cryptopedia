@@ -3,12 +3,15 @@ from __future__ import annotations
 import asyncio
 import json
 import socket
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from typing import Any
 from unittest.mock import patch
 from uuid import UUID, uuid4
 
 import pytest
 from crawler_analysis import (
+    AnalysisInProgressError,
     AnalysisJson,
     AnalyzeRequest,
     analyze,
@@ -35,12 +38,27 @@ VALID_ANALYSIS = {
 
 
 class FakeRepository:
-    def __init__(self, existing: dict[str, Any] | None = None) -> None:
+    def __init__(
+        self, existing: dict[str, Any] | None = None, *, fail_mark_failed: bool = False
+    ) -> None:
         self.existing = existing
         self.run_log_id = uuid4()
         self.analysis_id = uuid4()
         self.persisted: dict[str, Any] | None = None
         self.failed: str | None = None
+        self.locked = False
+        self.fail_mark_failed = fail_mark_failed
+
+    @asynccontextmanager
+    async def source_lock(self, source_id: UUID) -> AsyncIterator[bool]:
+        if self.locked:
+            yield False
+            return
+        self.locked = True
+        try:
+            yield True
+        finally:
+            self.locked = False
 
     async def get_source_url(self, source_id: UUID) -> str | None:
         return "https://build.avax.network/blog"
@@ -56,6 +74,8 @@ class FakeRepository:
         return self.analysis_id
 
     async def mark_failed(self, run_log_id: UUID, error: str) -> None:
+        if self.fail_mark_failed:
+            raise RuntimeError("database failed")
         self.failed = error
 
 
@@ -121,6 +141,68 @@ async def test_analyze_records_runner_failure(monkeypatch: pytest.MonkeyPatch) -
                 runner=failing_runner,
             )
     assert repository.failed == "RuntimeError: browser failed"
+
+
+@pytest.mark.asyncio
+async def test_run_log_failure_does_not_mask_runner_failure(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("CRAWLER_ANALYSIS_ALLOWED_HOSTS", "build.avax.network")
+    repository = FakeRepository(fail_mark_failed=True)
+    loop = asyncio.get_running_loop()
+
+    async def failing_runner(_: str) -> str:
+        raise ValueError("original browser failure")
+
+    with patch.object(loop, "getaddrinfo", side_effect=public_dns):
+        with pytest.raises(ValueError, match="original browser failure") as error:
+            await analyze(
+                AnalyzeRequest(source_id=uuid4(), url="https://build.avax.network/blog"),
+                repository,
+                runner=failing_runner,
+            )
+    assert isinstance(error.value.__cause__, RuntimeError)
+    assert str(error.value.__cause__) == "database failed"
+
+
+@pytest.mark.asyncio
+async def test_analyze_rejects_overlapping_run_for_same_source(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("CRAWLER_ANALYSIS_ALLOWED_HOSTS", "build.avax.network")
+    repository = FakeRepository()
+    source_id = uuid4()
+    started = asyncio.Event()
+    release = asyncio.Event()
+    runner_calls = 0
+
+    async def slow_runner(_: str) -> str:
+        nonlocal runner_calls
+        runner_calls += 1
+        started.set()
+        await release.wait()
+        return json.dumps(VALID_ANALYSIS)
+
+    loop = asyncio.get_running_loop()
+    with patch.object(loop, "getaddrinfo", side_effect=public_dns):
+        first = asyncio.create_task(
+            analyze(
+                AnalyzeRequest(source_id=source_id, url="https://build.avax.network/blog"),
+                repository,
+                runner=slow_runner,
+            )
+        )
+        await started.wait()
+        with pytest.raises(AnalysisInProgressError, match="already in progress"):
+            await analyze(
+                AnalyzeRequest(source_id=source_id, url="https://build.avax.network/blog"),
+                repository,
+                runner=slow_runner,
+            )
+        release.set()
+        await first
+
+    assert runner_calls == 1
 
 
 @pytest.mark.asyncio
