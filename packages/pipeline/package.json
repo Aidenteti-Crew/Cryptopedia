@@ -1,0 +1,21 @@
+{
+  "name": "@cryptopedia/pipeline",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^5.5.8",
+    "js-yaml": "^4.1.1",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.3.1",
+    "typescript": "^5.9.0",
+    "vitest": "^2.0.0"
+  }
+}

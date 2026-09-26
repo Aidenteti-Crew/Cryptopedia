@@ -1,0 +1,33 @@
+sources:
+  - url: 'https://github.com/ava-labs/avalanchego/releases.atom'
+    source_name: 'AvalancheGo Releases'
+    source_type: 'RSS'
+    adapter: 'ATOM'
+    content_kind: 'RELEASE'
+    authority: 'OFFICIAL'
+    recency_window_days: 7
+    consecutive_failures_threshold: 3
+
+  - url: 'https://github.com/avalanche-foundation/ACPs'
+    source_name: 'Avalanche Community Proposals'
+    source_type: 'CUSTOM'
+    adapter: 'GITHUB_API'
+    content_kind: 'GOVERNANCE'
+    authority: 'OFFICIAL'
+    enabled: false
+
+  - url: 'https://build.avax.network/blog'
+    source_name: 'Avalanche Builder Hub Blog'
+    source_type: 'WEBSITE'
+    adapter: 'CRAWL4AI'
+    content_kind: 'BLOG'
+    authority: 'OFFICIAL'
+    enabled: false
+
+  - url: 'https://x.com/avax'
+    source_name: 'Avalanche X'
+    source_type: 'TWITTER'
+    adapter: 'X_API'
+    content_kind: 'SOCIAL'
+    authority: 'OFFICIAL'
+    enabled: false
