@@ -201,6 +201,8 @@ ACP 공식 상태는 `Proposed`, `Implementable`, `Activated`, `Stale`로 취급
 
 API 호출은 인증된 GitHub App 또는 fine-grained token과 ETag conditional request를 사용한다. rate-limit header와 secondary rate limit을 관측하고 backoff한다.
 
+운영 배포에는 `GITHUB_TOKEN`을 필수 secret으로 설정한다. 비인증 public API는 초기 ACP 동기화만으로도 다수의 contents 요청을 사용해 rate limit에 쉽게 도달하므로 개발용 fallback으로만 취급한다. 포맷이 잘못된 ACP 하나가 전체 batch를 중단하지 않도록 malformed 문서 격리와 재처리 큐는 후속 hardening 백로그로 관리한다.
+
 ### 5.3 Discourse Forum
 
 **1차 수집 대상에서는 보류한다.** 2026-09-26 재확인 시 검색 인덱스에는 최근 페이지가 남아 있었지만 `https://forum.avax.network/`, `/latest`, `/latest.json`, `/latest.rss` 직접 접근을 안정적으로 확인하지 못했다. 네트워크 환경 또는 일시 장애일 가능성이 있으므로 폐쇄로 단정하지 않고 Phase 4에서 URL, DNS/TLS, API/RSS 응답과 운영 주체를 다시 검증한다.
