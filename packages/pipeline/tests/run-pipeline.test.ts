@@ -71,7 +71,7 @@ describe('runPipeline', () => {
     const db = new FakeContentDb()
     const summaries = await runPipeline(db.query, [
       source({ sourceName: 'Builder Hub', adapter: 'CRAWL4AI' }),
-      source({ sourceName: 'X', adapter: 'X_API' }),
+      source({ sourceName: 'Forum', adapter: 'DISCOURSE_API' }),
     ])
 
     expect(summaries).toEqual([
@@ -82,11 +82,30 @@ describe('runPipeline', () => {
         error: expect.stringContaining('CRAWL4AI'),
       },
       {
-        sourceName: 'X',
-        adapter: 'X_API',
+        sourceName: 'Forum',
+        adapter: 'DISCOURSE_API',
         status: 'SKIPPED',
-        error: expect.stringContaining('X_API'),
+        error: expect.stringContaining('DISCOURSE_API'),
       },
+    ])
+  })
+
+  it('dispatches X_API sources to the X runner', async () => {
+    const db = new FakeContentDb()
+    const xRunner = vi.fn().mockResolvedValue({
+      status: 'SUCCESS',
+      sourceId: 's3',
+      inserted: 1,
+      skippedDuplicate: 0,
+      skippedInvalid: 0,
+    })
+    const xSource = source({ sourceName: 'X Source', adapter: 'X_API' })
+
+    const summaries = await runPipeline(db.query, [xSource], { runXSource: xRunner })
+
+    expect(xRunner).toHaveBeenCalledWith(db.query, xSource)
+    expect(summaries).toEqual([
+      { sourceName: 'X Source', adapter: 'X_API', status: 'SUCCESS', detail: expect.any(Object) },
     ])
   })
 
