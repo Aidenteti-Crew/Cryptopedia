@@ -9,8 +9,9 @@ import os
 import re
 import socket
 from collections.abc import Awaitable, Callable
+from typing import Any, Protocol
 from urllib.parse import urlsplit
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -74,6 +75,25 @@ class AnalyzeResponse(BaseModel):
 
 
 AnalysisRunner = Callable[[str], Awaitable[str]]
+
+
+class AnalysisRepository(Protocol):
+    async def get_source_url(self, source_id: UUID) -> str | None: ...
+
+    async def get_analysis(self, source_id: UUID) -> dict[str, Any] | None: ...
+
+    async def create_run_log(self, source_id: UUID, model_name: str) -> UUID: ...
+
+    async def persist_success(
+        self,
+        *,
+        source_id: UUID,
+        run_log_id: UUID,
+        analysis_json: dict[str, Any],
+        model_name: str,
+    ) -> UUID: ...
+
+    async def mark_failed(self, run_log_id: UUID, error: str) -> None: ...
 
 
 def allowed_hosts() -> set[str]:
@@ -156,14 +176,19 @@ pagination_type must be one of: none, click, scroll.
 
 async def run_browser_use_analysis(url: str) -> str:
     """Run browser-use lazily so API imports and tests do not require Chromium."""
-    from browser_use import Agent
+    from browser_use import Agent, BrowserSession
     from browser_use.llm.anthropic.chat import ChatAnthropic
 
     api_key = os.environ["ANTHROPIC_API_KEY"]
     model = os.environ.get("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
+    hostname = urlsplit(url).hostname
+    if hostname is None:
+        raise ValueError("analysis URL has no hostname")
+    browser_session = BrowserSession(allowed_domains=[hostname])
     agent = Agent(
         task=ANALYSIS_PROMPT.format(url=url),
         llm=ChatAnthropic(model=model, api_key=api_key),
+        browser_session=browser_session,
         max_failures=3,
     )
     history = await agent.run()
@@ -174,8 +199,35 @@ async def run_browser_use_analysis(url: str) -> str:
 
 
 async def analyze(
-    request: AnalyzeRequest, runner: AnalysisRunner = run_browser_use_analysis
+    request: AnalyzeRequest,
+    repository: AnalysisRepository,
+    runner: AnalysisRunner = run_browser_use_analysis,
 ) -> AnalyzeResponse:
     url = await validate_target_url(request.url)
-    raw_output = await asyncio.wait_for(runner(url), timeout=analysis_timeout_seconds())
-    return AnalyzeResponse(analysis_id=uuid4(), analysis_json=extract_analysis_json(raw_output))
+    source_url = await repository.get_source_url(request.source_id)
+    if source_url is None:
+        raise ValueError(f"source does not exist: {request.source_id}")
+    if source_url.rstrip("/") != url.rstrip("/"):
+        raise ValueError("request URL does not match the registered source URL")
+    existing = await repository.get_analysis(request.source_id)
+    if existing is not None and not request.force:
+        return AnalyzeResponse(
+            analysis_id=existing["id"],
+            analysis_json=AnalysisJson.model_validate(existing["analysis_json"]),
+        )
+
+    model_name = os.environ.get("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
+    run_log_id = await repository.create_run_log(request.source_id, model_name)
+    try:
+        raw_output = await asyncio.wait_for(runner(url), timeout=analysis_timeout_seconds())
+        analysis_json = extract_analysis_json(raw_output)
+        analysis_id = await repository.persist_success(
+            source_id=request.source_id,
+            run_log_id=run_log_id,
+            analysis_json=analysis_json.model_dump(),
+            model_name=model_name,
+        )
+    except Exception as exc:
+        await repository.mark_failed(run_log_id, f"{type(exc).__name__}: {exc}")
+        raise
+    return AnalyzeResponse(analysis_id=analysis_id, analysis_json=analysis_json)

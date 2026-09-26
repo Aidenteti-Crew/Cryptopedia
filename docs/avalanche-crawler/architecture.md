@@ -231,6 +231,16 @@ browser-use analyze
 
 생성물은 가능하면 임의 Python 코드가 아니라 검증 가능한 JSON extraction spec으로 저장하고, 고정 runner가 이를 해석한다. 과도기적으로 Python을 저장해야 한다면 import allowlist, 파일/프로세스/내부망 접근 차단, 실행 시간과 메모리 제한을 둔 별도 프로세스 또는 컨테이너에서 실행한다.
 
+분석 endpoint는 서비스 간 bearer token을 요구하고 다음 경계를 fail-closed로 적용한다.
+
+- 등록된 source URL과 요청 URL의 일치 확인
+- HTTPS와 exact-host allowlist 강제
+- DNS 결과의 private/loopback/link-local 주소 거부
+- browser-use 세션에도 단일 대상 host를 `allowed_domains`로 전달해 redirect와 후속 탐색 제한
+- 최대 300초 timeout과 64 KiB 결과 크기 제한
+- JavaScript 및 알 수 없는 결과 필드는 strict schema에서 거부
+- 성공한 분석과 `core.run_log` 성공 전환은 같은 DB transaction으로 저장
+
 ### 5.5 X
 
 공식 API 사용을 우선한다. browser-use는 API 사용이 불가능하고 이용 조건을 확인한 경우에만 제한적으로 사용한다.
@@ -374,3 +384,4 @@ fallback은 가용성 보조 수단이지 canonical 실행 경로가 아니다. 
 | ADR-008 | 생성물은 Python 코드보다 선언적 JSON extraction spec을 우선한다                                        | 확정 |
 | ADR-009 | 기존 `news_collector`와 source 식별·정규화·dedup 계약 및 DB 전역 정합성 경계를 공유한다                | 확정 |
 | ADR-010 | Avalanche Forum은 1차 소스에서 보류하고 Phase 4에서 다른 실행 환경으로 접근성과 신뢰 범위를 재검증한다 | 확정 |
+| ADR-011 | browser-use 분석은 인증, source URL 결합, 네트워크 allowlist, 선언형 결과 제한을 통과해야 저장한다     | 확정 |

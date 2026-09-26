@@ -3,8 +3,9 @@ from __future__ import annotations
 import asyncio
 import json
 import socket
+from typing import Any
 from unittest.mock import patch
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 from crawler_analysis import (
@@ -33,6 +34,31 @@ VALID_ANALYSIS = {
 }
 
 
+class FakeRepository:
+    def __init__(self, existing: dict[str, Any] | None = None) -> None:
+        self.existing = existing
+        self.run_log_id = uuid4()
+        self.analysis_id = uuid4()
+        self.persisted: dict[str, Any] | None = None
+        self.failed: str | None = None
+
+    async def get_source_url(self, source_id: UUID) -> str | None:
+        return "https://build.avax.network/blog"
+
+    async def get_analysis(self, source_id: UUID) -> dict[str, Any] | None:
+        return self.existing
+
+    async def create_run_log(self, source_id: UUID, model_name: str) -> UUID:
+        return self.run_log_id
+
+    async def persist_success(self, **values: Any) -> UUID:
+        self.persisted = values
+        return self.analysis_id
+
+    async def mark_failed(self, run_log_id: UUID, error: str) -> None:
+        self.failed = error
+
+
 def public_dns(*args: object, **kwargs: object) -> list[tuple[object, ...]]:
     return [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("93.184.216.34", 443))]
 
@@ -42,14 +68,59 @@ async def test_analyze_returns_validated_declarative_result(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setenv("CRAWLER_ANALYSIS_ALLOWED_HOSTS", "build.avax.network")
+    repository = FakeRepository()
     loop = asyncio.get_running_loop()
     with patch.object(loop, "getaddrinfo", side_effect=public_dns):
         result = await analyze(
             AnalyzeRequest(source_id=uuid4(), url="https://build.avax.network/blog"),
+            repository,
             runner=lambda _: asyncio.sleep(0, result=json.dumps(VALID_ANALYSIS)),
         )
     assert result.analysis_json.content_selector == "article"
     assert "js_code" not in result.analysis_json.model_dump()
+    assert repository.persisted is not None
+
+
+@pytest.mark.asyncio
+async def test_analyze_reuses_cached_analysis(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("CRAWLER_ANALYSIS_ALLOWED_HOSTS", "build.avax.network")
+    analysis_id = uuid4()
+    repository = FakeRepository({"id": analysis_id, "analysis_json": VALID_ANALYSIS})
+    loop = asyncio.get_running_loop()
+    runner_called = False
+
+    async def runner(_: str) -> str:
+        nonlocal runner_called
+        runner_called = True
+        return json.dumps(VALID_ANALYSIS)
+
+    with patch.object(loop, "getaddrinfo", side_effect=public_dns):
+        result = await analyze(
+            AnalyzeRequest(source_id=uuid4(), url="https://build.avax.network/blog"),
+            repository,
+            runner=runner,
+        )
+    assert result.analysis_id == analysis_id
+    assert runner_called is False
+
+
+@pytest.mark.asyncio
+async def test_analyze_records_runner_failure(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("CRAWLER_ANALYSIS_ALLOWED_HOSTS", "build.avax.network")
+    repository = FakeRepository()
+    loop = asyncio.get_running_loop()
+
+    async def failing_runner(_: str) -> str:
+        raise RuntimeError("browser failed")
+
+    with patch.object(loop, "getaddrinfo", side_effect=public_dns):
+        with pytest.raises(RuntimeError, match="browser failed"):
+            await analyze(
+                AnalyzeRequest(source_id=uuid4(), url="https://build.avax.network/blog"),
+                repository,
+                runner=failing_runner,
+            )
+    assert repository.failed == "RuntimeError: browser failed"
 
 
 @pytest.mark.asyncio

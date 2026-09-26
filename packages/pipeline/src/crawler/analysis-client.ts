@@ -22,7 +22,8 @@ type FetchLike = (input: string, init?: RequestInit) => Promise<Response>
 export class CrawlerAnalysisClient {
   constructor(
     private readonly baseUrl: string,
-    private readonly fetchFn: FetchLike = fetch
+    private readonly fetchFn: FetchLike = fetch,
+    private readonly apiToken: string | undefined = process.env.CRAWLER_ANALYSIS_API_TOKEN
   ) {}
 
   async analyze(input: {
@@ -31,9 +32,15 @@ export class CrawlerAnalysisClient {
     url: string
     force?: boolean
   }): Promise<{ analysisId: string; spec: ExtractionSpec }> {
+    if (!this.apiToken || this.apiToken.length < 32) {
+      throw new Error('CRAWLER_ANALYSIS_API_TOKEN must contain at least 32 characters')
+    }
     const response = await this.fetchFn(`${this.baseUrl.replace(/\/$/, '')}/crawler/analyze`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.apiToken}`,
+      },
       body: JSON.stringify({
         source_id: input.sourceId,
         url: input.url,
