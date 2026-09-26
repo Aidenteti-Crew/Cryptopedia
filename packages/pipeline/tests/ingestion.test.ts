@@ -22,23 +22,8 @@ describe('shared ingestion contract', () => {
     expect(normalizeUrl(article.url)).toBe('https://example.com/releases/1')
   })
 
-  it('prefers a stable GUID for the representative key', () => {
-    expect(buildRepresentativeKey(article)).toBe('tag:example.com,2026:release-1')
-  })
-
-  it('falls back to the raw url unprefixed, matching news_collector representative_key format', () => {
-    const articleWithoutStableIds: NormalizedArticle = {
-      sourceUrl: article.sourceUrl,
-      adapter: article.adapter,
-      contentKind: article.contentKind,
-      authority: article.authority,
-      title: article.title,
-      url: article.url,
-      normalizedUrl: '',
-      body: article.body,
-      publishedAt: article.publishedAt,
-    }
-    expect(buildRepresentativeKey(articleWithoutStableIds)).toBe(article.url)
+  it('uses the raw URL even when a GUID exists, matching news_collector exactly', () => {
+    expect(buildRepresentativeKey(article)).toBe(article.url)
   })
 
   it('validates recency deterministically', () => {

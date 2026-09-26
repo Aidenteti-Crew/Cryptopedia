@@ -18,15 +18,12 @@ export function normalizeUrl(input: string): string {
   return url.toString()
 }
 
-// No type-prefix (e.g. "GUID:") is added here. content.article_raw.representative_key is
-// shared with python_services/packages/news_collector's agent_comm ingestion path, which
-// writes the raw article URL verbatim (see apps/api/.../agent-comm.service.ts insertArticle).
-// A prefixed key would never collide with that path's key for the same article, defeating
-// the shared uq_article_raw_representative_key_hash dedup guarantee across both pipelines.
+// This must exactly match python_services/packages/news_collector's agent_comm ingestion
+// contract, which stores the raw article URL in representative_key. Merely removing a
+// "GUID:" prefix is insufficient: preferring an unprefixed feed GUID would still produce a
+// different key from news_collector for every normal Atom entry. GUID/canonical/normalized
+// hashes remain useful lookup signals, but the shared cross-pipeline conflict key is raw URL
+// until both writers are migrated atomically to a new versioned contract.
 export function buildRepresentativeKey(article: NormalizedArticle): string {
-  if (article.guid?.trim()) return article.guid.trim()
-  if (article.externalId?.trim()) return article.externalId.trim()
-  if (article.canonicalUrl) return normalizeUrl(article.canonicalUrl)
-  if (article.normalizedUrl) return normalizeUrl(article.normalizedUrl)
   return article.url
 }

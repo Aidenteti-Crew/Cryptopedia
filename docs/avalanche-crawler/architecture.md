@@ -138,7 +138,7 @@ RSS와 API 소스도 crawler registry를 완전히 우회하지 않고 공통 he
 ### 4.3 증분 수집과 중복 제거
 
 - `recency_window_days`만으로 처리 여부를 결정하지 않는다. 장애 복구 후 누락을 막기 위해 영속 cursor/watermark를 사용한다.
-- 대표키 우선순위는 소스가 제공하는 안정 식별자를 우선한다: GUID 또는 외부 ID → canonical URL → normalized URL → 원본 URL.
+- 현행 공통 `representative_key`는 기존 `news_collector`와의 교차 파이프라인 dedup을 위해 원본 URL을 그대로 사용한다. GUID, canonical URL과 normalized URL hash는 보조 조회 신호로 저장한다. 더 강한 대표키로 전환할 때는 두 writer와 기존 데이터 migration을 하나의 버전 변경으로 처리한다.
 - 하나의 글이 블로그, RSS, X에 동시에 나타나는 경우 canonical URL과 콘텐츠 hash로 교차 소스 중복을 판별한다.
 - `0건 수집`은 정상 결과일 수 있으며 fetch/parser 오류와 구분한다.
 - 최초 backfill 범위와 매일 증분 수집 범위를 별도 설정한다.

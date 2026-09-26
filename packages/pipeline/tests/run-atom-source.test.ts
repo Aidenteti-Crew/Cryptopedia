@@ -118,9 +118,16 @@ describe('runAtomSource', () => {
     })
     expect(newsCollectorResult.created).toBe(true)
 
-    // Same article, no GUID this time, so buildRepresentativeKey falls back to the raw URL —
-    // the same value news_collector used as representative_key.
-    const xml = feedXml([{ title: 'v1.15.0', url: sharedUrl, published: '2026-09-22T00:00:00Z' }])
+    // Real GitHub Atom entries include an ID. The representative key must still be the same
+    // raw URL that news_collector stores; otherwise this cross-pipeline conflict is missed.
+    const xml = feedXml([
+      {
+        id: 'tag:github.com,2008:Repository/1/v1.15.0',
+        title: 'v1.15.0',
+        url: sharedUrl,
+        published: '2026-09-22T00:00:00Z',
+      },
+    ])
     const adapter = new AtomAdapter(async () => jsonResponse(xml))
 
     const result = await runAtomSource(db.query, source, { adapter })
@@ -133,7 +140,14 @@ describe('runAtomSource', () => {
   it('does not let news_collector duplicate an article this pipeline already inserted', async () => {
     const db = new FakeContentDb()
     const sharedUrl = 'https://github.com/ava-labs/avalanchego/releases/tag/v1.15.0'
-    const xml = feedXml([{ title: 'v1.15.0', url: sharedUrl, published: '2026-09-22T00:00:00Z' }])
+    const xml = feedXml([
+      {
+        id: 'tag:github.com,2008:Repository/1/v1.15.0',
+        title: 'v1.15.0',
+        url: sharedUrl,
+        published: '2026-09-22T00:00:00Z',
+      },
+    ])
     const adapter = new AtomAdapter(async () => jsonResponse(xml))
 
     const result = await runAtomSource(db.query, source, { adapter })
