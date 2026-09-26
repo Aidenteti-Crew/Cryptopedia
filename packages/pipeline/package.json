@@ -10,11 +10,14 @@
   "dependencies": {
     "fast-xml-parser": "^5.5.8",
     "js-yaml": "^4.1.1",
+    "pg": "^8.16.3",
+    "uuid": "^11.1.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.3.1",
+    "@types/pg": "^8.11.6",
     "typescript": "^5.9.0",
     "vitest": "^2.0.0"
   }

@@ -23,7 +23,22 @@ describe('shared ingestion contract', () => {
   })
 
   it('prefers a stable GUID for the representative key', () => {
-    expect(buildRepresentativeKey(article)).toBe('GUID:tag:example.com,2026:release-1')
+    expect(buildRepresentativeKey(article)).toBe('tag:example.com,2026:release-1')
+  })
+
+  it('falls back to the raw url unprefixed, matching news_collector representative_key format', () => {
+    const articleWithoutStableIds: NormalizedArticle = {
+      sourceUrl: article.sourceUrl,
+      adapter: article.adapter,
+      contentKind: article.contentKind,
+      authority: article.authority,
+      title: article.title,
+      url: article.url,
+      normalizedUrl: '',
+      body: article.body,
+      publishedAt: article.publishedAt,
+    }
+    expect(buildRepresentativeKey(articleWithoutStableIds)).toBe(article.url)
   })
 
   it('validates recency deterministically', () => {
