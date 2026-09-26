@@ -1,10 +1,11 @@
+import asyncio
 import os
 from datetime import datetime, timezone
-from typing import Any
 
-from fastapi import FastAPI
-from pydantic import BaseModel
+from crawler_analysis import AnalyzeRequest, AnalyzeResponse, analyze
+from fastapi import FastAPI, HTTPException
 from loguru import logger
+from pydantic import BaseModel
 
 app = FastAPI(
     title="Cherry in the Haystack API",
@@ -63,6 +64,17 @@ def echo(request: EchoRequest) -> EchoResponse:
         echo=request.message,
         timestamp=datetime.now(timezone.utc).isoformat(),
     )
+
+
+@app.post("/crawler/analyze", response_model=AnalyzeResponse)
+async def analyze_crawler(request: AnalyzeRequest) -> AnalyzeResponse:
+    """Analyze an allowlisted public page into a declarative crawler specification."""
+    try:
+        return await analyze(request)
+    except asyncio.TimeoutError as exc:
+        raise HTTPException(status_code=504, detail="crawler analysis timed out") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
 if __name__ == "__main__":

@@ -89,24 +89,24 @@ DB의 `content.source_type_enum`은 기존 값을 유지한다. 별도 설정 �
 
 ```yaml
 sources:
-  - url: "https://github.com/ava-labs/avalanchego/releases.atom"
-    source_name: "AvalancheGo Releases"
-    source_type: "RSS"       # DB 호환 분류
-    adapter: "ATOM"          # 실제 수집 구현
-    content_kind: "RELEASE"  # 콘텐츠 의미
-    authority: "OFFICIAL"
+  - url: 'https://github.com/ava-labs/avalanchego/releases.atom'
+    source_name: 'AvalancheGo Releases'
+    source_type: 'RSS' # DB 호환 분류
+    adapter: 'ATOM' # 실제 수집 구현
+    content_kind: 'RELEASE' # 콘텐츠 의미
+    authority: 'OFFICIAL'
     recency_window_days: 7
     consecutive_failures_threshold: 3
 ```
 
 초기 지원 값은 다음과 같다.
 
-| 필드 | 값 |
-|---|---|
-| `source_type` | DB enum의 `RSS`, `TWITTER`, `LINKEDIN`, `YOUTUBE`, `REDDIT`, `KAKAO`, `WEBSITE`, `CUSTOM` |
-| `adapter` | `RSS`, `ATOM`, `GITHUB_API`, `DISCOURSE_API`, `CRAWL4AI`, `X_API`, `BROWSER_USE` |
-| `content_kind` | `BLOG`, `RELEASE`, `GOVERNANCE`, `FORUM`, `NEWSLETTER`, `SOCIAL`, `DOCUMENTATION` |
-| `authority` | `OFFICIAL`, `OFFICIAL_COMMUNITY`, `THIRD_PARTY` |
+| 필드           | 값                                                                                        |
+| -------------- | ----------------------------------------------------------------------------------------- |
+| `source_type`  | DB enum의 `RSS`, `TWITTER`, `LINKEDIN`, `YOUTUBE`, `REDDIT`, `KAKAO`, `WEBSITE`, `CUSTOM` |
+| `adapter`      | `RSS`, `ATOM`, `GITHUB_API`, `DISCOURSE_API`, `CRAWL4AI`, `X_API`, `BROWSER_USE`          |
+| `content_kind` | `BLOG`, `RELEASE`, `GOVERNANCE`, `FORUM`, `NEWSLETTER`, `SOCIAL`, `DOCUMENTATION`         |
+| `authority`    | `OFFICIAL`, `OFFICIAL_COMMUNITY`, `THIRD_PARTY`                                           |
 
 `source_type`은 DB 저장 호환성을 위한 값이며 adapter routing에 사용하지 않는다. TypeScript의 허용 값은 DB의 실제 8개 값에 맞추고, CI 또는 애플리케이션 시작 시 `pg_enum`과 일치하는지 검사한다.
 
@@ -114,13 +114,13 @@ sources:
 
 ### 4.1 기존 스키마 정합성
 
-| 항목 | 결정 |
-|---|---|
-| `content.source` | 기존 테이블 재사용 |
-| `content.article_raw` | 기존 테이블 재사용. generated hash 컬럼은 INSERT 대상에서 제외 |
-| `core.run_log` | 모든 adapter 실행 기록에 공통 사용 |
+| 항목                                                   | 결정                                                                                                   |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `content.source`                                       | 기존 테이블 재사용                                                                                     |
+| `content.article_raw`                                  | 기존 테이블 재사용. generated hash 컬럼은 INSERT 대상에서 제외                                         |
+| `core.run_log`                                         | 모든 adapter 실행 기록에 공통 사용                                                                     |
 | `content.crawler_analysis`, `content.crawler_registry` | crawl4ai 자동생성 소스에 사용. 구현 전 `docs/crawler-autogen-migration.sql` 검토 후 별도 승인하여 적용 |
-| `content.source_type_enum` | 이번 작업에서 마이그레이션하지 않음 |
+| `content.source_type_enum`                             | 이번 작업에서 마이그레이션하지 않음                                                                    |
 
 ### 4.2 어댑터 실행 상태
 
@@ -276,18 +276,18 @@ active_registry.artifact_hash == merged_artifact.sha256
 
 ## 7. 확정된 1차 소스
 
-| 우선순위 | 소스 | URL | DB type | Adapter | Authority | 결정 |
-|---:|---|---|---|---|---|---|
-| 1 | Avalanche Builder Hub Blog | `https://build.avax.network/blog` | `WEBSITE` | `CRAWL4AI` | `OFFICIAL` | 포함. 네트워크 업그레이드·보안·개발자 게시물의 핵심 소스 |
-| 2 | AvalancheGo Releases | `https://github.com/ava-labs/avalanchego/releases.atom` | `RSS` | `ATOM` | `OFFICIAL` | 포함 |
-| 3 | Avalanche ACPs | `https://github.com/avalanche-foundation/ACPs` | `CUSTOM` | `GITHUB_API` | `OFFICIAL` | 포함. 문서와 상태 변경 이벤트 수집 |
-| 4 | Avalanche X | `https://x.com/avax` | `TWITTER` | `X_API` | `OFFICIAL` | API 우선, browser-use는 제한적 fallback |
+| 우선순위 | 소스                       | URL                                                     | DB type   | Adapter      | Authority  | 결정                                                     |
+| -------: | -------------------------- | ------------------------------------------------------- | --------- | ------------ | ---------- | -------------------------------------------------------- |
+|        1 | Avalanche Builder Hub Blog | `https://build.avax.network/blog`                       | `WEBSITE` | `CRAWL4AI`   | `OFFICIAL` | 포함. 네트워크 업그레이드·보안·개발자 게시물의 핵심 소스 |
+|        2 | AvalancheGo Releases       | `https://github.com/ava-labs/avalanchego/releases.atom` | `RSS`     | `ATOM`       | `OFFICIAL` | 포함                                                     |
+|        3 | Avalanche ACPs             | `https://github.com/avalanche-foundation/ACPs`          | `CUSTOM`  | `GITHUB_API` | `OFFICIAL` | 포함. 문서와 상태 변경 이벤트 수집                       |
+|        4 | Avalanche X                | `https://x.com/avax`                                    | `TWITTER` | `X_API`      | `OFFICIAL` | API 우선, browser-use는 제한적 fallback                  |
 
 보류 소스:
 
-| 소스 | URL | 잠정 adapter | Authority | 보류 사유 | 재검증 시점 |
-|---|---|---|---|---|---|
-| Avalanche Forum | `https://forum.avax.network` | `DISCOURSE_API` | `OFFICIAL_COMMUNITY` | 직접 URL/API/RSS 접근 불안정, 일반 사용자 글 중심 | Phase 4 |
+| 소스            | URL                          | 잠정 adapter    | Authority            | 보류 사유                                         | 재검증 시점 |
+| --------------- | ---------------------------- | --------------- | -------------------- | ------------------------------------------------- | ----------- |
+| Avalanche Forum | `https://forum.avax.network` | `DISCOURSE_API` | `OFFICIAL_COMMUNITY` | 직접 URL/API/RSS 접근 불안정, 일반 사용자 글 중심 | Phase 4     |
 
 추가 후보:
 
@@ -300,15 +300,15 @@ Newsletter 가입 페이지는 공개 게시물 archive가 아니므로 1차 소
 
 ## 8. 실패 처리와 재생성 정책
 
-| 실패 유형 | 처리 |
-|---|---|
-| 네트워크 timeout/429/5xx | 지수 backoff와 jitter, cursor 유지 |
-| RSS/API parse 일부 실패 | 정상 항목은 저장하고 실패 항목 quarantine |
-| 인증 실패 | 즉시 alert, 자동 재생성 금지 |
-| crawl4ai 결과 0건 | 최근 실제 게시 여부를 확인한 후 실패 판정 |
+| 실패 유형                     | 처리                                                      |
+| ----------------------------- | --------------------------------------------------------- |
+| 네트워크 timeout/429/5xx      | 지수 backoff와 jitter, cursor 유지                        |
+| RSS/API parse 일부 실패       | 정상 항목은 저장하고 실패 항목 quarantine                 |
+| 인증 실패                     | 즉시 alert, 자동 재생성 금지                              |
+| crawl4ai 결과 0건             | 최근 실제 게시 여부를 확인한 후 실패 판정                 |
 | selector/schema 실패 연속 N회 | 기존 active artifact를 deprecated 처리하고 재분석 PR 생성 |
-| fallback 실패 | source health에 기록하되 무한 재생성 금지 |
-| DB 저장 실패 | cursor를 전진시키지 않고 idempotent 재시도 |
+| fallback 실패                 | source health에 기록하되 무한 재생성 금지                 |
+| DB 저장 실패                  | cursor를 전진시키지 않고 idempotent 재시도                |
 
 fallback은 가용성 보조 수단이지 canonical 실행 경로가 아니다. fallback 결과에도 동일한 validation, dedup과 authority metadata를 적용한다.
 
@@ -362,15 +362,15 @@ fallback은 가용성 보조 수단이지 canonical 실행 경로가 아니다. 
 
 ## 11. 확정 결정 요약
 
-| ID | 결정 | 상태 |
-|---|---|---|
-| ADR-001 | `content.source_type_enum`은 변경하지 않고 코드가 기존 8개 값에 맞춘다 | 확정 |
-| ADR-002 | 수집 방식은 별도 `adapter`, 콘텐츠 의미는 `content_kind`로 분리한다 | 확정 |
-| ADR-003 | RSS/Atom은 analyze/generate를 생략하되 공통 health/cursor/검증 경로를 사용한다 | 확정 |
-| ADR-004 | ACP는 GitHub API와 commit SHA cursor로 수집한다 | 확정 |
-| ADR-005 | 자동생성 PR은 `Aidenteti-Crew/Cryptopedia`에 열고 base branch를 설정화한다 | 확정 |
-| ADR-006 | PR merge artifact와 active registry hash가 일치해야 활성화한다 | 확정 |
-| ADR-007 | Builder Hub Blog을 1차 공식 소스에 포함하고 newsletter 가입 페이지는 제외한다 | 확정 |
-| ADR-008 | 생성물은 Python 코드보다 선언적 JSON extraction spec을 우선한다 | 확정 |
-| ADR-009 | 기존 `news_collector`와 source 식별·정규화·dedup 계약 및 DB 전역 정합성 경계를 공유한다 | 확정 |
+| ID      | 결정                                                                                                   | 상태 |
+| ------- | ------------------------------------------------------------------------------------------------------ | ---- |
+| ADR-001 | `content.source_type_enum`은 변경하지 않고 코드가 기존 8개 값에 맞춘다                                 | 확정 |
+| ADR-002 | 수집 방식은 별도 `adapter`, 콘텐츠 의미는 `content_kind`로 분리한다                                    | 확정 |
+| ADR-003 | RSS/Atom은 analyze/generate를 생략하되 공통 health/cursor/검증 경로를 사용한다                         | 확정 |
+| ADR-004 | ACP는 GitHub API와 commit SHA cursor로 수집한다                                                        | 확정 |
+| ADR-005 | 자동생성 PR은 `Aidenteti-Crew/Cryptopedia`에 열고 base branch를 설정화한다                             | 확정 |
+| ADR-006 | PR merge artifact와 active registry hash가 일치해야 활성화한다                                         | 확정 |
+| ADR-007 | Builder Hub Blog을 1차 공식 소스에 포함하고 newsletter 가입 페이지는 제외한다                          | 확정 |
+| ADR-008 | 생성물은 Python 코드보다 선언적 JSON extraction spec을 우선한다                                        | 확정 |
+| ADR-009 | 기존 `news_collector`와 source 식별·정규화·dedup 계약 및 DB 전역 정합성 경계를 공유한다                | 확정 |
 | ADR-010 | Avalanche Forum은 1차 소스에서 보류하고 Phase 4에서 다른 실행 환경으로 접근성과 신뢰 범위를 재검증한다 | 확정 |
