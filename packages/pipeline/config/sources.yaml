@@ -8,6 +8,22 @@ sources:
     recency_window_days: 7
     consecutive_failures_threshold: 3
 
+  - url: 'https://github.com/ava-labs/coreth/releases.atom'
+    source_name: 'Coreth Releases'
+    source_type: 'RSS'
+    adapter: 'ATOM'
+    content_kind: 'RELEASE'
+    authority: 'OFFICIAL'
+    consecutive_failures_threshold: 3
+
+  - url: 'https://github.com/ava-labs/subnet-evm/releases.atom'
+    source_name: 'Subnet-EVM Releases'
+    source_type: 'RSS'
+    adapter: 'ATOM'
+    content_kind: 'RELEASE'
+    authority: 'OFFICIAL'
+    consecutive_failures_threshold: 3
+
   - url: 'https://github.com/avalanche-foundation/ACPs'
     source_name: 'Avalanche Community Proposals'
     source_type: 'CUSTOM'

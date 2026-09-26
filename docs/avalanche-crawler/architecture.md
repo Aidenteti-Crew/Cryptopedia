@@ -294,6 +294,10 @@ active_registry.artifact_hash == merged_artifact.sha256
 |        2 | AvalancheGo Releases       | `https://github.com/ava-labs/avalanchego/releases.atom` | `RSS`     | `ATOM`       | `OFFICIAL` | 포함                                                     |
 |        3 | Avalanche ACPs             | `https://github.com/avalanche-foundation/ACPs`          | `CUSTOM`  | `GITHUB_API` | `OFFICIAL` | 포함. 문서와 상태 변경 이벤트 수집                       |
 |        4 | Avalanche X                | `https://x.com/avax`                                    | `TWITTER` | `X_API`      | `OFFICIAL` | API 우선, browser-use는 제한적 fallback                  |
+|        5 | Coreth Releases            | `https://github.com/ava-labs/coreth/releases.atom`      | `RSS`     | `ATOM`       | `OFFICIAL` | 포함. C-Chain EVM 구현체 릴리스                          |
+|        6 | Subnet-EVM Releases        | `https://github.com/ava-labs/subnet-evm/releases.atom`  | `RSS`     | `ATOM`       | `OFFICIAL` | 포함. Subnet EVM 구현체 릴리스                           |
+
+coreth/subnet-evm은 avalanchego보다 릴리스 빈도가 낮아 `recency_window_days`를 설정하지 않는다 — 설정하면 최근 릴리스가 창을 벗어나 매 실행마다 0건으로 필터링될 수 있다.
 
 보류 소스:
 
@@ -303,7 +307,6 @@ active_registry.artifact_hash == merged_artifact.sha256
 
 추가 후보:
 
-- `ava-labs/coreth`, `ava-labs/subnet-evm` releases: 프로토콜 구현 변경까지 범위에 포함할 때 2차 추가
 - ACP GitHub Discussions/PRs: draft와 합의 과정을 수집할 때 별도 authority로 추가
 - 공식 YouTube/Telegram announcement: 텍스트 수집 품질과 운영 API를 검증한 뒤 추가
 - 기존 Avalanche Foundation 블로그: 현재 canonical URL, Builder Hub와의 중복 및 갱신 여부를 확인한 뒤 추가

@@ -33,6 +33,13 @@ function parseEntries(xml: string, source: SourceConfig): NormalizedArticle[] {
     attributeNamePrefix: '@_',
     textNodeName: '#text',
     trimValues: true,
+    // fast-xml-parser's entity-expansion DoS guard defaults to 1000 total expansions per
+    // document. A GitHub releases feed with several entries' worth of HTML-escaped PR/issue
+    // links (each &lt;a ...&gt;...&lt;/a&gt; is several entities) can legitimately exceed that —
+    // ava-labs/subnet-evm's feed alone has ~10,760 as of 2026-09-26. Raised well past that with
+    // headroom, not disabled: the per-entity maxEntitySize/maxExpandedLength guards (10 KiB /
+    // 100 KiB, library defaults) still bound a single malicious entity regardless of this count.
+    processEntities: { maxTotalExpansions: 20000 },
   })
   const document = parser.parse(xml) as { feed?: { entry?: AtomEntry | AtomEntry[] } }
   const rawEntries = document.feed?.entry
