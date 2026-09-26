@@ -40,6 +40,27 @@ the separately approved `docs/crawler-autogen-migration.sql`. It reuses a cached
 `force=true`, records new analysis attempts in `core.run_log`, and returns HTTP 409 while another
 process holds the same source's PostgreSQL advisory lock.
 
+## Testing
+
+```bash
+# Unit tests (no database required)
+pytest python_services/test_crawler_analysis.py python_services/test_crawler_api.py
+
+# PostgreSQL integration tests (migration objects + real advisory-lock behavior)
+docker-compose up -d postgres
+psql "$DATABASE_URL" -f docs/architecture/ddl-v1.1.sql
+psql "$DATABASE_URL" -c "ALTER TYPE core.run_kind_enum ADD VALUE IF NOT EXISTS 'CRAWLER_ANALYSIS';" \
+                      -c "ALTER TYPE core.run_kind_enum ADD VALUE IF NOT EXISTS 'CRAWLER_GENERATION';" \
+                      -c "ALTER TYPE core.run_kind_enum ADD VALUE IF NOT EXISTS 'CRAWLER_EXECUTION';" \
+                      -c "ALTER TYPE core.run_kind_enum ADD VALUE IF NOT EXISTS 'CRAWLER_FALLBACK';"
+psql "$DATABASE_URL" -f docs/crawler-autogen-migration.sql
+TEST_DATABASE_URL="$DATABASE_URL" pytest python_services/test_crawler_analysis_db_integration.py -m integration
+```
+
+The enum values are added in a separate `psql` call first because `ALTER TYPE ... ADD VALUE` cannot be
+used in the same transaction that adds it. `docs/crawler-autogen-migration.sql` repeats the same
+`ADD VALUE IF NOT EXISTS` statements at its top for standalone use — running it again here is a no-op.
+
 ## Environment Variables
 
 | Variable                           | Default                      | Description                                          |
