@@ -36,4 +36,22 @@ sources:
 `)
     ).toThrow('Invalid source config')
   })
+
+  it('requires a github location for the GITHUB_MARKDOWN adapter', () => {
+    const base = `
+sources:
+  - url: https://example.com/blog
+    source_name: Example Blog
+    source_type: WEBSITE
+    adapter: GITHUB_MARKDOWN
+    content_kind: BLOG
+    authority: OFFICIAL
+`
+    expect(() => parseSourceConfig(base)).toThrow('github {owner, repo, branch, path}')
+
+    const [source] = parseSourceConfig(
+      `${base}    github: { owner: o, repo: r, branch: main, path: posts }\n`
+    )
+    expect(source?.github).toEqual({ owner: 'o', repo: 'r', branch: 'main', path: 'posts' })
+  })
 })

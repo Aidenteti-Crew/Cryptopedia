@@ -2,6 +2,10 @@ import type { SourceAdapter, SourceConfig } from '../config/source-config.js'
 import type { QueryFn } from '../db/query.js'
 import { runAcpSource, type RunAcpSourceResult } from './run-acp-source.js'
 import { runAtomSource, type RunAtomSourceResult } from './run-atom-source.js'
+import {
+  runGithubMarkdownSource,
+  type RunGithubMarkdownSourceResult,
+} from './run-github-markdown-source.js'
 import { runXSource, type RunXSourceResult } from './run-x-source.js'
 
 export type PipelineSourceStatus = 'SUCCESS' | 'NOT_MODIFIED' | 'SKIPPED' | 'FAILED'
@@ -10,7 +14,11 @@ export interface PipelineSourceSummary {
   sourceName: string
   adapter: SourceAdapter
   status: PipelineSourceStatus
-  detail?: RunAtomSourceResult | RunAcpSourceResult | RunXSourceResult
+  detail?:
+    | RunAtomSourceResult
+    | RunAcpSourceResult
+    | RunXSourceResult
+    | RunGithubMarkdownSourceResult
   error?: string
 }
 
@@ -18,6 +26,7 @@ export interface RunPipelineDeps {
   runAtomSource?: typeof runAtomSource
   runAcpSource?: typeof runAcpSource
   runXSource?: typeof runXSource
+  runGithubMarkdownSource?: typeof runGithubMarkdownSource
 }
 
 // Adapters with a wired runner in this switch. Adapters listed in SOURCE_ADAPTERS but not here
@@ -31,6 +40,7 @@ export async function runPipeline(
   const atomRunner = deps.runAtomSource ?? runAtomSource
   const acpRunner = deps.runAcpSource ?? runAcpSource
   const xRunner = deps.runXSource ?? runXSource
+  const markdownRunner = deps.runGithubMarkdownSource ?? runGithubMarkdownSource
   const summaries: PipelineSourceSummary[] = []
 
   for (const source of sources) {
@@ -53,6 +63,16 @@ export async function runPipeline(
         }
         case 'GITHUB_API': {
           const result = await acpRunner(query, source)
+          summaries.push({
+            sourceName: source.sourceName,
+            adapter: source.adapter,
+            status: result.status,
+            detail: result,
+          })
+          break
+        }
+        case 'GITHUB_MARKDOWN': {
+          const result = await markdownRunner(query, source)
           summaries.push({
             sourceName: source.sourceName,
             adapter: source.adapter,

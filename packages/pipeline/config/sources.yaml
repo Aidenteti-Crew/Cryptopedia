@@ -34,10 +34,14 @@ sources:
   - url: 'https://build.avax.network/blog'
     source_name: 'Avalanche Builder Hub Blog'
     source_type: 'WEBSITE'
-    adapter: 'CRAWL4AI'
+    adapter: 'GITHUB_MARKDOWN'
     content_kind: 'BLOG'
     authority: 'OFFICIAL'
-    enabled: false
+    github:
+      owner: 'ava-labs'
+      repo: 'builders-hub'
+      branch: 'master'
+      path: 'content/blog'
 
   - url: 'https://x.com/avax'
     source_name: 'Avalanche X'

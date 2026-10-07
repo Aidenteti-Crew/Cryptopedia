@@ -90,6 +90,25 @@ describe('runPipeline', () => {
     ])
   })
 
+  it('dispatches GITHUB_MARKDOWN sources to the markdown runner', async () => {
+    const db = new FakeContentDb()
+    const markdownRunner = vi.fn().mockResolvedValue({
+      status: 'SUCCESS',
+      sourceId: 's4',
+      inserted: 3,
+      skippedDuplicate: 0,
+      skippedInvalid: 0,
+    })
+    const blogSource = source({ sourceName: 'Blog', adapter: 'GITHUB_MARKDOWN' })
+
+    const summaries = await runPipeline(db.query, [blogSource], {
+      runGithubMarkdownSource: markdownRunner,
+    })
+
+    expect(markdownRunner).toHaveBeenCalledWith(db.query, blogSource)
+    expect(summaries[0]).toMatchObject({ adapter: 'GITHUB_MARKDOWN', status: 'SUCCESS' })
+  })
+
   it('dispatches X_API sources to the X runner', async () => {
     const db = new FakeContentDb()
     const xRunner = vi.fn().mockResolvedValue({

@@ -18,6 +18,7 @@ export const SOURCE_ADAPTERS = [
   'RSS',
   'ATOM',
   'GITHUB_API',
+  'GITHUB_MARKDOWN',
   'DISCOURSE_API',
   'CRAWL4AI',
   'X_API',
@@ -41,6 +42,13 @@ export type SourceAdapter = (typeof SOURCE_ADAPTERS)[number]
 export type ContentKind = (typeof CONTENT_KINDS)[number]
 export type SourceAuthority = (typeof SOURCE_AUTHORITIES)[number]
 
+export interface GithubMarkdownLocation {
+  owner: string
+  repo: string
+  branch: string
+  path: string
+}
+
 export interface SourceConfig {
   url: string
   sourceName: string
@@ -52,20 +60,39 @@ export interface SourceConfig {
   minBodyLength?: number
   recencyWindowDays?: number
   consecutiveFailuresThreshold: number
+  github?: GithubMarkdownLocation
 }
 
-const SourceEntrySchema = z.object({
-  url: z.string().url(),
-  source_name: z.string().min(1),
-  source_type: z.enum(CONTENT_SOURCE_TYPES),
-  adapter: z.enum(SOURCE_ADAPTERS),
-  content_kind: z.enum(CONTENT_KINDS),
-  authority: z.enum(SOURCE_AUTHORITIES),
-  enabled: z.boolean().default(true),
-  min_body_length: z.number().int().nonnegative().optional(),
-  recency_window_days: z.number().int().positive().optional(),
-  consecutive_failures_threshold: z.number().int().positive().default(3),
-})
+const SourceEntrySchema = z
+  .object({
+    url: z.string().url(),
+    source_name: z.string().min(1),
+    source_type: z.enum(CONTENT_SOURCE_TYPES),
+    adapter: z.enum(SOURCE_ADAPTERS),
+    content_kind: z.enum(CONTENT_KINDS),
+    authority: z.enum(SOURCE_AUTHORITIES),
+    enabled: z.boolean().default(true),
+    min_body_length: z.number().int().nonnegative().optional(),
+    recency_window_days: z.number().int().positive().optional(),
+    consecutive_failures_threshold: z.number().int().positive().default(3),
+    github: z
+      .object({
+        owner: z.string().min(1),
+        repo: z.string().min(1),
+        branch: z.string().min(1),
+        path: z.string().min(1),
+      })
+      .optional(),
+  })
+  .superRefine((entry, ctx) => {
+    if (entry.adapter === 'GITHUB_MARKDOWN' && !entry.github) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['github'],
+        message: 'github {owner, repo, branch, path} is required for adapter GITHUB_MARKDOWN',
+      })
+    }
+  })
 
 const SourcesFileSchema = z.object({
   sources: z.array(SourceEntrySchema),
@@ -83,6 +110,7 @@ function toSourceConfig(raw: z.infer<typeof SourceEntrySchema>): SourceConfig {
     minBodyLength: raw.min_body_length,
     recencyWindowDays: raw.recency_window_days,
     consecutiveFailuresThreshold: raw.consecutive_failures_threshold,
+    github: raw.github,
   }
 }
 
