@@ -234,3 +234,55 @@
   animation: cherry-shake 0.7s cubic-bezier(.36,.07,.19,.97) both !important;
   transition: none !important;
 }
+
+/* ─────────────────────────────────────────────
+   Cryptopedia editorial surface — scoped so the
+   existing Cherry and /start screens keep their theme.
+───────────────────────────────────────────── */
+.editorial-root {
+  --editorial-paper: #151a20;
+  --editorial-surface: #101419;
+  --editorial-ink: #e9edf2;
+  --editorial-muted: #a5afbb;
+  --editorial-accent: #cebd91;
+  --editorial-line: #323c48;
+
+  min-height: 100dvh;
+  background: var(--editorial-paper);
+  color: var(--editorial-ink);
+  font-family: var(--font-editorial-body), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.editorial-root button,
+.editorial-root a {
+  transition-duration: 150ms;
+  transition-property: color, background-color, border-color, opacity, transform;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.editorial-root button:active,
+.editorial-root a:active {
+  transform: scale(0.96);
+}
+
+.editorial-root :focus-visible {
+  outline-color: var(--editorial-accent);
+}
+
+.editorial-display {
+  font-family: var(--font-editorial-display), serif;
+  text-wrap: balance;
+}
+
+.editorial-copy {
+  text-wrap: pretty;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-root button,
+  .editorial-root a {
+    transition-duration: 0ms;
+  }
+}

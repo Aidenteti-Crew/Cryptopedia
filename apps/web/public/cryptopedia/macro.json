@@ -1,0 +1,18 @@
+[
+  {
+    "id": "institutional-collaboration",
+    "order": 1,
+    "title": "금융기관 협업 소식",
+    "summary": "기관 협업 · 발표 요약과 관련 프로젝트",
+    "kind": "MACRO",
+    "sourceName": "Figma prototype"
+  },
+  {
+    "id": "ecosystem-expansion",
+    "order": 2,
+    "title": "생태계 확장과 산업 동향",
+    "summary": "산업 동향 · 체인에 연결되는 주요 이슈",
+    "kind": "MACRO",
+    "sourceName": "Figma prototype"
+  }
+]

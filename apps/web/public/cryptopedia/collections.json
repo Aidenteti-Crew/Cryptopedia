@@ -1,0 +1,59 @@
+[
+  {
+    "id": "fundamentals",
+    "breadcrumb": ["COLLECTION", "AVALANCHE", "FUNDAMENTALS"],
+    "volume": 1,
+    "eyebrow": "THE FUNDAMENTALS",
+    "title": "Avalanche",
+    "tagline": "하나의 체인, 깊이 있는 이해.",
+    "introduction": [
+      "첫 개념부터 네트워크의 구조까지.",
+      "흩어진 지식을 연결해, 다음 빌드의 토대를 만듭니다."
+    ],
+    "sectionTitle": "이 권의 목차",
+    "entries": [
+      { "id": "chain-overview", "order": 1, "title": "체인 개요", "summary": "Avalanche의 시작과 네트워크의 핵심 개념", "kind": "OVERVIEW" },
+      { "id": "pcx-chains", "order": 2, "title": "P · C · X 체인", "summary": "세 체인의 역할과 연결 구조를 이해하는 아키텍처 가이드", "kind": "ARCHITECTURE" },
+      { "id": "validator-structure", "order": 3, "title": "밸리데이터 구조", "summary": "네트워크 참여와 검증의 원리를 살펴보는 입문 문서", "kind": "NETWORK" },
+      { "id": "glossary", "order": 4, "title": "핵심 용어 사전", "summary": "낯선 개념을 다시 찾아볼 수 있는 블록체인 레퍼런스", "kind": "GLOSSARY" }
+    ]
+  },
+  {
+    "id": "builders",
+    "breadcrumb": ["COLLECTION", "AVALANCHE", "BUILDERS"],
+    "volume": 1,
+    "eyebrow": "BUILDERS",
+    "title": "Builders",
+    "tagline": "아이디어를 구현하는 자료실.",
+    "introduction": [
+      "공식 문서, 코드와 아티클을 한곳에서.",
+      "첫 프로젝트를 위한 레퍼런스를 차분히 탐색하세요."
+    ],
+    "sectionTitle": "빌더 라이브러리",
+    "entries": [
+      { "id": "official-docs", "order": 1, "title": "공식 Docs", "summary": "원문 링크와 함께 읽는 문서 요약", "kind": "DOCS" },
+      { "id": "code-reference", "order": 2, "title": "코드 레퍼런스", "summary": "프로젝트 구조와 구현 패턴을 살펴보는 예제", "kind": "CODE" },
+      { "id": "builder-articles", "order": 3, "title": "빌더 아티클", "summary": "설계와 개발의 맥락을 이해하는 글", "kind": "ARTICLE" },
+      { "id": "mcp-x402", "order": 4, "title": "MCP · x402", "summary": "AI 도구 연결과 결제 프로토콜 자료", "kind": "PROTOCOL" }
+    ]
+  },
+  {
+    "id": "academy",
+    "breadcrumb": ["COLLECTION", "AVALANCHE", "ACADEMY"],
+    "volume": 1,
+    "eyebrow": "ACADEMY",
+    "title": "Academy",
+    "tagline": "배움에 순서를 더하다.",
+    "introduction": [
+      "개념을 이해하고, 구조를 읽고, 직접 만드는 과정.",
+      "지금의 수준에서 다음 학습으로 이어집니다."
+    ],
+    "sectionTitle": "학습 커리큘럼",
+    "entries": [
+      { "id": "foundation", "order": 1, "title": "입문 — 체인의 첫 개념", "summary": "처음 시작하는 빌더를 위한 기본 용어와 원리", "kind": "FOUNDATION" },
+      { "id": "structure", "order": 2, "title": "구조 — 네트워크 읽기", "summary": "체인과 밸리데이터의 역할을 연결하는 학습", "kind": "STRUCTURE" },
+      { "id": "practice", "order": 3, "title": "실습 — 첫 프로젝트", "summary": "문서와 예제를 따라가며 만드는 빌드 과정", "kind": "PRACTICE" },
+      { "id": "skill-graph", "order": 4, "title": "스킬 그래프", "summary": "개념 → 구조 → 실습으로 연결되는 학습 경로", "kind": "LEARNING_MAP" }
+    ]
+  }
+]

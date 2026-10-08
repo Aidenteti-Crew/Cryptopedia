@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import { Plus_Jakarta_Sans } from 'next/font/google'
+import { Cormorant, Inter, Noto_Sans_KR, Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 
 const inter = Inter({
@@ -16,6 +15,20 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   weight: ['500', '600', '700', '800'],
 })
 
+const cormorant = Cormorant({
+  subsets: ['latin'],
+  variable: '--font-editorial-display',
+  display: 'swap',
+  weight: '400',
+})
+
+const notoSansKr = Noto_Sans_KR({
+  subsets: ['latin'],
+  variable: '--font-editorial-body',
+  display: 'swap',
+  weight: ['400', '500'],
+})
+
 export const metadata: Metadata = {
   title: 'Cherry — Knowledge Platform for AI Engineers',
   description: 'Curated intelligence for LLM practitioners. Weekly digests, concept guides, and cutting-edge research — distilled for builders.',
@@ -28,7 +41,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${inter.variable} ${plusJakartaSans.variable} ${cormorant.variable} ${notoSansKr.variable}`}
+      suppressHydrationWarning
+    >
       <body className="font-sans antialiased" suppressHydrationWarning>
         {children}
       </body>
