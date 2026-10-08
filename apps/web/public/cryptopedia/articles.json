@@ -1,0 +1,285 @@
+[
+  {
+    "id": "chain-overview",
+    "variant": "reader",
+    "breadcrumb": ["체인 기초", "입문", "개념 문서"],
+    "eyebrow": "체인 기초 / 입문 / 개념 문서",
+    "title": "체인 개요",
+    "subtitle": "Avalanche를 이해하기 위한 첫 번째 문서.",
+    "quickSummary": "체인을 처음 살펴볼 때는 네트워크의 목적, 구성 요소, 참여 방식부터 순서대로 읽어보세요. 이 문서는 각 개념을 연결하는 출발점입니다.",
+    "sections": [
+      { "id": "coverage", "heading": "이 문서에서 다루는 내용", "body": "네트워크의 기본 개념과 아키텍처, 밸리데이터의 역할을 살펴봅니다. 상세한 구현과 최신 내용은 연결된 공식 문서에서 확인할 수 있습니다." }
+    ],
+    "relatedItems": [
+      { "id": "pcx-chains", "order": 1, "title": "P · C · X 체인", "summary": "구성 요소와 역할을 연결해서 이해하기", "kind": "ARCHITECTURE" },
+      { "id": "validator-structure", "order": 2, "title": "밸리데이터 구조", "summary": "네트워크 참여와 검증 과정 살펴보기", "kind": "NETWORK" }
+    ],
+    "nextItemId": "pcx-chains",
+    "actionLabel": "아키텍처 이어 읽기 →"
+  },
+  {
+    "id": "pcx-chains",
+    "variant": "architecture",
+    "breadcrumb": ["체인 기초", "구조", "가이드"],
+    "eyebrow": "체인 기초 / 구조 / 가이드",
+    "title": "P · C · X 체인",
+    "subtitle": "각 체인의 역할을 나누어 살펴보는 아키텍처 가이드.",
+    "quickSummary": "각 체인이 담당하는 역할을 확인한 뒤, 체인 간의 관계와 개발에 필요한 문서로 이동하세요.",
+    "sections": [
+      { "id": "official", "heading": "공식 문서와 함께 읽기", "body": "구조를 요약한 이 페이지에서 출발해, 세부 동작과 최신 명세는 공식 문서를 통해 확인합니다." }
+    ],
+    "relatedItems": [
+      { "id": "p-chain", "order": 1, "title": "P-Chain", "summary": "역할과 관련 공식 문서", "kind": "ARCHITECTURE" },
+      { "id": "c-chain", "order": 2, "title": "C-Chain", "summary": "개발에 필요한 개념과 레퍼런스", "kind": "ARCHITECTURE" },
+      { "id": "x-chain", "order": 3, "title": "X-Chain", "summary": "구성 요소와 역할", "kind": "ARCHITECTURE" }
+    ],
+    "nextItemId": "official-docs",
+    "actionLabel": "공식 Docs 살펴보기 →"
+  },
+  {
+    "id": "validator-structure",
+    "variant": "validator",
+    "breadcrumb": ["체인 기초", "네트워크", "개념 문서"],
+    "eyebrow": "체인 기초 / 네트워크 / 개념 문서",
+    "title": "밸리데이터 구조",
+    "subtitle": "네트워크에 참여하고 검증하는 주체를 이해합니다.",
+    "quickSummary": "참여 주체와 검증의 흐름을 먼저 읽고, 운영에 필요한 조건과 절차를 공식 문서에서 확인하세요.",
+    "sections": [
+      { "id": "operations", "heading": "운영 자료로 이동하기", "body": "실제 운영을 준비할 때는 최신 요구 사항과 설정 방법을 원문에서 확인하는 것이 중요합니다." }
+    ],
+    "relatedItems": [
+      { "id": "pcx-chains", "order": 1, "title": "네트워크 아키텍처", "summary": "체인 구성으로 돌아가기", "kind": "ARCHITECTURE" },
+      { "id": "official-docs", "order": 2, "title": "운영 Docs", "summary": "공식 문서와 연결되는 자료실", "kind": "DOCS" }
+    ],
+    "nextItemId": "official-docs",
+    "actionLabel": "관련 Docs 보기 →"
+  },
+  {
+    "id": "glossary",
+    "variant": "glossary",
+    "breadcrumb": ["체인 기초", "용어"],
+    "eyebrow": "체인 기초 / 용어",
+    "title": "핵심 용어 사전",
+    "subtitle": "낯선 개념을 다시 찾아보는 블록체인 레퍼런스.",
+    "sections": [
+      { "id": "validator", "heading": "01 · 밸리데이터 · Validator", "body": "검증에 참여하는 주체와 역할" },
+      { "id": "network", "heading": "02 · 네트워크 · Network", "body": "서로 연결된 참여 주체와 구성" },
+      { "id": "architecture", "heading": "03 · 아키텍처 · Architecture", "body": "시스템을 구성하는 요소와 관계" },
+      { "id": "protocol", "heading": "04 · 프로토콜 · Protocol", "body": "참여자와 시스템이 따르는 규칙" }
+    ],
+    "relatedItems": [],
+    "nextItemId": "foundation",
+    "actionLabel": "개념 학습 시작 →"
+  },
+  {
+    "id": "official-docs",
+    "variant": "docs",
+    "breadcrumb": ["빌더", "Docs", "출처 기반"],
+    "eyebrow": "빌더 / Docs / 출처 기반",
+    "title": "공식 Docs",
+    "subtitle": "AI 요약과 원문을 함께 읽는 공식 문서 자료실.",
+    "sections": [
+      { "id": "summary", "heading": "AI 요약", "body": "문서의 목적, 먼저 알아야 할 개념, 다음에 읽을 자료를 한눈에 정리하는 영역입니다. 요약은 원문과 대조해 읽을 수 있도록 출처와 함께 배치합니다." }
+    ],
+    "sourceInfo": [
+      "출처: Avalanche Builder Hub",
+      "원문: build.avax.network",
+      "문서별 작성·검토 날짜와 버전은 실제 콘텐츠 연결 시 표시합니다."
+    ],
+    "relatedItems": [
+      { "id": "foundation", "order": 1, "title": "시작하기", "summary": "첫 프로젝트를 준비하는 입문 자료", "kind": "FOUNDATION" },
+      { "id": "pcx-chains", "order": 2, "title": "구조와 개념", "summary": "네트워크 구조를 이해하는 레퍼런스", "kind": "ARCHITECTURE" },
+      { "id": "mcp-x402", "order": 3, "title": "MCP · x402", "summary": "AI 도구와 프로토콜 자료", "kind": "PROTOCOL" }
+    ],
+    "nextItemId": "code-reference",
+    "actionLabel": "코드 예제 살펴보기 →"
+  },
+  {
+    "id": "code-reference",
+    "variant": "code",
+    "breadcrumb": ["빌더", "Code", "예제"],
+    "eyebrow": "빌더 / Code / 예제",
+    "title": "코드 레퍼런스",
+    "subtitle": "문맥과 함께 읽고, 직접 적용하는 빌더 예제.",
+    "sections": [
+      { "id": "before", "heading": "사용 전 확인", "body": "예제의 목적과 선행 개념을 읽고, 프로젝트에 맞는 환경과 패키지 버전을 확인하세요." }
+    ],
+    "codeSample": {
+      "label": "JAVASCRIPT · 예제 구조",
+      "code": "// 예제 구조 · UI 샘플\nconst lesson = {\n  topic: \"First build\",\n  reference: \"Official docs\"\n};\n\nconsole.log(lesson.topic);"
+    },
+    "relatedItems": [
+      { "id": "official-docs", "order": 1, "title": "관련 Docs", "summary": "설정과 API는 원문에서 확인", "kind": "DOCS" },
+      { "id": "practice", "order": 2, "title": "첫 프로젝트 실습", "summary": "단계별 학습으로 이어가기", "kind": "PRACTICE" }
+    ],
+    "nextItemId": "practice",
+    "actionLabel": "실습으로 이어가기 →",
+    "prototypeNote": "// 예제 구조 · UI 샘플"
+  },
+  {
+    "id": "builder-articles",
+    "variant": "article",
+    "breadcrumb": ["빌더", "아티클", "읽기 자료"],
+    "eyebrow": "빌더 / 아티클 / 읽기 자료",
+    "title": "첫 프로젝트를 설계하는 방법",
+    "subtitle": "작게 시작하고, 공식 문서를 기준으로 구현의 순서를 정합니다.",
+    "sections": [
+      { "id": "small", "heading": "01 · 작은 목표부터", "body": "첫 프로젝트의 목표를 한 문장으로 정합니다. 사용자가 어떤 정보를 확인하고 어떤 행동을 완료하는지부터 설계하면 필요한 기능을 좁힐 수 있습니다." },
+      { "id": "source", "heading": "02 · 원문과 예제를 함께", "body": "관련 개념을 익힌 뒤 공식 Docs에서 구현 방법을 확인합니다. 코드 예제는 출발점으로 활용하고, 사용 환경에 맞는 설정은 원문에서 다시 확인합니다." },
+      { "id": "record", "heading": "03 · 학습을 기록하기", "body": "구현 과정에서 생긴 질문과 해결 방법을 함께 기록합니다. 이후 비슷한 문제를 만났을 때 다시 찾을 수 있도록 개념, 문서와 코드를 연결합니다." }
+    ],
+    "relatedItems": [
+      { "id": "foundation", "order": 1, "title": "입문 과정", "summary": "개념부터 첫 실습까지 이어서 배우기", "kind": "FOUNDATION" },
+      { "id": "builders", "order": 2, "title": "빌더 자료실", "summary": "관련 Docs와 구현 자료", "kind": "DOCS" }
+    ],
+    "nextItemId": "code-reference",
+    "actionLabel": "코드 레퍼런스 살펴보기 →"
+  },
+  {
+    "id": "mcp-x402",
+    "variant": "protocol",
+    "breadcrumb": ["빌더", "Protocols", "리서치"],
+    "eyebrow": "빌더 / Protocols / 리서치",
+    "title": "MCP · x402",
+    "subtitle": "AI 도구 연결과 결제 프로토콜을 탐색하는 자료실.",
+    "sections": [
+      { "id": "order", "heading": "자료를 읽는 순서", "body": "개념 소개를 읽고, 인터페이스와 예제, 원문 명세 순서로 확인하세요. 각 프로토콜의 지원 범위와 구현 상태는 원문에서 검토합니다." }
+    ],
+    "relatedItems": [
+      { "id": "official-docs", "order": 1, "title": "MCP 자료", "summary": "도구 연결의 개념과 문서", "kind": "DOCS" },
+      { "id": "builder-articles", "order": 2, "title": "x402 자료", "summary": "프로토콜 문서와 관련 아티클", "kind": "ARTICLE" },
+      { "id": "code-reference", "order": 3, "title": "코드와 구현 패턴", "summary": "예제로 살펴보는 연결 방식", "kind": "CODE" }
+    ],
+    "nextItemId": "official-docs",
+    "actionLabel": "빌더 Docs 보기 →"
+  },
+  {
+    "id": "foundation",
+    "variant": "course",
+    "breadcrumb": ["아카데미", "입문 과정"],
+    "eyebrow": "아카데미 / 입문 과정",
+    "title": "Avalanche 입문 과정",
+    "subtitle": "기본 개념에서 구조 이해, 첫 실습으로 이어지는 학습.",
+    "sections": [
+      { "id": "intro", "heading": "과정 소개", "body": "체인을 처음 접하는 빌더를 위한 학습 경로입니다. 개념 문서를 읽고, 구조를 연결한 뒤 예제 실습으로 이해를 확인합니다." }
+    ],
+    "relatedItems": [
+      { "id": "practice", "order": 1, "title": "01 · 체인의 첫 개념", "summary": "학습 시작 가능 / 개념 문서 읽기", "kind": "FOUNDATION" },
+      { "id": "pcx-chains", "order": 2, "title": "02 · 네트워크 구조", "summary": "체인과 검증의 관계 이해하기", "kind": "ARCHITECTURE" },
+      { "id": "code-reference", "order": 3, "title": "03 · 첫 프로젝트", "summary": "공식 문서를 따라가며 구현하기", "kind": "PRACTICE" }
+    ],
+    "nextItemId": "practice",
+    "actionLabel": "첫 수업 시작 →"
+  },
+  {
+    "id": "structure",
+    "variant": "architecture",
+    "breadcrumb": ["아카데미", "구조"],
+    "eyebrow": "아카데미 / 구조 / 네트워크",
+    "title": "P · C · X 체인",
+    "subtitle": "각 체인의 역할을 나누어 살펴보는 아키텍처 가이드.",
+    "sections": [
+      { "id": "method", "heading": "구조를 읽는 방법", "body": "각 체인이 담당하는 역할을 확인한 뒤, 체인 간의 관계와 개발에 필요한 문서로 이동하세요." }
+    ],
+    "relatedItems": [],
+    "nextItemId": "pcx-chains",
+    "actionLabel": "아키텍처 열기 →"
+  },
+  {
+    "id": "practice",
+    "variant": "lesson",
+    "breadcrumb": ["아카데미", "Avalanche 입문", "1단계"],
+    "eyebrow": "아카데미 / Avalanche 입문 / 1단계",
+    "title": "01. 체인의 첫 개념",
+    "subtitle": "문서를 읽고 핵심 내용을 정리하는 첫 번째 수업.",
+    "sections": [
+      { "id": "goal", "heading": "학습 목표", "body": "체인의 주요 구성 요소를 구분하고, 다음에 읽어야 할 문서를 찾을 수 있도록 합니다." },
+      { "id": "reading", "heading": "읽기 자료", "body": "체인 개요를 읽으며 낯선 용어를 정리하세요. 아키텍처 문서로 이동해 개념이 어떻게 연결되는지 살펴봅니다." },
+      { "id": "check", "heading": "이해 확인", "body": "어떤 개념이 아직 낯선가요? 핵심 용어 사전에서 찾아본 뒤, 자신만의 문장으로 요약해 보세요." }
+    ],
+    "relatedItems": [
+      { "id": "chain-overview", "order": 1, "title": "체인 개요", "summary": "필수 읽기 자료", "kind": "OVERVIEW" },
+      { "id": "glossary", "order": 2, "title": "핵심 용어 사전", "summary": "다시 찾아보기", "kind": "GLOSSARY" }
+    ],
+    "nextItemId": "skill-graph",
+    "actionLabel": "다음 학습 경로 보기 →"
+  },
+  {
+    "id": "skill-graph",
+    "variant": "graph",
+    "breadcrumb": ["아카데미", "학습 경로"],
+    "eyebrow": "아카데미 / 학습 경로",
+    "title": "스킬 그래프",
+    "subtitle": "배운 개념과 다음 학습을 연결하는 지식 지도.",
+    "learningSteps": [
+      { "id": "fundamentals", "order": 1, "title": "체인 기초", "summary": "핵심 개념과 네트워크의 역할", "kind": "FOUNDATION" },
+      { "id": "pcx-chains", "order": 2, "title": "아키텍처", "summary": "P · C · X 체인의 연결 구조", "kind": "ARCHITECTURE" },
+      { "id": "practice", "order": 3, "title": "첫 프로젝트", "summary": "Docs에서 코드와 실습으로", "kind": "PRACTICE" }
+    ],
+    "sections": [
+      { "id": "order", "heading": "추천 학습 순서", "body": "체인 기초를 읽은 뒤 구조를 이해하고, Docs와 코드 예제를 활용해 첫 프로젝트로 이어집니다. 각 단계에서 필요한 자료로 바로 이동할 수 있습니다." }
+    ],
+    "relatedItems": [
+      { "id": "chain-overview", "title": "개념 · 체인 기초", "summary": "시작점 / 먼저 이해할 핵심 개념", "kind": "FOUNDATION" },
+      { "id": "pcx-chains", "title": "구조 · 아키텍처", "summary": "연결점 / 구성 요소 사이의 관계", "kind": "ARCHITECTURE" },
+      { "id": "code-reference", "title": "실습 · 첫 빌드", "summary": "적용점 / 문서를 활용한 첫 구현", "kind": "PRACTICE" }
+    ],
+    "nextItemId": "foundation",
+    "actionLabel": "입문 과정 열기 →"
+  },
+  {
+    "id": "institutional-collaboration",
+    "variant": "macro",
+    "breadcrumb": ["매크로 소식"],
+    "eyebrow": "매크로 / 기관 협업 / 예시 콘텐츠",
+    "title": "금융기관 협업 소식",
+    "subtitle": "발표의 핵심 내용과 관련 기관, 프로젝트를 함께 확인합니다.",
+    "sections": [
+      { "id": "summary", "heading": "발표 요약", "body": "협업의 목적, 참여 기관과 적용 범위를 요약해 보여주는 영역입니다." },
+      { "id": "context", "heading": "관련 맥락", "body": "발표된 내용과 예정된 계획을 구분하고, 관련 프로젝트의 후속 소식으로 연결합니다." }
+    ],
+    "sourceInfo": ["공식 발표 — 원문 등록 예정", "게시일 — 확인 예정", "수집 시각 — 수집 대기"],
+    "relatedItems": [],
+    "nextItemId": "macro",
+    "actionLabel": "목록으로 돌아가기 →"
+  },
+  {
+    "id": "ecosystem-expansion",
+    "variant": "macro",
+    "breadcrumb": ["매크로 소식"],
+    "eyebrow": "매크로 / 산업 동향 / 예시 콘텐츠",
+    "title": "생태계 확장과 산업 동향",
+    "subtitle": "산업 동향과 체인에 연결되는 주요 이슈를 확인합니다.",
+    "sections": [
+      { "id": "summary", "heading": "핵심 요약", "body": "수집 데이터가 연결되면 최신 자료의 핵심 내용을 표시합니다." },
+      { "id": "context", "heading": "관련 맥락", "body": "관련 프로젝트와 후속 소식으로 연결합니다." }
+    ],
+    "sourceInfo": ["공식 발표 — 원문 등록 예정", "게시일 — 확인 예정", "수집 시각 — 수집 대기"],
+    "relatedItems": [],
+    "nextItemId": "macro",
+    "actionLabel": "목록으로 돌아가기 →"
+  },
+  {
+    "id": "fuji-update",
+    "variant": "article",
+    "breadcrumb": ["생태계 · 매크로", "개발 업데이트"],
+    "eyebrow": "개발 릴리스 / 예시 콘텐츠",
+    "title": "Fuji 업데이트",
+    "subtitle": "테스트넷 · 변경 요약 및 적용 대상.",
+    "sections": [],
+    "relatedItems": []
+  },
+  {
+    "id": "developer-tools-release",
+    "variant": "article",
+    "breadcrumb": ["생태계 · 매크로", "개발 업데이트"],
+    "eyebrow": "개발 릴리스 / 예시 콘텐츠",
+    "title": "개발 도구 릴리스",
+    "subtitle": "개발 도구 · 주요 변경 사항.",
+    "sections": [],
+    "relatedItems": []
+  },
+  { "id": "p-chain", "variant": "architecture", "breadcrumb": ["체인 기초", "P · C · X 체인", "P-Chain"], "eyebrow": "체인 기초 / 구조 / P-Chain", "title": "P-Chain", "subtitle": "역할과 관련 공식 문서.", "sections": [], "relatedItems": [] },
+  { "id": "c-chain", "variant": "architecture", "breadcrumb": ["체인 기초", "P · C · X 체인", "C-Chain"], "eyebrow": "체인 기초 / 구조 / C-Chain", "title": "C-Chain", "subtitle": "개발에 필요한 개념과 레퍼런스.", "sections": [], "relatedItems": [] },
+  { "id": "x-chain", "variant": "architecture", "breadcrumb": ["체인 기초", "P · C · X 체인", "X-Chain"], "eyebrow": "체인 기초 / 구조 / X-Chain", "title": "X-Chain", "subtitle": "구성 요소와 역할.", "sections": [], "relatedItems": [] }
+]

@@ -188,3 +188,32 @@ curl -s http://localhost:4000/api/learning/concepts/RAG | head -c 500
 ```
 
 화면 확인: 사이드바 **Learning → Basics → RAG**. 4구획이 다 차 있고 로드맵이 그려지면 정상. 나머지 11개 토픽은 **Overview·Cherries·References가 비어 있는 게 정상**(콘텐츠 미작성).
+
+---
+
+## 6) 2026-10-08 델타 — Avalanche Cryptopedia Editorial UI
+
+브랜치 `feature/avalanche-editorial-ui`에서 `/`의 기본 화면을 Avalanche Cryptopedia로 교체했다.
+
+- `/` → `components/cherry/editorial/editorial-app.tsx`
+- 기존 Cherry 개발자 화면 컴포넌트와 API 코드는 삭제하지 않았지만 `/`에서는 더 이상 렌더링하지 않는다.
+- `/start/*`, `/login`, `/start/login`, `/template/edit`, `/demo-hanbit`는 유지한다.
+- 디자인 정본은 Figma `Aidenteti Crew Cryptopedia · Responsive UI`의 Full Service page다.
+- 1차 데이터 정본은 `apps/web/public/cryptopedia/*.json`이다.
+- JSON은 `lib/cryptopedia-types.ts`의 Zod 스키마로 런타임 검증한다.
+- 데이터 접근은 `CryptopediaRepository` 경계 뒤에 있어 후속 API 구현으로 교체할 수 있다.
+- 이벤트는 기사 `published_at`을 개최일로 사용하지 않고 별도 `startsAt` 계약을 사용한다.
+- 크롤링 담당자 요청 계약은 `apps/docs/avalanche-editorial-ui/event-crawler-data-request.md`다.
+
+새 화면 구조:
+
+```text
+생태계 · 매크로: Projects / Macro / Events / Updates
+컬렉션 탐색: Chains → Avalanche / Injective / Midnight
+01 체인 기초: Fundamentals 4개 + Reader
+02 빌더 라이브러리: Builders 4개 + Reader
+03 아카데미: Academy 4개 + Reader
+Reference Library: 체인·프로젝트 5권 공통 Book template
+```
+
+검증 결과와 스크린샷 경로는 `apps/docs/avalanche-editorial-ui/4-progress-log.md`를 따른다.

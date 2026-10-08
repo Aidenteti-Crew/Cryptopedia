@@ -1,0 +1,11 @@
+{
+  "breadcrumb": ["컬렉션", "탐색"],
+  "title": "체인 컬렉션",
+  "subtitle": "한 체인씩 깊이 읽는 블록체인 백과사전.",
+  "currentChainId": "avalanche",
+  "items": [
+    { "id": "avalanche", "order": 1, "name": "Avalanche", "summary": "체인 기초 · 빌더 · 아카데미 · 생태계", "status": "AVAILABLE" },
+    { "id": "injective", "order": 2, "name": "Injective", "summary": "컬렉션 준비 중", "status": "COMING_SOON" },
+    { "id": "midnight", "order": 3, "name": "Midnight", "summary": "컬렉션 준비 중", "status": "COMING_SOON" }
+  ]
+}

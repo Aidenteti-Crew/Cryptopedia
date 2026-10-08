@@ -1,0 +1,7 @@
+[
+  { "id": "avalanche", "name": "Avalanche", "type": "CHAIN", "volume": 1, "networkType": "C-CHAIN", "description": "네트워크별로 연결된 지식과 생태계", "coverAsset": "/cryptopedia/assets/book-avalanche.png", "href": "book-avalanche" },
+  { "id": "beam", "name": "Beam", "type": "CHAIN", "volume": 2, "networkType": "AVALANCHE L1", "description": "네트워크별로 연결된 지식과 생태계", "coverAsset": "/cryptopedia/assets/book-beam.png", "href": "book-beam" },
+  { "id": "dexalot", "name": "Dexalot", "type": "CHAIN", "volume": 3, "networkType": "AVALANCHE L1", "description": "네트워크별로 연결된 지식과 생태계", "coverAsset": "/cryptopedia/assets/book-dexalot.png", "href": "book-dexalot" },
+  { "id": "allblue", "name": "All blue", "type": "PROJECT", "volume": 4, "networkType": "PROJECT COLLECTION", "description": "체인 위에서 만들어지는 서비스와 팀", "coverAsset": "/cryptopedia/assets/book-allblue.png", "href": "book-allblue" },
+  { "id": "pengolin", "name": "Pengolin", "type": "PROJECT", "volume": 5, "networkType": "PROJECT COLLECTION", "description": "체인 위에서 만들어지는 서비스와 팀", "coverAsset": "/cryptopedia/assets/book-pengolin.png", "href": "book-pengolin" }
+]

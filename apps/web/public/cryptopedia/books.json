@@ -1,0 +1,97 @@
+[
+  {
+    "id": "book-avalanche",
+    "name": "Avalanche",
+    "type": "CHAIN",
+    "volume": 1,
+    "networkType": "C-CHAIN",
+    "description": "Primary Network · C-Chain",
+    "readingGuide": "체인을 이해하고, 그 위의 프로젝트와 최신 소식을 연결해서 읽습니다.",
+    "contentStatus": "컬렉션 구성 미리보기 · 자료 연결 예정",
+    "coverAsset": "/cryptopedia/assets/book-avalanche.png",
+    "chapters": [
+      { "id": "chain-overview", "order": 1, "title": "소개와 공식 자료", "summary": "개념 · 공식 사이트 · Docs", "kind": "OVERVIEW" },
+      { "id": "projects", "order": 2, "title": "연결된 생태계", "summary": "체인과 프로젝트 사이의 관계", "kind": "ARTICLE" },
+      { "id": "macro", "order": 3, "title": "관련 발표와 산업의 흐름", "summary": "매크로 소식과 연결되는 자료", "kind": "MACRO" },
+      { "id": "events", "order": 4, "title": "행사와 기록", "summary": "예정 행사 · 지난 이벤트", "kind": "ARTICLE" },
+      { "id": "updates", "order": 5, "title": "릴리스와 변경 사항", "summary": "네트워크와 개발 도구의 변경", "kind": "UPDATE" },
+      { "id": "builders", "order": 6, "title": "배우기", "summary": "빌더 자료 · 아카데미", "kind": "FOUNDATION" }
+    ]
+  },
+  {
+    "id": "book-beam",
+    "name": "Beam",
+    "type": "CHAIN",
+    "volume": 2,
+    "networkType": "AVALANCHE L1",
+    "description": "Avalanche L1 · 체인 컬렉션",
+    "readingGuide": "체인을 이해하고, 그 위의 프로젝트와 최신 소식을 연결해서 읽습니다.",
+    "contentStatus": "컬렉션 구성 미리보기 · 자료 연결 예정",
+    "coverAsset": "/cryptopedia/assets/book-beam.png",
+    "chapters": [
+      { "id": "chain-overview", "order": 1, "title": "소개와 공식 자료", "summary": "개념 · 공식 사이트 · Docs", "kind": "OVERVIEW" },
+      { "id": "projects", "order": 2, "title": "연결된 생태계", "summary": "체인과 프로젝트 사이의 관계", "kind": "ARTICLE" },
+      { "id": "macro", "order": 3, "title": "관련 발표와 산업의 흐름", "summary": "매크로 소식과 연결되는 자료", "kind": "MACRO" },
+      { "id": "events", "order": 4, "title": "행사와 기록", "summary": "예정 행사 · 지난 이벤트", "kind": "ARTICLE" },
+      { "id": "updates", "order": 5, "title": "릴리스와 변경 사항", "summary": "네트워크와 개발 도구의 변경", "kind": "UPDATE" },
+      { "id": "builders", "order": 6, "title": "배우기", "summary": "빌더 자료 · 아카데미", "kind": "FOUNDATION" }
+    ]
+  },
+  {
+    "id": "book-dexalot",
+    "name": "Dexalot",
+    "type": "CHAIN",
+    "volume": 3,
+    "networkType": "AVALANCHE L1",
+    "description": "Avalanche L1 · 체인 컬렉션",
+    "readingGuide": "체인을 이해하고, 그 위의 프로젝트와 최신 소식을 연결해서 읽습니다.",
+    "contentStatus": "컬렉션 구성 미리보기 · 자료 연결 예정",
+    "coverAsset": "/cryptopedia/assets/book-dexalot.png",
+    "chapters": [
+      { "id": "chain-overview", "order": 1, "title": "소개와 공식 자료", "summary": "개념 · 공식 사이트 · Docs", "kind": "OVERVIEW" },
+      { "id": "projects", "order": 2, "title": "연결된 생태계", "summary": "체인과 프로젝트 사이의 관계", "kind": "ARTICLE" },
+      { "id": "macro", "order": 3, "title": "관련 발표와 산업의 흐름", "summary": "매크로 소식과 연결되는 자료", "kind": "MACRO" },
+      { "id": "events", "order": 4, "title": "행사와 기록", "summary": "예정 행사 · 지난 이벤트", "kind": "ARTICLE" },
+      { "id": "updates", "order": 5, "title": "릴리스와 변경 사항", "summary": "네트워크와 개발 도구의 변경", "kind": "UPDATE" },
+      { "id": "builders", "order": 6, "title": "배우기", "summary": "빌더 자료 · 아카데미", "kind": "FOUNDATION" }
+    ]
+  },
+  {
+    "id": "book-allblue",
+    "name": "All blue",
+    "type": "PROJECT",
+    "volume": 4,
+    "networkType": "PROJECT COLLECTION",
+    "description": "프로젝트 · 기획 예시",
+    "readingGuide": "프로젝트의 소개와 공식 자료, 행사와 업데이트를 한 권으로 모았습니다.",
+    "contentStatus": "컬렉션 구성 미리보기 · 자료 연결 예정",
+    "coverAsset": "/cryptopedia/assets/book-allblue.png",
+    "chapters": [
+      { "id": "chain-overview", "order": 1, "title": "소개와 공식 자료", "summary": "개념 · 공식 사이트 · Docs", "kind": "OVERVIEW" },
+      { "id": "projects", "order": 2, "title": "연결된 생태계", "summary": "체인과 프로젝트 사이의 관계", "kind": "ARTICLE" },
+      { "id": "macro", "order": 3, "title": "관련 발표와 산업의 흐름", "summary": "매크로 소식과 연결되는 자료", "kind": "MACRO" },
+      { "id": "events", "order": 4, "title": "행사와 기록", "summary": "예정 행사 · 지난 이벤트", "kind": "ARTICLE" },
+      { "id": "updates", "order": 5, "title": "릴리스와 변경 사항", "summary": "네트워크와 개발 도구의 변경", "kind": "UPDATE" },
+      { "id": "builders", "order": 6, "title": "배우기", "summary": "빌더 자료 · 아카데미", "kind": "FOUNDATION" }
+    ]
+  },
+  {
+    "id": "book-pengolin",
+    "name": "Pengolin",
+    "type": "PROJECT",
+    "volume": 5,
+    "networkType": "PROJECT COLLECTION",
+    "description": "프로젝트 · 기획 예시",
+    "readingGuide": "프로젝트의 소개와 공식 자료, 행사와 업데이트를 한 권으로 모았습니다.",
+    "contentStatus": "컬렉션 구성 미리보기 · 자료 연결 예정",
+    "coverAsset": "/cryptopedia/assets/book-pengolin.png",
+    "chapters": [
+      { "id": "chain-overview", "order": 1, "title": "소개와 공식 자료", "summary": "개념 · 공식 사이트 · Docs", "kind": "OVERVIEW" },
+      { "id": "projects", "order": 2, "title": "연결된 생태계", "summary": "체인과 프로젝트 사이의 관계", "kind": "ARTICLE" },
+      { "id": "macro", "order": 3, "title": "관련 발표와 산업의 흐름", "summary": "매크로 소식과 연결되는 자료", "kind": "MACRO" },
+      { "id": "events", "order": 4, "title": "행사와 기록", "summary": "예정 행사 · 지난 이벤트", "kind": "ARTICLE" },
+      { "id": "updates", "order": 5, "title": "릴리스와 변경 사항", "summary": "네트워크와 개발 도구의 변경", "kind": "UPDATE" },
+      { "id": "builders", "order": 6, "title": "배우기", "summary": "빌더 자료 · 아카데미", "kind": "FOUNDATION" }
+    ]
+  }
+]
