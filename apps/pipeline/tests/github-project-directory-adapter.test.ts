@@ -8,6 +8,7 @@ import type { SourceConfig } from '../src/config/source-config.js'
 
 const source: SourceConfig = {
   url: 'https://build.avax.network/integrations',
+  chain: 'avalanche',
   sourceName: 'Avalanche Builder Hub Integrations',
   sourceType: 'WEBSITE',
   adapter: 'GITHUB_DIRECTORY',

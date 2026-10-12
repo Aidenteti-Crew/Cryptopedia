@@ -8,6 +8,7 @@ const article: RecordArticle = {
   title: 'Crypto House Seoul announced',
   publishedAt: new Date('2026-10-20T00:00:00Z'),
   contentKind: 'SOCIAL',
+  chain: 'avalanche',
 }
 
 function classification(partial: Record<string, unknown>): Classification {
@@ -154,5 +155,14 @@ describe('buildCategoryRecord: other categories', () => {
     const result = buildCategoryRecord(article, classification({ category: 'OTHER' }), 'u')
 
     expect(result).toEqual({ record: null })
+  })
+
+  it('stamps every row with the source chain', () => {
+    const other = { ...article, chain: 'itest-chain' }
+    const macro = buildCategoryRecord(other, classification({ category: 'MACRO' }), 'u').record
+    const event = buildCategoryRecord(other, classification({ event: goodEvent }), 'u').record
+
+    expect(macro?.chain).toBe('itest-chain')
+    expect(event?.chain).toBe('itest-chain')
   })
 })

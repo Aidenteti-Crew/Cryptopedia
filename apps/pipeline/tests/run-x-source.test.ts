@@ -7,6 +7,7 @@ import { FakeContentDb } from './support/fake-content-db.js'
 
 const source: SourceConfig = {
   url: 'https://x.com/avax',
+  chain: 'avalanche',
   sourceName: 'Avalanche X',
   sourceType: 'TWITTER',
   adapter: 'X_API',

@@ -9,6 +9,7 @@ import type { SourceConfig } from '../src/config/source-config.js'
 
 const source: SourceConfig = {
   url: 'https://github.com/avalanche-foundation/ACPs',
+  chain: 'avalanche',
   sourceName: 'Avalanche Community Proposals',
   sourceType: 'CUSTOM',
   adapter: 'GITHUB_API',

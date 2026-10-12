@@ -7,6 +7,7 @@ import { FakeContentDb } from './support/fake-content-db.js'
 function source(overrides: Partial<SourceConfig>): SourceConfig {
   return {
     url: 'https://example.com/feed.atom',
+    chain: 'avalanche',
     sourceName: 'Example',
     sourceType: 'RSS',
     adapter: 'ATOM',

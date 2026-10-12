@@ -91,9 +91,9 @@ maybe('chain feed HTTP contract (real Postgres)', () => {
       [`${CHAIN}-1`, CHAIN],
     );
     await db.raw(
-      `INSERT INTO content.eco_project (id, external_key, name, category, chains)
-       VALUES (gen_random_uuid(), ?, 'Itest Project', ?, ARRAY['C-Chain'])`,
-      [CATEGORY, CATEGORY],
+      `INSERT INTO content.eco_project (id, chain, external_key, name, category, chains)
+       VALUES (gen_random_uuid(), ?, ?, 'Itest Project', ?, ARRAY['C-Chain'])`,
+      [CHAIN, CATEGORY, CATEGORY],
     );
   });
 
@@ -140,7 +140,7 @@ maybe('chain feed HTTP contract (real Postgres)', () => {
 
   it('serves the project directory with category counts and a category filter', async () => {
     const res = await request(app.getHttpServer())
-      .get(`/ecosystem/projects?category=${CATEGORY}`)
+      .get(`/ecosystem/projects?chain=${CHAIN}&category=${CATEGORY}`)
       .expect(200);
 
     expect(res.body.items).toEqual([
@@ -153,7 +153,29 @@ maybe('chain feed HTTP contract (real Postgres)', () => {
     expect(res.body.categories).toEqual(
       expect.arrayContaining([{ name: CATEGORY, count: 1 }]),
     );
-    expect(res.body.total).toBeGreaterThanOrEqual(1);
+    expect(res.body.total).toBe(1);
+  });
+
+  it("keeps each chain separate: the default chain does not see another chain's rows", async () => {
+    const avalanche = await request(app.getHttpServer())
+      .get(`/ecosystem/projects?category=${CATEGORY}`)
+      .expect(200);
+    expect(avalanche.body.items).toEqual([]);
+
+    const hub = await request(app.getHttpServer())
+      .get(`/ecosystem?chain=${CHAIN}`)
+      .expect(200);
+    expect(hub.body.projects).toEqual({
+      total: 1,
+      categories: [{ name: CATEGORY, count: 1 }],
+    });
+    expect(hub.body.events.map((e: { id: string }) => e.id)).toEqual([
+      `${CHAIN}-1`,
+    ]);
+
+    await request(app.getHttpServer())
+      .get('/ecosystem?chain=Bad Chain!')
+      .expect(400);
   });
 
   it('serves macro, updates and the combined hub', async () => {

@@ -7,6 +7,7 @@ import { FakeContentDb } from './support/fake-content-db.js'
 
 const source: SourceConfig = {
   url: 'https://x.com/Team1KOR',
+  chain: 'avalanche',
   sourceName: 'Team1 Korea X',
   sourceType: 'TWITTER',
   adapter: 'APIFY',

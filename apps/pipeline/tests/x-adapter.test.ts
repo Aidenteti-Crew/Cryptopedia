@@ -5,6 +5,7 @@ import type { SourceConfig } from '../src/config/source-config.js'
 
 const source: SourceConfig = {
   url: 'https://x.com/avax',
+  chain: 'avalanche',
   sourceName: 'Avalanche X',
   sourceType: 'TWITTER',
   adapter: 'X_API',

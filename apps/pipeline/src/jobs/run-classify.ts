@@ -12,8 +12,9 @@ import {
 import type { QueryFn } from '../db/query.js'
 
 export interface ClassifyOptions {
-  // url_handle of every configured source, mapped to its content kind (RELEASE, BLOG, ...).
-  contentKindBySourceUrl: Record<string, string>
+  // url_handle of every configured source, mapped to its content kind (RELEASE, BLOG, ...) and
+  // the chain whose ecosystem it belongs to.
+  sourcesByUrl: Record<string, { contentKind: string; chain: string }>
   modelName: string
   limit: number
   concurrency: number
@@ -51,7 +52,7 @@ export async function runClassify(
   llm: LlmClient,
   options: ClassifyOptions
 ): Promise<ClassifySummary> {
-  const sourceUrls = Object.keys(options.contentKindBySourceUrl)
+  const sourceUrls = Object.keys(options.sourcesByUrl)
   const pending = await fetchPendingArticles(query, {
     sourceUrls,
     limit: options.limit,
@@ -76,6 +77,11 @@ export async function runClassify(
       const article = pending[next++]
       if (!article) return
       const item: ClassifiedItem = { article }
+      // Pending articles are selected by these same URLs, so every one has an entry.
+      const sourceInfo = options.sourcesByUrl[article.sourceUrl] ?? {
+        contentKind: 'UNKNOWN',
+        chain: 'unknown',
+      }
       try {
         const outcome = await classifyArticle(llm, {
           title: article.title,
@@ -84,7 +90,7 @@ export async function runClassify(
           body: article.body,
           publishedAt: article.publishedAt,
           sourceName: article.sourceName,
-          contentKind: options.contentKindBySourceUrl[article.sourceUrl] ?? 'UNKNOWN',
+          contentKind: sourceInfo.contentKind,
         })
         item.outcome = outcome
         const built = buildCategoryRecord(
@@ -92,7 +98,8 @@ export async function runClassify(
             id: article.id,
             title: article.title,
             publishedAt: article.publishedAt,
-            contentKind: options.contentKindBySourceUrl[article.sourceUrl] ?? 'UNKNOWN',
+            contentKind: sourceInfo.contentKind,
+            chain: sourceInfo.chain,
           },
           outcome.classification,
           article.url

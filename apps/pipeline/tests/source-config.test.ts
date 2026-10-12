@@ -7,6 +7,7 @@ describe('source config', () => {
     const [source] = parseSourceConfig(`
 sources:
   - url: https://example.com/releases.atom
+    chain: avalanche
     source_name: Example Releases
     source_type: RSS
     adapter: ATOM
@@ -28,6 +29,7 @@ sources:
       parseSourceConfig(`
 sources:
   - url: https://example.com
+    chain: avalanche
     source_name: Example
     source_type: BLOG
     adapter: CRAWL4AI
@@ -41,6 +43,7 @@ sources:
     const base = `
 sources:
   - url: https://example.com/blog
+    chain: avalanche
     source_name: Example Blog
     source_type: WEBSITE
     adapter: GITHUB_MARKDOWN
@@ -59,6 +62,7 @@ sources:
     const base = `
 sources:
   - url: https://x.com/avax
+    chain: avalanche
     source_name: Avalanche X
     source_type: TWITTER
     adapter: APIFY
@@ -81,6 +85,7 @@ sources:
     const base = `
 sources:
   - url: https://example.com/releases.atom
+    chain: avalanche
     source_name: Example
     source_type: RSS
     adapter: ATOM
@@ -94,5 +99,21 @@ sources:
     expect(() => parseSourceConfig(`${base}      - '([unclosed'\n`)).toThrow(
       'valid regular expression'
     )
+  })
+
+  it('requires a lowercase chain on every source, with no default', () => {
+    const entry = (chainLine: string) => `
+sources:
+  - url: https://example.com/releases.atom
+${chainLine}
+    source_name: Example
+    source_type: RSS
+    adapter: ATOM
+    content_kind: RELEASE
+    authority: OFFICIAL
+`
+    expect(() => parseSourceConfig(entry(''))).toThrow(/chain/)
+    expect(() => parseSourceConfig(entry('    chain: Avalanche'))).toThrow('lowercase identifier')
+    expect(parseSourceConfig(entry('    chain: avalanche'))[0]?.chain).toBe('avalanche')
   })
 })

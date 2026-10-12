@@ -5,6 +5,7 @@ import type { SourceConfig } from '../src/config/source-config.js'
 
 const source: SourceConfig = {
   url: 'https://github.com/ava-labs/avalanchego/releases.atom',
+  chain: 'avalanche',
   sourceName: 'AvalancheGo Releases',
   sourceType: 'RSS',
   adapter: 'ATOM',

@@ -8,6 +8,7 @@ import { FakeContentDb } from './support/fake-content-db.js'
 
 const source: SourceConfig = {
   url: 'https://build.avax.network/blog',
+  chain: 'avalanche',
   sourceName: 'Avalanche Builder Hub Blog',
   sourceType: 'WEBSITE',
   adapter: 'CRAWL4AI',

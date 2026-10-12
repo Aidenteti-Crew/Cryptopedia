@@ -7,6 +7,7 @@ import { FakeContentDb } from './support/fake-content-db.js'
 
 const source: SourceConfig = {
   url: 'https://github.com/ava-labs/avalanchego/releases.atom',
+  chain: 'avalanche',
   sourceName: 'AvalancheGo Releases',
   sourceType: 'RSS',
   adapter: 'ATOM',

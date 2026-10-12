@@ -37,11 +37,11 @@ describe.skipIf(!url)('eco-project-repository (real Postgres)', () => {
   })
 
   it('inserts once, updates in place, and allows re-adding a key after it was revoked', async () => {
-    expect(await upsertEcoProjects(connection.query, [record('First')])).toEqual({
+    expect(await upsertEcoProjects(connection.query, 'avalanche', [record('First')])).toEqual({
       inserted: 1,
       updated: 0,
     })
-    expect(await upsertEcoProjects(connection.query, [record('Renamed')])).toEqual({
+    expect(await upsertEcoProjects(connection.query, 'avalanche', [record('Renamed')])).toEqual({
       inserted: 0,
       updated: 1,
     })
@@ -53,13 +53,37 @@ describe.skipIf(!url)('eco-project-repository (real Postgres)', () => {
     expect(rows.rows).toHaveLength(1)
     expect(rows.rows[0]).toMatchObject({ name: 'Renamed', chains: ['C-Chain', 'Dexalot'] })
 
-    expect(await revokeEcoProjects(connection.query, [KEY, 'does-not-exist'])).toBe(1)
-    expect(await revokeEcoProjects(connection.query, [KEY])).toBe(0)
+    expect(await revokeEcoProjects(connection.query, 'avalanche', [KEY, 'does-not-exist'])).toBe(1)
+    expect(await revokeEcoProjects(connection.query, 'avalanche', [KEY])).toBe(0)
 
     // The unique index only covers active rows, so the key can be inserted again.
-    expect(await upsertEcoProjects(connection.query, [record('Back')])).toEqual({
+    expect(await upsertEcoProjects(connection.query, 'avalanche', [record('Back')])).toEqual({
       inserted: 1,
       updated: 0,
     })
+  })
+
+  it('keeps the same project key separately per chain', async () => {
+    await upsertEcoProjects(connection.query, 'avalanche', [record('Avalanche entry')])
+    expect(
+      await upsertEcoProjects(connection.query, 'itest-other-chain', [record('Other')])
+    ).toEqual({ inserted: 1, updated: 0 })
+
+    const rows = await connection.query(
+      `SELECT chain, name FROM content.eco_project
+        WHERE external_key = $1 AND revoked_at IS NULL ORDER BY chain`,
+      [KEY]
+    )
+    expect(rows.rows).toEqual([
+      { chain: 'avalanche', name: 'Avalanche entry' },
+      { chain: 'itest-other-chain', name: 'Other' },
+    ])
+    // Revoking on one chain leaves the other chain's row alone.
+    expect(await revokeEcoProjects(connection.query, 'itest-other-chain', [KEY])).toBe(1)
+    const left = await connection.query(
+      'SELECT chain FROM content.eco_project WHERE external_key = $1 AND revoked_at IS NULL',
+      [KEY]
+    )
+    expect(left.rows).toEqual([{ chain: 'avalanche' }])
   })
 })

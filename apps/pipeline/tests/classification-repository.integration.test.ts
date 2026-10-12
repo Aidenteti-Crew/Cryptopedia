@@ -102,6 +102,7 @@ describe.skipIf(!url)('classification-repository (real Postgres)', () => {
   it('inserts each category row once per article (idempotent re-run)', async () => {
     const tech: CategoryRecord = {
       type: 'TECH_UPDATE',
+      chain: 'avalanche',
       kind: 'RELEASE',
       network: 'MAINNET',
       upgradeName: 'Helicon',
@@ -119,6 +120,7 @@ describe.skipIf(!url)('classification-repository (real Postgres)', () => {
   it('merges repeated announcements of one event on event_key', async () => {
     const event: CategoryRecord = {
       type: 'EVENT',
+      chain: 'avalanche',
       eventKey: EVENT_KEY,
       title: 'Meetup',
       summary: '요약',

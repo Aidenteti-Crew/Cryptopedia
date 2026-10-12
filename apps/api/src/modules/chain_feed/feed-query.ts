@@ -1,14 +1,16 @@
-import { InvalidEventQueryError } from './event-query';
+import { InvalidEventQueryError, parseChain } from './event-query';
 
 // Shared parsing for the ecosystem list endpoints. Reuses the event error type so the controller
 // maps every validation failure to one HTTP 400 shape.
 export interface ContentFeedQuery {
+  chain: string;
   limit: number;
   minImportance: number | null;
   sort: 'latest' | 'importance';
 }
 
 export interface ProjectsQuery {
+  chain: string;
   category: string | null;
   limit: number;
 }
@@ -44,6 +46,7 @@ export function parseContentFeedQuery(
     throw new InvalidEventQueryError('sort must be latest or importance');
   }
   return {
+    chain: parseChain(raw),
     limit: intInRange(single(raw.limit, 'limit'), 'limit', 1, 100) ?? 30,
     minImportance: intInRange(
       single(raw.minImportance, 'minImportance'),
@@ -59,6 +62,7 @@ export function parseProjectsQuery(
   raw: Record<string, unknown>,
 ): ProjectsQuery {
   return {
+    chain: parseChain(raw),
     category: single(raw.category, 'category') ?? null,
     limit: intInRange(single(raw.limit, 'limit'), 'limit', 1, 500) ?? 500,
   };

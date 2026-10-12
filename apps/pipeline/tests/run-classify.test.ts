@@ -63,7 +63,7 @@ const undatedEvent = JSON.stringify({
 })
 
 const options: ClassifyOptions = {
-  contentKindBySourceUrl: { [SOURCE]: 'RELEASE' },
+  sourcesByUrl: { [SOURCE]: { contentKind: 'RELEASE', chain: 'avalanche' } },
   modelName: 'test-model',
   limit: 10,
   concurrency: 2,

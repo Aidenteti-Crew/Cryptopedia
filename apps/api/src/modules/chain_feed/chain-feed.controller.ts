@@ -7,7 +7,11 @@ import type {
   EventFeedResponse,
   ProjectsResponse,
 } from './chain-feed.types';
-import { InvalidEventQueryError, parseEventQuery } from './event-query';
+import {
+  InvalidEventQueryError,
+  parseChain,
+  parseEventQuery,
+} from './event-query';
 import { parseContentFeedQuery, parseProjectsQuery } from './feed-query';
 
 // Validation failures become HTTP 400 with the {code, message} body the event contract asks for;
@@ -52,8 +56,14 @@ export class EcosystemController {
     summary:
       '생태계·매크로 한 페이지용: 프로젝트 요약 + 매크로 + 예정 행사 + 기술 업데이트',
   })
-  async hub(): Promise<EcosystemHubResponse> {
-    return this.feed.getHub();
+  async hub(
+    @Query() query: Record<string, unknown>,
+  ): Promise<EcosystemHubResponse> {
+    try {
+      return await this.feed.getHub(parseChain(query));
+    } catch (error) {
+      return badRequest('INVALID_FEED_QUERY', error);
+    }
   }
 
   @Get('projects')

@@ -7,6 +7,7 @@ import { FakeContentDb } from './support/fake-content-db.js'
 
 const source: SourceConfig = {
   url: 'https://build.avax.network/integrations',
+  chain: 'avalanche',
   sourceName: 'Avalanche Builder Hub Integrations',
   sourceType: 'WEBSITE',
   adapter: 'GITHUB_DIRECTORY',

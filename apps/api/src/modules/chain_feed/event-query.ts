@@ -86,10 +86,16 @@ export function decodeCursor(value: string): EventCursor {
   throw new InvalidEventQueryError('cursor is not valid');
 }
 
-export function parseEventQuery(raw: Record<string, unknown>): EventQuery {
+// Every feed is per chain; avalanche is the default because it is the only chain collected so far.
+export function parseChain(raw: Record<string, unknown>): string {
   const chain = (single(raw.chain, 'chain') ?? 'avalanche').toLowerCase();
   if (!/^[a-z0-9_-]{1,50}$/.test(chain))
     throw new InvalidEventQueryError('chain is not valid');
+  return chain;
+}
+
+export function parseEventQuery(raw: Record<string, unknown>): EventQuery {
+  const chain = parseChain(raw);
 
   const statusText = single(raw.status, 'status')?.toUpperCase();
   if (

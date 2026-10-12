@@ -7,10 +7,12 @@ export interface RecordArticle {
   title: string
   publishedAt: Date
   contentKind: string
+  chain: string
 }
 
 export interface MacroRecord {
   type: 'MACRO'
+  chain: string
   kind: string
   relatedProject: string | null
   title: string
@@ -21,6 +23,7 @@ export interface MacroRecord {
 
 export interface TechRecord {
   type: 'TECH_UPDATE'
+  chain: string
   kind: string
   network: string
   upgradeName: string | null
@@ -34,6 +37,7 @@ export interface TechRecord {
 
 export interface EventRecord {
   type: 'EVENT'
+  chain: string
   eventKey: string
   title: string
   summary: string
@@ -121,6 +125,7 @@ function buildEvent(
   return {
     record: {
       type: 'EVENT',
+      chain: article.chain,
       eventKey: clip(`${slug(name)}-${event.starts_at.slice(0, 10)}`, 200),
       title: clip(name, 500),
       summary: c.summary_ko,
@@ -160,6 +165,7 @@ export function buildCategoryRecord(
       return {
         record: {
           type: 'MACRO',
+          chain: article.chain,
           kind: c.macro?.kind ?? 'OTHER',
           relatedProject: c.macro?.related_project ? clip(c.macro.related_project, 200) : null,
           title,
@@ -172,6 +178,7 @@ export function buildCategoryRecord(
       return {
         record: {
           type: 'TECH_UPDATE',
+          chain: article.chain,
           kind: KIND_BY_CONTENT_KIND[article.contentKind] ?? 'OTHER',
           network: c.tech?.network ?? 'OTHER',
           upgradeName: c.tech?.upgrade_name ? clip(c.tech.upgrade_name, 200) : null,

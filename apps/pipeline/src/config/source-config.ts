@@ -60,6 +60,8 @@ export interface ApifyLocation {
 
 export interface SourceConfig {
   url: string
+  // Which chain's ecosystem the source belongs to (e.g. avalanche). Stored on every derived row.
+  chain: string
   sourceName: string
   sourceType: ContentSourceType
   adapter: SourceAdapter
@@ -77,6 +79,8 @@ export interface SourceConfig {
 const SourceEntrySchema = z
   .object({
     url: z.string().url(),
+    // Required with no default: a new chain's source must not silently land as avalanche.
+    chain: z.string().regex(/^[a-z0-9_-]{1,50}$/, 'chain must be a lowercase identifier'),
     source_name: z.string().min(1),
     source_type: z.enum(CONTENT_SOURCE_TYPES),
     adapter: z.enum(SOURCE_ADAPTERS),
@@ -145,6 +149,7 @@ const SourcesFileSchema = z.object({
 function toSourceConfig(raw: z.infer<typeof SourceEntrySchema>): SourceConfig {
   return {
     url: raw.url,
+    chain: raw.chain,
     sourceName: raw.source_name,
     sourceType: raw.source_type,
     adapter: raw.adapter,

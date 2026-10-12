@@ -2,7 +2,9 @@
 -- Avalanche 생태계·매크로 4분류 테이블 (2026-10-12)
 -- 크롤러(apps/pipeline)가 content.article_raw 에 쌓은 글을 AI(NVIDIA)로 분류한 결과와,
 -- 생태계 프로젝트 디렉터리를 4개 화면(프로젝트 / 매크로 / 이벤트 / 기술 업데이트)용으로 나눠 저장한다.
--- 원칙: 신규 표만 추가. 기존 표 변경 없음. 점수(importance 1~5)는 각 표에 독립 저장하며
+-- 원칙: 신규 표만 추가. 기존 표 변경 없음. 모든 분류 표에 chain 을 두며 기본값은 두지 않는다
+--       (다른 체인의 데이터가 avalanche 로 잘못 저장되지 않도록 쓰는 쪽이 반드시 값을 준다).
+-- 점수(importance 1~5)는 각 표에 독립 저장하며
 --       기존 user_article_ai_state(AI 엔지니어링용 평가)와 연동하지 않는다.
 -- 적용: 수동(DBeaver/psql). 공유 DB 적용 전 팀 승인 필요. 되돌리기: avalanche-categories-2026-10-12.rollback.sql
 -- ════════════════════════════════════════════════════════════════
@@ -36,6 +38,7 @@ CREATE INDEX IF NOT EXISTS idx_acls_pending
 -- ── 2. 생태계 프로젝트 (builders-hub integrations 디렉터리, AI 불필요) ──
 CREATE TABLE IF NOT EXISTS content.eco_project (
   id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  chain             VARCHAR(50) NOT NULL,
   external_key      VARCHAR(200) NOT NULL,
   name              VARCHAR(200) NOT NULL,
   category          VARCHAR(100),
@@ -53,15 +56,12 @@ CREATE TABLE IF NOT EXISTS content.eco_project (
 );
 COMMENT ON COLUMN content.eco_project.external_key IS
   '출처 파일명(예: aave). 재수집해도 변하지 않는 안정 키.';
-CREATE UNIQUE INDEX IF NOT EXISTS uq_ecop_external_key
-  ON content.eco_project (external_key) WHERE (revoked_at IS NULL);
-CREATE INDEX IF NOT EXISTS idx_ecop_category
-  ON content.eco_project (category) WHERE (revoked_at IS NULL);
 
 -- ── 3. 매크로 소식 (협업 발표, 거래량 급증 등) ─────────────────────
 CREATE TABLE IF NOT EXISTS content.macro_news (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   article_raw_id  UUID NOT NULL REFERENCES content.article_raw(id),
+  chain           VARCHAR(50) NOT NULL,
   kind            VARCHAR(20) NOT NULL DEFAULT 'OTHER',
   related_project VARCHAR(200),
   title           VARCHAR(500) NOT NULL,
@@ -76,8 +76,6 @@ CREATE TABLE IF NOT EXISTS content.macro_news (
 );
 CREATE UNIQUE INDEX IF NOT EXISTS uq_macro_article
   ON content.macro_news (article_raw_id) WHERE (revoked_at IS NULL);
-CREATE INDEX IF NOT EXISTS idx_macro_published
-  ON content.macro_news (published_at DESC) WHERE (revoked_at IS NULL);
 
 -- ── 4. 이벤트·행사 (프론트 EventEntry 계약: event-crawler-data-request.md) ──
 CREATE TABLE IF NOT EXISTS content.chain_event (
@@ -101,7 +99,7 @@ CREATE TABLE IF NOT EXISTS content.chain_event (
   image_url             VARCHAR(1000),
   category              VARCHAR(50),
   tags                  TEXT[] NOT NULL DEFAULT '{}',
-  chain                 VARCHAR(50) NOT NULL DEFAULT 'avalanche',
+  chain                 VARCHAR(50) NOT NULL,
   project               VARCHAR(200),
   status_override       VARCHAR(20),
   confidence            NUMERIC(3, 2),
@@ -123,10 +121,6 @@ COMMENT ON COLUMN content.chain_event.event_key IS
   '같은 행사의 여러 안내 글을 하나로 합치는 안정 키(예: crypto-house-seoul-2026).';
 COMMENT ON COLUMN content.chain_event.status_override IS
   'CANCELLED/POSTPONED 만 저장. UPCOMING/ONGOING/PAST 는 API 응답 시점에 시간으로 계산한다.';
-CREATE UNIQUE INDEX IF NOT EXISTS uq_chev_event_key
-  ON content.chain_event (event_key) WHERE (revoked_at IS NULL);
-CREATE INDEX IF NOT EXISTS idx_chev_starts
-  ON content.chain_event (starts_at, id) WHERE (revoked_at IS NULL);
 CREATE INDEX IF NOT EXISTS idx_chev_country
   ON content.chain_event (country) WHERE (revoked_at IS NULL);
 
@@ -134,6 +128,7 @@ CREATE INDEX IF NOT EXISTS idx_chev_country
 CREATE TABLE IF NOT EXISTS content.tech_update (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   article_raw_id  UUID NOT NULL REFERENCES content.article_raw(id),
+  chain           VARCHAR(50) NOT NULL,
   kind            VARCHAR(20) NOT NULL DEFAULT 'OTHER',
   network         VARCHAR(20) NOT NULL DEFAULT 'OTHER',
   upgrade_name    VARCHAR(200),
@@ -154,10 +149,38 @@ COMMENT ON COLUMN content.tech_update.activated_at IS
   '실제 활성화 시점(글에서 확인된 경우만). ACP 의 published_at 은 수집일이라 여기에 쓰지 않는다.';
 CREATE UNIQUE INDEX IF NOT EXISTS uq_tech_article
   ON content.tech_update (article_raw_id) WHERE (revoked_at IS NULL);
-CREATE INDEX IF NOT EXISTS idx_tech_published
-  ON content.tech_update (published_at DESC) WHERE (revoked_at IS NULL);
 
--- ── 6. updated_at 자동 갱신 ────────────────────────────────────
+-- ── 6. chain 컬럼과 체인 단위 인덱스 ──────────────────────────────
+-- 새 DB에서는 CREATE TABLE 이 chain 을 이미 만들어 ADD COLUMN 은 아무것도 하지 않는다.
+-- 첫 초안(chain 없는 버전)이 적용된 로컬 DB에서는 기존 행을 avalanche 로 채운 뒤 기본값을 없앤다.
+-- 체인이 들어간 인덱스는 컬럼이 확실히 생긴 뒤인 여기서만 만든다.
+ALTER TABLE content.eco_project  ADD COLUMN IF NOT EXISTS chain VARCHAR(50) NOT NULL DEFAULT 'avalanche';
+ALTER TABLE content.macro_news   ADD COLUMN IF NOT EXISTS chain VARCHAR(50) NOT NULL DEFAULT 'avalanche';
+ALTER TABLE content.tech_update  ADD COLUMN IF NOT EXISTS chain VARCHAR(50) NOT NULL DEFAULT 'avalanche';
+ALTER TABLE content.eco_project  ALTER COLUMN chain DROP DEFAULT;
+ALTER TABLE content.macro_news   ALTER COLUMN chain DROP DEFAULT;
+ALTER TABLE content.tech_update  ALTER COLUMN chain DROP DEFAULT;
+ALTER TABLE content.chain_event  ALTER COLUMN chain DROP DEFAULT;
+DROP INDEX IF EXISTS content.uq_ecop_external_key;
+DROP INDEX IF EXISTS content.idx_ecop_category;
+DROP INDEX IF EXISTS content.idx_macro_published;
+DROP INDEX IF EXISTS content.uq_chev_event_key;
+DROP INDEX IF EXISTS content.idx_chev_starts;
+DROP INDEX IF EXISTS content.idx_tech_published;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_ecop_chain_key
+  ON content.eco_project (chain, external_key) WHERE (revoked_at IS NULL);
+CREATE INDEX IF NOT EXISTS idx_ecop_chain_category
+  ON content.eco_project (chain, category) WHERE (revoked_at IS NULL);
+CREATE INDEX IF NOT EXISTS idx_macro_chain_published
+  ON content.macro_news (chain, published_at DESC) WHERE (revoked_at IS NULL);
+CREATE UNIQUE INDEX IF NOT EXISTS uq_chev_chain_event_key
+  ON content.chain_event (chain, event_key) WHERE (revoked_at IS NULL);
+CREATE INDEX IF NOT EXISTS idx_chev_chain_starts
+  ON content.chain_event (chain, starts_at, id) WHERE (revoked_at IS NULL);
+CREATE INDEX IF NOT EXISTS idx_tech_chain_published
+  ON content.tech_update (chain, published_at DESC) WHERE (revoked_at IS NULL);
+
+-- ── 7. updated_at 자동 갱신 ────────────────────────────────────
 DO $$
 DECLARE t TEXT;
 BEGIN

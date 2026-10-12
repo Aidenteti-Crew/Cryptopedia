@@ -1,5 +1,6 @@
 sources:
   - url: 'https://github.com/ava-labs/avalanchego/releases.atom'
+    chain: 'avalanche'
     source_name: 'AvalancheGo Releases'
     source_type: 'RSS'
     adapter: 'ATOM'
@@ -14,6 +15,7 @@ sources:
     consecutive_failures_threshold: 3
 
   - url: 'https://github.com/ava-labs/coreth/releases.atom'
+    chain: 'avalanche'
     source_name: 'Coreth Releases'
     source_type: 'RSS'
     adapter: 'ATOM'
@@ -22,6 +24,7 @@ sources:
     consecutive_failures_threshold: 3
 
   - url: 'https://github.com/ava-labs/subnet-evm/releases.atom'
+    chain: 'avalanche'
     source_name: 'Subnet-EVM Releases'
     source_type: 'RSS'
     adapter: 'ATOM'
@@ -30,6 +33,7 @@ sources:
     consecutive_failures_threshold: 3
 
   - url: 'https://github.com/avalanche-foundation/ACPs'
+    chain: 'avalanche'
     source_name: 'Avalanche Community Proposals'
     source_type: 'CUSTOM'
     adapter: 'GITHUB_API'
@@ -37,6 +41,7 @@ sources:
     authority: 'OFFICIAL'
 
   - url: 'https://build.avax.network/blog'
+    chain: 'avalanche'
     source_name: 'Avalanche Builder Hub Blog'
     source_type: 'WEBSITE'
     adapter: 'GITHUB_MARKDOWN'
@@ -49,6 +54,7 @@ sources:
       path: 'content/blog'
 
   - url: 'https://build.avax.network/integrations'
+    chain: 'avalanche'
     source_name: 'Avalanche Builder Hub Integrations'
     source_type: 'WEBSITE'
     adapter: 'GITHUB_DIRECTORY'
@@ -61,6 +67,7 @@ sources:
       path: 'content/integrations'
 
   - url: 'https://x.com/avax'
+    chain: 'avalanche'
     source_name: 'Avalanche X'
     source_type: 'TWITTER'
     adapter: 'APIFY'
@@ -75,6 +82,7 @@ sources:
     enabled: false # Apify free plan is limited to 5 runs/month for this actor; enable after upgrading or switching to the X API
 
   - url: 'https://x.com/Team1KOR'
+    chain: 'avalanche'
     source_name: 'Team1 Korea X'
     source_type: 'TWITTER'
     adapter: 'APIFY'
@@ -89,6 +97,7 @@ sources:
     enabled: false # Apify free plan is limited to 5 runs/month for this actor; enable after upgrading or switching to the X API
 
   - url: 'https://x.com/AvaxTeam1'
+    chain: 'avalanche'
     source_name: 'Avalanche Team1 X'
     source_type: 'TWITTER'
     adapter: 'APIFY'

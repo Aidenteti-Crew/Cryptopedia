@@ -46,8 +46,8 @@ export async function runEcoProjectSource(
       }
     }
 
-    const { inserted, updated } = await upsertEcoProjects(query, result.projects)
-    const revoked = await revokeEcoProjects(query, result.removedKeys)
+    const { inserted, updated } = await upsertEcoProjects(query, source.chain, result.projects)
+    const revoked = await revokeEcoProjects(query, source.chain, result.removedKeys)
     await setSourceCursor(query, sourceRecord.id, result.cursor)
     await recordSourceSuccess(query, sourceRecord.id)
     return { status: 'SUCCESS', sourceId: sourceRecord.id, inserted, updated, revoked }

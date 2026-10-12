@@ -132,7 +132,7 @@ export class ChainFeedService {
   }
 
   async listMacro(query: ContentFeedQuery): Promise<ContentFeedResponse> {
-    const bindings: Knex.RawBinding[] = [];
+    const bindings: Knex.RawBinding[] = [query.chain];
     let importance = '';
     if (query.minImportance !== null) {
       importance = 'AND m.importance >= ?';
@@ -150,7 +150,7 @@ export class ChainFeedService {
          FROM content.macro_news m
          JOIN content.article_raw a ON a.id = m.article_raw_id
          JOIN content.source s ON s.id = a.source_id
-        WHERE m.revoked_at IS NULL ${importance}
+        WHERE m.revoked_at IS NULL AND m.chain = ? ${importance}
         ORDER BY ${order}
         LIMIT ?`,
       bindings,
@@ -176,7 +176,7 @@ export class ChainFeedService {
   }
 
   async listUpdates(query: ContentFeedQuery): Promise<ContentFeedResponse> {
-    const bindings: Knex.RawBinding[] = [];
+    const bindings: Knex.RawBinding[] = [query.chain];
     let importance = '';
     if (query.minImportance !== null) {
       importance = 'AND t.importance >= ?';
@@ -195,7 +195,7 @@ export class ChainFeedService {
          FROM content.tech_update t
          JOIN content.article_raw a ON a.id = t.article_raw_id
          JOIN content.source s ON s.id = a.source_id
-        WHERE t.revoked_at IS NULL ${importance}
+        WHERE t.revoked_at IS NULL AND t.chain = ? ${importance}
         ORDER BY ${order}
         LIMIT ?`,
       bindings,
@@ -223,7 +223,7 @@ export class ChainFeedService {
     };
   }
 
-  private async projectCategories(): Promise<{
+  private async projectCategories(chain: string): Promise<{
     categories: ProjectCategoryCount[];
     total: number;
   }> {
@@ -232,9 +232,10 @@ export class ChainFeedService {
     }>(
       `SELECT category AS name, count(*)::int AS count
          FROM content.eco_project
-        WHERE revoked_at IS NULL
+        WHERE revoked_at IS NULL AND chain = ?
         GROUP BY category
         ORDER BY count DESC, category`,
+      [chain],
     );
     const categories = result.rows.map((r) => ({
       name: r.name ?? 'Uncategorized',
@@ -247,7 +248,7 @@ export class ChainFeedService {
   }
 
   async listProjects(query: ProjectsQuery): Promise<ProjectsResponse> {
-    const bindings: Knex.RawBinding[] = [];
+    const bindings: Knex.RawBinding[] = [query.chain];
     let category = '';
     if (query.category) {
       category = 'AND category = ?';
@@ -260,12 +261,12 @@ export class ChainFeedService {
         `SELECT id, external_key, name, category, developer, website_url, documentation_url,
                 description, chains, source_url
            FROM content.eco_project
-          WHERE revoked_at IS NULL ${category}
+          WHERE revoked_at IS NULL AND chain = ? ${category}
           ORDER BY name
           LIMIT ?`,
         bindings,
       ),
-      this.projectCategories(),
+      this.projectCategories(query.chain),
     ]);
     return {
       items: result.rows.map(
@@ -289,14 +290,22 @@ export class ChainFeedService {
   }
 
   // One call for the combined "ecosystem / macro" page: the four categories side by side.
-  async getHub(now: Date = new Date()): Promise<EcosystemHubResponse> {
-    const top = { limit: 5, minImportance: null, sort: 'latest' as const };
+  async getHub(
+    chain: string,
+    now: Date = new Date(),
+  ): Promise<EcosystemHubResponse> {
+    const top = {
+      chain,
+      limit: 5,
+      minImportance: null,
+      sort: 'latest' as const,
+    };
     const [projects, macro, events, updates] = await Promise.all([
-      this.projectCategories(),
+      this.projectCategories(chain),
       this.listMacro({ ...top, sort: 'importance' }),
       this.listEvents(
         {
-          chain: 'avalanche',
+          chain,
           status: 'UPCOMING',
           from: null,
           toExclusive: null,

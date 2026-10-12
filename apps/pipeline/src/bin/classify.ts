@@ -36,12 +36,14 @@ async function main(): Promise<void> {
 
   const dryRun = process.argv.includes('--dry-run')
   const sources = loadSourceConfig(CONFIG_PATH)
-  const contentKindBySourceUrl = Object.fromEntries(sources.map((s) => [s.url, s.contentKind]))
+  const sourcesByUrl = Object.fromEntries(
+    sources.map((s) => [s.url, { contentKind: s.contentKind, chain: s.chain }])
+  )
 
   const connection = createPgConnection(databaseUrl)
   try {
     const summary = await runClassify(connection.query, new OpenAiCompatibleClient(llmConfig), {
-      contentKindBySourceUrl,
+      sourcesByUrl,
       modelName: llmConfig.model,
       limit: numberArg('--limit', 20),
       concurrency: numberArg('--concurrency', 4),

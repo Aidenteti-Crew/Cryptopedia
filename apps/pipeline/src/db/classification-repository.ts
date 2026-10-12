@@ -117,10 +117,20 @@ export async function saveClassificationFailure(
 async function insertMacro(query: QueryFn, articleId: string, r: MacroRecord): Promise<boolean> {
   const result = await query(
     `INSERT INTO content.macro_news
-       (id, article_raw_id, kind, related_project, title, summary, importance, published_at)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       (id, article_raw_id, kind, related_project, title, summary, importance, published_at, chain)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
      ON CONFLICT (article_raw_id) WHERE (revoked_at IS NULL) DO NOTHING`,
-    [uuidv7(), articleId, r.kind, r.relatedProject, r.title, r.summary, r.importance, r.publishedAt]
+    [
+      uuidv7(),
+      articleId,
+      r.kind,
+      r.relatedProject,
+      r.title,
+      r.summary,
+      r.importance,
+      r.publishedAt,
+      r.chain,
+    ]
   )
   return (result.rowCount ?? 0) > 0
 }
@@ -129,8 +139,8 @@ async function insertTech(query: QueryFn, articleId: string, r: TechRecord): Pro
   const result = await query(
     `INSERT INTO content.tech_update
        (id, article_raw_id, kind, network, upgrade_name, version, title, change_summary,
-        activated_at, importance, published_at)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        activated_at, importance, published_at, chain)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
      ON CONFLICT (article_raw_id) WHERE (revoked_at IS NULL) DO NOTHING`,
     [
       uuidv7(),
@@ -144,21 +154,23 @@ async function insertTech(query: QueryFn, articleId: string, r: TechRecord): Pro
       r.activatedAt,
       r.importance,
       r.publishedAt,
+      r.chain,
     ]
   )
   return (result.rowCount ?? 0) > 0
 }
 
-// The same event is often announced several times; the stable event_key keeps the first row.
+// The same event is often announced several times; the stable (chain, event_key) keeps the first row.
 async function insertEvent(query: QueryFn, articleId: string, r: EventRecord): Promise<boolean> {
   const result = await query(
     `INSERT INTO content.chain_event
        (id, event_key, first_article_raw_id, title, summary, starts_at, ends_at, timezone, all_day,
         organizer, venue_name, venue_address, city, country, is_online, source_url,
-        registration_url, category, tags, status_override, confidence, importance, published_at)
+        registration_url, category, tags, status_override, confidence, importance, published_at,
+        chain)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18,
-             $19, $20, $21, $22, $23)
-     ON CONFLICT (event_key) WHERE (revoked_at IS NULL) DO NOTHING`,
+             $19, $20, $21, $22, $23, $24)
+     ON CONFLICT (chain, event_key) WHERE (revoked_at IS NULL) DO NOTHING`,
     [
       uuidv7(),
       r.eventKey,
@@ -183,6 +195,7 @@ async function insertEvent(query: QueryFn, articleId: string, r: EventRecord): P
       r.confidence,
       r.importance,
       r.publishedAt,
+      r.chain,
     ]
   )
   return (result.rowCount ?? 0) > 0
