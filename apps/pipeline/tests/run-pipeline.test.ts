@@ -109,6 +109,23 @@ describe('runPipeline', () => {
     expect(summaries[0]).toMatchObject({ adapter: 'GITHUB_MARKDOWN', status: 'SUCCESS' })
   })
 
+  it('dispatches APIFY sources to the apify runner', async () => {
+    const db = new FakeContentDb()
+    const apifyRunner = vi.fn().mockResolvedValue({
+      status: 'SUCCESS',
+      sourceId: 's5',
+      inserted: 2,
+      skippedDuplicate: 0,
+      skippedInvalid: 0,
+    })
+    const xSource = source({ sourceName: 'X via Apify', adapter: 'APIFY' })
+
+    const summaries = await runPipeline(db.query, [xSource], { runApifySource: apifyRunner })
+
+    expect(apifyRunner).toHaveBeenCalledWith(db.query, xSource)
+    expect(summaries[0]).toMatchObject({ adapter: 'APIFY', status: 'SUCCESS' })
+  })
+
   it('dispatches X_API sources to the X runner', async () => {
     const db = new FakeContentDb()
     const xRunner = vi.fn().mockResolvedValue({

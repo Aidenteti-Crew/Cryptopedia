@@ -46,7 +46,38 @@ sources:
   - url: 'https://x.com/avax'
     source_name: 'Avalanche X'
     source_type: 'TWITTER'
-    adapter: 'X_API'
+    adapter: 'APIFY'
     content_kind: 'SOCIAL'
     authority: 'OFFICIAL'
-    enabled: false
+    apify:
+      actor: 'apidojo~tweet-scraper'
+      input:
+        startUrls: ['https://x.com/avax']
+        maxItems: 20
+    min_body_length: 40
+
+  - url: 'https://x.com/Team1KOR'
+    source_name: 'Team1 Korea X'
+    source_type: 'TWITTER'
+    adapter: 'APIFY'
+    content_kind: 'SOCIAL'
+    authority: 'OFFICIAL_COMMUNITY'
+    apify:
+      actor: 'apidojo~tweet-scraper'
+      input:
+        startUrls: ['https://x.com/Team1KOR']
+        maxItems: 20
+    min_body_length: 40
+
+  - url: 'https://x.com/AvaxTeam1'
+    source_name: 'Avalanche Team1 X'
+    source_type: 'TWITTER'
+    adapter: 'APIFY'
+    content_kind: 'SOCIAL'
+    authority: 'OFFICIAL_COMMUNITY'
+    apify:
+      actor: 'apidojo~tweet-scraper'
+      input:
+        startUrls: ['https://x.com/AvaxTeam1']
+        maxItems: 20
+    min_body_length: 40

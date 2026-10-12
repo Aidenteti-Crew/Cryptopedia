@@ -19,6 +19,7 @@ export const SOURCE_ADAPTERS = [
   'ATOM',
   'GITHUB_API',
   'GITHUB_MARKDOWN',
+  'APIFY',
   'DISCOURSE_API',
   'CRAWL4AI',
   'X_API',
@@ -49,6 +50,12 @@ export interface GithubMarkdownLocation {
   path: string
 }
 
+export interface ApifyLocation {
+  actor: string
+  input: Record<string, unknown>
+  includeRetweets: boolean
+}
+
 export interface SourceConfig {
   url: string
   sourceName: string
@@ -61,6 +68,7 @@ export interface SourceConfig {
   recencyWindowDays?: number
   consecutiveFailuresThreshold: number
   github?: GithubMarkdownLocation
+  apify?: ApifyLocation
 }
 
 const SourceEntrySchema = z
@@ -83,6 +91,13 @@ const SourceEntrySchema = z
         path: z.string().min(1),
       })
       .optional(),
+    apify: z
+      .object({
+        actor: z.string().min(1),
+        input: z.record(z.unknown()).default({}),
+        include_retweets: z.boolean().default(false),
+      })
+      .optional(),
   })
   .superRefine((entry, ctx) => {
     if (entry.adapter === 'GITHUB_MARKDOWN' && !entry.github) {
@@ -90,6 +105,13 @@ const SourceEntrySchema = z
         code: z.ZodIssueCode.custom,
         path: ['github'],
         message: 'github {owner, repo, branch, path} is required for adapter GITHUB_MARKDOWN',
+      })
+    }
+    if (entry.adapter === 'APIFY' && !entry.apify) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['apify'],
+        message: 'apify {actor, input} is required for adapter APIFY',
       })
     }
   })
@@ -111,6 +133,11 @@ function toSourceConfig(raw: z.infer<typeof SourceEntrySchema>): SourceConfig {
     recencyWindowDays: raw.recency_window_days,
     consecutiveFailuresThreshold: raw.consecutive_failures_threshold,
     github: raw.github,
+    apify: raw.apify && {
+      actor: raw.apify.actor,
+      input: raw.apify.input,
+      includeRetweets: raw.apify.include_retweets,
+    },
   }
 }
 

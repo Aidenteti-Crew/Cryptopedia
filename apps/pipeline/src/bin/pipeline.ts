@@ -1,13 +1,16 @@
-import 'dotenv/config'
-
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+
+import { config as loadEnv } from 'dotenv'
 
 import { loadSourceConfig } from '../config/source-config.js'
 import { createPgConnection } from '../db/pg-pool.js'
 import { runPipeline } from '../jobs/run-pipeline.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+// The shared .env lives at the repo root (next to .env.example); a package-local .env still wins.
+loadEnv()
+loadEnv({ path: path.join(__dirname, '../../../../../.env') })
 const CONFIG_PATH = path.join(__dirname, '../../../config/sources.yaml')
 
 async function main(): Promise<void> {

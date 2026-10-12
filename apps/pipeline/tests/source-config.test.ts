@@ -54,4 +54,26 @@ sources:
     )
     expect(source?.github).toEqual({ owner: 'o', repo: 'r', branch: 'main', path: 'posts' })
   })
+
+  it('requires an apify block for the APIFY adapter and defaults retweets off', () => {
+    const base = `
+sources:
+  - url: https://x.com/avax
+    source_name: Avalanche X
+    source_type: TWITTER
+    adapter: APIFY
+    content_kind: SOCIAL
+    authority: OFFICIAL
+`
+    expect(() => parseSourceConfig(base)).toThrow('apify {actor, input}')
+
+    const [source] = parseSourceConfig(
+      `${base}    apify:\n      actor: apidojo~tweet-scraper\n      input:\n        maxItems: 5\n`
+    )
+    expect(source?.apify).toEqual({
+      actor: 'apidojo~tweet-scraper',
+      input: { maxItems: 5 },
+      includeRetweets: false,
+    })
+  })
 })

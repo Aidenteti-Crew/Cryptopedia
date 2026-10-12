@@ -1,6 +1,7 @@
 import type { SourceAdapter, SourceConfig } from '../config/source-config.js'
 import type { QueryFn } from '../db/query.js'
 import { runAcpSource, type RunAcpSourceResult } from './run-acp-source.js'
+import { runApifySource, type RunApifySourceResult } from './run-apify-source.js'
 import { runAtomSource, type RunAtomSourceResult } from './run-atom-source.js'
 import {
   runGithubMarkdownSource,
@@ -19,6 +20,7 @@ export interface PipelineSourceSummary {
     | RunAcpSourceResult
     | RunXSourceResult
     | RunGithubMarkdownSourceResult
+    | RunApifySourceResult
   error?: string
 }
 
@@ -27,6 +29,7 @@ export interface RunPipelineDeps {
   runAcpSource?: typeof runAcpSource
   runXSource?: typeof runXSource
   runGithubMarkdownSource?: typeof runGithubMarkdownSource
+  runApifySource?: typeof runApifySource
 }
 
 // Adapters with a wired runner in this switch. Adapters listed in SOURCE_ADAPTERS but not here
@@ -41,6 +44,7 @@ export async function runPipeline(
   const acpRunner = deps.runAcpSource ?? runAcpSource
   const xRunner = deps.runXSource ?? runXSource
   const markdownRunner = deps.runGithubMarkdownSource ?? runGithubMarkdownSource
+  const apifyRunner = deps.runApifySource ?? runApifySource
   const summaries: PipelineSourceSummary[] = []
 
   for (const source of sources) {
@@ -73,6 +77,16 @@ export async function runPipeline(
         }
         case 'GITHUB_MARKDOWN': {
           const result = await markdownRunner(query, source)
+          summaries.push({
+            sourceName: source.sourceName,
+            adapter: source.adapter,
+            status: result.status,
+            detail: result,
+          })
+          break
+        }
+        case 'APIFY': {
+          const result = await apifyRunner(query, source)
           summaries.push({
             sourceName: source.sourceName,
             adapter: source.adapter,
