@@ -203,4 +203,18 @@ maybe('ChainFeedService.listEvents (real Postgres)', () => {
       generatedAt: NOW.toISOString(),
     });
   });
+
+  it('drops an item that would break the frontend schema instead of returning it', async () => {
+    await db.raw(
+      `INSERT INTO content.chain_event
+         (id, event_key, title, summary, starts_at, timezone, chain, registration_url)
+       VALUES (gen_random_uuid(), 'bad-link', 'Bad link', '요약', '2026-12-10T00:00:00Z', 'UTC', ?, 'lu.ma/no-scheme')`,
+      [CHAIN],
+    );
+
+    const ids = keys(await list());
+
+    expect(ids).not.toContain('bad-link');
+    expect(ids).toContain('upcoming-later');
+  });
 });

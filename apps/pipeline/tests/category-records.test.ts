@@ -165,4 +165,21 @@ describe('buildCategoryRecord: other categories', () => {
     expect(macro?.chain).toBe('itest-chain')
     expect(event?.chain).toBe('itest-chain')
   })
+
+  it('drops unsafe or malformed links and empty tags the model returns', () => {
+    const { record } = buildCategoryRecord(
+      article,
+      classification({
+        event: {
+          ...goodEvent,
+          registration_url: 'https://us02web.zoom.us/j/1?pwd=secret',
+          tags: ['', ' Avalanche ', 'avalanche'],
+          organizer: '   ',
+        },
+      }),
+      'https://x.com/Team1KOR/status/1'
+    )
+
+    expect(record).toMatchObject({ registrationUrl: null, tags: ['Avalanche'], organizer: null })
+  })
 })

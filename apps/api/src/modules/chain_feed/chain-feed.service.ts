@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
 import type {
   ContentFeedItem,
@@ -9,6 +9,7 @@ import type {
   ProjectItem,
   ProjectsResponse,
 } from './chain-feed.types';
+import { eventEntryContract } from './event-contract';
 import { toEventEntry, type EventRow } from './event-mapper';
 import { encodeCursor, type EventQuery } from './event-query';
 import type { ContentFeedQuery, ProjectsQuery } from './feed-query';
@@ -57,6 +58,8 @@ interface ProjectRow {
 
 @Injectable()
 export class ChainFeedService {
+  private readonly logger = new Logger(ChainFeedService.name);
+
   constructor(@Inject('KNEX_CONNECTION') private readonly knex: Knex) {}
 
   // Event status is computed here, at request time, never read from a stored value: a cancelled
@@ -119,7 +122,15 @@ export class ChainFeedService {
     const page = rows.slice(0, query.limit);
     const last = page[page.length - 1];
     return {
-      items: page.map(toEventEntry),
+      items: page.map(toEventEntry).filter((entry) => {
+        const valid = eventEntryContract.safeParse(entry).success;
+        // Only the id is logged: event text is crawled content and stays out of the logs.
+        if (!valid)
+          this.logger.warn(
+            `dropped event failing the frontend contract: ${entry.id}`,
+          );
+        return valid;
+      }),
       nextCursor:
         rows.length > query.limit && last
           ? encodeCursor({

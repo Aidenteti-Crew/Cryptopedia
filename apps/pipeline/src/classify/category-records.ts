@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto'
 
+import { cleanTags, nonEmpty, safePublicUrl } from '../events/sanitize.js'
 import type { Classification } from './schema.js'
 
 export interface RecordArticle {
@@ -133,16 +134,16 @@ function buildEvent(
       endsAt,
       timezone: event.timezone,
       allDay: event.all_day,
-      organizer: event.organizer && clip(event.organizer, 200),
-      venueName: event.venue_name && clip(event.venue_name, 300),
-      venueAddress: event.venue_address && clip(event.venue_address, 500),
-      city: event.city && clip(event.city, 100),
+      organizer: nonEmpty(event.organizer, 200),
+      venueName: nonEmpty(event.venue_name, 300),
+      venueAddress: nonEmpty(event.venue_address, 500),
+      city: nonEmpty(event.city, 100),
       country,
       isOnline: event.is_online,
       sourceUrl,
-      registrationUrl: event.registration_url && clip(event.registration_url, 1000),
+      registrationUrl: safePublicUrl(event.registration_url),
       category: event.category,
-      tags: event.tags.slice(0, 10),
+      tags: cleanTags(event.tags),
       statusOverride: event.status,
       confidence: event.confidence,
       importance: c.importance,
