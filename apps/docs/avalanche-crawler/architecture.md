@@ -1,6 +1,6 @@
 # Avalanche 생태계 신규 게시글 수집 파이프라인
 
-> 브랜치: `hansu-crawl-deploy` (`deploy` 기준, PR Aidenteti-Crew/Cryptopedia#1)
+> 브랜치: `hansu-crawl-deploy` (`deploy` 기준, PR Aidenteti-Crew/Cryptopedia#2)
 > 최초 작성일: 2026-09-25
 > 최종 검토일: 2026-10-13
 > 상태: 수집·분류·채점·조회 API 구현 완료(로컬 검증). 공유 DB 마이그레이션·자동 스케줄·crawl4ai 자동생성은 미적용
