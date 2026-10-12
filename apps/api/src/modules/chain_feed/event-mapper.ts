@@ -27,6 +27,8 @@ export interface EventRow {
   published_at: Date | null;
   fetched_at: Date;
   confidence: string | number | null;
+  importance: number | null;
+  importance_reason: string | null;
   status: EventStatus;
 }
 
@@ -60,5 +62,7 @@ export function toEventEntry(row: EventRow): EventEntry {
     publishedAt: row.published_at ? row.published_at.toISOString() : null,
     fetchedAt: row.fetched_at.toISOString(),
     confidence: row.confidence === null ? null : Number(row.confidence),
+    importance: row.importance ?? null,
+    importanceReason: row.importance_reason ?? null,
   };
 }

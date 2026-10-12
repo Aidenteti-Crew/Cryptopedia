@@ -12,6 +12,7 @@ export interface ContentFeedQuery {
 export interface ProjectsQuery {
   chain: string;
   category: string | null;
+  sort: 'name' | 'importance';
   limit: number;
 }
 
@@ -58,12 +59,19 @@ export function parseContentFeedQuery(
   };
 }
 
+function parseProjectSort(value: string | undefined): 'name' | 'importance' {
+  if (value === undefined || value === 'name') return 'name';
+  if (value === 'importance') return 'importance';
+  throw new InvalidEventQueryError('sort must be name or importance');
+}
+
 export function parseProjectsQuery(
   raw: Record<string, unknown>,
 ): ProjectsQuery {
   return {
     chain: parseChain(raw),
     category: single(raw.category, 'category') ?? null,
+    sort: parseProjectSort(single(raw.sort, 'sort')),
     limit: intInRange(single(raw.limit, 'limit'), 'limit', 1, 500) ?? 500,
   };
 }

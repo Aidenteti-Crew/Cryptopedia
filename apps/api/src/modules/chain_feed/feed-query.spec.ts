@@ -51,13 +51,22 @@ describe('parseProjectsQuery', () => {
     expect(parseProjectsQuery({})).toEqual({
       chain: 'avalanche',
       category: null,
+      sort: 'name',
       limit: 500,
     });
     expect(parseProjectsQuery({ category: 'DeFi', limit: '10' })).toEqual({
       chain: 'avalanche',
       category: 'DeFi',
+      sort: 'name',
       limit: 10,
     });
+  });
+
+  it('sorts projects by name or importance', () => {
+    expect(parseProjectsQuery({ sort: 'importance' }).sort).toBe('importance');
+    expect(() => parseProjectsQuery({ sort: 'stars' })).toThrow(
+      InvalidEventQueryError,
+    );
   });
 
   it('rejects an out-of-range limit', () => {

@@ -15,6 +15,7 @@ import { encodeCursor, type EventQuery } from './event-query';
 import type { ContentFeedQuery, ProjectsQuery } from './feed-query';
 
 interface MacroRow {
+  importance_reason: string | null;
   id: string;
   kind: string;
   related_project: string | null;
@@ -28,6 +29,7 @@ interface MacroRow {
 }
 
 interface TechRow {
+  importance_reason: string | null;
   id: string;
   kind: string;
   network: string;
@@ -44,6 +46,7 @@ interface TechRow {
 }
 
 interface GeneralRow {
+  importance_reason: string | null;
   id: string;
   title: string;
   summary: string;
@@ -55,6 +58,8 @@ interface GeneralRow {
 }
 
 interface ProjectRow {
+  importance: number | null;
+  importance_reason: string | null;
   id: string;
   external_key: string;
   name: string;
@@ -168,10 +173,12 @@ export class ChainFeedService {
 
     const result = await this.knex.raw<{ rows: MacroRow[] }>(
       `SELECT m.id, m.kind, m.related_project, m.title, m.summary, m.importance,
-              m.published_at, m.created_at, a.url, s.name AS source_name
+              m.published_at, m.created_at, a.url, s.name AS source_name,
+              c.raw_json->>'importance_reason' AS importance_reason
          FROM content.macro_news m
          JOIN content.article_raw a ON a.id = m.article_raw_id
          JOIN content.source s ON s.id = a.source_id
+         LEFT JOIN content.article_classification c ON c.article_raw_id = m.article_raw_id
         WHERE m.revoked_at IS NULL AND m.chain = ? ${importance}
         ORDER BY ${order}
         LIMIT ?`,
@@ -190,6 +197,7 @@ export class ChainFeedService {
           publishedAt: r.published_at.toISOString(),
           collectedAt: r.created_at.toISOString(),
           importance: r.importance,
+          importanceReason: r.importance_reason,
           relatedProject: r.related_project,
         }),
       ),
@@ -213,10 +221,12 @@ export class ChainFeedService {
     const result = await this.knex.raw<{ rows: TechRow[] }>(
       `SELECT t.id, t.kind, t.network, t.upgrade_name, t.version, t.title, t.change_summary,
               t.activated_at, t.importance, t.published_at, t.created_at, a.url,
+              c.raw_json->>'importance_reason' AS importance_reason,
               s.name AS source_name
          FROM content.tech_update t
          JOIN content.article_raw a ON a.id = t.article_raw_id
          JOIN content.source s ON s.id = a.source_id
+         LEFT JOIN content.article_classification c ON c.article_raw_id = t.article_raw_id
         WHERE t.revoked_at IS NULL AND t.chain = ? ${importance}
         ORDER BY ${order}
         LIMIT ?`,
@@ -235,6 +245,7 @@ export class ChainFeedService {
           publishedAt: r.published_at.toISOString(),
           collectedAt: r.created_at.toISOString(),
           importance: r.importance,
+          importanceReason: r.importance_reason,
           network: r.network,
           upgradeName: r.upgrade_name,
           version: r.version,
@@ -262,10 +273,12 @@ export class ChainFeedService {
 
     const result = await this.knex.raw<{ rows: GeneralRow[] }>(
       `SELECT g.id, g.title, g.summary, g.importance, g.published_at, g.created_at, a.url,
+              c.raw_json->>'importance_reason' AS importance_reason,
               s.name AS source_name
          FROM content.general_post g
          JOIN content.article_raw a ON a.id = g.article_raw_id
          JOIN content.source s ON s.id = a.source_id
+         LEFT JOIN content.article_classification c ON c.article_raw_id = g.article_raw_id
         WHERE g.revoked_at IS NULL AND g.chain = ? ${importance}
         ORDER BY ${order}
         LIMIT ?`,
@@ -284,6 +297,7 @@ export class ChainFeedService {
           publishedAt: r.published_at.toISOString(),
           collectedAt: r.created_at.toISOString(),
           importance: r.importance,
+          importanceReason: r.importance_reason,
         }),
       ),
       generatedAt: new Date().toISOString(),
@@ -326,10 +340,10 @@ export class ChainFeedService {
     const [result, summary] = await Promise.all([
       this.knex.raw<{ rows: ProjectRow[] }>(
         `SELECT id, external_key, name, category, developer, website_url, documentation_url,
-                description, chains, source_url
+                description, chains, source_url, importance, importance_reason
            FROM content.eco_project
           WHERE revoked_at IS NULL AND chain = ? ${category}
-          ORDER BY name
+          ORDER BY ${query.sort === 'importance' ? 'importance DESC NULLS LAST, name' : 'name'}
           LIMIT ?`,
         bindings,
       ),
@@ -348,6 +362,8 @@ export class ChainFeedService {
           description: r.description,
           chains: r.chains ?? [],
           sourceUrl: r.source_url,
+          importance: r.importance,
+          importanceReason: r.importance_reason,
         }),
       ),
       categories: summary.categories,

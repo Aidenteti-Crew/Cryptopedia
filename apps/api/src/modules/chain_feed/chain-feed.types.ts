@@ -27,6 +27,9 @@ export interface EventEntry {
   publishedAt: string | null;
   fetchedAt: string;
   confidence: number | null;
+  // Extras beyond the frontend contract (its schema ignores unknown keys).
+  importance: number | null;
+  importanceReason: string | null;
 }
 
 export interface EventFeedResponse {
@@ -47,6 +50,7 @@ export interface ContentFeedItem {
   publishedAt: string;
   collectedAt: string;
   importance: number | null;
+  importanceReason: string | null;
   relatedProject?: string | null;
   network?: string;
   upgradeName?: string | null;
@@ -70,6 +74,8 @@ export interface ProjectItem {
   description: string | null;
   chains: string[];
   sourceUrl: string | null;
+  importance: number | null;
+  importanceReason: string | null;
 }
 
 export interface ProjectCategoryCount {
