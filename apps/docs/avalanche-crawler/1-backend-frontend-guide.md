@@ -205,7 +205,7 @@ interface EcosystemHubResponse {
     "category":"COMMUNITY","tags":["Avalanche","Team1","Team1 Korea"],"chain":"Avalanche","project":null,"publishedAt":null,
     "fetchedAt":"2026-10-13T06:20:00.000Z","confidence":1,"importance":3,"importanceReason":"대학 연계 프로그램으로 파트너와의 밋업"}
    ```
-4. **원본 출처:** Team1 Korea Luma 캘린더(공개 구독 ICS) + Team1·Avalanche 공식 X 공지에서 날짜가 확정된 행사. 다른 국가 Team1 캘린더 7개는 Luma 약관 문제로 Team1 허락 전까지 꺼둠.
+4. **원본 출처:** Team1 Korea Luma 캘린더(공개 구독 ICS) + Team1·Avalanche 공식 X 공지에서 날짜가 확정된 행사. 다른 국가 Team1 캘린더 7개는 설정에 있지만 현재 꺼둠.
 5. **날짜·시간대 추출 실패:** 추정하지 않습니다. 시작 날짜·IANA 시간대가 확정되지 않거나 게시일과 400일 이상 차이 나면 이벤트로 저장하지 않고 분류 기록에만 사유를 남깁니다. Luma는 좌표로 시간대를 정하고, 좌표가 없으면 UTC·신뢰도 0.7.
 6. **중복 제거 기준:** 같은 체인 + 시작 2시간 이내 + 제목 유사 → 한 행사. Luma 행을 남기고 X 공지는 추가 출처로 연결.
 7. **갱신 주기·마지막 수집 시각:** 자동 스케줄은 아직 없음(아래 4.3). 소스별 마지막 성공 시각은 `content.source.last_success_at`(API 미노출). 응답의 `fetchedAt`은 그 행사를 마지막으로 받은 시각.
@@ -263,7 +263,7 @@ pnpm score --kind all          # 프로젝트·행사 중 아직 채점 안 된 
 | Builder Hub 프로젝트 디렉터리 | GitHub MDX | eco_project | 사용 |
 | X: @avax, @Team1KOR, @AvaxTeam1 | Apify (리트윗·이모지만 있는 글 제외) | article_raw | 사용 |
 | Luma: Team1 Korea | 공개 ICS | chain_event | 사용 |
-| Luma: Team1 글로벌·인도·베트남·프랑스·태국·아프리카·튀르키예 | 공개 ICS | chain_event | **꺼짐** (Team1 허락 대기) |
+| Luma: Team1 글로벌·인도·베트남·프랑스·태국·아프리카·튀르키예 | 공개 ICS | chain_event | **꺼짐** (현재 한국만 수집) |
 
 ### 4.5 분류·채점·중복 제거 규칙
 
@@ -294,7 +294,6 @@ cd apps/api && TEST_DATABASE_URL=... npx jest src/modules/chain_feed            
 ## 5. 운영 전 확인할 것 (결정·주의)
 
 1. **기존 NestJS 스케줄러와의 관계:** 기존 스케줄러는 `article_raw`의 모든 활성 글을 AI 엔지니어링용 평가 대기열에 넣습니다. 켜져 있으면 아발란체 글이 그쪽 평가에도 들어가 비용이 이중으로 나가거나 다른 페이지에 섞일 수 있습니다. 소스 단위 제외가 필요한지 확인해 주세요.
-2. **Luma 약관:** 행사 정보는 주최자 소유이고 Luma 밖 재게시는 회색 지대입니다. Team1 Korea 허락 후 다른 캘린더를 켜는 것을 권장합니다.
-3. **X 수집 방식:** Apify Actor는 X 공식 API가 아닌 스크래핑입니다(X 약관 위험). 공식 API(종량제) 어댑터도 코드에 있습니다.
-4. **프로젝트 카테고리 정리:** 원본 33종에 비슷한 것이 섞여 있습니다(예: Audit Firms / Security Audits). "묶음 카테고리" 컬럼 추가를 제안합니다.
-5. **아직 없는 것:** 자동 스케줄, Luma에서 삭제된 행사 정리, 출처 연결(`chain_event_source`)의 API 노출, 매크로 세부 종류 확장, 온톨로지(그래프 DB) 연결.
+2. **X 수집 방식:** Apify Actor는 X 공식 API가 아닌 스크래핑입니다(X 약관 위험). 공식 API(종량제) 어댑터도 코드에 있습니다.
+3. **프로젝트 카테고리 정리:** 원본 33종에 비슷한 것이 섞여 있습니다(예: Audit Firms / Security Audits). "묶음 카테고리" 컬럼 추가를 제안합니다.
+4. **아직 없는 것:** 자동 스케줄, Luma에서 삭제된 행사 정리, 출처 연결(`chain_event_source`)의 API 노출, 매크로 세부 종류 확장, 온톨로지(그래프 DB) 연결.

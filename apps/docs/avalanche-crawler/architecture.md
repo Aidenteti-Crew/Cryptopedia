@@ -1,10 +1,11 @@
 # Avalanche 생태계 신규 게시글 수집 파이프라인
 
-> 브랜치: `hansu-crawl`
+> 브랜치: `hansu-crawl-deploy` (`deploy` 기준, PR Aidenteti-Crew/Cryptopedia#1)
 > 최초 작성일: 2026-09-25
-> 최종 검토일: 2026-09-25
-> 상태: 설계 확정 — 구현 전
+> 최종 검토일: 2026-10-13
+> 상태: 수집·분류·채점·조회 API 구현 완료(로컬 검증). 공유 DB 마이그레이션·자동 스케줄·crawl4ai 자동생성은 미적용
 > 참고 구현: `origin/feature/browser-agent`
+> 연동 가이드(API·실행 방법): [`1-backend-frontend-guide.md`](./1-backend-frontend-guide.md)
 
 ## 1. 목표와 범위
 
@@ -20,7 +21,11 @@
 - 실패 감지, 제한적 fallback, 재분석 및 재생성
 - 실행 상태, cursor, 오류와 artifact 버전의 관측 가능성
 
-대량 과거 데이터 backfill, 콘텐츠 요약/분류 및 게시물 발행은 1차 범위에서 제외한다.
+- 수집한 글의 AI 분류(4분류 + 기타), 중요도(1~5)·근거·한국어 요약, 분류별 테이블 적재 (ADR-013·014·017·018)
+- 공식 행사 캘린더(Luma) 수집과 글·캘린더 간 같은 행사 중복 제거 (ADR-016·019)
+- 화면용 조회 API (`apps/api` ChainFeed 모듈, ADR-020)
+
+대량 과거 데이터 backfill, 게시물 발행, 프론트 화면 교체는 범위에서 제외한다.
 
 ## 2. 참고 구현과 포팅 원칙
 
@@ -58,30 +63,39 @@ python_services/packages/browser-agent/
 sources.yaml
     │
     ▼
-source config validation ── DB enum compatibility check
+source config validation ── DB enum compatibility check, chain 필수
     │
     ▼
-adapter router
-    ├── RSS / ATOM ───────────────┐
-    ├── GITHUB_API / GITHUB_MARKDOWN ┤
-    ├── DISCOURSE_API ────────────┤
-    ├── X_API 또는 제한적 fallback ┤
-    └── CRAWL4AI                  │
-          └─ 신규/재생성 시에만    │
-             browser-use analyze  │
-             → JSON spec 생성     │
-             → PR 리뷰/머지        │
-                                  ▼
-                         공통 normalize
-                                  ▼
-                         validate → dedup
-                                  ▼
-                      content.article_raw
-                                  ▼
-                 run log / health / cursor 갱신
+adapter router                                   [pnpm start]
+    ├── ATOM (릴리스) ─────────────┐
+    ├── GITHUB_API (ACP) ──────────┤
+    ├── GITHUB_MARKDOWN (블로그) ──┤
+    ├── APIFY (X 3계정) ───────────┤
+    ├── (미사용) RSS / DISCOURSE_API / X_API / CRAWL4AI
+    │                              ▼
+    │          공통 normalize → validate → dedup → content.article_raw
+    │
+    ├── GITHUB_DIRECTORY (Builder Hub 프로젝트) ──► content.eco_project (upsert)
+    └── LUMA_ICS (Team1 캘린더) ─────────────────► content.chain_event (upsert)
+                                                   └─ absorbDuplicateEvents (글에서 온 같은 행사 흡수)
+
+content.article_raw                              [pnpm classify]
+    └─ LLM: 분류 + 중요도 + 근거 + 한국어 요약 ─► content.article_classification (글당 1행, 멱등)
+          ├─ MACRO       ─► content.macro_news
+          ├─ TECH_UPDATE ─► content.tech_update
+          ├─ EVENT       ─► content.chain_event (날짜·시간대 확정 시만, 같은 행사면 chain_event_source로 연결)
+          ├─ GENERAL     ─► content.general_post
+          └─ NOISE       ─► (분류 기록만)
+
+eco_project · chain_event(캘린더)                [pnpm score]
+    └─ LLM: 10건씩 묶어 중요도 + 근거
+
+apps/api ChainFeed ─► GET /api/events, /api/ecosystem, /api/ecosystem/{projects,macro,updates,general}
+
+모든 단계: run log / health / cursor 갱신
 ```
 
-핵심 원칙은 **소스 발견/분석 경로만 어댑터별로 분리하고, 정규화 이후의 검증·dedup·저장·관측 경로는 공유**하는 것이다.
+핵심 원칙은 **소스 발견/분석 경로만 어댑터별로 분리하고, 정규화 이후의 검증·dedup·저장·관측 경로는 공유**하는 것이다. 이미 구조화된 데이터(프로젝트 디렉터리, 행사 캘린더)는 글 테이블과 AI 분류를 거치지 않고 해당 표에 바로 넣는다.
 
 ### 3.2 소스 설정 모델
 
@@ -91,21 +105,25 @@ DB의 `content.source_type_enum`은 기존 값을 유지한다. 별도 설정 �
 sources:
   - url: 'https://github.com/ava-labs/avalanchego/releases.atom'
     source_name: 'AvalancheGo Releases'
+    chain: 'avalanche' # 필수, 소문자 식별자. 모든 분류 표의 chain 값이 된다
     source_type: 'RSS' # DB 호환 분류
     adapter: 'ATOM' # 실제 수집 구현
     content_kind: 'RELEASE' # 콘텐츠 의미
     authority: 'OFFICIAL'
+    exclude_title_patterns: ['^graft/'] # 선택, 제목 정규식으로 제외
     recency_window_days: 7
     consecutive_failures_threshold: 3
 ```
+
+어댑터별 추가 블록: `github`(GITHUB_MARKDOWN·GITHUB_DIRECTORY의 저장소·경로), `apify`(actor·input), `luma`(calendar_id). 해당 어댑터에 블록이 없으면 설정 검증에서 실패한다.
 
 초기 지원 값은 다음과 같다.
 
 | 필드           | 값                                                                                                                               |
 | -------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `source_type`  | DB enum의 `RSS`, `TWITTER`, `LINKEDIN`, `YOUTUBE`, `REDDIT`, `KAKAO`, `WEBSITE`, `CUSTOM`                                        |
-| `adapter`      | `RSS`, `ATOM`, `GITHUB_API`, `GITHUB_MARKDOWN`, `GITHUB_DIRECTORY`, `DISCOURSE_API`, `CRAWL4AI`, `X_API`, `APIFY`, `BROWSER_USE` |
-| `content_kind` | `BLOG`, `RELEASE`, `GOVERNANCE`, `FORUM`, `NEWSLETTER`, `SOCIAL`, `DOCUMENTATION`, `PROJECT`                                     |
+| `adapter`      | `RSS`, `ATOM`, `GITHUB_API`, `GITHUB_MARKDOWN`, `GITHUB_DIRECTORY`, `DISCOURSE_API`, `CRAWL4AI`, `X_API`, `APIFY`, `LUMA_ICS`, `BROWSER_USE` |
+| `content_kind` | `BLOG`, `RELEASE`, `GOVERNANCE`, `FORUM`, `NEWSLETTER`, `SOCIAL`, `DOCUMENTATION`, `PROJECT`, `EVENT`                            |
 | `authority`    | `OFFICIAL`, `OFFICIAL_COMMUNITY`, `THIRD_PARTY`                                                                                  |
 
 `source_type`은 DB 저장 호환성을 위한 값이며 adapter routing에 사용하지 않는다. TypeScript의 허용 값은 DB의 실제 8개 값에 맞추고, CI 또는 애플리케이션 시작 시 `pg_enum`과 일치하는지 검사한다.
@@ -119,8 +137,23 @@ sources:
 | `content.source`                                       | 기존 테이블 재사용                                                                                     |
 | `content.article_raw`                                  | 기존 테이블 재사용. generated hash 컬럼은 INSERT 대상에서 제외                                         |
 | `core.run_log`                                         | 모든 adapter 실행 기록에 공통 사용                                                                     |
-| `content.crawler_analysis`, `content.crawler_registry` | crawl4ai 자동생성 소스에 사용. 구현 전 `docs/crawler-autogen-migration.sql` 검토 후 별도 승인하여 적용 |
+| `content.crawler_analysis`, `content.crawler_registry` | crawl4ai 자동생성 소스에 사용. 구현 전 `docs/architecture/crawler-autogen-migration.sql` 검토 후 별도 승인하여 적용 |
 | `content.source_type_enum`                             | 이번 작업에서 마이그레이션하지 않음                                                                    |
+| 분류·행사·프로젝트 표 7개                              | `docs/architecture/avalanche-categories-2026-10-12.sql`(+ `.rollback.sql`). 로컬 docker DB에만 적용·검증, **공유 DB는 팀 승인 후 수동 적용** |
+
+분류·행사·프로젝트 표(스키마 `content`):
+
+| 표                         | 내용                                                                 | 고유 키                    |
+| -------------------------- | -------------------------------------------------------------------- | -------------------------- |
+| `article_classification`   | 글마다 분류·중요도·근거·모델·원본 응답 JSON·실패 사유 (재분류 방지)  | `article_raw_id`           |
+| `macro_news`               | 종류(COLLAB·VOLUME·OTHER), 관련 프로젝트, 요약, 중요도               | `article_raw_id`           |
+| `tech_update`              | 종류(RELEASE·ACP·BLOG·OTHER), 네트워크(FUJI·MAINNET·BOTH·OTHER), 업그레이드명, 버전, 활성화 시점 | `article_raw_id` |
+| `general_post`             | 기타 정보(교육·해설)                                                 | `article_raw_id`           |
+| `chain_event`              | 프론트 이벤트 계약 필드 전부 + `status_override`·신뢰도·중요도·근거  | `(chain, event_key)`       |
+| `chain_event_source`       | 한 행사를 알린 추가 출처 글                                          | `(chain_event_id, url)`    |
+| `eco_project`              | Builder Hub 프로젝트 디렉터리 + 중요도·근거                          | `(chain, external_key)`    |
+
+모든 표에 `chain`(기본값 없음)과 `importance`·`importance_reason`·`importance_model`·`importance_scored_at`이 있다(분류 표는 `article_classification`에 모델 기록). 이벤트 상태(예정·진행·종료)는 저장하지 않고 조회 시점에 계산한다.
 
 ### 4.2 어댑터 실행 상태
 
@@ -243,15 +276,55 @@ browser-use analyze
 
 DNS public-address 검사는 Chromium 탐색 전 사전 방어이며 navigation 시점의 DNS rebinding을 완전히 제거하지는 못한다. 운영 환경에서는 crawler 컨테이너의 link-local, RFC1918, loopback 및 클라우드 metadata 대역 egress를 네트워크 정책으로 차단한다.
 
-### 5.5 X
+### 5.5 X (Apify)
 
-공식 API 사용을 우선한다. browser-use는 API 사용이 불가능하고 이용 조건을 확인한 경우에만 제한적으로 사용한다.
+ADR-015에 따라 Apify Actor `apidojo~tweet-scraper`를 `run-sync-get-dataset-items`로 호출한다(`APIFY_TOKEN`, Starter 플랜). 공식 X API 어댑터(`X_API`)는 코드만 유지하고 소스 설정에서는 쓰지 않는다.
 
-- 공식 계정 allowlist 적용
-- 짧은 게시물을 고려해 source별 최소 본문 길이 설정
-- 원문 링크가 있으면 게시물과 링크 대상을 별개 레코드로 구분
-- 로그인 만료, rate limit, 페이지 구조 변경을 명시적 오류 코드로 기록
-- fallback 실패가 crawl4ai 재생성을 촉발하지 않도록 adapter별 복구 정책 분리
+- 공식 계정 allowlist: @avax, @Team1KOR, @AvaxTeam1. 실행당 계정별 최대 50건(Actor 최소 과금 단위)
+- 리트윗(`isRetweet` 또는 `RT @`)과 글자·숫자가 없는 글(이모지만 등)만 수집 단계에서 버린다. 길이로 자르지 않고 나머지는 AI가 NOISE로 판단한다(ADR-017)
+- 게시물 URL `https://x.com/<user>/status/<id>`를 대표 키로, 가장 큰 트윗 id(BigInt 비교)를 cursor로 저장한다
+- 응답이 전부 `noResults`이면 플랜 한도 초과 등으로 보고 실패로 기록한다(0건 정상과 구분)
+- 비용: 계정당 실행 1회 약 $0.02
+
+### 5.6 Luma 행사 캘린더
+
+Team1 Luma 캘린더의 공개 구독 ICS(`api.lu.ma/ics/get?entity=calendar&id=cal-…`)를 AI 없이 `chain_event`로 바로 적재한다(ADR-016). 현재 Team1 Korea만 켜고 나머지 7개는 설정에만 두고 꺼 둔다(ADR-021).
+
+- 시간대: GEO 좌표 → IANA 시간대(`@photostructure/tz-lookup`). 좌표가 없으면 UTC, 신뢰도 0.7
+- 나라: 좌표 → ISO 3166-1 alpha-2(`@rapideditor/country-coder`), 주소 문자열 fallback. 폐기된 코드(VD·FX 등)는 버린다
+- 좌표·주소가 없으면 온라인이 아니라 장소 미정. 온라인 단서가 있을 때만 `isOnline=true`
+- 링크는 공개 http(s) URL만 저장하고 회의 링크·인증 파라미터가 있는 URL은 버린다
+- cursor는 `DTSTAMP`를 뺀 본문 hash. 바뀌면 같은 `event_key`로 갱신(upsert)
+- 실행마다(변경 없음이어도) 글에서 나온 같은 행사를 흡수한다(ADR-019)
+- 캘린더에서 삭제된 행사 정리는 아직 없다
+
+### 5.7 Builder Hub 프로젝트 디렉터리
+
+`ava-labs/builders-hub`의 `content/integrations/*.mdx`(약 234개)를 `GITHUB_DIRECTORY`로 읽어 `eco_project`에 upsert한다. 파일명이 `external_key`이고, 디렉터리에서 사라진 항목은 `revoked_at`으로 숨긴다. 카테고리는 원본 33종을 그대로 둔다(정리용 묶음 카테고리는 미결정).
+
+### 5.8 AI 분류·채점
+
+- **모델:** OpenAI 호환 API(`LLM_BASE_URL`·`LLM_API_KEY`·`LLM_MODEL`), 현재 NVIDIA build `deepseek-ai/deepseek-v4.1-flash`. 이 모델은 JSON 모드에서 답을 `reasoning_content`에 넣기 때문에 `response_format`을 쓰지 않고 본문에서 JSON을 추출한다. zod 검증 실패 시 교정 요청 1회 재시도
+- **분류(`pnpm classify`):** 설정된 소스의 미분류 글만 처리. 본문 6,000자까지 보낸다. 카테고리별 필드는 원문에 근거가 있을 때만 채우고, 날짜·장소·이름·URL은 AI가 만들지 않는다
+- **이벤트 저장 조건:** 시작 시각과 유효한 IANA 시간대(`pg_timezone_names`로도 확인)가 확정되고, 게시일과 ±400일 이내일 때만 `chain_event`에 넣는다. 아니면 분류 기록에 사유만 남긴다
+- **채점(`pnpm score`):** 프로젝트·캘린더 행사 중 미채점만 10건씩 묶어 중요도와 근거를 받는다
+- **기준표:** 원본 Cherry 채점 기준(넓이·긴급성·실행 가능성·지속성, 1~5점)을 `src/classify/rubric.ts` 한 곳에 두고 분류·채점이 함께 쓴다(ADR-018)
+- **처리량:** 호출당 25~30초, 동시성 4~8(NVIDIA 무료 티어 분당 약 40회)
+
+### 5.9 같은 행사 중복 제거
+
+같은 체인 + 시작 시각 2시간 이내 + 제목 유사(정규화 후 같음, 한쪽이 다른 쪽을 포함, 또는 단어 60% 이상 겹침)이면 같은 행사로 본다(ADR-019).
+
+- 글에서 나온 행사가 이미 있는 행사와 같으면 새 행을 만들지 않고 `chain_event_source`에 출처로 연결한다
+- 캘린더(Luma) 행이 우선한다. 먼저 저장된 글 유래 행사는 Luma 수집 때 숨기고(`revoked_at`) 출처로 옮긴다
+
+### 5.10 조회 API
+
+`apps/api/src/modules/chain_feed`(NestJS, knex raw SQL, 인증 없음). 엔드포인트·파라미터·응답 타입은 [연동 가이드](./1-backend-frontend-guide.md)가 정본이다.
+
+- `GET /api/events`는 프론트 요청서(`apps/docs/avalanche-editorial-ui/event-crawler-data-request.md`) 계약을 따른다. keyset cursor, 상태는 조회 시점 계산(취소·연기 우선, 종료 시각 없으면 현지 날짜가 끝나면 종료), 시각은 현지 offset 포함
+- 응답 직전 프론트 `eventEntrySchema` 사본으로 검사해 맞지 않는 항목만 뺀다
+- 잘못된 파라미터는 400 `INVALID_EVENT_QUERY` / `INVALID_FEED_QUERY`, 결과 없음은 200 + 빈 배열
 
 ## 6. GitHub PR 승인 및 artifact 무결성
 
@@ -262,7 +335,7 @@ DNS public-address 검사는 Chromium 탐색 전 사전 방어이며 navigation 
 ```text
 GITHUB_REPO_OWNER=Aidenteti-Crew
 GITHUB_REPO_NAME=Cryptopedia
-GITHUB_BASE_BRANCH=hansu-crawl   # 개발 단계
+GITHUB_BASE_BRANCH=deploy   # 개발 단계 (자동생성 경로는 아직 미사용)
 ```
 
 운영 전환 시 `GITHUB_BASE_BRANCH=main`으로 변경하되 branch protection과 필수 CI를 먼저 설정한다. 참고 구현의 하드코딩된 `feature/browser-crawl-agent`는 제거한다.
@@ -288,17 +361,21 @@ active_registry.artifact_hash == merged_artifact.sha256
 
 ## 7. 확정된 1차 소스
 
-| 우선순위 | 소스                       | URL                                                     | DB type   | Adapter            | Authority            | 결정                                                                    |
-| -------: | -------------------------- | ------------------------------------------------------- | --------- | ------------------ | -------------------- | ----------------------------------------------------------------------- |
-|        1 | Avalanche Builder Hub Blog | `https://build.avax.network/blog`                       | `WEBSITE` | `GITHUB_MARKDOWN`  | `OFFICIAL`           | 포함. 블로그 원본(MDX)이 GitHub에 공개돼 있어 AI/크롤링 없이 수집       |
-|        2 | AvalancheGo Releases       | `https://github.com/ava-labs/avalanchego/releases.atom` | `RSS`     | `ATOM`             | `OFFICIAL`           | 포함                                                                    |
-|        3 | Avalanche ACPs             | `https://github.com/avalanche-foundation/ACPs`          | `CUSTOM`  | `GITHUB_API`       | `OFFICIAL`           | 포함. 문서와 상태 변경 이벤트 수집                                      |
-|        4 | Avalanche X                | `https://x.com/avax`                                    | `TWITTER` | `APIFY`            | `OFFICIAL`           | ADR-015. 리트윗·40자 미만 제외. 현재 비활성                             |
-|        7 | Team1 Korea X              | `https://x.com/Team1KOR`                                | `TWITTER` | `APIFY`            | `OFFICIAL_COMMUNITY` | 한국 커뮤니티·행사 소식. 현재 비활성                                    |
-|        8 | Avalanche Team1 X          | `https://x.com/AvaxTeam1`                               | `TWITTER` | `APIFY`            | `OFFICIAL_COMMUNITY` | 행사·커뮤니티 소식. 현재 비활성                                         |
-|        9 | Builder Hub Integrations   | `https://build.avax.network/integrations`               | `WEBSITE` | `GITHUB_DIRECTORY` | `OFFICIAL`           | 프로젝트 디렉터리 234개. 글이 아니라 `eco_project`에 upsert, LLM 불필요 |
-|        5 | Coreth Releases            | `https://github.com/ava-labs/coreth/releases.atom`      | `RSS`     | `ATOM`             | `OFFICIAL`           | 포함. C-Chain EVM 구현체 릴리스                                         |
-|        6 | Subnet-EVM Releases        | `https://github.com/ava-labs/subnet-evm/releases.atom`  | `RSS`     | `ATOM`             | `OFFICIAL`           | 포함. Subnet EVM 구현체 릴리스                                          |
+모든 소스의 `chain`은 `avalanche`다.
+
+| 소스                       | URL                                                     | DB type   | Adapter            | Authority            | 저장 위치      | 상태                                                    |
+| -------------------------- | ------------------------------------------------------- | --------- | ------------------ | -------------------- | -------------- | ------------------------------------------------------- |
+| Avalanche Builder Hub Blog | `https://build.avax.network/blog`                       | `WEBSITE` | `GITHUB_MARKDOWN`  | `OFFICIAL`           | `article_raw`  | 사용. 블로그 원본(MDX)을 GitHub에서 수집                |
+| AvalancheGo Releases       | `https://github.com/ava-labs/avalanchego/releases.atom` | `RSS`     | `ATOM`             | `OFFICIAL`           | `article_raw`  | 사용. `graft/*` 태그(내부 하위 모듈 릴리스) 제외        |
+| Coreth Releases            | `https://github.com/ava-labs/coreth/releases.atom`      | `RSS`     | `ATOM`             | `OFFICIAL`           | `article_raw`  | 사용. C-Chain EVM 구현체 릴리스                         |
+| Subnet-EVM Releases        | `https://github.com/ava-labs/subnet-evm/releases.atom`  | `RSS`     | `ATOM`             | `OFFICIAL`           | `article_raw`  | 사용. Subnet EVM 구현체 릴리스                          |
+| Avalanche ACPs             | `https://github.com/avalanche-foundation/ACPs`          | `CUSTOM`  | `GITHUB_API`       | `OFFICIAL`           | `article_raw`  | 사용. 문서와 상태 변경 이벤트 수집                      |
+| Avalanche X                | `https://x.com/avax`                                    | `TWITTER` | `APIFY`            | `OFFICIAL`           | `article_raw`  | 사용 (ADR-015)                                          |
+| Team1 Korea X              | `https://x.com/Team1KOR`                                | `TWITTER` | `APIFY`            | `OFFICIAL_COMMUNITY` | `article_raw`  | 사용. 한국 커뮤니티·행사 소식                           |
+| Avalanche Team1 X          | `https://x.com/AvaxTeam1`                               | `TWITTER` | `APIFY`            | `OFFICIAL_COMMUNITY` | `article_raw`  | 사용. 행사·커뮤니티 소식                                |
+| Builder Hub Integrations   | `https://build.avax.network/integrations`               | `WEBSITE` | `GITHUB_DIRECTORY` | `OFFICIAL`           | `eco_project`  | 사용. 프로젝트 디렉터리 약 234개, upsert                |
+| Luma: Team1 Korea          | `https://luma.com/Team1KOR`                             | `WEBSITE` | `LUMA_ICS`         | `OFFICIAL_COMMUNITY` | `chain_event`  | 사용 (ADR-016·021)                                      |
+| Luma: Team1 글로벌·인도·베트남·프랑스·태국·아프리카·튀르키예 | `https://luma.com/Team1` 외 6개 | `WEBSITE` | `LUMA_ICS` | `OFFICIAL_COMMUNITY` | `chain_event` | **꺼짐**. 현재 한국만 수집 (ADR-021) |
 
 Builder Hub Blog는 원래 `CRAWL4AI`(browser-use 분석)로 설계했으나, 글 원본이 `ava-labs/builders-hub`의 `content/blog/*.mdx`로 공개돼 있어(기본 브랜치 `master`) GitHub API로 직접 수집한다. frontmatter(title, description, date, authors, topics)를 파싱하고, 기사 URL은 공개 글 URL(`<source.url>/<slug>`)로 고정한다. 신규 글만 가져오며(`added`/`renamed`), 수정된 글은 같은 URL이라 dedup 인덱스가 걸러낸다. 형식이 잘못된 글은 경고 후 건너뛰어 나머지 수집을 막지 않는다. `CRAWL4AI` 경로는 RSS도 GitHub 원본도 없는 사이트를 위해 유지한다.
 
@@ -346,6 +423,14 @@ fallback은 가용성 보조 수단이지 canonical 실행 경로가 아니다. 
 
 ## 10. 구현 순서와 완료 조건
 
+| Phase | 내용                         | 상태 (2026-10-13)                                                                 |
+| ----- | ---------------------------- | --------------------------------------------------------------------------------- |
+| 1     | 공통 기반과 Atom             | 완료                                                                              |
+| 2     | ACP GitHub API               | 완료                                                                              |
+| 3     | crawl4ai 생성 파이프라인     | 미착수. Builder Hub 블로그는 GitHub 원본으로 대체(ADR-012)                        |
+| 4     | Forum과 X                    | X는 Apify로 완료(ADR-015). Forum은 보류 유지                                      |
+| 5     | 분류·채점·행사·조회 API      | 완료(로컬 검증). 공유 DB 마이그레이션·자동 스케줄·Luma 삭제 처리는 남음           |
+
 ### Phase 1 — 공통 기반과 Atom vertical slice
 
 1. `source-config.ts`를 DB enum에 맞추고 `adapter`, `content_kind`, `authority`를 추가한다.
@@ -366,7 +451,7 @@ fallback은 가용성 보조 수단이지 canonical 실행 경로가 아니다. 
 
 ### Phase 3 — crawl4ai 생성 파이프라인
 
-1. `docs/crawler-autogen-migration.sql` 적용 계획을 재검토하고 별도 승인 후 적용한다.
+1. `docs/architecture/crawler-autogen-migration.sql` 적용 계획을 재검토하고 별도 승인 후 적용한다.
 2. browser-use 분석 결과를 JSON spec으로 제한한다.
 3. GitHub base branch 설정화, versioned branch, artifact hash 검증을 구현한다.
 4. RSS/GitHub 원본이 없는 사이트(예: Foundation 블로그)를 첫 자동생성 대상으로 검증한다. (Builder Hub Blog는 ADR-012에 따라 `GITHUB_MARKDOWN`으로 이동)
@@ -377,8 +462,19 @@ fallback은 가용성 보조 수단이지 canonical 실행 경로가 아니다. 
 
 1. Forum의 URL, DNS/TLS, 운영 상태와 JSON API/RSS 접근성을 다른 실행 환경에서도 재검증한다.
 2. Forum을 유지할 경우 category/작성자 정책을 확정하고 Discourse adapter를 추가한다.
-3. X API 권한과 비용을 확인한 후 adapter를 추가한다.
-4. API 사용이 불가능한 경우에만 제한적 browser-use fallback을 평가한다.
+3. ~~X API 권한과 비용을 확인한 후 adapter를 추가한다.~~ → Apify로 완료(ADR-015)
+4. ~~API 사용이 불가능한 경우에만 제한적 browser-use fallback을 평가한다.~~ → 불필요
+
+### Phase 5 — 분류·채점·행사·조회 API
+
+1. 분류별 표 마이그레이션(로컬 적용, 업그레이드·신규 DB 모두 검증)
+2. LLM 분류(`pnpm classify`)와 프로젝트·행사 채점(`pnpm score`)
+3. Builder Hub 프로젝트 디렉터리, Luma 캘린더 어댑터, 같은 행사 중복 제거
+4. `apps/api` ChainFeed 모듈과 프론트 스키마 대조 검증
+
+완료 조건: 실데이터 이벤트 5건 이상이 프론트 `eventFeedResponseSchema`를, 매크로·업데이트·기타가 `contentEntrySchema`를 통과하고, 재실행해도 분류·행사·프로젝트가 중복 생성되지 않는다. → 로컬에서 충족(이벤트 20건, 글 154건 분류, 프로젝트 234건 채점).
+
+남은 일: 공유 DB 마이그레이션 승인·적용, `start → classify → score` 자동 스케줄, Luma에서 삭제된 행사 정리, `chain_event_source`의 API 노출, 프로젝트 묶음 카테고리, 기존 NestJS 평가 스케줄러에서 아발란체 소스 제외 여부 결정.
 
 ## 11. 확정 결정 요약
 
@@ -394,10 +490,14 @@ fallback은 가용성 보조 수단이지 canonical 실행 경로가 아니다. 
 | ADR-008 | 생성물은 Python 코드보다 선언적 JSON extraction spec을 우선한다                                                                                                                                                                                                                                                                                                                                                      | 확정                 |
 | ADR-009 | 기존 `news_collector`와 source 식별·정규화·dedup 계약 및 DB 전역 정합성 경계를 공유한다                                                                                                                                                                                                                                                                                                                              | 확정                 |
 | ADR-010 | Avalanche Forum은 1차 소스에서 보류하고 Phase 4에서 다른 실행 환경으로 접근성과 신뢰 범위를 재검증한다                                                                                                                                                                                                                                                                                                               | 확정                 |
-| ADR-012 | Builder Hub Blog는 AI 분석 대신 GitHub 원본(MDX)을 `GITHUB_MARKDOWN` 어댑터로 수집한다. AI 비용·셀렉터 깨짐이 없고 날짜·주제 메타데이터가 정확하다                                                                                                                                                                                                                                                                   | 확정                 |
 | ADR-011 | browser-use 분석은 인증, source URL 결합, 네트워크 allowlist, 선언형 결과 제한을 통과해야 저장한다                                                                                                                                                                                                                                                                                                                   | 확정                 |
+| ADR-012 | Builder Hub Blog는 AI 분석 대신 GitHub 원본(MDX)을 `GITHUB_MARKDOWN` 어댑터로 수집한다. AI 비용·셀렉터 깨짐이 없고 날짜·주제 메타데이터가 정확하다                                                                                                                                                                                                                                                                   | 확정                 |
 | ADR-013 | 화면의 4분류(생태계 프로젝트·매크로 소식·이벤트·기술 업데이트)는 분류별 테이블에 나눠 적재하고(`eco_project`, `macro_news`, `chain_event`, `tech_update`), 한 페이지 조합은 API가 한다. 중요도(1~5)는 각 표에 독립 저장하며 기존 `user_article_ai_state`와 연동하지 않는다. 모든 분류 표에 `chain`을 두며 기본값은 없고(소스 설정의 필수 `chain`에서 채움), 고유 키는 `(chain, external_key)`·`(chain, event_key)`다 | 확정                 |
 | ADR-014 | 글 분류·중요도·한국어 요약은 OpenAI 호환 LLM(NVIDIA build, `LLM_*`)이 한 번에 처리한다. 날짜·시간대·나라는 글에 근거가 없으면 비우고, 확정된 날짜가 없는 이벤트는 `chain_event`에 넣지 않는다                                                                                                                                                                                                                        | 확정                 |
-| ADR-015 | X 수집은 Apify Actor(`APIFY` 어댑터)로 한다. 무료 플랜은 월 5회·회당 10건 제한이 있어 유료 전환 또는 공식 X API 전환이 결정될 때까지 3개 X 소스는 `enabled: false`다. Actor는 X 약관상 허용되지 않는 스크래핑이라는 위험을 감수한다                                                                                                                                                                                  | 보류(결제 결정 대기) |
+| ADR-015 | X 수집은 Apify Actor(`apidojo~tweet-scraper`, `APIFY` 어댑터)로 한다. 무료 플랜(월 5회·회당 10건)으로는 부족해 Starter 플랜으로 전환했고 3개 X 소스를 켰다. Actor는 X 약관상 허용되지 않는 스크래핑이라는 위험을 감수하며, 공식 X API 어댑터는 대안으로 코드에 유지한다                                                                                                                                               | 확정                 |
 | ADR-016 | 행사는 Team1의 Luma 공개 캘린더(ICS)에서 AI 없이 `chain_event`로 바로 적재한다. 시간대·나라는 좌표에서 정하고, 좌표가 없으면 온라인이 아니라 장소 미정으로 둔다. 캘린더가 원본이므로 같은 행사는 갱신한다                                                                                                                                                                                                            | 확정                 |
 | ADR-017 | 분류 "기타"를 기타 정보(`GENERAL`, `general_post`에 저장·API 제공)와 노이즈(`NOISE`, 분류 기록만)로 나눈다. 길이로 미리 자르지 않고 글자·숫자가 없는 글만 수집 단계에서 버린다                                                                                                                                                                                                                                       | 확정                 |
+| ADR-018 | 중요도는 원본 Cherry 채점 기준(1~5점: 넓이·긴급성·실행 가능성·지속성)을 대상만 "아발란체 생태계를 따라가는 사람"으로 바꿔 그대로 쓴다. 기준표는 `rubric.ts` 한 곳에 두고 글 분류·프로젝트·행사 채점이 공유하며, 점수와 함께 한국어 근거·모델·채점 시각을 저장한다. 점수는 이후 온톨로지 구축(ML 엔지니어 전달)의 입력이다 | 확정 |
+| ADR-019 | 같은 행사는 같은 체인 + 시작 2시간 이내 + 제목 유사로 판별한다. 캘린더(Luma) 행이 우선하고, 글에서 나온 같은 행사는 새 행 대신 `chain_event_source`에 출처로 연결한다 | 확정 |
+| ADR-020 | 조회 API는 `apps/api`의 ChainFeed 모듈로 공개 제공한다. 이벤트는 프론트 요청서 계약을 그대로 따르고 응답 직전 프론트 스키마 사본으로 검사한다. 응답 필드는 프론트 `ContentEntry`·`EventFeedResponse`와 호환되며 `importance`·`importanceReason`을 더한다 | 확정 |
+| ADR-021 | Luma는 우선 Team1 Korea 캘린더만 수집한다. 다른 Team1 캘린더 7개는 `sources.yaml`에 `enabled: false`로 두어 필요할 때 켠다 | 확정 |
