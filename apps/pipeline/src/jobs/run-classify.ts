@@ -4,6 +4,7 @@ import { LlmFatalError, type LlmClient } from '../classify/llm-client.js'
 import {
   fetchPendingArticles,
   insertCategoryRecord,
+  isKnownTimezone,
   saveClassificationFailure,
   saveClassificationSuccess,
   type PendingArticle,
@@ -96,22 +97,28 @@ export async function runClassify(
           outcome.classification,
           article.url
         )
-        item.record = built.record
-        item.skippedReason = built.skippedReason
+        let record = built.record
+        let skippedReason = built.skippedReason
+        if (record?.type === 'EVENT' && !(await isKnownTimezone(query, record.timezone))) {
+          record = null
+          skippedReason = 'event timezone unknown to Postgres'
+        }
+        item.record = record
+        item.skippedReason = skippedReason
 
         if (!options.dryRun) {
           // Category row first: if the process dies before the classification row is written,
           // the next run re-classifies and the conflict clause makes the insert a no-op.
-          if (built.record) {
-            const created = await insertCategoryRecord(query, article.id, built.record)
-            if (created) bump(summary.inserted, built.record.type)
+          if (record) {
+            const created = await insertCategoryRecord(query, article.id, record)
+            if (created) bump(summary.inserted, record.type)
             else summary.duplicates++
           }
           await saveClassificationSuccess(query, article.id, outcome, options.modelName)
-        } else if (built.record) {
-          bump(summary.inserted, built.record.type)
+        } else if (record) {
+          bump(summary.inserted, record.type)
         }
-        if (built.skippedReason) bump(summary.skipped, built.skippedReason)
+        if (skippedReason) bump(summary.skipped, skippedReason)
         summary.succeeded++
         bump(summary.byCategory, outcome.classification.category)
       } catch (error) {

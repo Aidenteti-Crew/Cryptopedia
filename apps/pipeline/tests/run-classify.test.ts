@@ -27,6 +27,9 @@ function fakeQuery(pending: ReturnType<typeof row>[]) {
   const query: QueryFn = async (sql, params) => {
     const text = sql.replace(/\s+/g, ' ').trim()
     if (text.startsWith('SELECT a.id')) return { rows: pending, rowCount: pending.length }
+    if (text.startsWith('SELECT 1 FROM pg_timezone_names')) {
+      return { rows: [], rowCount: params[0] === 'Atlantic/Unknown_To_Pg' ? 0 : 1 }
+    }
     writes.push({ sql: text, params })
     if (text.startsWith('INSERT INTO content.tech_update')) {
       const key = `tech:${params[1]}`
@@ -156,6 +159,32 @@ describe('runClassify', () => {
 
     expect(summary.inserted).toEqual({ TECH_UPDATE: 1 })
     expect(summary.duplicates).toBe(1)
+  })
+
+  it('skips an event whose timezone Postgres does not know instead of storing it', async () => {
+    const { query, writes } = fakeQuery([row('1', 'Meetup')])
+    const event = JSON.stringify({
+      category: 'EVENT',
+      importance: 3,
+      summary_ko: '행사',
+      event: {
+        name: 'Meetup',
+        starts_at: '2026-10-20T10:00:00+00:00',
+        timezone: 'Atlantic/Reykjavik',
+      },
+    })
+    // Same event, but the stub's Postgres rejects this zone name.
+    const unknownZone = event.replace('Atlantic/Reykjavik', 'Atlantic/Unknown_To_Pg')
+
+    const known = await runClassify(query, llmByTitle({ Meetup: event }), options)
+    expect(known.inserted).toEqual({ EVENT: 1 })
+
+    const rejected = await runClassify(query, llmByTitle({ Meetup: unknownZone }), options)
+    expect(rejected.inserted).toEqual({})
+    expect(rejected.skipped).toEqual({ 'event timezone unknown to Postgres': 1 })
+    expect(writes.filter((w) => w.sql.startsWith('INSERT INTO content.chain_event'))).toHaveLength(
+      1
+    )
   })
 
   it('does nothing when there is nothing pending', async () => {

@@ -57,6 +57,13 @@ export async function fetchPendingArticles(
   }))
 }
 
+// Node's Intl accepts some zone names Postgres does not know. An unknown one would make the events
+// API fail on `AT TIME ZONE` for every request, so check against Postgres before storing an event.
+export async function isKnownTimezone(query: QueryFn, name: string): Promise<boolean> {
+  const result = await query('SELECT 1 FROM pg_timezone_names WHERE name = $1 LIMIT 1', [name])
+  return (result.rowCount ?? 0) > 0
+}
+
 export async function saveClassificationSuccess(
   query: QueryFn,
   articleId: string,
