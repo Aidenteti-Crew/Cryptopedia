@@ -117,6 +117,9 @@ sources:
     adapter: 'LUMA_ICS'
     content_kind: 'EVENT'
     authority: 'OFFICIAL_COMMUNITY'
+    # Off until Team1 agrees to its events being shown (Luma terms: event content belongs to the
+    # hosts and may not be republished outside bona fide use of Luma). Team1 Korea stays on.
+    enabled: false
     luma:
       calendar_id: 'cal-HKsZ9ey1Sj9gYEz'
 
@@ -137,6 +140,9 @@ sources:
     adapter: 'LUMA_ICS'
     content_kind: 'EVENT'
     authority: 'OFFICIAL_COMMUNITY'
+    # Off until Team1 agrees to its events being shown (Luma terms: event content belongs to the
+    # hosts and may not be republished outside bona fide use of Luma). Team1 Korea stays on.
+    enabled: false
     luma:
       calendar_id: 'cal-K1Q62e5PBWEwoJ5'
 
@@ -147,6 +153,9 @@ sources:
     adapter: 'LUMA_ICS'
     content_kind: 'EVENT'
     authority: 'OFFICIAL_COMMUNITY'
+    # Off until Team1 agrees to its events being shown (Luma terms: event content belongs to the
+    # hosts and may not be republished outside bona fide use of Luma). Team1 Korea stays on.
+    enabled: false
     luma:
       calendar_id: 'cal-MWTdBWMK6km8AMH'
 
@@ -157,6 +166,9 @@ sources:
     adapter: 'LUMA_ICS'
     content_kind: 'EVENT'
     authority: 'OFFICIAL_COMMUNITY'
+    # Off until Team1 agrees to its events being shown (Luma terms: event content belongs to the
+    # hosts and may not be republished outside bona fide use of Luma). Team1 Korea stays on.
+    enabled: false
     luma:
       calendar_id: 'cal-VLGjrTcGskE7GnI'
 
@@ -167,6 +179,9 @@ sources:
     adapter: 'LUMA_ICS'
     content_kind: 'EVENT'
     authority: 'OFFICIAL_COMMUNITY'
+    # Off until Team1 agrees to its events being shown (Luma terms: event content belongs to the
+    # hosts and may not be republished outside bona fide use of Luma). Team1 Korea stays on.
+    enabled: false
     luma:
       calendar_id: 'cal-jlry3qvP8VGtM2E'
 
@@ -177,6 +192,9 @@ sources:
     adapter: 'LUMA_ICS'
     content_kind: 'EVENT'
     authority: 'OFFICIAL_COMMUNITY'
+    # Off until Team1 agrees to its events being shown (Luma terms: event content belongs to the
+    # hosts and may not be republished outside bona fide use of Luma). Team1 Korea stays on.
+    enabled: false
     luma:
       calendar_id: 'cal-LgF4fRCDgBrI9G3'
 
@@ -187,5 +205,8 @@ sources:
     adapter: 'LUMA_ICS'
     content_kind: 'EVENT'
     authority: 'OFFICIAL_COMMUNITY'
+    # Off until Team1 agrees to its events being shown (Luma terms: event content belongs to the
+    # hosts and may not be republished outside bona fide use of Luma). Team1 Korea stays on.
+    enabled: false
     luma:
       calendar_id: 'cal-5x1GA3vKpLS1cRG'
