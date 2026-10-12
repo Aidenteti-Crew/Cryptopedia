@@ -101,12 +101,12 @@ sources:
 
 초기 지원 값은 다음과 같다.
 
-| 필드           | 값                                                                                                  |
-| -------------- | --------------------------------------------------------------------------------------------------- |
-| `source_type`  | DB enum의 `RSS`, `TWITTER`, `LINKEDIN`, `YOUTUBE`, `REDDIT`, `KAKAO`, `WEBSITE`, `CUSTOM`           |
-| `adapter`      | `RSS`, `ATOM`, `GITHUB_API`, `GITHUB_MARKDOWN`, `DISCOURSE_API`, `CRAWL4AI`, `X_API`, `BROWSER_USE` |
-| `content_kind` | `BLOG`, `RELEASE`, `GOVERNANCE`, `FORUM`, `NEWSLETTER`, `SOCIAL`, `DOCUMENTATION`                   |
-| `authority`    | `OFFICIAL`, `OFFICIAL_COMMUNITY`, `THIRD_PARTY`                                                     |
+| 필드           | 값                                                                                                                               |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `source_type`  | DB enum의 `RSS`, `TWITTER`, `LINKEDIN`, `YOUTUBE`, `REDDIT`, `KAKAO`, `WEBSITE`, `CUSTOM`                                        |
+| `adapter`      | `RSS`, `ATOM`, `GITHUB_API`, `GITHUB_MARKDOWN`, `GITHUB_DIRECTORY`, `DISCOURSE_API`, `CRAWL4AI`, `X_API`, `APIFY`, `BROWSER_USE` |
+| `content_kind` | `BLOG`, `RELEASE`, `GOVERNANCE`, `FORUM`, `NEWSLETTER`, `SOCIAL`, `DOCUMENTATION`, `PROJECT`                                     |
+| `authority`    | `OFFICIAL`, `OFFICIAL_COMMUNITY`, `THIRD_PARTY`                                                                                  |
 
 `source_type`은 DB 저장 호환성을 위한 값이며 adapter routing에 사용하지 않는다. TypeScript의 허용 값은 DB의 실제 8개 값에 맞추고, CI 또는 애플리케이션 시작 시 `pg_enum`과 일치하는지 검사한다.
 
@@ -288,14 +288,17 @@ active_registry.artifact_hash == merged_artifact.sha256
 
 ## 7. 확정된 1차 소스
 
-| 우선순위 | 소스                       | URL                                                     | DB type   | Adapter           | Authority  | 결정                                                              |
-| -------: | -------------------------- | ------------------------------------------------------- | --------- | ----------------- | ---------- | ----------------------------------------------------------------- |
-|        1 | Avalanche Builder Hub Blog | `https://build.avax.network/blog`                       | `WEBSITE` | `GITHUB_MARKDOWN` | `OFFICIAL` | 포함. 블로그 원본(MDX)이 GitHub에 공개돼 있어 AI/크롤링 없이 수집 |
-|        2 | AvalancheGo Releases       | `https://github.com/ava-labs/avalanchego/releases.atom` | `RSS`     | `ATOM`            | `OFFICIAL` | 포함                                                              |
-|        3 | Avalanche ACPs             | `https://github.com/avalanche-foundation/ACPs`          | `CUSTOM`  | `GITHUB_API`      | `OFFICIAL` | 포함. 문서와 상태 변경 이벤트 수집                                |
-|        4 | Avalanche X                | `https://x.com/avax`                                    | `TWITTER` | `X_API`           | `OFFICIAL` | API 우선, browser-use는 제한적 fallback                           |
-|        5 | Coreth Releases            | `https://github.com/ava-labs/coreth/releases.atom`      | `RSS`     | `ATOM`            | `OFFICIAL` | 포함. C-Chain EVM 구현체 릴리스                                   |
-|        6 | Subnet-EVM Releases        | `https://github.com/ava-labs/subnet-evm/releases.atom`  | `RSS`     | `ATOM`            | `OFFICIAL` | 포함. Subnet EVM 구현체 릴리스                                    |
+| 우선순위 | 소스                       | URL                                                     | DB type   | Adapter            | Authority            | 결정                                                                    |
+| -------: | -------------------------- | ------------------------------------------------------- | --------- | ------------------ | -------------------- | ----------------------------------------------------------------------- |
+|        1 | Avalanche Builder Hub Blog | `https://build.avax.network/blog`                       | `WEBSITE` | `GITHUB_MARKDOWN`  | `OFFICIAL`           | 포함. 블로그 원본(MDX)이 GitHub에 공개돼 있어 AI/크롤링 없이 수집       |
+|        2 | AvalancheGo Releases       | `https://github.com/ava-labs/avalanchego/releases.atom` | `RSS`     | `ATOM`             | `OFFICIAL`           | 포함                                                                    |
+|        3 | Avalanche ACPs             | `https://github.com/avalanche-foundation/ACPs`          | `CUSTOM`  | `GITHUB_API`       | `OFFICIAL`           | 포함. 문서와 상태 변경 이벤트 수집                                      |
+|        4 | Avalanche X                | `https://x.com/avax`                                    | `TWITTER` | `APIFY`            | `OFFICIAL`           | ADR-015. 리트윗·40자 미만 제외. 현재 비활성                             |
+|        7 | Team1 Korea X              | `https://x.com/Team1KOR`                                | `TWITTER` | `APIFY`            | `OFFICIAL_COMMUNITY` | 한국 커뮤니티·행사 소식. 현재 비활성                                    |
+|        8 | Avalanche Team1 X          | `https://x.com/AvaxTeam1`                               | `TWITTER` | `APIFY`            | `OFFICIAL_COMMUNITY` | 행사·커뮤니티 소식. 현재 비활성                                         |
+|        9 | Builder Hub Integrations   | `https://build.avax.network/integrations`               | `WEBSITE` | `GITHUB_DIRECTORY` | `OFFICIAL`           | 프로젝트 디렉터리 234개. 글이 아니라 `eco_project`에 upsert, LLM 불필요 |
+|        5 | Coreth Releases            | `https://github.com/ava-labs/coreth/releases.atom`      | `RSS`     | `ATOM`             | `OFFICIAL`           | 포함. C-Chain EVM 구현체 릴리스                                         |
+|        6 | Subnet-EVM Releases        | `https://github.com/ava-labs/subnet-evm/releases.atom`  | `RSS`     | `ATOM`             | `OFFICIAL`           | 포함. Subnet EVM 구현체 릴리스                                          |
 
 Builder Hub Blog는 원래 `CRAWL4AI`(browser-use 분석)로 설계했으나, 글 원본이 `ava-labs/builders-hub`의 `content/blog/*.mdx`로 공개돼 있어(기본 브랜치 `master`) GitHub API로 직접 수집한다. frontmatter(title, description, date, authors, topics)를 파싱하고, 기사 URL은 공개 글 URL(`<source.url>/<slug>`)로 고정한다. 신규 글만 가져오며(`added`/`renamed`), 수정된 글은 같은 URL이라 dedup 인덱스가 걸러낸다. 형식이 잘못된 글은 경고 후 건너뛰어 나머지 수집을 막지 않는다. `CRAWL4AI` 경로는 RSS도 GitHub 원본도 없는 사이트를 위해 유지한다.
 
@@ -366,7 +369,7 @@ fallback은 가용성 보조 수단이지 canonical 실행 경로가 아니다. 
 1. `docs/crawler-autogen-migration.sql` 적용 계획을 재검토하고 별도 승인 후 적용한다.
 2. browser-use 분석 결과를 JSON spec으로 제한한다.
 3. GitHub base branch 설정화, versioned branch, artifact hash 검증을 구현한다.
-4. RSS/GitHub 원본이 없는 사이트(예: Foundation 블로그)를 첫 자동생성 대상으로 검증한다. (Builder Hub Blog는 ADR-011에 따라 `GITHUB_MARKDOWN`으로 이동)
+4. RSS/GitHub 원본이 없는 사이트(예: Foundation 블로그)를 첫 자동생성 대상으로 검증한다. (Builder Hub Blog는 ADR-012에 따라 `GITHUB_MARKDOWN`으로 이동)
 
 완료 조건: PR에서 수정한 최종 artifact와 실제 실행 artifact hash가 일치하고 rollback 가능한 이전 버전이 남는다.
 
@@ -379,17 +382,20 @@ fallback은 가용성 보조 수단이지 canonical 실행 경로가 아니다. 
 
 ## 11. 확정 결정 요약
 
-| ID      | 결정                                                                                                                                               | 상태 |
-| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ---- |
-| ADR-001 | `content.source_type_enum`은 변경하지 않고 코드가 기존 8개 값에 맞춘다                                                                             | 확정 |
-| ADR-002 | 수집 방식은 별도 `adapter`, 콘텐츠 의미는 `content_kind`로 분리한다                                                                                | 확정 |
-| ADR-003 | RSS/Atom은 analyze/generate를 생략하되 공통 health/cursor/검증 경로를 사용한다                                                                     | 확정 |
-| ADR-004 | ACP는 GitHub API와 commit SHA cursor로 수집한다                                                                                                    | 확정 |
-| ADR-005 | 자동생성 PR은 `Aidenteti-Crew/Cryptopedia`에 열고 base branch를 설정화한다                                                                         | 확정 |
-| ADR-006 | PR merge artifact와 active registry hash가 일치해야 활성화한다                                                                                     | 확정 |
-| ADR-007 | Builder Hub Blog을 1차 공식 소스에 포함하고 newsletter 가입 페이지는 제외한다                                                                      | 확정 |
-| ADR-008 | 생성물은 Python 코드보다 선언적 JSON extraction spec을 우선한다                                                                                    | 확정 |
-| ADR-009 | 기존 `news_collector`와 source 식별·정규화·dedup 계약 및 DB 전역 정합성 경계를 공유한다                                                            | 확정 |
-| ADR-010 | Avalanche Forum은 1차 소스에서 보류하고 Phase 4에서 다른 실행 환경으로 접근성과 신뢰 범위를 재검증한다                                             | 확정 |
-| ADR-011 | Builder Hub Blog는 AI 분석 대신 GitHub 원본(MDX)을 `GITHUB_MARKDOWN` 어댑터로 수집한다. AI 비용·셀렉터 깨짐이 없고 날짜·주제 메타데이터가 정확하다 | 확정 |
-| ADR-011 | browser-use 분석은 인증, source URL 결합, 네트워크 allowlist, 선언형 결과 제한을 통과해야 저장한다                                                 | 확정 |
+| ID      | 결정                                                                                                                                                                                                                                                                       | 상태                 |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| ADR-001 | `content.source_type_enum`은 변경하지 않고 코드가 기존 8개 값에 맞춘다                                                                                                                                                                                                     | 확정                 |
+| ADR-002 | 수집 방식은 별도 `adapter`, 콘텐츠 의미는 `content_kind`로 분리한다                                                                                                                                                                                                        | 확정                 |
+| ADR-003 | RSS/Atom은 analyze/generate를 생략하되 공통 health/cursor/검증 경로를 사용한다                                                                                                                                                                                             | 확정                 |
+| ADR-004 | ACP는 GitHub API와 commit SHA cursor로 수집한다                                                                                                                                                                                                                            | 확정                 |
+| ADR-005 | 자동생성 PR은 `Aidenteti-Crew/Cryptopedia`에 열고 base branch를 설정화한다                                                                                                                                                                                                 | 확정                 |
+| ADR-006 | PR merge artifact와 active registry hash가 일치해야 활성화한다                                                                                                                                                                                                             | 확정                 |
+| ADR-007 | Builder Hub Blog을 1차 공식 소스에 포함하고 newsletter 가입 페이지는 제외한다                                                                                                                                                                                              | 확정                 |
+| ADR-008 | 생성물은 Python 코드보다 선언적 JSON extraction spec을 우선한다                                                                                                                                                                                                            | 확정                 |
+| ADR-009 | 기존 `news_collector`와 source 식별·정규화·dedup 계약 및 DB 전역 정합성 경계를 공유한다                                                                                                                                                                                    | 확정                 |
+| ADR-010 | Avalanche Forum은 1차 소스에서 보류하고 Phase 4에서 다른 실행 환경으로 접근성과 신뢰 범위를 재검증한다                                                                                                                                                                     | 확정                 |
+| ADR-012 | Builder Hub Blog는 AI 분석 대신 GitHub 원본(MDX)을 `GITHUB_MARKDOWN` 어댑터로 수집한다. AI 비용·셀렉터 깨짐이 없고 날짜·주제 메타데이터가 정확하다                                                                                                                         | 확정                 |
+| ADR-011 | browser-use 분석은 인증, source URL 결합, 네트워크 allowlist, 선언형 결과 제한을 통과해야 저장한다                                                                                                                                                                         | 확정                 |
+| ADR-013 | 화면의 4분류(생태계 프로젝트·매크로 소식·이벤트·기술 업데이트)는 분류별 테이블에 나눠 적재하고(`eco_project`, `macro_news`, `chain_event`, `tech_update`), 한 페이지 조합은 API가 한다. 중요도(1~5)는 각 표에 독립 저장하며 기존 `user_article_ai_state`와 연동하지 않는다 | 확정                 |
+| ADR-014 | 글 분류·중요도·한국어 요약은 OpenAI 호환 LLM(NVIDIA build, `LLM_*`)이 한 번에 처리한다. 날짜·시간대·나라는 글에 근거가 없으면 비우고, 확정된 날짜가 없는 이벤트는 `chain_event`에 넣지 않는다                                                                              | 확정                 |
+| ADR-015 | X 수집은 Apify Actor(`APIFY` 어댑터)로 한다. 무료 플랜은 월 5회·회당 10건 제한이 있어 유료 전환 또는 공식 X API 전환이 결정될 때까지 3개 X 소스는 `enabled: false`다. Actor는 X 약관상 허용되지 않는 스크래핑이라는 위험을 감수한다                                        | 보류(결제 결정 대기) |

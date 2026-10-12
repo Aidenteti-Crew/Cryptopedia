@@ -15,6 +15,7 @@ import { FrameworksLandscapeModule } from './modules/frameworks_landscape/framew
 import { SourceSubmissionModule } from './modules/source_submission/source-submission.module';
 import { SourceRegistryModule } from './modules/source_registry/source-registry.module';
 import { ConceptModule } from './modules/concept/concept.module';
+import { ChainFeedModule } from './modules/chain_feed/chain-feed.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ConceptModule } from './modules/concept/concept.module';
     ConceptModule,
     SourceSubmissionModule,
     SourceRegistryModule,
+    ChainFeedModule,
   ],
   controllers: [],
   providers: [],
