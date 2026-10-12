@@ -1,0 +1,173 @@
+-- ════════════════════════════════════════════════════════════════
+-- Avalanche 생태계·매크로 4분류 테이블 (2026-10-12)
+-- 크롤러(apps/pipeline)가 content.article_raw 에 쌓은 글을 AI(NVIDIA)로 분류한 결과와,
+-- 생태계 프로젝트 디렉터리를 4개 화면(프로젝트 / 매크로 / 이벤트 / 기술 업데이트)용으로 나눠 저장한다.
+-- 원칙: 신규 표만 추가. 기존 표 변경 없음. 점수(importance 1~5)는 각 표에 독립 저장하며
+--       기존 user_article_ai_state(AI 엔지니어링용 평가)와 연동하지 않는다.
+-- 적용: 수동(DBeaver/psql). 공유 DB 적용 전 팀 승인 필요. 되돌리기: avalanche-categories-2026-10-12.rollback.sql
+-- ════════════════════════════════════════════════════════════════
+BEGIN;
+
+-- ── 1. 분류 기록 (재분류 방지·실패 추적) ─────────────────────────
+CREATE TABLE IF NOT EXISTS content.article_classification (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  article_raw_id  UUID NOT NULL REFERENCES content.article_raw(id),
+  category        VARCHAR(20),
+  importance      SMALLINT,
+  status          content.ai_status_enum NOT NULL DEFAULT 'PENDING',
+  model_name      VARCHAR(100),
+  raw_json        JSONB,
+  error_msg       TEXT,
+  attempts        INT NOT NULL DEFAULT 0,
+  classified_at   TIMESTAMPTZ,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT ck_acls_category CHECK
+    (category IS NULL OR category IN ('PROJECT', 'MACRO', 'EVENT', 'TECH_UPDATE', 'OTHER')),
+  CONSTRAINT ck_acls_importance CHECK (importance IS NULL OR importance BETWEEN 1 AND 5),
+  CONSTRAINT ck_acls_raw_json CHECK (raw_json IS NULL OR jsonb_typeof(raw_json) = 'object')
+);
+COMMENT ON TABLE content.article_classification IS
+  'article_raw 한 건당 한 번의 AI 분류 결과. 행이 있으면 재분류하지 않는다(실패는 status=FAILED 로 남아 재시도 대상).';
+CREATE UNIQUE INDEX IF NOT EXISTS uq_acls_article ON content.article_classification (article_raw_id);
+CREATE INDEX IF NOT EXISTS idx_acls_pending
+  ON content.article_classification (status) WHERE (status <> 'SUCCESS');
+
+-- ── 2. 생태계 프로젝트 (builders-hub integrations 디렉터리, AI 불필요) ──
+CREATE TABLE IF NOT EXISTS content.eco_project (
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  external_key      VARCHAR(200) NOT NULL,
+  name              VARCHAR(200) NOT NULL,
+  category          VARCHAR(100),
+  developer         VARCHAR(200),
+  website_url       VARCHAR(1000),
+  documentation_url VARCHAR(1000),
+  description       TEXT,
+  chains            TEXT[] NOT NULL DEFAULT '{}',
+  source_url        VARCHAR(1000),
+  importance        SMALLINT,
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  revoked_at        TIMESTAMPTZ,
+  CONSTRAINT ck_ecop_importance CHECK (importance IS NULL OR importance BETWEEN 1 AND 5)
+);
+COMMENT ON COLUMN content.eco_project.external_key IS
+  '출처 파일명(예: aave). 재수집해도 변하지 않는 안정 키.';
+CREATE UNIQUE INDEX IF NOT EXISTS uq_ecop_external_key
+  ON content.eco_project (external_key) WHERE (revoked_at IS NULL);
+CREATE INDEX IF NOT EXISTS idx_ecop_category
+  ON content.eco_project (category) WHERE (revoked_at IS NULL);
+
+-- ── 3. 매크로 소식 (협업 발표, 거래량 급증 등) ─────────────────────
+CREATE TABLE IF NOT EXISTS content.macro_news (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  article_raw_id  UUID NOT NULL REFERENCES content.article_raw(id),
+  kind            VARCHAR(20) NOT NULL DEFAULT 'OTHER',
+  related_project VARCHAR(200),
+  title           VARCHAR(500) NOT NULL,
+  summary         TEXT NOT NULL,
+  importance      SMALLINT,
+  published_at    TIMESTAMPTZ NOT NULL,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  revoked_at      TIMESTAMPTZ,
+  CONSTRAINT ck_macro_kind CHECK (kind IN ('COLLAB', 'VOLUME', 'OTHER')),
+  CONSTRAINT ck_macro_importance CHECK (importance IS NULL OR importance BETWEEN 1 AND 5)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS uq_macro_article
+  ON content.macro_news (article_raw_id) WHERE (revoked_at IS NULL);
+CREATE INDEX IF NOT EXISTS idx_macro_published
+  ON content.macro_news (published_at DESC) WHERE (revoked_at IS NULL);
+
+-- ── 4. 이벤트·행사 (프론트 EventEntry 계약: event-crawler-data-request.md) ──
+CREATE TABLE IF NOT EXISTS content.chain_event (
+  id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_key             VARCHAR(200) NOT NULL,
+  first_article_raw_id  UUID REFERENCES content.article_raw(id),
+  title                 VARCHAR(500) NOT NULL,
+  summary               TEXT NOT NULL,
+  starts_at             TIMESTAMPTZ NOT NULL,
+  ends_at               TIMESTAMPTZ,
+  timezone              VARCHAR(64) NOT NULL,
+  all_day               BOOLEAN NOT NULL DEFAULT FALSE,
+  organizer             VARCHAR(200),
+  venue_name            VARCHAR(300),
+  venue_address         VARCHAR(500),
+  city                  VARCHAR(100),
+  country               CHAR(2),
+  is_online             BOOLEAN NOT NULL DEFAULT FALSE,
+  source_url            VARCHAR(1000),
+  registration_url      VARCHAR(1000),
+  image_url             VARCHAR(1000),
+  category              VARCHAR(50),
+  tags                  TEXT[] NOT NULL DEFAULT '{}',
+  chain                 VARCHAR(50) NOT NULL DEFAULT 'avalanche',
+  project               VARCHAR(200),
+  status_override       VARCHAR(20),
+  confidence            NUMERIC(3, 2),
+  importance            SMALLINT,
+  published_at          TIMESTAMPTZ,
+  fetched_at            TIMESTAMPTZ NOT NULL DEFAULT now(),
+  created_at            TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at            TIMESTAMPTZ NOT NULL DEFAULT now(),
+  revoked_at            TIMESTAMPTZ,
+  CONSTRAINT ck_chev_status CHECK
+    (status_override IS NULL OR status_override IN ('CANCELLED', 'POSTPONED')),
+  CONSTRAINT ck_chev_confidence CHECK (confidence IS NULL OR confidence BETWEEN 0 AND 1),
+  CONSTRAINT ck_chev_importance CHECK (importance IS NULL OR importance BETWEEN 1 AND 5),
+  CONSTRAINT ck_chev_range CHECK (ends_at IS NULL OR ends_at >= starts_at)
+);
+COMMENT ON TABLE content.chain_event IS
+  '행사 개최일(starts_at)과 안내 글 게시일(published_at)은 다른 값이다. 날짜를 확정할 수 없는 글은 이 표에 넣지 않는다.';
+COMMENT ON COLUMN content.chain_event.event_key IS
+  '같은 행사의 여러 안내 글을 하나로 합치는 안정 키(예: crypto-house-seoul-2026).';
+COMMENT ON COLUMN content.chain_event.status_override IS
+  'CANCELLED/POSTPONED 만 저장. UPCOMING/ONGOING/PAST 는 API 응답 시점에 시간으로 계산한다.';
+CREATE UNIQUE INDEX IF NOT EXISTS uq_chev_event_key
+  ON content.chain_event (event_key) WHERE (revoked_at IS NULL);
+CREATE INDEX IF NOT EXISTS idx_chev_starts
+  ON content.chain_event (starts_at, id) WHERE (revoked_at IS NULL);
+CREATE INDEX IF NOT EXISTS idx_chev_country
+  ON content.chain_event (country) WHERE (revoked_at IS NULL);
+
+-- ── 5. 기술 업데이트 (Fuji/메인넷에 무엇이 올라갔나) ───────────────
+CREATE TABLE IF NOT EXISTS content.tech_update (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  article_raw_id  UUID NOT NULL REFERENCES content.article_raw(id),
+  kind            VARCHAR(20) NOT NULL DEFAULT 'OTHER',
+  network         VARCHAR(20) NOT NULL DEFAULT 'OTHER',
+  upgrade_name    VARCHAR(200),
+  version         VARCHAR(100),
+  title           VARCHAR(500) NOT NULL,
+  change_summary  TEXT NOT NULL,
+  activated_at    TIMESTAMPTZ,
+  importance      SMALLINT,
+  published_at    TIMESTAMPTZ NOT NULL,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  revoked_at      TIMESTAMPTZ,
+  CONSTRAINT ck_tech_kind CHECK (kind IN ('RELEASE', 'ACP', 'BLOG', 'OTHER')),
+  CONSTRAINT ck_tech_network CHECK (network IN ('FUJI', 'MAINNET', 'BOTH', 'OTHER')),
+  CONSTRAINT ck_tech_importance CHECK (importance IS NULL OR importance BETWEEN 1 AND 5)
+);
+COMMENT ON COLUMN content.tech_update.activated_at IS
+  '실제 활성화 시점(글에서 확인된 경우만). ACP 의 published_at 은 수집일이라 여기에 쓰지 않는다.';
+CREATE UNIQUE INDEX IF NOT EXISTS uq_tech_article
+  ON content.tech_update (article_raw_id) WHERE (revoked_at IS NULL);
+CREATE INDEX IF NOT EXISTS idx_tech_published
+  ON content.tech_update (published_at DESC) WHERE (revoked_at IS NULL);
+
+-- ── 6. updated_at 자동 갱신 ────────────────────────────────────
+DO $$
+DECLARE t TEXT;
+BEGIN
+  FOREACH t IN ARRAY ARRAY['article_classification', 'eco_project', 'macro_news', 'chain_event', 'tech_update']
+  LOOP
+    EXECUTE format('DROP TRIGGER IF EXISTS trg_%s_set_updated_at ON content.%I', t, t);
+    EXECUTE format(
+      'CREATE TRIGGER trg_%s_set_updated_at BEFORE UPDATE ON content.%I
+       FOR EACH ROW EXECUTE FUNCTION core.set_updated_at()', t, t);
+  END LOOP;
+END $$;
+
+COMMIT;
