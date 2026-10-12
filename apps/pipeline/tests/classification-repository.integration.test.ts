@@ -58,6 +58,11 @@ describe.skipIf(!url)('classification-repository (real Postgres)', () => {
     await q('DELETE FROM content.tech_update WHERE article_raw_id = $1', [articleId])
     await q('DELETE FROM content.macro_news WHERE article_raw_id = $1', [articleId])
     await q('DELETE FROM content.general_post WHERE article_raw_id = $1', [articleId])
+    await q(
+      `DELETE FROM content.chain_event_source WHERE chain_event_id IN
+         (SELECT id FROM content.chain_event WHERE event_key = $1)`,
+      [EVENT_KEY]
+    )
     await q('DELETE FROM content.chain_event WHERE event_key = $1', [EVENT_KEY])
     await q('DELETE FROM content.article_classification WHERE article_raw_id = $1', [articleId])
     await q('DELETE FROM content.article_raw WHERE id = $1', [articleId])
@@ -134,7 +139,8 @@ describe.skipIf(!url)('classification-repository (real Postgres)', () => {
   it('merges repeated announcements of one event on event_key', async () => {
     const event: CategoryRecord = {
       type: 'EVENT',
-      chain: 'avalanche',
+      // A chain of its own so real or leftover events never match this one.
+      chain: TAG,
       eventKey: EVENT_KEY,
       title: 'Meetup',
       summary: '요약',

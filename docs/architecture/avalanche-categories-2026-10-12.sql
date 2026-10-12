@@ -130,6 +130,19 @@ COMMENT ON COLUMN content.chain_event.status_override IS
 CREATE INDEX IF NOT EXISTS idx_chev_country
   ON content.chain_event (country) WHERE (revoked_at IS NULL);
 
+-- ── 4-1. 행사의 출처 (한 행사를 여러 글이 알린 경우) ─────────────────
+-- 같은 행사를 Luma 캘린더와 X 공지가 함께 알리면 chain_event 는 한 행으로 두고(공식 페이지 우선),
+-- 나머지 안내 글은 여기 출처로 연결한다.
+CREATE TABLE IF NOT EXISTS content.chain_event_source (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  chain_event_id  UUID NOT NULL REFERENCES content.chain_event(id),
+  article_raw_id  UUID REFERENCES content.article_raw(id),
+  source_url      VARCHAR(1000) NOT NULL,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS uq_chev_source_url
+  ON content.chain_event_source (chain_event_id, source_url);
+
 -- ── 5. 기술 업데이트 (Fuji/메인넷에 무엇이 올라갔나) ───────────────
 CREATE TABLE IF NOT EXISTS content.tech_update (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),

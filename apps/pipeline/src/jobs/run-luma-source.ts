@@ -1,6 +1,6 @@
 import { LumaCalendarAdapter } from '../adapters/luma-calendar-adapter.js'
 import type { SourceConfig } from '../config/source-config.js'
-import { upsertChainEvents } from '../db/chain-event-repository.js'
+import { absorbDuplicateEvents, upsertChainEvents } from '../db/chain-event-repository.js'
 import type { QueryFn } from '../db/query.js'
 import {
   getOrCreateSource,
@@ -15,6 +15,8 @@ export interface RunLumaSourceResult {
   sourceId: string
   inserted: number
   updated: number
+  // Post-derived events folded into the calendar's version of the same event.
+  absorbed: number
   skipped: Record<string, number>
 }
 
@@ -35,17 +37,22 @@ export async function runLumaSource(
     const cursor = (await getSourceCursor(query, sourceRecord.id)) ?? {}
     const result = await adapter.collect(source, cursor)
     if (result.status === 'NOT_MODIFIED') {
+      // Posts classified since the last import may duplicate calendar events, so this runs even
+      // when the calendar itself did not change.
+      const absorbed = await absorbDuplicateEvents(query, source.chain)
       await recordSourceSuccess(query, sourceRecord.id)
       return {
         status: 'NOT_MODIFIED',
         sourceId: sourceRecord.id,
         inserted: 0,
         updated: 0,
+        absorbed,
         skipped: {},
       }
     }
 
     const { inserted, updated } = await upsertChainEvents(query, result.events)
+    const absorbed = await absorbDuplicateEvents(query, source.chain)
     await setSourceCursor(query, sourceRecord.id, result.cursor)
     await recordSourceSuccess(query, sourceRecord.id)
     return {
@@ -53,6 +60,7 @@ export async function runLumaSource(
       sourceId: sourceRecord.id,
       inserted,
       updated,
+      absorbed,
       skipped: result.skipped,
     }
   } catch (error) {

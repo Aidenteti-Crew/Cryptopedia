@@ -8,6 +8,7 @@ import type {
   TechRecord,
 } from '../classify/category-records.js'
 import type { ClassificationOutcome } from '../classify/classify-article.js'
+import { findMatchingEvent, linkEventSource } from './chain-event-repository.js'
 import type { QueryFn } from './query.js'
 
 export interface PendingArticle {
@@ -161,8 +162,16 @@ async function insertTech(query: QueryFn, articleId: string, r: TechRecord): Pro
   return (result.rowCount ?? 0) > 0
 }
 
-// The same event is often announced several times; the stable (chain, event_key) keeps the first row.
+// The same event is often announced several times, and also listed in a calendar. If an active
+// event on the same chain starts at nearly the same time under a matching title, this post is
+// recorded as one more source of that event instead of a new row. Otherwise the stable
+// (chain, event_key) keeps the first row.
 async function insertEvent(query: QueryFn, articleId: string, r: EventRecord): Promise<boolean> {
+  const existing = await findMatchingEvent(query, r.chain, r.startsAt, r.title)
+  if (existing) {
+    await linkEventSource(query, existing.id, articleId, r.sourceUrl)
+    return false
+  }
   const result = await query(
     `INSERT INTO content.chain_event
        (id, event_key, first_article_raw_id, title, summary, starts_at, ends_at, timezone, all_day,

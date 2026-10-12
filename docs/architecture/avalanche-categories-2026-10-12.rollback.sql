@@ -3,6 +3,7 @@
 BEGIN;
 DROP TABLE IF EXISTS content.general_post;
 DROP TABLE IF EXISTS content.tech_update;
+DROP TABLE IF EXISTS content.chain_event_source;
 DROP TABLE IF EXISTS content.chain_event;
 DROP TABLE IF EXISTS content.macro_news;
 DROP TABLE IF EXISTS content.eco_project;
