@@ -223,7 +223,7 @@ interface EcosystemHubResponse {
 | `apps/pipeline/config/sources.yaml` | 소스 목록 (`chain` 필수, `enabled`로 켜고 끔) |
 | `apps/pipeline/src/classify/rubric.ts` | 중요도 기준표 (한 곳에서 정의, 분류·채점 공용) |
 | `docs/architecture/avalanche-categories-2026-10-12.sql` (+ `.rollback.sql`) | DB 마이그레이션 |
-| `docs/avalanche-crawler/architecture.md` | 설계 문서 (ADR-001~017) |
+| `apps/docs/avalanche-crawler/architecture.md` | 설계 문서 (ADR-001~017) |
 
 ### 4.2 DB 테이블 (스키마 `content`)
 
