@@ -76,6 +76,7 @@ export const classificationSchema = z.object({
     .transform((value) => Math.round(value)),
   title_ko: optionalText,
   summary_ko: z.string().trim().min(1),
+  importance_reason: optionalText,
   macro: macroSchema.nullable().optional(),
   tech: techSchema.nullable().optional(),
   event: eventSchema.nullable().optional(),

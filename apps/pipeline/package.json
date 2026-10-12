@@ -7,7 +7,8 @@
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
     "start": "node dist/src/bin/pipeline.js",
-    "classify": "node dist/src/bin/classify.js"
+    "classify": "node dist/src/bin/classify.js",
+    "score": "node dist/src/bin/score.js"
   },
   "dependencies": {
     "@photostructure/tz-lookup": "11.7.0",

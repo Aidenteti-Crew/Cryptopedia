@@ -77,8 +77,8 @@ sources:
       actor: 'apidojo~tweet-scraper'
       input:
         startUrls: ['https://x.com/avax']
-        maxItems: 20
-    enabled: false # Apify free plan is limited to 5 runs/month for this actor; enable after upgrading or switching to the X API
+        # The actor bills a minimum of 50 tweets per query on paid plans, so ask for all 50.
+        maxItems: 50
 
   - url: 'https://x.com/Team1KOR'
     chain: 'avalanche'
@@ -91,8 +91,8 @@ sources:
       actor: 'apidojo~tweet-scraper'
       input:
         startUrls: ['https://x.com/Team1KOR']
-        maxItems: 20
-    enabled: false # Apify free plan is limited to 5 runs/month for this actor; enable after upgrading or switching to the X API
+        # The actor bills a minimum of 50 tweets per query on paid plans, so ask for all 50.
+        maxItems: 50
 
   - url: 'https://x.com/AvaxTeam1'
     chain: 'avalanche'
@@ -105,8 +105,8 @@ sources:
       actor: 'apidojo~tweet-scraper'
       input:
         startUrls: ['https://x.com/AvaxTeam1']
-        maxItems: 20
-    enabled: false # Apify free plan is limited to 5 runs/month for this actor; enable after upgrading or switching to the X API
+        # The actor bills a minimum of 50 tweets per query on paid plans, so ask for all 50.
+        maxItems: 50
 
   # Team1 event calendars on Luma (public iCalendar export). Events go straight to
   # content.chain_event; regional calendars mostly hold events the global one does not.

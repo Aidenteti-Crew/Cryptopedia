@@ -1,3 +1,5 @@
+import { IMPORTANCE_RUBRIC } from './rubric.js'
+
 const MAX_BODY_CHARS = 6000
 
 export interface PromptArticle {
@@ -20,12 +22,7 @@ category (pick exactly one):
 - GENERAL: useful information that fits none of the above: explainers and educational posts, ecosystem overviews, analyses, guides, opinion pieces with concrete content.
 - NOISE: no information worth keeping: greetings ("gm"), memes, engagement bait, slogans or hype, promotion with no concrete facts. Use NOISE only when a reader would learn nothing; when in doubt prefer GENERAL.
 
-importance (integer 1-5) for someone following the Avalanche ecosystem:
-5 = mainnet-impacting upgrade or activation, security incident or critical fix, major institutional or partner announcement with concrete figures
-4 = stable release with notable features, ACP reaching Implementable or Activated, notable partnership, major event announcement
-3 = routine release or ACP with moderate impact, ecosystem integration, regional event
-2 = minor release or patch, early-draft proposal, small announcement
-1 = trivial, or no concrete information
+${IMPORTANCE_RUBRIC}
 
 Fields:
 - title_ko: short Korean headline, at most 80 characters.

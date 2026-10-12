@@ -49,6 +49,9 @@ CREATE TABLE IF NOT EXISTS content.eco_project (
   chains            TEXT[] NOT NULL DEFAULT '{}',
   source_url        VARCHAR(1000),
   importance        SMALLINT,
+  importance_reason    TEXT,
+  importance_model     VARCHAR(100),
+  importance_scored_at TIMESTAMPTZ,
   created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
   revoked_at        TIMESTAMPTZ,
@@ -104,6 +107,9 @@ CREATE TABLE IF NOT EXISTS content.chain_event (
   status_override       VARCHAR(20),
   confidence            NUMERIC(3, 2),
   importance            SMALLINT,
+  importance_reason    TEXT,
+  importance_model     VARCHAR(100),
+  importance_scored_at TIMESTAMPTZ,
   published_at          TIMESTAMPTZ,
   fetched_at            TIMESTAMPTZ NOT NULL DEFAULT now(),
   created_at            TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -199,6 +205,15 @@ CREATE INDEX IF NOT EXISTS idx_tech_chain_published
   ON content.tech_update (chain, published_at DESC) WHERE (revoked_at IS NULL);
 CREATE INDEX IF NOT EXISTS idx_general_chain_published
   ON content.general_post (chain, published_at DESC) WHERE (revoked_at IS NULL);
+
+-- 디렉터리·캘린더처럼 AI 분류를 거치지 않는 표는 별도 채점 작업(pnpm score)이 importance 와
+-- 그 근거·모델·시각을 채운다. importance_scored_at 이 비어 있으면 아직 채점 전이다.
+ALTER TABLE content.eco_project ADD COLUMN IF NOT EXISTS importance_reason TEXT;
+ALTER TABLE content.eco_project ADD COLUMN IF NOT EXISTS importance_model VARCHAR(100);
+ALTER TABLE content.eco_project ADD COLUMN IF NOT EXISTS importance_scored_at TIMESTAMPTZ;
+ALTER TABLE content.chain_event ADD COLUMN IF NOT EXISTS importance_reason TEXT;
+ALTER TABLE content.chain_event ADD COLUMN IF NOT EXISTS importance_model VARCHAR(100);
+ALTER TABLE content.chain_event ADD COLUMN IF NOT EXISTS importance_scored_at TIMESTAMPTZ;
 
 -- 첫 초안의 분류값 OTHER 는 GENERAL/NOISE 로 나뉘었다. 초안이 적용된 DB에 남은 OTHER 기록은
 -- 재분류 대상(FAILED, attempts 0)으로 돌린 뒤 제약을 새 값 목록으로 바꾼다. 새 DB에서는 해당 행이 없다.
