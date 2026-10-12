@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS content.article_classification (
   created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
   CONSTRAINT ck_acls_category CHECK
-    (category IS NULL OR category IN ('PROJECT', 'MACRO', 'EVENT', 'TECH_UPDATE', 'OTHER')),
+    (category IS NULL OR category IN ('PROJECT', 'MACRO', 'EVENT', 'TECH_UPDATE', 'GENERAL', 'NOISE')),
   CONSTRAINT ck_acls_importance CHECK (importance IS NULL OR importance BETWEEN 1 AND 5),
   CONSTRAINT ck_acls_raw_json CHECK (raw_json IS NULL OR jsonb_typeof(raw_json) = 'object')
 );
@@ -150,6 +150,24 @@ COMMENT ON COLUMN content.tech_update.activated_at IS
 CREATE UNIQUE INDEX IF NOT EXISTS uq_tech_article
   ON content.tech_update (article_raw_id) WHERE (revoked_at IS NULL);
 
+-- ── 5-1. 기타 정보 (네 분류에 안 맞지만 버리기엔 아까운 글: 교육·해설·일반 정보) ──
+-- NOISE(인사·밈·내용 없는 홍보)는 어떤 표에도 넣지 않고 분류 기록만 남긴다.
+CREATE TABLE IF NOT EXISTS content.general_post (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  article_raw_id  UUID NOT NULL REFERENCES content.article_raw(id),
+  chain           VARCHAR(50) NOT NULL,
+  title           VARCHAR(500) NOT NULL,
+  summary         TEXT NOT NULL,
+  importance      SMALLINT,
+  published_at    TIMESTAMPTZ NOT NULL,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  revoked_at      TIMESTAMPTZ,
+  CONSTRAINT ck_general_importance CHECK (importance IS NULL OR importance BETWEEN 1 AND 5)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS uq_general_article
+  ON content.general_post (article_raw_id) WHERE (revoked_at IS NULL);
+
 -- ── 6. chain 컬럼과 체인 단위 인덱스 ──────────────────────────────
 -- 새 DB에서는 CREATE TABLE 이 chain 을 이미 만들어 ADD COLUMN 은 아무것도 하지 않는다.
 -- 첫 초안(chain 없는 버전)이 적용된 로컬 DB에서는 기존 행을 avalanche 로 채운 뒤 기본값을 없앤다.
@@ -179,12 +197,24 @@ CREATE INDEX IF NOT EXISTS idx_chev_chain_starts
   ON content.chain_event (chain, starts_at, id) WHERE (revoked_at IS NULL);
 CREATE INDEX IF NOT EXISTS idx_tech_chain_published
   ON content.tech_update (chain, published_at DESC) WHERE (revoked_at IS NULL);
+CREATE INDEX IF NOT EXISTS idx_general_chain_published
+  ON content.general_post (chain, published_at DESC) WHERE (revoked_at IS NULL);
+
+-- 첫 초안의 분류값 OTHER 는 GENERAL/NOISE 로 나뉘었다. 초안이 적용된 DB에 남은 OTHER 기록은
+-- 재분류 대상(FAILED, attempts 0)으로 돌린 뒤 제약을 새 값 목록으로 바꾼다. 새 DB에서는 해당 행이 없다.
+UPDATE content.article_classification
+   SET category = NULL, importance = NULL, status = 'FAILED', attempts = 0,
+       error_msg = 'reclassify: OTHER was split into GENERAL and NOISE'
+ WHERE category = 'OTHER';
+ALTER TABLE content.article_classification DROP CONSTRAINT IF EXISTS ck_acls_category;
+ALTER TABLE content.article_classification ADD CONSTRAINT ck_acls_category CHECK
+  (category IS NULL OR category IN ('PROJECT', 'MACRO', 'EVENT', 'TECH_UPDATE', 'GENERAL', 'NOISE'));
 
 -- ── 7. updated_at 자동 갱신 ────────────────────────────────────
 DO $$
 DECLARE t TEXT;
 BEGIN
-  FOREACH t IN ARRAY ARRAY['article_classification', 'eco_project', 'macro_news', 'chain_event', 'tech_update']
+  FOREACH t IN ARRAY ARRAY['article_classification', 'eco_project', 'macro_news', 'chain_event', 'tech_update', 'general_post']
   LOOP
     EXECUTE format('DROP TRIGGER IF EXISTS trg_%s_set_updated_at ON content.%I', t, t);
     EXECUTE format(

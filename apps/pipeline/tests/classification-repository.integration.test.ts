@@ -57,6 +57,7 @@ describe.skipIf(!url)('classification-repository (real Postgres)', () => {
     const q = connection.query
     await q('DELETE FROM content.tech_update WHERE article_raw_id = $1', [articleId])
     await q('DELETE FROM content.macro_news WHERE article_raw_id = $1', [articleId])
+    await q('DELETE FROM content.general_post WHERE article_raw_id = $1', [articleId])
     await q('DELETE FROM content.chain_event WHERE event_key = $1', [EVENT_KEY])
     await q('DELETE FROM content.article_classification WHERE article_raw_id = $1', [articleId])
     await q('DELETE FROM content.article_raw WHERE id = $1', [articleId])
@@ -115,6 +116,19 @@ describe.skipIf(!url)('classification-repository (real Postgres)', () => {
     }
     expect(await insertCategoryRecord(connection.query, articleId, tech)).toBe(true)
     expect(await insertCategoryRecord(connection.query, articleId, tech)).toBe(false)
+  })
+
+  it('stores a GENERAL post once per article', async () => {
+    const general: CategoryRecord = {
+      type: 'GENERAL',
+      chain: 'avalanche',
+      title: 'Fuji 테스트넷은 왜 있나',
+      summary: '요약',
+      importance: 2,
+      publishedAt: new Date('2026-10-01T00:00:00Z'),
+    }
+    expect(await insertCategoryRecord(connection.query, articleId, general)).toBe(true)
+    expect(await insertCategoryRecord(connection.query, articleId, general)).toBe(false)
   })
 
   it('merges repeated announcements of one event on event_key', async () => {

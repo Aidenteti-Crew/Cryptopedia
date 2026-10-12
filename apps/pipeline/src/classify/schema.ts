@@ -3,7 +3,13 @@ import { z } from 'zod'
 // Shape the model must return for one article. Values the model gets wrong in a recoverable way
 // (unknown enum value, malformed date) degrade to a safe default or null instead of failing the
 // whole classification, because the rules downstream never accept a guessed date or location.
-export const CLASSIFICATION_CATEGORIES = ['MACRO', 'EVENT', 'TECH_UPDATE', 'OTHER'] as const
+export const CLASSIFICATION_CATEGORIES = [
+  'MACRO',
+  'EVENT',
+  'TECH_UPDATE',
+  'GENERAL',
+  'NOISE',
+] as const
 export const EVENT_CATEGORIES = [
   'COMMUNITY',
   'CONFERENCE',

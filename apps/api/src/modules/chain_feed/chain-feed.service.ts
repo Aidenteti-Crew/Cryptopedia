@@ -43,6 +43,17 @@ interface TechRow {
   source_name: string;
 }
 
+interface GeneralRow {
+  id: string;
+  title: string;
+  summary: string;
+  importance: number | null;
+  published_at: Date;
+  created_at: Date;
+  url: string;
+  source_name: string;
+}
+
 interface ProjectRow {
   id: string;
   external_key: string;
@@ -234,6 +245,51 @@ export class ChainFeedService {
     };
   }
 
+  // Posts the classifier filed as GENERAL: useful but outside the four page categories
+  // (explainers, overviews). NOISE never reaches a table, so there is nothing to filter here.
+  async listGeneral(query: ContentFeedQuery): Promise<ContentFeedResponse> {
+    const bindings: Knex.RawBinding[] = [query.chain];
+    let importance = '';
+    if (query.minImportance !== null) {
+      importance = 'AND g.importance >= ?';
+      bindings.push(query.minImportance);
+    }
+    bindings.push(query.limit);
+    const order =
+      query.sort === 'importance'
+        ? 'g.importance DESC NULLS LAST, g.published_at DESC'
+        : 'g.published_at DESC';
+
+    const result = await this.knex.raw<{ rows: GeneralRow[] }>(
+      `SELECT g.id, g.title, g.summary, g.importance, g.published_at, g.created_at, a.url,
+              s.name AS source_name
+         FROM content.general_post g
+         JOIN content.article_raw a ON a.id = g.article_raw_id
+         JOIN content.source s ON s.id = a.source_id
+        WHERE g.revoked_at IS NULL AND g.chain = ? ${importance}
+        ORDER BY ${order}
+        LIMIT ?`,
+      bindings,
+    );
+    return {
+      items: result.rows.map(
+        (r): ContentFeedItem => ({
+          id: r.id,
+          title: r.title,
+          summary: r.summary,
+          kind: 'ARTICLE',
+          subKind: 'GENERAL',
+          sourceName: r.source_name,
+          sourceUrl: r.url,
+          publishedAt: r.published_at.toISOString(),
+          collectedAt: r.created_at.toISOString(),
+          importance: r.importance,
+        }),
+      ),
+      generatedAt: new Date().toISOString(),
+    };
+  }
+
   private async projectCategories(chain: string): Promise<{
     categories: ProjectCategoryCount[];
     total: number;
@@ -311,7 +367,7 @@ export class ChainFeedService {
       minImportance: null,
       sort: 'latest' as const,
     };
-    const [projects, macro, events, updates] = await Promise.all([
+    const [projects, macro, events, updates, general] = await Promise.all([
       this.projectCategories(chain),
       this.listMacro({ ...top, sort: 'importance' }),
       this.listEvents(
@@ -326,12 +382,14 @@ export class ChainFeedService {
         now,
       ),
       this.listUpdates(top),
+      this.listGeneral(top),
     ]);
     return {
       projects,
       macro: macro.items,
       events: events.items,
       updates: updates.items,
+      general: general.items,
       generatedAt: now.toISOString(),
     };
   }

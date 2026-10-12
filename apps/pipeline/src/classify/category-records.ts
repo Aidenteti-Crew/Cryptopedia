@@ -62,7 +62,16 @@ export interface EventRecord {
   publishedAt: Date
 }
 
-export type CategoryRecord = MacroRecord | TechRecord | EventRecord
+export interface GeneralRecord {
+  type: 'GENERAL'
+  chain: string
+  title: string
+  summary: string
+  importance: number
+  publishedAt: Date
+}
+
+export type CategoryRecord = MacroRecord | TechRecord | EventRecord | GeneralRecord
 
 export interface RecordBuildResult {
   record: CategoryRecord | null
@@ -193,7 +202,19 @@ export function buildCategoryRecord(
       }
     case 'EVENT':
       return buildEvent(article, c, sourceUrl)
-    default:
+    case 'GENERAL':
+      return {
+        record: {
+          type: 'GENERAL',
+          chain: article.chain,
+          title,
+          summary: c.summary_ko,
+          importance: c.importance,
+          publishedAt: article.publishedAt,
+        },
+      }
+    case 'NOISE':
+      // Kept only as the classification record; nothing is shown for it.
       return { record: null }
   }
 }

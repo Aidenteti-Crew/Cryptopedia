@@ -39,7 +39,8 @@ export interface ContentFeedItem {
   id: string;
   title: string;
   summary: string;
-  kind: 'MACRO' | 'UPDATE';
+  // MACRO, UPDATE and ARTICLE are values of the frontend ContentEntry kind enum.
+  kind: 'MACRO' | 'UPDATE' | 'ARTICLE';
   subKind: string;
   sourceName: string;
   sourceUrl: string;
@@ -88,5 +89,6 @@ export interface EcosystemHubResponse {
   macro: ContentFeedItem[];
   events: EventEntry[];
   updates: ContentFeedItem[];
+  general: ContentFeedItem[];
   generatedAt: string;
 }

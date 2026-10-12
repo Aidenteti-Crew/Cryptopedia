@@ -17,7 +17,8 @@ category (pick exactly one):
 - TECH_UPDATE: protocol or software changes: node/client releases, network upgrades (Fuji or Mainnet), ACP proposals and status changes, developer-facing technical announcements.
 - EVENT: an announcement, invitation, schedule or recap about one specific gathering: summit, conference, meetup, hackathon, trading competition, AMA, workshop.
 - MACRO: ecosystem and market news: partnerships and collaborations, integrations going live, institutional adoption, volume/TVL/price statistics, funding, regulation.
-- OTHER: generic marketing, greetings, memes, or posts with no concrete information.
+- GENERAL: useful information that fits none of the above: explainers and educational posts, ecosystem overviews, analyses, guides, opinion pieces with concrete content.
+- NOISE: no information worth keeping: greetings ("gm"), memes, engagement bait, slogans or hype, promotion with no concrete facts. Use NOISE only when a reader would learn nothing; when in doubt prefer GENERAL.
 
 importance (integer 1-5) for someone following the Avalanche ecosystem:
 5 = mainnet-impacting upgrade or activation, security incident or critical fix, major institutional or partner announcement with concrete figures

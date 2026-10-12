@@ -151,10 +151,27 @@ describe('buildCategoryRecord: other categories', () => {
     })
   })
 
-  it('produces no row for OTHER', () => {
-    const result = buildCategoryRecord(article, classification({ category: 'OTHER' }), 'u')
+  it('stores GENERAL posts and drops NOISE', () => {
+    const general = buildCategoryRecord(
+      article,
+      classification({ category: 'GENERAL', title_ko: 'Fuji 테스트넷은 왜 있나' }),
+      'u'
+    )
+    expect(general.record).toMatchObject({
+      type: 'GENERAL',
+      chain: 'avalanche',
+      title: 'Fuji 테스트넷은 왜 있나',
+      summary: '요약',
+      importance: 3,
+    })
 
-    expect(result).toEqual({ record: null })
+    expect(buildCategoryRecord(article, classification({ category: 'NOISE' }), 'u')).toEqual({
+      record: null,
+    })
+  })
+
+  it('rejects the retired OTHER category', () => {
+    expect(() => classification({ category: 'OTHER' })).toThrow()
   })
 
   it('stamps every row with the source chain', () => {

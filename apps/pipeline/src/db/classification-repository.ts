@@ -3,6 +3,7 @@ import { v7 as uuidv7 } from 'uuid'
 import type {
   CategoryRecord,
   EventRecord,
+  GeneralRecord,
   MacroRecord,
   TechRecord,
 } from '../classify/category-records.js'
@@ -201,6 +202,21 @@ async function insertEvent(query: QueryFn, articleId: string, r: EventRecord): P
   return (result.rowCount ?? 0) > 0
 }
 
+async function insertGeneral(
+  query: QueryFn,
+  articleId: string,
+  r: GeneralRecord
+): Promise<boolean> {
+  const result = await query(
+    `INSERT INTO content.general_post
+       (id, article_raw_id, chain, title, summary, importance, published_at)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)
+     ON CONFLICT (article_raw_id) WHERE (revoked_at IS NULL) DO NOTHING`,
+    [uuidv7(), articleId, r.chain, r.title, r.summary, r.importance, r.publishedAt]
+  )
+  return (result.rowCount ?? 0) > 0
+}
+
 // Returns false when the row already existed (idempotent re-run or a duplicate event).
 export async function insertCategoryRecord(
   query: QueryFn,
@@ -214,5 +230,7 @@ export async function insertCategoryRecord(
       return insertTech(query, articleId, record)
     case 'EVENT':
       return insertEvent(query, articleId, record)
+    case 'GENERAL':
+      return insertGeneral(query, articleId, record)
   }
 }

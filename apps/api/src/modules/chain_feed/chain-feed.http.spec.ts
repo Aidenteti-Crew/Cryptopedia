@@ -181,6 +181,7 @@ maybe('chain feed HTTP contract (real Postgres)', () => {
   it('serves macro, updates and the combined hub', async () => {
     for (const path of [
       '/ecosystem/macro?limit=3',
+      '/ecosystem/general?limit=3',
       '/ecosystem/updates?limit=3&sort=importance',
     ]) {
       const res = await request(app.getHttpServer()).get(path).expect(200);
@@ -193,6 +194,7 @@ maybe('chain feed HTTP contract (real Postgres)', () => {
       .expect(200);
     expect(Object.keys(hub.body).sort()).toEqual([
       'events',
+      'general',
       'generatedAt',
       'macro',
       'projects',

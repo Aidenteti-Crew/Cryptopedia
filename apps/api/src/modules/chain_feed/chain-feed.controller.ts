@@ -54,7 +54,7 @@ export class EcosystemController {
   @Get()
   @ApiOperation({
     summary:
-      '생태계·매크로 한 페이지용: 프로젝트 요약 + 매크로 + 예정 행사 + 기술 업데이트',
+      '생태계·매크로 한 페이지용: 프로젝트 요약 + 매크로 + 예정 행사 + 기술 업데이트 + 기타 정보',
   })
   async hub(
     @Query() query: Record<string, unknown>,
@@ -87,6 +87,21 @@ export class EcosystemController {
   ): Promise<ContentFeedResponse> {
     try {
       return await this.feed.listMacro(parseContentFeedQuery(query));
+    } catch (error) {
+      return badRequest('INVALID_FEED_QUERY', error);
+    }
+  }
+
+  @Get('general')
+  @ApiOperation({
+    summary:
+      '기타 정보: 네 분류에 안 맞는 교육·해설 글 (limit, minImportance, sort)',
+  })
+  async general(
+    @Query() query: Record<string, unknown>,
+  ): Promise<ContentFeedResponse> {
+    try {
+      return await this.feed.listGeneral(parseContentFeedQuery(query));
     } catch (error) {
       return badRequest('INVALID_FEED_QUERY', error);
     }

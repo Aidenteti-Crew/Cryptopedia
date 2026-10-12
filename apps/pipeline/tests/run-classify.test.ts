@@ -54,7 +54,7 @@ const tech = JSON.stringify({
   summary_ko: '요약',
   tech: { network: 'MAINNET', version: 'v1' },
 })
-const other = JSON.stringify({ category: 'OTHER', importance: 1, summary_ko: '인사' })
+const other = JSON.stringify({ category: 'NOISE', importance: 1, summary_ko: '인사' })
 const undatedEvent = JSON.stringify({
   category: 'EVENT',
   importance: 3,
@@ -97,7 +97,7 @@ describe('runClassify', () => {
       processed: 3,
       succeeded: 3,
       failed: 0,
-      byCategory: { TECH_UPDATE: 1, OTHER: 1, EVENT: 1 },
+      byCategory: { TECH_UPDATE: 1, NOISE: 1, EVENT: 1 },
       inserted: { TECH_UPDATE: 1 },
       skipped: { 'event start date not confirmed': 1 },
     })
