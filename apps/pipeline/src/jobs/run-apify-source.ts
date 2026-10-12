@@ -48,6 +48,7 @@ export async function runApifySource(
     const validArticles = result.articles.filter((article) => {
       const errors = validateArticle(article, {
         minBodyLength: source.minBodyLength,
+        excludeTitlePatterns: source.excludeTitlePatterns,
         recencyWindowDays: source.recencyWindowDays,
       })
       if (errors.length > 0) skippedInvalid++

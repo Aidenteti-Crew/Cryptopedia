@@ -5,6 +5,11 @@ sources:
     adapter: 'ATOM'
     content_kind: 'RELEASE'
     authority: 'OFFICIAL'
+    # graft/* tags (graft/coreth/v1.x, graft/evm/v1.x, graft/subnet-evm/v1.x) are version tags of
+    # code being merged into this repo. They have no release notes and duplicate the real releases
+    # (Coreth and Subnet-EVM are collected from their own repos).
+    exclude_title_patterns:
+      - '^graft/'
     recency_window_days: 7
     consecutive_failures_threshold: 3
 

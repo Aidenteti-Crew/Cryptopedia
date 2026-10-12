@@ -67,6 +67,7 @@ export interface SourceConfig {
   authority: SourceAuthority
   enabled: boolean
   minBodyLength?: number
+  excludeTitlePatterns?: string[]
   recencyWindowDays?: number
   consecutiveFailuresThreshold: number
   github?: GithubMarkdownLocation
@@ -83,6 +84,21 @@ const SourceEntrySchema = z
     authority: z.enum(SOURCE_AUTHORITIES),
     enabled: z.boolean().default(true),
     min_body_length: z.number().int().nonnegative().optional(),
+    exclude_title_patterns: z
+      .array(
+        z.string().refine(
+          (pattern) => {
+            try {
+              new RegExp(pattern)
+              return true
+            } catch {
+              return false
+            }
+          },
+          { message: 'must be a valid regular expression' }
+        )
+      )
+      .optional(),
     recency_window_days: z.number().int().positive().optional(),
     consecutive_failures_threshold: z.number().int().positive().default(3),
     github: z
@@ -136,6 +152,7 @@ function toSourceConfig(raw: z.infer<typeof SourceEntrySchema>): SourceConfig {
     authority: raw.authority,
     enabled: raw.enabled,
     minBodyLength: raw.min_body_length,
+    excludeTitlePatterns: raw.exclude_title_patterns,
     recencyWindowDays: raw.recency_window_days,
     consecutiveFailuresThreshold: raw.consecutive_failures_threshold,
     github: raw.github,

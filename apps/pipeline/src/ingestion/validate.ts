@@ -2,6 +2,8 @@ import type { NormalizedArticle } from './contracts.js'
 
 export interface ValidationOptions {
   minBodyLength?: number
+  // Titles matching any of these regular expressions are dropped (e.g. internal tags in a feed).
+  excludeTitlePatterns?: string[]
   now?: Date
   recencyWindowDays?: number
 }
@@ -15,6 +17,9 @@ export function validateArticle(
 
   if (!article.title.trim()) errors.push('EMPTY_TITLE')
   if (article.body.length < minBodyLength) errors.push('SHORT_CONTENT')
+  if (options.excludeTitlePatterns?.some((pattern) => new RegExp(pattern).test(article.title))) {
+    errors.push('EXCLUDED_TITLE')
+  }
 
   try {
     const url = new URL(article.url)

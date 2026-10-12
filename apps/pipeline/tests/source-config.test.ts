@@ -76,4 +76,23 @@ sources:
       includeRetweets: false,
     })
   })
+
+  it('parses exclude_title_patterns and rejects an invalid regular expression', () => {
+    const base = `
+sources:
+  - url: https://example.com/releases.atom
+    source_name: Example
+    source_type: RSS
+    adapter: ATOM
+    content_kind: RELEASE
+    authority: OFFICIAL
+    exclude_title_patterns:
+`
+    const [source] = parseSourceConfig(`${base}      - '^graft/'\n`)
+    expect(source?.excludeTitlePatterns).toEqual(['^graft/'])
+
+    expect(() => parseSourceConfig(`${base}      - '([unclosed'\n`)).toThrow(
+      'valid regular expression'
+    )
+  })
 })

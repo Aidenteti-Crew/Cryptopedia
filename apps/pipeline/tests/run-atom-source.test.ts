@@ -163,4 +163,38 @@ describe('runAtomSource', () => {
     expect(newsCollectorResult.created).toBe(false)
     expect(db.articles).toHaveLength(1)
   })
+
+  it('drops entries whose title matches exclude_title_patterns and still stores the rest', async () => {
+    const db = new FakeContentDb()
+    const xml = feedXml([
+      {
+        id: 'a',
+        title: 'v1.15.1',
+        url: 'https://github.com/o/r/releases/tag/v1.15.1',
+        published: '2026-10-01T00:00:00Z',
+      },
+      {
+        id: 'b',
+        title: 'graft/coreth/v1.15.1',
+        url: 'https://github.com/o/r/releases/tag/graft/coreth/v1.15.1',
+        published: '2026-10-01T00:00:00Z',
+      },
+      {
+        id: 'c',
+        title: 'graft/evm/v1.15.1',
+        url: 'https://github.com/o/r/releases/tag/graft/evm/v1.15.1',
+        published: '2026-10-01T00:00:00Z',
+      },
+    ])
+    const adapter = new AtomAdapter(async () => jsonResponse(xml))
+
+    const result = await runAtomSource(
+      db.query,
+      { ...source, excludeTitlePatterns: ['^graft/'] },
+      { adapter }
+    )
+
+    expect(result).toMatchObject({ status: 'SUCCESS', inserted: 1, skippedInvalid: 2 })
+    expect(db.articles.map((a) => a.title)).toEqual(['v1.15.1'])
+  })
 })

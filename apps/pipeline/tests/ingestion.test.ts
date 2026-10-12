@@ -35,4 +35,17 @@ describe('shared ingestion contract', () => {
       })
     ).toEqual([])
   })
+
+  it('excludes titles matching a configured pattern, and only those', () => {
+    const options = { excludeTitlePatterns: ['^graft/', 'nightly'] }
+
+    expect(validateArticle({ ...article, title: 'graft/coreth/v1.15.1' }, options)).toEqual([
+      'EXCLUDED_TITLE',
+    ])
+    expect(validateArticle({ ...article, title: 'v1.15.1-nightly' }, options)).toEqual([
+      'EXCLUDED_TITLE',
+    ])
+    // The pattern is anchored: a title that merely contains "graft" is kept.
+    expect(validateArticle({ ...article, title: 'Helicon (graft support)' }, options)).toEqual([])
+  })
 })
