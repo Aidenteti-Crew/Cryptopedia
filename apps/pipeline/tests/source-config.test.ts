@@ -116,4 +116,24 @@ ${chainLine}
     expect(() => parseSourceConfig(entry('    chain: Avalanche'))).toThrow('lowercase identifier')
     expect(parseSourceConfig(entry('    chain: avalanche'))[0]?.chain).toBe('avalanche')
   })
+
+  it('requires a luma calendar id for the LUMA_ICS adapter', () => {
+    const base = `
+sources:
+  - url: https://luma.com/Team1KOR
+    chain: avalanche
+    source_name: Luma
+    source_type: WEBSITE
+    adapter: LUMA_ICS
+    content_kind: EVENT
+    authority: OFFICIAL_COMMUNITY
+`
+    expect(() => parseSourceConfig(base)).toThrow('luma {calendar_id}')
+    expect(() => parseSourceConfig(`${base}    luma:\n      calendar_id: not-a-cal\n`)).toThrow()
+    expect(
+      parseSourceConfig(`${base}    luma:\n      calendar_id: cal-pE5SNzqEFCTNpRU\n`)[0]?.luma
+    ).toEqual({
+      calendarId: 'cal-pE5SNzqEFCTNpRU',
+    })
+  })
 })

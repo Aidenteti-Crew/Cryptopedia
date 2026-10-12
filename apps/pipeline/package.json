@@ -10,6 +10,8 @@
     "classify": "node dist/src/bin/classify.js"
   },
   "dependencies": {
+    "@photostructure/tz-lookup": "11.7.0",
+    "@rapideditor/country-coder": "5.6.1",
     "dotenv": "^16.4.5",
     "fast-xml-parser": "^5.5.8",
     "js-yaml": "^4.1.1",

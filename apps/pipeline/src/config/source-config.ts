@@ -21,6 +21,7 @@ export const SOURCE_ADAPTERS = [
   'GITHUB_MARKDOWN',
   'GITHUB_DIRECTORY',
   'APIFY',
+  'LUMA_ICS',
   'DISCOURSE_API',
   'CRAWL4AI',
   'X_API',
@@ -36,6 +37,7 @@ export const CONTENT_KINDS = [
   'SOCIAL',
   'DOCUMENTATION',
   'PROJECT',
+  'EVENT',
 ] as const
 
 export const SOURCE_AUTHORITIES = ['OFFICIAL', 'OFFICIAL_COMMUNITY', 'THIRD_PARTY'] as const
@@ -58,6 +60,10 @@ export interface ApifyLocation {
   includeRetweets: boolean
 }
 
+export interface LumaLocation {
+  calendarId: string
+}
+
 export interface SourceConfig {
   url: string
   // Which chain's ecosystem the source belongs to (e.g. avalanche). Stored on every derived row.
@@ -74,6 +80,7 @@ export interface SourceConfig {
   consecutiveFailuresThreshold: number
   github?: GithubMarkdownLocation
   apify?: ApifyLocation
+  luma?: LumaLocation
 }
 
 const SourceEntrySchema = z
@@ -113,6 +120,7 @@ const SourceEntrySchema = z
         path: z.string().min(1),
       })
       .optional(),
+    luma: z.object({ calendar_id: z.string().regex(/^cal-[A-Za-z0-9]+$/) }).optional(),
     apify: z
       .object({
         actor: z.string().min(1),
@@ -131,6 +139,13 @@ const SourceEntrySchema = z
         path: ['github'],
         message:
           'github {owner, repo, branch, path} is required for adapters GITHUB_MARKDOWN and GITHUB_DIRECTORY',
+      })
+    }
+    if (entry.adapter === 'LUMA_ICS' && !entry.luma) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['luma'],
+        message: 'luma {calendar_id} is required for adapter LUMA_ICS',
       })
     }
     if (entry.adapter === 'APIFY' && !entry.apify) {
@@ -161,6 +176,7 @@ function toSourceConfig(raw: z.infer<typeof SourceEntrySchema>): SourceConfig {
     recencyWindowDays: raw.recency_window_days,
     consecutiveFailuresThreshold: raw.consecutive_failures_threshold,
     github: raw.github,
+    luma: raw.luma && { calendarId: raw.luma.calendar_id },
     apify: raw.apify && {
       actor: raw.apify.actor,
       input: raw.apify.input,

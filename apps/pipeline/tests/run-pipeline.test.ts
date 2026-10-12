@@ -110,6 +110,23 @@ describe('runPipeline', () => {
     expect(summaries[0]).toMatchObject({ adapter: 'GITHUB_MARKDOWN', status: 'SUCCESS' })
   })
 
+  it('dispatches LUMA_ICS sources to the luma runner', async () => {
+    const db = new FakeContentDb()
+    const lumaRunner = vi.fn().mockResolvedValue({
+      status: 'SUCCESS',
+      sourceId: 's6',
+      inserted: 3,
+      updated: 0,
+      skipped: {},
+    })
+    const calendarSource = source({ sourceName: 'Luma', adapter: 'LUMA_ICS' })
+
+    const summaries = await runPipeline(db.query, [calendarSource], { runLumaSource: lumaRunner })
+
+    expect(lumaRunner).toHaveBeenCalledWith(db.query, calendarSource)
+    expect(summaries[0]).toMatchObject({ adapter: 'LUMA_ICS', status: 'SUCCESS' })
+  })
+
   it('dispatches APIFY sources to the apify runner', async () => {
     const db = new FakeContentDb()
     const apifyRunner = vi.fn().mockResolvedValue({

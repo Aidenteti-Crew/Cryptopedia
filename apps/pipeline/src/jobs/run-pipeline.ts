@@ -2,6 +2,7 @@ import type { SourceAdapter, SourceConfig } from '../config/source-config.js'
 import type { QueryFn } from '../db/query.js'
 import { runAcpSource, type RunAcpSourceResult } from './run-acp-source.js'
 import { runApifySource, type RunApifySourceResult } from './run-apify-source.js'
+import { runLumaSource, type RunLumaSourceResult } from './run-luma-source.js'
 import { runEcoProjectSource, type RunEcoProjectSourceResult } from './run-eco-project-source.js'
 import { runAtomSource, type RunAtomSourceResult } from './run-atom-source.js'
 import {
@@ -22,6 +23,7 @@ export interface PipelineSourceSummary {
     | RunXSourceResult
     | RunGithubMarkdownSourceResult
     | RunApifySourceResult
+    | RunLumaSourceResult
     | RunEcoProjectSourceResult
   error?: string
 }
@@ -32,6 +34,7 @@ export interface RunPipelineDeps {
   runXSource?: typeof runXSource
   runGithubMarkdownSource?: typeof runGithubMarkdownSource
   runApifySource?: typeof runApifySource
+  runLumaSource?: typeof runLumaSource
   runEcoProjectSource?: typeof runEcoProjectSource
 }
 
@@ -48,6 +51,7 @@ export async function runPipeline(
   const xRunner = deps.runXSource ?? runXSource
   const markdownRunner = deps.runGithubMarkdownSource ?? runGithubMarkdownSource
   const apifyRunner = deps.runApifySource ?? runApifySource
+  const lumaRunner = deps.runLumaSource ?? runLumaSource
   const ecoProjectRunner = deps.runEcoProjectSource ?? runEcoProjectSource
   const summaries: PipelineSourceSummary[] = []
 
@@ -91,6 +95,16 @@ export async function runPipeline(
         }
         case 'GITHUB_DIRECTORY': {
           const result = await ecoProjectRunner(query, source)
+          summaries.push({
+            sourceName: source.sourceName,
+            adapter: source.adapter,
+            status: result.status,
+            detail: result,
+          })
+          break
+        }
+        case 'LUMA_ICS': {
+          const result = await lumaRunner(query, source)
           summaries.push({
             sourceName: source.sourceName,
             adapter: source.adapter,

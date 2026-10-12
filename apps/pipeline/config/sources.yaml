@@ -110,3 +110,85 @@ sources:
         maxItems: 20
     min_body_length: 40
     enabled: false # Apify free plan is limited to 5 runs/month for this actor; enable after upgrading or switching to the X API
+
+  # Team1 event calendars on Luma (public iCalendar export). Events go straight to
+  # content.chain_event; regional calendars mostly hold events the global one does not.
+  - url: 'https://luma.com/Team1'
+    chain: 'avalanche'
+    source_name: 'Luma: Team1 Global Events'
+    source_type: 'WEBSITE'
+    adapter: 'LUMA_ICS'
+    content_kind: 'EVENT'
+    authority: 'OFFICIAL_COMMUNITY'
+    luma:
+      calendar_id: 'cal-HKsZ9ey1Sj9gYEz'
+
+  - url: 'https://luma.com/Team1KOR'
+    chain: 'avalanche'
+    source_name: 'Luma: Team1 Korea'
+    source_type: 'WEBSITE'
+    adapter: 'LUMA_ICS'
+    content_kind: 'EVENT'
+    authority: 'OFFICIAL_COMMUNITY'
+    luma:
+      calendar_id: 'cal-pE5SNzqEFCTNpRU'
+
+  - url: 'https://luma.com/Team1India'
+    chain: 'avalanche'
+    source_name: 'Luma: Team1 India'
+    source_type: 'WEBSITE'
+    adapter: 'LUMA_ICS'
+    content_kind: 'EVENT'
+    authority: 'OFFICIAL_COMMUNITY'
+    luma:
+      calendar_id: 'cal-K1Q62e5PBWEwoJ5'
+
+  - url: 'https://luma.com/Team1VN'
+    chain: 'avalanche'
+    source_name: 'Luma: Team1 Vietnam'
+    source_type: 'WEBSITE'
+    adapter: 'LUMA_ICS'
+    content_kind: 'EVENT'
+    authority: 'OFFICIAL_COMMUNITY'
+    luma:
+      calendar_id: 'cal-MWTdBWMK6km8AMH'
+
+  - url: 'https://luma.com/Team1France'
+    chain: 'avalanche'
+    source_name: 'Luma: Team1 France'
+    source_type: 'WEBSITE'
+    adapter: 'LUMA_ICS'
+    content_kind: 'EVENT'
+    authority: 'OFFICIAL_COMMUNITY'
+    luma:
+      calendar_id: 'cal-VLGjrTcGskE7GnI'
+
+  - url: 'https://luma.com/team1th'
+    chain: 'avalanche'
+    source_name: 'Luma: Team1 Thailand'
+    source_type: 'WEBSITE'
+    adapter: 'LUMA_ICS'
+    content_kind: 'EVENT'
+    authority: 'OFFICIAL_COMMUNITY'
+    luma:
+      calendar_id: 'cal-jlry3qvP8VGtM2E'
+
+  - url: 'https://luma.com/Team1Africa'
+    chain: 'avalanche'
+    source_name: 'Luma: Team1 Africa'
+    source_type: 'WEBSITE'
+    adapter: 'LUMA_ICS'
+    content_kind: 'EVENT'
+    authority: 'OFFICIAL_COMMUNITY'
+    luma:
+      calendar_id: 'cal-LgF4fRCDgBrI9G3'
+
+  - url: 'https://luma.com/Team1Turkiye'
+    chain: 'avalanche'
+    source_name: 'Luma: Team1 Turkiye'
+    source_type: 'WEBSITE'
+    adapter: 'LUMA_ICS'
+    content_kind: 'EVENT'
+    authority: 'OFFICIAL_COMMUNITY'
+    luma:
+      calendar_id: 'cal-5x1GA3vKpLS1cRG'
