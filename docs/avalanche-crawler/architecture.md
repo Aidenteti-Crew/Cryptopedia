@@ -28,7 +28,7 @@
 
 ```text
 python_services/packages/browser-agent/
-├── packages/pipeline/
+├── apps/pipeline/
 │   ├── config/sources.yaml
 │   └── src/
 │       ├── config/source-config.ts

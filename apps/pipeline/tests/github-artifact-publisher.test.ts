@@ -46,7 +46,7 @@ describe('GitHubArtifactPublisher', () => {
       body: 'Review extraction spec',
     })
     expect(result.branch).toBe('feat/crawler/builder-hub/gen-123')
-    expect(result.artifactPath).toBe('packages/pipeline/config/generated/builder-hub/gen-123.json')
+    expect(result.artifactPath).toBe('apps/pipeline/config/generated/builder-hub/gen-123.json')
     expect(calls.some((call) => call.method === 'DELETE')).toBe(false)
     expect(calls.some((call) => call.url.includes('/pulls?'))).toBe(false)
   })
@@ -63,7 +63,7 @@ describe('GitHubArtifactPublisher', () => {
     })
     const merged = await publisher(fetchFn).readMergedArtifact(
       7,
-      'packages/pipeline/config/generated/builder-hub/gen-123.json'
+      'apps/pipeline/config/generated/builder-hub/gen-123.json'
     )
     expect(merged?.content).toBe(artifact)
     expect(merged?.artifactHash).toMatch(/^[a-f0-9]{64}$/)

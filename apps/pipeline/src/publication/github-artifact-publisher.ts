@@ -43,7 +43,7 @@ export class GitHubArtifactPublisher {
     const safeGeneration = input.generationId.toLowerCase().replace(/[^a-z0-9-]+/g, '-')
     if (!safeSlug || !safeGeneration) throw new Error('Invalid source slug or generation ID')
     const branch = `feat/crawler/${safeSlug}/${safeGeneration}`
-    const artifactPath = `packages/pipeline/config/generated/${safeSlug}/${safeGeneration}.json`
+    const artifactPath = `apps/pipeline/config/generated/${safeSlug}/${safeGeneration}.json`
 
     const base = await this.json<{ commit: { sha: string } }>(
       await this.request(
@@ -87,7 +87,7 @@ export class GitHubArtifactPublisher {
     artifactPath: string
   ): Promise<MergedArtifact | undefined> {
     if (
-      !artifactPath.startsWith('packages/pipeline/config/generated/') ||
+      !artifactPath.startsWith('apps/pipeline/config/generated/') ||
       !artifactPath.endsWith('.json')
     ) {
       throw new Error(`Artifact path is outside the generated-spec allowlist: ${artifactPath}`)

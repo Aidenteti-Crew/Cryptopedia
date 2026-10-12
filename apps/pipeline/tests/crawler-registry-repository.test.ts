@@ -22,7 +22,7 @@ describe('crawler registry repository', () => {
     await createPendingRegistry(query, {
       sourceId: 'source-1',
       generationId: '00000000-0000-7000-8000-000000000001',
-      artifactPath: 'packages/pipeline/config/generated/builder/gen.json',
+      artifactPath: 'apps/pipeline/config/generated/builder/gen.json',
       artifactContent: artifact,
       prNumber: 7,
       prUrl: 'https://github.test/pr/7',

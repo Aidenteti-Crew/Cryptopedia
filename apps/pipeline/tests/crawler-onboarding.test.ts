@@ -46,7 +46,7 @@ describe('crawler onboarding', () => {
         prNumber: 7,
         prUrl: 'https://github.test/pr/7',
         branch: 'feat/crawler/avalanche-builder-hub-blog/gen-1',
-        artifactPath: 'packages/pipeline/config/generated/avalanche-builder-hub-blog/gen-1.json',
+        artifactPath: 'apps/pipeline/config/generated/avalanche-builder-hub-blog/gen-1.json',
         artifactHash: 'a'.repeat(64),
       })),
     } as unknown as GitHubArtifactPublisher
@@ -81,7 +81,7 @@ describe('crawler onboarding', () => {
       registryId: 'registry-1',
       sourceId: 'source-1',
       prNumber: 7,
-      artifactPath: 'packages/pipeline/config/generated/builder/gen.json',
+      artifactPath: 'apps/pipeline/config/generated/builder/gen.json',
     })
     expect(result).toEqual({ activated: true, artifactHash: 'b'.repeat(64) })
     expect(query).toHaveBeenCalledOnce()
