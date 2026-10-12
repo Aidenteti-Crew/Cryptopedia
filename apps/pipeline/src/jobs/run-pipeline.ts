@@ -2,6 +2,7 @@ import type { SourceAdapter, SourceConfig } from '../config/source-config.js'
 import type { QueryFn } from '../db/query.js'
 import { runAcpSource, type RunAcpSourceResult } from './run-acp-source.js'
 import { runApifySource, type RunApifySourceResult } from './run-apify-source.js'
+import { runEcoProjectSource, type RunEcoProjectSourceResult } from './run-eco-project-source.js'
 import { runAtomSource, type RunAtomSourceResult } from './run-atom-source.js'
 import {
   runGithubMarkdownSource,
@@ -21,6 +22,7 @@ export interface PipelineSourceSummary {
     | RunXSourceResult
     | RunGithubMarkdownSourceResult
     | RunApifySourceResult
+    | RunEcoProjectSourceResult
   error?: string
 }
 
@@ -30,6 +32,7 @@ export interface RunPipelineDeps {
   runXSource?: typeof runXSource
   runGithubMarkdownSource?: typeof runGithubMarkdownSource
   runApifySource?: typeof runApifySource
+  runEcoProjectSource?: typeof runEcoProjectSource
 }
 
 // Adapters with a wired runner in this switch. Adapters listed in SOURCE_ADAPTERS but not here
@@ -45,6 +48,7 @@ export async function runPipeline(
   const xRunner = deps.runXSource ?? runXSource
   const markdownRunner = deps.runGithubMarkdownSource ?? runGithubMarkdownSource
   const apifyRunner = deps.runApifySource ?? runApifySource
+  const ecoProjectRunner = deps.runEcoProjectSource ?? runEcoProjectSource
   const summaries: PipelineSourceSummary[] = []
 
   for (const source of sources) {
@@ -77,6 +81,16 @@ export async function runPipeline(
         }
         case 'GITHUB_MARKDOWN': {
           const result = await markdownRunner(query, source)
+          summaries.push({
+            sourceName: source.sourceName,
+            adapter: source.adapter,
+            status: result.status,
+            detail: result,
+          })
+          break
+        }
+        case 'GITHUB_DIRECTORY': {
+          const result = await ecoProjectRunner(query, source)
           summaries.push({
             sourceName: source.sourceName,
             adapter: source.adapter,

@@ -44,6 +44,7 @@ interface ArticleRow {
 export class FakeContentDb {
   readonly sources: SourceRow[] = []
   readonly articles: ArticleRow[] = []
+  readonly ecoProjects: { external_key: string; name: string; revoked_at: string | null }[] = []
 
   query: QueryFn = async (sql, params) => {
     const normalized = sql.replace(/\s+/g, ' ').trim()
@@ -148,6 +149,29 @@ export class FakeContentDb {
         content_raw: contentRaw,
       })
       return { rows: [], rowCount: 1 }
+    }
+
+    if (normalized.startsWith('INSERT INTO content.eco_project')) {
+      const [, externalKey, name] = params as [string, string, string]
+      const existing = this.ecoProjects.find((p) => p.external_key === externalKey && !p.revoked_at)
+      if (existing) {
+        existing.name = name
+        return { rows: [{ inserted: false }], rowCount: 1 }
+      }
+      this.ecoProjects.push({ external_key: externalKey, name, revoked_at: null })
+      return { rows: [{ inserted: true }], rowCount: 1 }
+    }
+
+    if (normalized.startsWith('UPDATE content.eco_project SET revoked_at')) {
+      const [keys] = params as [string[]]
+      let count = 0
+      for (const project of this.ecoProjects) {
+        if (keys.includes(project.external_key) && !project.revoked_at) {
+          project.revoked_at = new Date().toISOString()
+          count++
+        }
+      }
+      return { rows: [], rowCount: count }
     }
 
     throw new Error(`FakeContentDb: unrecognized query: ${normalized}`)

@@ -39,22 +39,37 @@ function frontmatterDate(value: unknown): string | undefined {
   return date && !Number.isNaN(date.getTime()) ? date.toISOString() : undefined
 }
 
+// Splits "---\nyaml\n---\nbody" into parsed frontmatter and body. Shared by blog posts (this
+// file) and the project directory adapter, whose entries have no date.
+export function parseFrontmatter(source: string): {
+  meta: Record<string, unknown>
+  content: string
+} {
+  const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/)
+  if (!match) throw new Error('missing YAML frontmatter')
+  const meta = load(match[1] ?? '')
+  return {
+    meta: meta && typeof meta === 'object' ? (meta as Record<string, unknown>) : {},
+    content: match[2] ?? '',
+  }
+}
+
+export { frontmatterText }
+
 // Posts live as MDX with YAML frontmatter (title, description, date, authors, topics). The MDX
 // body also carries JSX import lines for site components, which are noise as plain text.
 export function parseMarkdownPost(source: string): ParsedMarkdownPost {
-  const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/)
-  if (!match) throw new Error('missing YAML frontmatter')
-  const meta = load(match[1] ?? '') as Record<string, unknown> | null
-  const title = frontmatterText(meta?.title)
-  const publishedAt = frontmatterDate(meta?.date)
+  const { meta, content: rawContent } = parseFrontmatter(source)
+  const title = frontmatterText(meta.title)
+  const publishedAt = frontmatterDate(meta.date)
   if (!title) throw new Error('frontmatter is missing title')
   if (!publishedAt) throw new Error('frontmatter is missing a valid date')
 
-  const authors = Array.isArray(meta?.authors)
+  const authors = Array.isArray(meta.authors)
     ? meta.authors.filter((a): a is string => typeof a === 'string').join(', ')
-    : (frontmatterText(meta?.authors) ?? '')
-  const description = frontmatterText(meta?.description) ?? ''
-  const content = (match[2] ?? '')
+    : (frontmatterText(meta.authors) ?? '')
+  const description = frontmatterText(meta.description) ?? ''
+  const content = rawContent
     .split('\n')
     .filter((line) => !/^import\s/.test(line))
     .join('\n')

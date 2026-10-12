@@ -19,6 +19,7 @@ export const SOURCE_ADAPTERS = [
   'ATOM',
   'GITHUB_API',
   'GITHUB_MARKDOWN',
+  'GITHUB_DIRECTORY',
   'APIFY',
   'DISCOURSE_API',
   'CRAWL4AI',
@@ -34,6 +35,7 @@ export const CONTENT_KINDS = [
   'NEWSLETTER',
   'SOCIAL',
   'DOCUMENTATION',
+  'PROJECT',
 ] as const
 
 export const SOURCE_AUTHORITIES = ['OFFICIAL', 'OFFICIAL_COMMUNITY', 'THIRD_PARTY'] as const
@@ -100,11 +102,15 @@ const SourceEntrySchema = z
       .optional(),
   })
   .superRefine((entry, ctx) => {
-    if (entry.adapter === 'GITHUB_MARKDOWN' && !entry.github) {
+    if (
+      (entry.adapter === 'GITHUB_MARKDOWN' || entry.adapter === 'GITHUB_DIRECTORY') &&
+      !entry.github
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['github'],
-        message: 'github {owner, repo, branch, path} is required for adapter GITHUB_MARKDOWN',
+        message:
+          'github {owner, repo, branch, path} is required for adapters GITHUB_MARKDOWN and GITHUB_DIRECTORY',
       })
     }
     if (entry.adapter === 'APIFY' && !entry.apify) {
