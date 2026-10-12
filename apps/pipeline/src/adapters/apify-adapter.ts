@@ -44,6 +44,9 @@ function toArticle(
   if (!item.url || !item.text || !publishedAt || Number.isNaN(publishedAt.getTime()))
     return undefined
   const text = decodeEntities(item.text).trim()
+  // Posts with no letter or digit at all (emoji only) carry nothing to classify. Anything else,
+  // however short, goes to the classifier, which files contentless posts as NOISE.
+  if (!/[\p{L}\p{N}]/u.test(text)) return undefined
   const username = new URL(item.url).pathname.split('/').filter(Boolean)[0]
   return {
     sourceUrl: source.url,
@@ -104,7 +107,10 @@ export class ApifyAdapter {
       if (isRetweet && !source.apify.includeRetweets) continue
       const article = toArticle(source, item, id.toString())
       if (article) articles.push(article)
-      else console.warn(`[apify] skipping tweet ${id}: missing url, text, or valid createdAt`)
+      else
+        console.warn(
+          `[apify] skipping tweet ${id}: no url, no letters or digits, or no valid createdAt`
+        )
     }
 
     if (!hasNew) return { status: 'NOT_MODIFIED', articles: [], cursor }

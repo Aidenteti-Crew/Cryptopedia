@@ -78,7 +78,6 @@ sources:
       input:
         startUrls: ['https://x.com/avax']
         maxItems: 20
-    min_body_length: 40
     enabled: false # Apify free plan is limited to 5 runs/month for this actor; enable after upgrading or switching to the X API
 
   - url: 'https://x.com/Team1KOR'
@@ -93,7 +92,6 @@ sources:
       input:
         startUrls: ['https://x.com/Team1KOR']
         maxItems: 20
-    min_body_length: 40
     enabled: false # Apify free plan is limited to 5 runs/month for this actor; enable after upgrading or switching to the X API
 
   - url: 'https://x.com/AvaxTeam1'
@@ -108,7 +106,6 @@ sources:
       input:
         startUrls: ['https://x.com/AvaxTeam1']
         maxItems: 20
-    min_body_length: 40
     enabled: false # Apify free plan is limited to 5 runs/month for this actor; enable after upgrading or switching to the X API
 
   # Team1 event calendars on Luma (public iCalendar export). Events go straight to

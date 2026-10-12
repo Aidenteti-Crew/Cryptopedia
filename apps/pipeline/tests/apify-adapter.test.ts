@@ -166,4 +166,25 @@ describe('ApifyAdapter', () => {
       new ApifyAdapter(async () => response([]), 'https://api.apify.com', 't').collect(withoutApify)
     ).rejects.toThrow('requires adapter=APIFY')
   })
+
+  it('keeps short posts for the classifier and drops only posts without any letter or digit', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const tweet = (id: string, text: string) => ({
+      ...ORIGINAL,
+      id,
+      text,
+      url: `https://x.com/avax/status/${id}`,
+    })
+    const adapter = new ApifyAdapter(
+      async () =>
+        response([tweet('3', 'Mainnet live ✅'), tweet('2', 't¹ 🔺'), tweet('1', '🔺🔺 ✅')]),
+      'https://api.apify.com',
+      't'
+    )
+
+    const result = await adapter.collect(source)
+    warn.mockRestore()
+
+    expect(result.articles.map((a) => a.body).sort()).toEqual(['Mainnet live ✅', 't¹ 🔺'])
+  })
 })
