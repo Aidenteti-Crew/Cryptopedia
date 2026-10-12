@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
-    "start": "node dist/src/bin/pipeline.js"
+    "start": "node dist/src/bin/pipeline.js",
+    "classify": "node dist/src/bin/classify.js"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
