@@ -27,6 +27,10 @@ const PAGE_STYLE: Record<string, { color: string; bgLight: string; bgMid: string
   "REGULATIONS":      { color: "#6B6480", bgLight: "#F7F6F9", bgMid: "#D9D5E2" },
   "BIG_TECH_TRENDS":  { color: "#4A4358", bgLight: "#F5F3F7", bgMid: "#D0CBD9" },
   "THIS_WEEKS_POSTS": { color: "#2E5C94", bgLight: "#EEF3FA", bgMid: "#C6D4E7" },
+  projects: { color: "#7B5EA7", bgLight: "#F7F2FC", bgMid: "#E4D7F0" },
+  macro: { color: "#2E5C94", bgLight: "#EEF3FA", bgMid: "#C6D4E7" },
+  events: { color: "#2D7A5E", bgLight: "#F0FAF5", bgMid: "#CFE9DC" },
+  updates: { color: "#C94B6E", bgLight: "#FDF3F6", bgMid: "#F5D3DD" },
 }
 
 const STATIC_BUZZ_DATA: BuzzItem[] = [
@@ -67,7 +71,7 @@ function prettyLabel(raw?: string | null): string {
 // ── Custom tile ──────────────────────────────────────────────────────────────
 
 function CustomizedContent(props: any) {
-  const { x, y, width, height, label, percent, color, bgLight, bgMid, hoveredLabel, setHoveredLabel, rank } = props
+  const { x, y, width, height, label, percent, color, bgLight, bgMid, hoveredLabel, setHoveredLabel, rank, labels, onSelect } = props
   if (!width || !height || !label) return null
 
   const isHovered = hoveredLabel === label
@@ -88,6 +92,13 @@ function CustomizedContent(props: any) {
 
   return (
     <g
+      role={onSelect ? 'button' : undefined}
+      tabIndex={onSelect ? 0 : undefined}
+      aria-label={onSelect ? `${labels?.[label] ?? prettyLabel(label)} ${percent}% 소식 보기` : undefined}
+      onClick={() => onSelect?.(label)}
+      onKeyDown={(event) => {
+        if (onSelect && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); onSelect(label) }
+      }}
       onMouseEnter={() => setHoveredLabel?.(label)}
       onMouseLeave={() => setHoveredLabel?.(null)}
       style={{ cursor: "pointer" }}
@@ -151,7 +162,7 @@ function CustomizedContent(props: any) {
                   letterSpacing: "0.01em",
                 }}
               >
-                {prettyLabel(label)}
+                {labels?.[label] ?? prettyLabel(label)}
               </div>
             )}
             {showPct && (
@@ -178,11 +189,18 @@ function CustomizedContent(props: any) {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function CategoryTreemap({ items, showHeader = true }: { items?: LandingTreemapItem[]; showHeader?: boolean }) {
+export function CategoryTreemap({ items, showHeader = true, useStaticFallback = true, labels, onSelect, appearance = 'legacy' }: {
+  items?: LandingTreemapItem[]
+  showHeader?: boolean
+  useStaticFallback?: boolean
+  labels?: Record<string, string>
+  onSelect?: (page: string) => void
+  appearance?: 'legacy' | 'editorial'
+}) {
   const isMobile = useIsMobile()
   const [hoveredLabel, setHoveredLabel] = useState<string | null>(null)
 
-  const data = items && items.length > 0 ? toDisplayItems(items) : STATIC_BUZZ_DATA
+  const data = items && items.length > 0 ? toDisplayItems(items) : useStaticFallback ? STATIC_BUZZ_DATA : []
   const containerH = isMobile ? 420 : 310
 
   // percent 내림차순 정렬된 순서로 rank 부여 (1위=0, 나머지=1+)
@@ -219,9 +237,9 @@ export function CategoryTreemap({ items, showHeader = true }: { items?: LandingT
       )}
 
       <div
-        className="rounded-2xl border border-border/80 overflow-hidden p-[6px] shadow-card"
+        className={appearance === 'editorial' ? "rounded-2xl border border-[var(--editorial-line)] overflow-hidden p-[6px]" : "rounded-2xl border border-border/80 overflow-hidden p-[6px] shadow-card"}
         style={{
-          background: "linear-gradient(145deg, rgba(255,255,255,0.98), rgba(238,233,248,0.98))",
+          background: appearance === 'editorial' ? 'var(--editorial-surface)' : "linear-gradient(145deg, rgba(255,255,255,0.98), rgba(238,233,248,0.98))",
           height: containerH,
         }}
       >
@@ -233,7 +251,7 @@ export function CategoryTreemap({ items, showHeader = true }: { items?: LandingT
             stroke="transparent"
             fill="transparent"
             // @ts-ignore — recharts types don't expose content extra props
-            content={<CustomizedContent hoveredLabel={hoveredLabel} setHoveredLabel={setHoveredLabel} />}
+            content={<CustomizedContent hoveredLabel={hoveredLabel} setHoveredLabel={setHoveredLabel} labels={labels} onSelect={onSelect} />}
             isAnimationActive={false}
           />
         </ResponsiveContainer>

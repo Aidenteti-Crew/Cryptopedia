@@ -2,6 +2,7 @@ import assert from "node:assert/strict"
 import { readFileSync } from "node:fs"
 import { fileURLToPath } from "node:url"
 import test from "node:test"
+import { HUB_ENTRY_IDS, hubSchema } from "./cryptopedia-hub"
 
 import {
   articleDetailSchema,
@@ -212,6 +213,9 @@ test("every internal article and book link resolves", () => {
   const articles = articleDetailSchema.array().parse(read("articles.json"))
   const books = bookDetailSchema.array().parse(read("books.json"))
   const articleIds = new Set(articles.map((article) => article.id))
+  const hub = hubSchema.parse(read("hub.json"))
+  for (const item of [...hub.projects, ...hub.resources, ...hub.concepts, ...hub.cases, ...hub.skills, ...hub.updates]) articleIds.add(item.id)
+  for (const id of HUB_ENTRY_IDS) articleIds.add(id)
   const screenIds = new Set([
     "projects",
     "macro",

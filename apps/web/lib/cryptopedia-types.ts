@@ -52,6 +52,11 @@ export const chainCollectionItemSchema = z.object({
   name: z.string().min(1),
   summary: z.string().min(1),
   status: z.enum(["AVAILABLE", "COMING_SOON"]),
+  /** 체인 공식 로고 아바타 (public 경로) */
+  logoUrl: z.string().min(1).optional(),
+  tagline: z.string().min(1).optional(),
+  taglineSourceUrl: z.string().url().optional(),
+  taglineCheckedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 })
 
 export const chainCollectionPageSchema = z.object({
@@ -74,6 +79,7 @@ export const ecosystemPageSchema = z.object({
   eyebrow: z.string().min(1),
   title: z.string().min(1),
   tagline: z.string().min(1),
+  taglineSourceUrl: z.string().url().optional(),
   introduction: z.array(z.string().min(1)).min(1),
   entries: z.array(ecosystemEntrySchema).length(4),
   latest: z.array(contentEntrySchema),

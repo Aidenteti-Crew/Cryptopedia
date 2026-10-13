@@ -462,7 +462,12 @@ function wrapLabelAt(label: string, maxTextW: number, fs: number): string[] {
 
 interface Chip { node: string; label: string; hasPage: boolean; lines: string[]; w: number; h: number; fs: number }
 
-function ConceptRoadmap({ doc }: { doc: ConceptPage }) {
+export function ConceptRoadmap({ doc, onOpenConcept, appearance = "legacy" }: {
+  doc: ConceptPage
+  onOpenConcept?: (node: string) => void
+  appearance?: "legacy" | "editorial"
+}) {
+  const editorial = appearance === "editorial"
   const inner = RM.W - RM.PAD * 2
 
   /** 이름 길이에 맞춰 상자 크기 결정 (넘치면 줄바꿈) */
@@ -527,16 +532,27 @@ function ConceptRoadmap({ doc }: { doc: ConceptPage }) {
             const cx = x; x += c.w + RM.GAP
             const isPrereq = b.pos === "above"
             return (
-              <g key={c.node}>
+              <g key={c.node}
+                role={onOpenConcept && c.hasPage ? "button" : undefined}
+                tabIndex={onOpenConcept && c.hasPage ? 0 : undefined}
+                aria-label={onOpenConcept ? `개념 열기: ${c.label}` : undefined}
+                className={onOpenConcept && c.hasPage ? "cursor-pointer" : undefined}
+                onClick={() => c.hasPage && onOpenConcept?.(c.node)}
+                onKeyDown={(event) => {
+                  if (c.hasPage && (event.key === "Enter" || event.key === " ")) {
+                    event.preventDefault()
+                    onOpenConcept?.(c.node)
+                  }
+                }}>
                 <rect x={cx} y={y} width={c.w} height={c.h} rx="7"
-                      fill={isPrereq ? "#F2F0F7" : "#F3EFFA"}
-                      stroke={isPrereq ? "#E4E1EE" : "#C7B8E8"}
+                      fill={editorial ? "var(--editorial-surface)" : isPrereq ? "#F2F0F7" : "#F3EFFA"}
+                      stroke={editorial ? "var(--editorial-line)" : isPrereq ? "#E4E1EE" : "#C7B8E8"}
                       strokeDasharray={c.hasPage ? undefined : "3"} />
                 {c.lines.map((ln, li) => (
                   <text key={li} x={cx + c.w / 2}
                         y={y + RM.CHIP_PAD_Y + (c.fs + 3) * li + c.fs}
                         textAnchor="middle" fontSize={c.fs}
-                        fill={isPrereq ? "#6B6480" : "#7B5EA7"}>
+                        fill={editorial ? "var(--editorial-ink)" : isPrereq ? "#6B6480" : "#7B5EA7"}>
                     {ln}
                   </text>
                 ))}
@@ -567,11 +583,11 @@ function ConceptRoadmap({ doc }: { doc: ConceptPage }) {
   parts.push(
     <g key="self">
       <rect x={(RM.W - selfW) / 2} y={y} width={selfW} height={selfH} rx="8"
-            fill="white" stroke="#C94B6E" strokeWidth="2" />
+            fill={editorial ? "var(--editorial-surface)" : "white"} stroke={editorial ? "var(--editorial-accent)" : "#C94B6E"} strokeWidth="2" />
       {selfFit.lines.map((ln, i) => (
         <text key={i} x={RM.W / 2}
               y={y + RM.SELF_PAD_Y + (selfFit.fs + 4) * i + selfFit.fs}
-              textAnchor="middle" fontSize={selfFit.fs} fontWeight="700" fill="#C94B6E">
+              textAnchor="middle" fontSize={selfFit.fs} fontWeight="700" fill={editorial ? "var(--editorial-accent)" : "#C94B6E"}>
           {ln}
         </text>
       ))}
@@ -584,5 +600,5 @@ function ConceptRoadmap({ doc }: { doc: ConceptPage }) {
   if (below.length) { parts.push(arrow(y, true)); y += RM.ARROW }
   below.forEach((b, i) => { parts.push(drawBand(b, y)); y += b.h + (i < below.length - 1 ? RM.BAND_GAP : 0) })
 
-  return <svg viewBox={`0 0 ${RM.W} ${Math.ceil(H)}`} className="w-full h-auto">{parts}</svg>
+  return <svg role={onOpenConcept ? "group" : "img"} aria-label={`${doc.title} 개념 관계 지도`} viewBox={`0 0 ${RM.W} ${Math.ceil(H)}`} className="w-full h-auto">{parts}</svg>
 }

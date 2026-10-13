@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
 import { API_URL } from "@/lib/auth"
 import { CategoryTreemap } from "@/components/cherry/buzz-treemap"
 import { fetchLanding, LandingResponse } from "@/lib/api"
@@ -32,6 +32,7 @@ type Payload = { total: number; topics: Topic[] }
 
 /** 화면에 쓸 수 있게 평탄화한 항목 */
 type Item = Entity & { topic: string; type: string }
+export type OverviewHeroItem = Item
 
 const TYPE_LABEL: Record<string, string> = {
   server: "Server", skill: "Skill", product: "Product", platform: "Platform",
@@ -42,7 +43,7 @@ const TYPE_LABEL: Record<string, string> = {
 }
 
 /** 히어로 슬라이드별 [좌측 패널, 우측 비주얼] 그라디언트 */
-const HERO_GRADIENTS: [string, string][] = [
+export const HERO_GRADIENTS: [string, string][] = [
   ["linear-gradient(155deg,#3B2159 0%,#5B3D87 45%,#7B5EA7 100%)", "linear-gradient(140deg,#6E4C9B 0%,#8A6BB8 60%,#A98FD0 100%)"],
   ["linear-gradient(155deg,#12325E 0%,#1F4E8C 45%,#3A6EA5 100%)", "linear-gradient(140deg,#2C5E9E 0%,#4B78F0 60%,#7BA0F7 100%)"],
   ["linear-gradient(155deg,#0F3B32 0%,#1C6152 45%,#2E8B6F 100%)", "linear-gradient(140deg,#227A63 0%,#3FA184 60%,#6FBFA5 100%)"],
@@ -83,10 +84,15 @@ function Chevron({ dir }: { dir: "left" | "right" }) {
 /* ── 히어로 캐러셀 (가로 스크롤 + 스냅) ── */
 const HERO_INTERVAL_MS = 10_000
 
-function HeroCarousel({ items }: { items: Item[] }) {
+export function HeroCarousel({ items, renderSlide, appearance = "legacy" }: {
+  items: Item[]
+  renderSlide?: (item: Item, index: number) => ReactNode
+  appearance?: "legacy" | "editorial"
+}) {
   const n = items.length
   const [active, setActive] = useState(0) // 실제 인덱스(인디케이터용)
   const [paused, setPaused] = useState(false)
+  const [autoPlay, setAutoPlay] = useState(true)
   const trackRef = useRef<HTMLDivElement>(null)
   const jumpingRef = useRef(false) // 클론→실제 순간이동 중엔 onScroll 무시
   const idleRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -100,11 +106,11 @@ function HeroCarousel({ items }: { items: Item[] }) {
   const rawToReal = (raw: number) => (!loop ? 0 : raw <= 0 ? n - 1 : raw >= n + 1 ? 0 : raw - 1)
   const rawIndex = () => {
     const el = trackRef.current
-    return el && el.clientWidth ? Math.round(el.scrollLeft / el.clientWidth) : loop ? 1 : 0
+    return el && el.clientWidth ? Math.round(el.scrollLeft / (el.clientWidth + 16)) : loop ? 1 : 0
   }
   const goRaw = (raw: number, smooth = true) => {
     const el = trackRef.current
-    if (el) el.scrollTo({ left: raw * el.clientWidth, behavior: smooth ? "smooth" : "auto" })
+    if (el) el.scrollTo({ left: raw * (el.clientWidth + 16), behavior: smooth && !window.matchMedia('(prefers-reduced-motion: reduce)').matches ? "smooth" : "auto" })
   }
   const next = () => goRaw(rawIndex() + 1)
   const prev = () => goRaw(rawIndex() - 1)
@@ -115,27 +121,39 @@ function HeroCarousel({ items }: { items: Item[] }) {
     if (!loop) return
     const el = trackRef.current
     if (!el) return
+    let frame = 0
+    let cancelled = false
     const place = () => {
-      if (el.clientWidth === 0) { requestAnimationFrame(place); return }
+      if (cancelled) return
+      if (el.clientWidth === 0) { frame = requestAnimationFrame(place); return }
       jumpingRef.current = true
-      el.scrollLeft = el.clientWidth
-      requestAnimationFrame(() => { jumpingRef.current = false })
+      el.scrollLeft = el.clientWidth + 16
+      frame = requestAnimationFrame(() => { jumpingRef.current = false })
     }
     place()
-  }, [loop])
+    const observer = new ResizeObserver(() => {
+      if (jumpingRef.current) return
+      const current = Number(el.dataset.activeSlide ?? 0)
+      el.scrollLeft = (current + 1) * (el.clientWidth + 16)
+    })
+    observer.observe(el)
+    return () => { cancelled = true; cancelAnimationFrame(frame); observer.disconnect(); if (idleRef.current) clearTimeout(idleRef.current) }
+  }, [loop, n])
 
   // 스크롤이 멈춘 뒤 클론 위에 있으면 실제 슬라이드로 순간 이동(이음매 제거)
   const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
     if (jumpingRef.current) return
     const el = e.currentTarget
-    setActive(rawToReal(Math.round(el.scrollLeft / el.clientWidth)))
+    const current = rawToReal(Math.round(el.scrollLeft / (el.clientWidth + 16)))
+    el.dataset.activeSlide = String(current)
+    setActive(current)
     if (!loop) return
     if (idleRef.current) clearTimeout(idleRef.current)
     idleRef.current = setTimeout(() => {
-      const raw = Math.round(el.scrollLeft / el.clientWidth)
+      const raw = Math.round(el.scrollLeft / (el.clientWidth + 16))
       if (raw !== 0 && raw !== n + 1) return
       jumpingRef.current = true
-      el.scrollLeft = (raw === 0 ? n : 1) * el.clientWidth
+      el.scrollLeft = (raw === 0 ? n : 1) * (el.clientWidth + 16)
       requestAnimationFrame(() => { jumpingRef.current = false })
     }, 130)
   }
@@ -143,21 +161,24 @@ function HeroCarousel({ items }: { items: Item[] }) {
   /* 자동 재생 — 10초마다 다음 장(순환). hover/백그라운드/동작줄이기면 멈춤.
      trackRef만 참조해 DOM 스크롤 위치 기준으로 전진 → 클론+onScroll 리셋이 순환 처리. */
   useEffect(() => {
-    if (n <= 1 || paused) return
+    if (n <= 1 || paused || !autoPlay) return
     if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return
     const id = setInterval(() => {
       if (document.hidden) return
       const el = trackRef.current
       if (!el || !el.clientWidth) return
-      const raw = Math.round(el.scrollLeft / el.clientWidth)
-      el.scrollTo({ left: (raw + 1) * el.clientWidth, behavior: "smooth" })
+      const raw = Math.round(el.scrollLeft / (el.clientWidth + 16))
+      el.scrollTo({ left: (raw + 1) * (el.clientWidth + 16), behavior: "smooth" })
     }, HERO_INTERVAL_MS)
     return () => clearInterval(id)
-  }, [n, paused])
+  }, [n, paused, autoPlay])
 
   return (
     <div
       className="group/hero relative"
+      role="region"
+      aria-label={appearance === "editorial" ? "최신 소식 슬라이드" : "Featured slides"}
+      aria-roledescription="carousel"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -166,18 +187,18 @@ function HeroCarousel({ items }: { items: Item[] }) {
       {/* 좌우 화살표 — 가늘게, hover 시 드러남. 양끝에서도 항상 표시(순환 이동) */}
       <button
         type="button"
-        aria-label="Previous"
+        aria-label={appearance === "editorial" ? "이전 소식" : "Previous"}
         onClick={prev}
-        className="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-0 opacity-0 transition-opacity duration-200 group-hover/hero:opacity-100"
+        className="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-0 opacity-100 transition-opacity duration-200 md:opacity-0 group-hover/hero:opacity-100 focus-visible:opacity-100"
         style={{ background: "rgba(255,255,255,.18)", backdropFilter: "blur(8px)" }}
       >
         <Chevron dir="left" />
       </button>
       <button
         type="button"
-        aria-label="Next"
+        aria-label={appearance === "editorial" ? "다음 소식" : "Next"}
         onClick={next}
-        className="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-0 opacity-0 transition-opacity duration-200 group-hover/hero:opacity-100"
+        className="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-0 opacity-100 transition-opacity duration-200 md:opacity-0 group-hover/hero:opacity-100 focus-visible:opacity-100"
         style={{ background: "rgba(255,255,255,.18)", backdropFilter: "blur(8px)" }}
       >
         <Chevron dir="right" />
@@ -193,6 +214,14 @@ function HeroCarousel({ items }: { items: Item[] }) {
         {slides.map((h, idx) => {
           // 그라디언트는 실제 인덱스 기준(클론도 원본 색 그대로)
           const gi = loop ? (idx - 1 + n) % n : idx
+          if (renderSlide) return (
+            <div key={idx} role="group" aria-roledescription="slide" aria-label={`${gi + 1} / ${n}`}
+              aria-hidden={loop && (idx === 0 || idx === n + 1) ? true : undefined}
+              inert={loop && (idx === 0 || idx === n + 1) ? true : undefined}
+              className="min-w-0 w-full flex-shrink-0 snap-start">
+              {renderSlide(h, gi)}
+            </div>
+          )
           return (
           <a
             key={idx}
@@ -252,17 +281,19 @@ function HeroCarousel({ items }: { items: Item[] }) {
           <button
             key={i}
             type="button"
-            aria-label={`Go to slide ${i + 1}`}
+            aria-label={appearance === "editorial" ? `${i + 1}번째 소식 보기` : `Go to slide ${i + 1}`}
+            aria-current={i === active ? 'true' : undefined}
             onClick={() => goToReal(i)}
             className="cursor-pointer border-0 p-0 transition-all"
             style={{
               width: i === active ? 20 : 6,
               height: 6,
               borderRadius: 3,
-              background: i === active ? "#7B5EA7" : "#D8D3E3",
+              background: appearance === "editorial" ? i === active ? 'var(--editorial-accent)' : 'var(--editorial-line)' : i === active ? "#7B5EA7" : "#D8D3E3",
             }}
           />
         ))}
+        {appearance === "editorial" && n > 1 && <button type="button" onClick={() => setAutoPlay((current) => !current)} aria-label={autoPlay ? "슬라이드 자동재생 정지" : "슬라이드 자동재생 시작"} aria-pressed={!autoPlay} className="ml-3 -my-3 rounded px-2 py-1 text-[11px] text-[var(--editorial-muted)] hover:text-[var(--editorial-accent)]">{autoPlay ? '일시정지' : '자동재생'}</button>}
       </div>
     </div>
   )

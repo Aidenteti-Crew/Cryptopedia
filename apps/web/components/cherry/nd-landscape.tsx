@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import { createPortal } from "react-dom"
 import { API_URL } from "@/lib/auth"
 
@@ -346,19 +346,27 @@ export function RisingStar({ pageKey }: { pageKey: string }) {
 }
 
 /* ── 표시 전용 그리드 (카드 + 모달). 데이터 출처(백엔드/정적)와 무관하게 재사용 ── */
-export function LandscapeGrid({ categories }: { categories: LandscapeCategory[] }) {
+export function LandscapeGrid({ categories, renderCategory, renderDetail }: {
+  categories: LandscapeCategory[]
+  renderCategory?: (category: LandscapeCategory, onOpen: () => void) => ReactNode
+  renderDetail?: (category: LandscapeCategory, onClose: () => void) => ReactNode
+}) {
   const [selected, setSelected] = useState<LandscapeCategory | null>(null)
   return (
     <>
       <div
         className="grid gap-[12px]"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(min(280px, 100%), 1fr))" }}
       >
         {categories.map((cat) => (
-          <CategoryCard key={cat.code} cat={cat} onOpen={setSelected} />
+          renderCategory
+            ? <div key={cat.code}>{renderCategory(cat, () => setSelected(cat))}</div>
+            : <CategoryCard key={cat.code} cat={cat} onOpen={setSelected} />
         ))}
       </div>
-      {selected && <CategoryModal cat={selected} onClose={() => setSelected(null)} />}
+      {selected && (renderDetail
+        ? renderDetail(selected, () => setSelected(null))
+        : <CategoryModal cat={selected} onClose={() => setSelected(null)} />)}
     </>
   )
 }
