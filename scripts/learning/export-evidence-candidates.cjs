@@ -42,7 +42,7 @@ const toJsRegex = (re) => new RegExp(re.replace(/\\m/g, "\\b").replace(/\\M/g, "
 
 (async () => {
   const c = new Client({ host: env.LOCAL_DB_HOST, port: +env.LOCAL_DB_PORT, user: env.LOCAL_DB_USER,
-    password: env.LOCAL_DB_PASSWORD, database: env.LOCAL_DB_NAME, ssl: { rejectUnauthorized: false } });
+    password: env.LOCAL_DB_PASSWORD, database: env.LOCAL_DB_NAME, ssl: env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false });
   await c.connect();
 
   /* 개념 + 하위 개념명 → 검색어 (생성기와 동일 경로) */

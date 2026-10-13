@@ -1245,38 +1245,44 @@ function FilterButton({
   )
 }
 
-function InventoryCard({
-  item, onDragStart, onDragEnd, isDragging,
+export function InventoryCard({
+  item, onDragStart, onDragEnd, isDragging = false,
+  appearance = "legacy", selected, onToggle, onInspect,
 }: {
   item: InventoryItem
-  onDragStart: () => void
-  onDragEnd: () => void
-  isDragging: boolean
+  onDragStart?: () => void
+  onDragEnd?: () => void
+  isDragging?: boolean
+  appearance?: "legacy" | "editorial"
+  selected?: boolean
+  onToggle?: () => void
+  onInspect?: () => void
 }) {
   const theme = TYPE_THEME[item.type]
+  const editorial = appearance === "editorial"
   const [showSource, setShowSource] = useState(false)
   return (
     <div
-      draggable
+      draggable={!editorial}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
-      className={`relative border rounded-lg p-3 bg-white cursor-grab active:cursor-grabbing transition-all ${
+      className={`relative border rounded-lg transition-all ${editorial ? "p-4 border-[var(--editorial-line)] bg-[var(--editorial-surface)]" : "p-3 bg-white cursor-grab active:cursor-grabbing"} ${
         isDragging ? "opacity-50 scale-95" : "hover:shadow-md"
       }`}
       style={{ borderLeftWidth: "4px", borderLeftColor: theme.border }}
       title={item.summary ?? `${item.title} · ${item.category}`}
     >
       {/* Jigsaw tab — filled shape protruding above the card, mirrors the slot socket. */}
-      <JigsawConnector type={item.type} mode="tab" position="top" size={14} />
+      {!editorial && <JigsawConnector type={item.type} mode="tab" position="top" size={14} />}
 
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <div className="text-[13px] font-bold text-[#1A1626] truncate">{item.title}</div>
-          <div className="text-[10px] text-[#9E97B3] mt-0.5 truncate">
-            {item.category} · {item.updatedAt}
+          {onToggle ? <label className="flex cursor-pointer items-start gap-3 text-[13px] font-bold text-[var(--editorial-ink)]"><input type="checkbox" checked={selected ?? false} onChange={onToggle} className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--editorial-accent)]" />{item.title}</label> : <div className="text-[13px] font-bold text-[#1A1626] truncate">{item.title}</div>}
+          <div className={`text-[10px] ${editorial ? "mt-2 text-[var(--editorial-accent)]" : "mt-0.5 text-[#9E97B3] truncate"}`}>
+            {item.category}{!editorial && ` · ${item.updatedAt}`}
           </div>
           {item.summary && (
-            <div className="text-[10px] text-[#6B6480] mt-1 line-clamp-2">{item.summary}</div>
+            <div className={editorial ? "mt-3 text-xs leading-6 text-[var(--editorial-muted)]" : "text-[10px] text-[#6B6480] mt-1 line-clamp-2"}>{item.summary}</div>
           )}
         </div>
         <div className="flex items-center gap-1 flex-shrink-0">
@@ -1284,20 +1290,21 @@ function InventoryCard({
           <button
             onClick={(e) => {
               e.stopPropagation()
-              setShowSource(true)
+              if (onInspect) onInspect()
+              else setShowSource(true)
             }}
             onMouseDown={(e) => e.stopPropagation()}
             draggable={false}
             onDragStart={(e) => e.preventDefault()}
-            aria-label="View source"
+            aria-label={editorial ? `${item.title} 지침 보기` : "View source"}
             title="View source (read-only)"
-            className="w-6 h-6 rounded flex items-center justify-center text-[12px] text-[#9A7C55] hover:bg-[#F5E4C2]/60 hover:text-[#3A2A1C] cursor-pointer"
+            className={editorial ? "flex h-9 w-9 cursor-pointer items-center justify-center rounded text-[var(--editorial-accent)] hover:bg-white/5" : "w-6 h-6 rounded flex items-center justify-center text-[12px] text-[#9A7C55] hover:bg-[#F5E4C2]/60 hover:text-[#3A2A1C] cursor-pointer"}
           >
             <SourceIcon />
           </button>
           <span
             className="text-[8px] font-bold px-1.5 py-0.5 rounded tracking-[0.5px] uppercase"
-            style={{ backgroundColor: theme.badge, color: theme.text }}
+            style={editorial ? { backgroundColor: "var(--editorial-paper)", color: "var(--editorial-accent)" } : { backgroundColor: theme.badge, color: theme.text }}
           >
             {theme.label}
           </span>
@@ -1325,7 +1332,7 @@ function InventoryCard({
           ▸ via @{item.sourceAgent}
         </div>
       )}
-      {item.source === "builtin" && (
+      {item.source === "builtin" && !editorial && (
         <div className="mt-1.5 text-[9px] font-bold text-[#6B6480]">
           ▸ built-in
         </div>

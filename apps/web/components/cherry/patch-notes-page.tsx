@@ -55,13 +55,14 @@ function Stars({ count, color = "#C94B6E" }: { count: number; color?: string }) 
 /* ─────────────────────────────────────────────
    Timeline Item (real + skeleton)
 ───────────────────────────────────────────── */
-function TimelineItem({
+export function PatchNoteTimelineItem({
   item,
   index,
   total,
   onRead,
   loading = false,
   skeletonWidths,
+  appearance = "legacy",
 }: {
   item?: PatchNoteItem
   index: number
@@ -69,6 +70,7 @@ function TimelineItem({
   onRead: (id: string) => void
   loading?: boolean
   skeletonWidths?: { title: string; summary: string }
+  appearance?: "legacy" | "editorial"
 }) {
   const badgeKey = item ? (PAGE_BADGE[item.page] ?? "muted") : "muted"
   const badgeStyle = BADGE_STYLES[badgeKey]
@@ -78,20 +80,22 @@ function TimelineItem({
     : 1
 
   return (
-    <div
-      className="relative pl-6 cursor-pointer"
+    <button
+      type="button"
+      className={`relative block w-full pl-6 text-left ${loading ? "cursor-default" : "cursor-pointer"}`}
+      disabled={loading}
       style={{ opacity }}
       onClick={() => item && !item.isRead && onRead(item.articleStateId)}
     >
       {/* Dot */}
       <span
         className="absolute left-0 top-[7px] w-[10px] h-[10px] rounded-full border-2 border-card"
-        style={{ backgroundColor: loading ? "#E4E1EE" : (item?.dotColor ?? "#E4E1EE") }}
+        style={{ backgroundColor: appearance === "editorial" ? "var(--editorial-accent)" : loading ? "#E4E1EE" : (item?.dotColor ?? "#E4E1EE") }}
       />
 
       <div className="pb-5">
         {/* Date · Area */}
-        <div className="text-[12px] text-text-muted mb-1.5 h-4 flex items-center gap-1">
+        <div className={`text-[12px] mb-1.5 flex items-center gap-1 ${appearance === "editorial" ? "min-h-4 flex-wrap text-[var(--editorial-muted)]" : "h-4 text-text-muted"}`}>
           {loading ? <Bone w="w-28" h="h-3" /> : (
             <>
               {item!.date} · {item!.area}
@@ -109,7 +113,7 @@ function TimelineItem({
           {loading ? (
             <Bone w={skeletonWidths?.title ?? "w-[65%]"} h="h-[18px]" />
           ) : (
-            <p className="text-[15px] font-bold text-[#1A1626] leading-snug">{item!.title}</p>
+            <p className={`text-[15px] font-bold leading-snug ${appearance === "editorial" ? "text-[var(--editorial-ink)]" : "text-[#1A1626]"}`}>{item!.title}</p>
           )}
         </div>
 
@@ -118,7 +122,7 @@ function TimelineItem({
           {loading ? (
             <Bone w={skeletonWidths?.summary ?? "w-[75%]"} h="h-3" />
           ) : item!.oneLiner ? (
-            <p className="text-[13px] text-text-muted">{item!.oneLiner}</p>
+            <p className={`text-[13px] ${appearance === "editorial" ? "text-[var(--editorial-muted)]" : "text-text-muted"}`}>{item!.oneLiner}</p>
           ) : null}
         </div>
 
@@ -133,7 +137,9 @@ function TimelineItem({
             <>
               <span
                 className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border"
-                style={{ backgroundColor: badgeStyle.bg, color: badgeStyle.text, borderColor: badgeStyle.border }}
+                style={appearance === "editorial"
+                  ? { backgroundColor: "var(--editorial-surface)", color: "var(--editorial-accent)", borderColor: "var(--editorial-line)" }
+                  : { backgroundColor: badgeStyle.bg, color: badgeStyle.text, borderColor: badgeStyle.border }}
               >
                 {item!.area}
               </span>
@@ -149,7 +155,7 @@ function TimelineItem({
           )}
         </div>
       </div>
-    </div>
+    </button>
   )
 }
 
@@ -245,7 +251,7 @@ export function PatchNotesPage() {
 
             {loading ? (
               Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-                <TimelineItem key={i} index={i} total={SKELETON_COUNT} onRead={() => {}} loading skeletonWidths={SKELETON_WIDTHS[i]} />
+                <PatchNoteTimelineItem key={i} index={i} total={SKELETON_COUNT} onRead={() => {}} loading skeletonWidths={SKELETON_WIDTHS[i]} />
               ))
             ) : error ? (
               <div className="pl-6 text-[13px] py-8" style={{ color: "#C8301E" }}>
@@ -259,7 +265,7 @@ export function PatchNotesPage() {
               </div>
             ) : (
               filteredItems.map((item, index) => (
-                <TimelineItem key={item.id} item={item} index={index} total={filteredItems.length} onRead={handleRead} />
+                <PatchNoteTimelineItem key={item.id} item={item} index={index} total={filteredItems.length} onRead={handleRead} />
               ))
             )}
 

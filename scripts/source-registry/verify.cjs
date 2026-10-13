@@ -26,7 +26,7 @@ function parseCsv(text) { const rows = []; let row = [], cell = "", q = false;
   const env = Object.fromEntries(fs.readFileSync(path.join(ROOT, "apps/api/.env"), "utf8").split("\n")
     .filter((l) => /^[A-Z_0-9]+=/.test(l)).map((l) => [l.slice(0, l.indexOf("=")), l.slice(l.indexOf("=") + 1)]));
   const c = new Client({ host: env.LOCAL_DB_HOST, port: +env.LOCAL_DB_PORT, user: env.LOCAL_DB_USER,
-    password: env.LOCAL_DB_PASSWORD, database: env.LOCAL_DB_NAME, ssl: { rejectUnauthorized: false } });
+    password: env.LOCAL_DB_PASSWORD, database: env.LOCAL_DB_NAME, ssl: env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false });
   await c.connect();
 
   console.log("■ 행 수 대조 (검수 2-3)");

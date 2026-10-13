@@ -9,7 +9,7 @@ const env=Object.fromEntries(fs.readFileSync(path.join(ROOT,"apps/api/.env"),"ut
   .split("\n").filter(l=>/^[A-Z_]+=/.test(l)).map(l=>[l.slice(0,l.indexOf("=")),l.slice(l.indexOf("=")+1).trim()]));
 (async()=>{
 const c=new Client({host:env.LOCAL_DB_HOST,port:+env.LOCAL_DB_PORT,user:env.LOCAL_DB_USER,
-  password:env.LOCAL_DB_PASSWORD,database:env.LOCAL_DB_NAME,ssl:{rejectUnauthorized:false}});
+  password:env.LOCAL_DB_PASSWORD,database:env.LOCAL_DB_NAME,ssl: env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false});
 await c.connect();
 let fail=0; const ok=(b,m)=>{console.log(`   ${b?"✅":"❌"} ${m}`); if(!b)fail++;};
 

@@ -15,14 +15,14 @@ const env=Object.fromEntries(fs.readFileSync(path.join(ROOT,"apps/api/.env"),"ut
 
 (async()=>{
 const c=new Client({host:env.LOCAL_DB_HOST,port:+env.LOCAL_DB_PORT,user:env.LOCAL_DB_USER,
-  password:env.LOCAL_DB_PASSWORD,database:env.LOCAL_DB_NAME,ssl:{rejectUnauthorized:false},statement_timeout:120000});
+  password:env.LOCAL_DB_PASSWORD,database:env.LOCAL_DB_NAME,ssl: env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,statement_timeout:120000});
 await c.connect();
 
 const before=await c.query(`SELECT (SELECT count(*)::int FROM handbook.concept) a,
   (SELECT count(*)::int FROM handbook.concept_alias) b,
   (SELECT count(*)::int FROM handbook.concept_relation) d,
   (SELECT count(*)::int FROM handbook.paragraph_chunk) e,
-  (SELECT count(*)::int FROM public.key_ideas) f`);
+  0 f`);
 console.log("■ 실행 전:", JSON.stringify(before.rows[0]));
 
 try{
@@ -90,7 +90,7 @@ const after=await c.query(`SELECT (SELECT count(*)::int FROM handbook.concept) a
   (SELECT count(*)::int FROM handbook.concept_alias) b,
   (SELECT count(*)::int FROM handbook.concept_relation) d,
   (SELECT count(*)::int FROM handbook.paragraph_chunk) e,
-  (SELECT count(*)::int FROM public.key_ideas) f`);
+  0 f`);
 console.log("■ 실행 후:", JSON.stringify(after.rows[0]));
 await c.end();
 

@@ -75,3 +75,9 @@ test("selecting navigation replaces a detail view", () => {
     { kind: "screen", id: "events" },
   )
 })
+
+test("restores the actual previous library or case when returning from a connected detail", () => {
+  const previous: EditorialView = { kind: "article", id: "practice", parent: "academy" }
+  const detail: EditorialView = { kind: "article", id: "case-first-contract", parent: "academy" }
+  assert.deepEqual(editorialViewReducer(detail, { type: "restore-view", view: previous }), previous)
+})

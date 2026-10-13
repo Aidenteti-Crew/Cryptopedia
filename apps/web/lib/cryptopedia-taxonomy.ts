@@ -38,8 +38,8 @@ export const CHAPTER_NAV: NavItem[] = [
     label: "01    체인 기초",
     children: [
       { id: "chain-overview", label: "체인 개요" },
-      { id: "pcx-chains", label: "P · C · X 체인" },
-      { id: "validator-structure", label: "밸리데이터 구조" },
+      { id: "pcx-chains", label: "네트워크·체인 구조" },
+      { id: "validator-structure", label: "합의·밸리데이터" },
       { id: "glossary", label: "핵심 용어 사전" },
     ],
   },
@@ -47,20 +47,21 @@ export const CHAPTER_NAV: NavItem[] = [
     id: "builders",
     label: "02    빌더 라이브러리",
     children: [
-      { id: "official-docs", label: "공식 Docs" },
-      { id: "code-reference", label: "코드 레퍼런스" },
+      { id: "official-docs", label: "공식 문서" },
+      { id: "code-reference", label: "코드·도구 레퍼런스" },
       { id: "builder-articles", label: "빌더 아티클" },
-      { id: "mcp-x402", label: "MCP · x402" },
+      { id: "mcp-tools", label: "MCP·에이전트 도구" },
+      { id: "skill-library", label: "스킬 라이브러리" },
     ],
   },
   {
     id: "academy",
     label: "03    아카데미",
     children: [
-      { id: "foundation", label: "입문 — 체인의 첫 개념" },
-      { id: "structure", label: "구조 — 네트워크 읽기" },
-      { id: "practice", label: "실습 — 첫 프로젝트" },
-      { id: "skill-graph", label: "스킬 그래프" },
+      { id: "foundation", label: "입문" },
+      { id: "structure", label: "구조 이해" },
+      { id: "practice", label: "케이스별 실습" },
+      { id: "skill-graph", label: "학습·스킬 그래프" },
     ],
   },
 ]
@@ -74,6 +75,8 @@ const ARTICLE_PARENT: Record<string, ScreenId> = {
   "code-reference": "builders",
   "builder-articles": "builders",
   "mcp-x402": "builders",
+  "mcp-tools": "builders",
+  "skill-library": "builders",
   foundation: "academy",
   structure: "academy",
   practice: "academy",
@@ -85,5 +88,11 @@ const ARTICLE_PARENT: Record<string, ScreenId> = {
 }
 
 export function resolveParentScreen(entryId: string): ScreenId | null {
+  if (entryId.startsWith("project-")) return "projects"
+  if (entryId.startsWith("change-")) return "updates"
+  if (entryId.startsWith("skill-") && entryId !== "skill-graph") return "builders"
+  if (entryId.startsWith("resource-")) return "builders"
+  if (entryId.startsWith("concept-")) return "fundamentals"
+  if (entryId.startsWith("case-")) return "academy"
   return ARTICLE_PARENT[entryId] ?? null
 }

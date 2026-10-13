@@ -20,7 +20,8 @@ const logger = new Logger('DatabaseModule');
             user: config.db.user,
             password: config.db.password,
             database: config.db.database,
-            ssl: { rejectUnauthorized: false },
+            // DB_SSL=true 일 때만 SSL (관리형 PG 등). 자체 호스팅/로컬 PG 는 기본 비활성.
+            ssl: config.db.ssl ? { rejectUnauthorized: false } : false,
           },
           pool: { min: 1, max: 5 },
         });

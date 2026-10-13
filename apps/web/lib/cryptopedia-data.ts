@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { filterHubForChain, hubSchema, type HubData } from "./cryptopedia-hub"
 
 import {
   articleDetailSchema,
@@ -34,6 +35,7 @@ export class CryptopediaDataError extends Error {
 }
 
 export interface CryptopediaRepository {
+  getHub(chainId: string): Promise<HubData>
   getChains(): Promise<ChainCollectionPageData>
   getEcosystem(): Promise<EcosystemPageData>
   getCollection(id: string): Promise<CollectionPageData>
@@ -62,7 +64,7 @@ const STATUS_ORDER: Record<EventStatus, number> = {
 async function loadJson<T>(
   fetchImpl: typeof fetch,
   path: string,
-  schema: z.ZodType<T>,
+  schema: z.ZodType<T, z.ZodTypeDef, unknown>,
 ): Promise<T> {
   let response: Response
   try {
@@ -102,6 +104,10 @@ export function createStaticCryptopediaRepository(
   fetchImpl: typeof fetch = fetch,
 ): CryptopediaRepository {
   return {
+    async getHub(chainId) {
+      const data = await loadJson(fetchImpl, "/cryptopedia/hub.json", hubSchema)
+      return filterHubForChain(data, chainId)
+    },
     getChains() {
       return loadJson(
         fetchImpl,

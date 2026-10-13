@@ -75,7 +75,7 @@ const knex = knexLib({
     user: config.db.user,
     password: config.db.password,
     database: config.db.database,
-    ssl: { rejectUnauthorized: false },
+    ssl: config.db.ssl ? { rejectUnauthorized: false } : false,
   },
   pool: { min: 1, max: 3 },
 });

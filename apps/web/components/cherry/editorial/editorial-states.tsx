@@ -10,7 +10,7 @@ interface EditorialErrorProps {
 export function EditorialLoading() {
   return (
     <div
-      className="space-y-4 px-6 py-10 sm:p-8 lg:p-[52px]"
+      className="space-y-4 px-4 py-10 sm:p-8 lg:p-[52px]"
       role="status"
       aria-live="polite"
     >
@@ -29,7 +29,7 @@ export function EditorialLoading() {
 
 export function EditorialEmpty({ message }: EditorialEmptyProps) {
   return (
-    <div className="px-6 py-16 text-sm text-[var(--editorial-muted)] sm:p-8 lg:p-[52px]">
+    <div className="px-4 py-16 text-sm text-[var(--editorial-muted)] sm:p-8 lg:p-[52px]">
       {message}
     </div>
   )
@@ -38,7 +38,7 @@ export function EditorialEmpty({ message }: EditorialEmptyProps) {
 export function EditorialError({ message, onRetry }: EditorialErrorProps) {
   return (
     <div
-      className="flex flex-col items-start gap-5 px-6 py-16 sm:p-8 lg:p-[52px]"
+      className="flex flex-col items-start gap-5 px-4 py-16 sm:p-8 lg:p-[52px]"
       role="alert"
     >
       <p className="text-sm text-[var(--editorial-muted)]">{message}</p>
