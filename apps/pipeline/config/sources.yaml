@@ -1,0 +1,212 @@
+sources:
+  - url: 'https://github.com/ava-labs/avalanchego/releases.atom'
+    chain: 'avalanche'
+    source_name: 'AvalancheGo Releases'
+    source_type: 'RSS'
+    adapter: 'ATOM'
+    content_kind: 'RELEASE'
+    authority: 'OFFICIAL'
+    # graft/* tags (graft/coreth/v1.x, graft/evm/v1.x, graft/subnet-evm/v1.x) are version tags of
+    # code being merged into this repo. They have no release notes and duplicate the real releases
+    # (Coreth and Subnet-EVM are collected from their own repos).
+    exclude_title_patterns:
+      - '^graft/'
+    recency_window_days: 7
+    consecutive_failures_threshold: 3
+
+  - url: 'https://github.com/ava-labs/coreth/releases.atom'
+    chain: 'avalanche'
+    source_name: 'Coreth Releases'
+    source_type: 'RSS'
+    adapter: 'ATOM'
+    content_kind: 'RELEASE'
+    authority: 'OFFICIAL'
+    consecutive_failures_threshold: 3
+
+  - url: 'https://github.com/ava-labs/subnet-evm/releases.atom'
+    chain: 'avalanche'
+    source_name: 'Subnet-EVM Releases'
+    source_type: 'RSS'
+    adapter: 'ATOM'
+    content_kind: 'RELEASE'
+    authority: 'OFFICIAL'
+    consecutive_failures_threshold: 3
+
+  - url: 'https://github.com/avalanche-foundation/ACPs'
+    chain: 'avalanche'
+    source_name: 'Avalanche Community Proposals'
+    source_type: 'CUSTOM'
+    adapter: 'GITHUB_API'
+    content_kind: 'GOVERNANCE'
+    authority: 'OFFICIAL'
+
+  - url: 'https://build.avax.network/blog'
+    chain: 'avalanche'
+    source_name: 'Avalanche Builder Hub Blog'
+    source_type: 'WEBSITE'
+    adapter: 'GITHUB_MARKDOWN'
+    content_kind: 'BLOG'
+    authority: 'OFFICIAL'
+    github:
+      owner: 'ava-labs'
+      repo: 'builders-hub'
+      branch: 'master'
+      path: 'content/blog'
+
+  - url: 'https://build.avax.network/integrations'
+    chain: 'avalanche'
+    source_name: 'Avalanche Builder Hub Integrations'
+    source_type: 'WEBSITE'
+    adapter: 'GITHUB_DIRECTORY'
+    content_kind: 'PROJECT'
+    authority: 'OFFICIAL'
+    github:
+      owner: 'ava-labs'
+      repo: 'builders-hub'
+      branch: 'master'
+      path: 'content/integrations'
+
+  - url: 'https://x.com/avax'
+    chain: 'avalanche'
+    source_name: 'Avalanche X'
+    source_type: 'TWITTER'
+    adapter: 'APIFY'
+    content_kind: 'SOCIAL'
+    authority: 'OFFICIAL'
+    apify:
+      actor: 'apidojo~tweet-scraper'
+      input:
+        startUrls: ['https://x.com/avax']
+        # The actor bills a minimum of 50 tweets per query on paid plans, so ask for all 50.
+        maxItems: 50
+
+  - url: 'https://x.com/Team1KOR'
+    chain: 'avalanche'
+    source_name: 'Team1 Korea X'
+    source_type: 'TWITTER'
+    adapter: 'APIFY'
+    content_kind: 'SOCIAL'
+    authority: 'OFFICIAL_COMMUNITY'
+    apify:
+      actor: 'apidojo~tweet-scraper'
+      input:
+        startUrls: ['https://x.com/Team1KOR']
+        # The actor bills a minimum of 50 tweets per query on paid plans, so ask for all 50.
+        maxItems: 50
+
+  - url: 'https://x.com/AvaxTeam1'
+    chain: 'avalanche'
+    source_name: 'Avalanche Team1 X'
+    source_type: 'TWITTER'
+    adapter: 'APIFY'
+    content_kind: 'SOCIAL'
+    authority: 'OFFICIAL_COMMUNITY'
+    apify:
+      actor: 'apidojo~tweet-scraper'
+      input:
+        startUrls: ['https://x.com/AvaxTeam1']
+        # The actor bills a minimum of 50 tweets per query on paid plans, so ask for all 50.
+        maxItems: 50
+
+  # Team1 event calendars on Luma (public iCalendar export). Events go straight to
+  # content.chain_event; regional calendars mostly hold events the global one does not.
+  - url: 'https://luma.com/Team1'
+    chain: 'avalanche'
+    source_name: 'Luma: Team1 Global Events'
+    source_type: 'WEBSITE'
+    adapter: 'LUMA_ICS'
+    content_kind: 'EVENT'
+    authority: 'OFFICIAL_COMMUNITY'
+    # Off until Team1 agrees to its events being shown (Luma terms: event content belongs to the
+    # hosts and may not be republished outside bona fide use of Luma). Team1 Korea stays on.
+    enabled: false
+    luma:
+      calendar_id: 'cal-HKsZ9ey1Sj9gYEz'
+
+  - url: 'https://luma.com/Team1KOR'
+    chain: 'avalanche'
+    source_name: 'Luma: Team1 Korea'
+    source_type: 'WEBSITE'
+    adapter: 'LUMA_ICS'
+    content_kind: 'EVENT'
+    authority: 'OFFICIAL_COMMUNITY'
+    luma:
+      calendar_id: 'cal-pE5SNzqEFCTNpRU'
+
+  - url: 'https://luma.com/Team1India'
+    chain: 'avalanche'
+    source_name: 'Luma: Team1 India'
+    source_type: 'WEBSITE'
+    adapter: 'LUMA_ICS'
+    content_kind: 'EVENT'
+    authority: 'OFFICIAL_COMMUNITY'
+    # Off until Team1 agrees to its events being shown (Luma terms: event content belongs to the
+    # hosts and may not be republished outside bona fide use of Luma). Team1 Korea stays on.
+    enabled: false
+    luma:
+      calendar_id: 'cal-K1Q62e5PBWEwoJ5'
+
+  - url: 'https://luma.com/Team1VN'
+    chain: 'avalanche'
+    source_name: 'Luma: Team1 Vietnam'
+    source_type: 'WEBSITE'
+    adapter: 'LUMA_ICS'
+    content_kind: 'EVENT'
+    authority: 'OFFICIAL_COMMUNITY'
+    # Off until Team1 agrees to its events being shown (Luma terms: event content belongs to the
+    # hosts and may not be republished outside bona fide use of Luma). Team1 Korea stays on.
+    enabled: false
+    luma:
+      calendar_id: 'cal-MWTdBWMK6km8AMH'
+
+  - url: 'https://luma.com/Team1France'
+    chain: 'avalanche'
+    source_name: 'Luma: Team1 France'
+    source_type: 'WEBSITE'
+    adapter: 'LUMA_ICS'
+    content_kind: 'EVENT'
+    authority: 'OFFICIAL_COMMUNITY'
+    # Off until Team1 agrees to its events being shown (Luma terms: event content belongs to the
+    # hosts and may not be republished outside bona fide use of Luma). Team1 Korea stays on.
+    enabled: false
+    luma:
+      calendar_id: 'cal-VLGjrTcGskE7GnI'
+
+  - url: 'https://luma.com/team1th'
+    chain: 'avalanche'
+    source_name: 'Luma: Team1 Thailand'
+    source_type: 'WEBSITE'
+    adapter: 'LUMA_ICS'
+    content_kind: 'EVENT'
+    authority: 'OFFICIAL_COMMUNITY'
+    # Off until Team1 agrees to its events being shown (Luma terms: event content belongs to the
+    # hosts and may not be republished outside bona fide use of Luma). Team1 Korea stays on.
+    enabled: false
+    luma:
+      calendar_id: 'cal-jlry3qvP8VGtM2E'
+
+  - url: 'https://luma.com/Team1Africa'
+    chain: 'avalanche'
+    source_name: 'Luma: Team1 Africa'
+    source_type: 'WEBSITE'
+    adapter: 'LUMA_ICS'
+    content_kind: 'EVENT'
+    authority: 'OFFICIAL_COMMUNITY'
+    # Off until Team1 agrees to its events being shown (Luma terms: event content belongs to the
+    # hosts and may not be republished outside bona fide use of Luma). Team1 Korea stays on.
+    enabled: false
+    luma:
+      calendar_id: 'cal-LgF4fRCDgBrI9G3'
+
+  - url: 'https://luma.com/Team1Turkiye'
+    chain: 'avalanche'
+    source_name: 'Luma: Team1 Turkiye'
+    source_type: 'WEBSITE'
+    adapter: 'LUMA_ICS'
+    content_kind: 'EVENT'
+    authority: 'OFFICIAL_COMMUNITY'
+    # Off until Team1 agrees to its events being shown (Luma terms: event content belongs to the
+    # hosts and may not be republished outside bona fide use of Luma). Team1 Korea stays on.
+    enabled: false
+    luma:
+      calendar_id: 'cal-5x1GA3vKpLS1cRG'

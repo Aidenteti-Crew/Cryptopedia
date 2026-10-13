@@ -1,0 +1,30 @@
+{
+  "name": "@cryptopedia/pipeline",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "start": "node dist/src/bin/pipeline.js",
+    "classify": "node dist/src/bin/classify.js",
+    "score": "node dist/src/bin/score.js"
+  },
+  "dependencies": {
+    "@photostructure/tz-lookup": "11.7.0",
+    "@rapideditor/country-coder": "5.6.1",
+    "dotenv": "^16.4.5",
+    "fast-xml-parser": "^5.5.8",
+    "js-yaml": "^4.1.1",
+    "pg": "^8.16.3",
+    "uuid": "^11.1.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.3.1",
+    "@types/pg": "^8.11.6",
+    "typescript": "^5.9.0",
+    "vitest": "^2.0.0"
+  }
+}

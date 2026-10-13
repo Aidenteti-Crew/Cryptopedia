@@ -114,6 +114,9 @@ CREATE TABLE IF NOT EXISTS content.crawler_registry (
     analysis_id          UUID                        NULL,
     status               content.crawler_status_enum NOT NULL DEFAULT 'pending_review',
     generated_code       TEXT                        NOT NULL,
+    artifact_path        VARCHAR(1000)               NULL,
+    artifact_hash        BYTEA                       NULL,
+    generation_id        UUID                        NULL,
     pr_number            INT                         NULL,
     pr_url               VARCHAR(1000)               NULL,
     pr_merged_at         TIMESTAMPTZ                 NULL,
@@ -134,8 +137,25 @@ CREATE TABLE IF NOT EXISTS content.crawler_registry (
 
     CONSTRAINT fk_crawler_registry_run_log
         FOREIGN KEY (run_log_id) REFERENCES core.run_log(id)
-            ON UPDATE RESTRICT ON DELETE RESTRICT
+            ON UPDATE RESTRICT ON DELETE RESTRICT,
+
+    CONSTRAINT chk_crawler_registry_artifact_hash_len
+        CHECK (artifact_hash IS NULL OR octet_length(artifact_hash) = 32)
 );
+
+-- 이미 초기 버전 테이블이 적용된 환경에도 선언적 artifact 메타데이터를 추가한다.
+ALTER TABLE content.crawler_registry
+    ADD COLUMN IF NOT EXISTS artifact_path VARCHAR(1000) NULL,
+    ADD COLUMN IF NOT EXISTS artifact_hash BYTEA NULL,
+    ADD COLUMN IF NOT EXISTS generation_id UUID NULL;
+
+DO $$ BEGIN
+    ALTER TABLE content.crawler_registry
+        ADD CONSTRAINT chk_crawler_registry_artifact_hash_len
+        CHECK (artifact_hash IS NULL OR octet_length(artifact_hash) = 32);
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- 소스당 active 크롤러는 1개만 허용. (deprecated 행은 여러 개 누적 = 버전 히스토리)
 CREATE UNIQUE INDEX IF NOT EXISTS uq_crawler_registry_source_active

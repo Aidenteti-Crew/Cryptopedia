@@ -17,6 +17,7 @@
 
 # Dependencies
 node_modules/
+.pnpm-store/
 __pycache__/
 *.pyc
 .pytest_cache/
@@ -61,3 +62,6 @@ apps/docs/concept-quality/researcher-package/*.bak
 
 # 유저 투고 파일 (로컬)
 apps/api/.uploads/
+
+# symlink for import resolution
+python_services/packages/ontology
