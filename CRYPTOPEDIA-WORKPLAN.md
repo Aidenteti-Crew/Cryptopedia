@@ -1,6 +1,6 @@
 # Cryptopedia 도메인 전환 작업표
 
-> 기준일 2026-10-10 · 브랜치 `develop` (`origin/deploy` 2c2781b 기준)
+> 기준일 2026-10-14 · 현재 브랜치 `deploy` (초기 작업 시작: `origin/deploy` 2c2781b)
 > 원본: `cherrypickersGuild/cherry-in-the-haystack` (AI 엔지니어링 지식 플랫폼) → 목표: Avalanche 중심 블록체인 지식 플랫폼, 자체 리눅스 서버에 web·api·PostgreSQL 전부 호스팅 (Supabase 미사용)
 
 ---
@@ -212,3 +212,12 @@ DATABASE_URL=postgresql://cherry:cherry_dev@localhost:15432/cherry_db \
 - 로컬 웹 관련 테스트 70개 통과. 실제 DB 연결을 요구하는 통합 테스트는 미실행이며 DB 마이그레이션·크롤러 실행·배포는 하지 않는다.
 - 로컬 변경 백업: `/private/tmp/cryptopedia-local-before-pr2-20261014/`에 tracked patch와 untracked archive 보관.
 - 인프라 커밋: `b61bceb`. 웹·문서 변경은 별도 커밋으로 저장하고 PR이 반영된 deploy에 통합한다.
+
+### 통합 결과
+
+- PR #2는 `deploy`에 머지됨: `456bb218222f4d82b44c508248f871bb71cb6bf8`.
+- 로컬 변경 커밋: `b61bceb`(DB 설정·부트스트랩), `7d6f2d8`(웹·데이터·문서).
+- PR과 로컬 변경은 파일 충돌 없이 통합. 현재 로컬 브랜치도 `deploy`이며 `origin/deploy`를 추적한다.
+- 통합 소스의 웹 production 빌드는 Webpack으로 통과. 임시 폴더에서 기존 의존성 링크를 공유했기 때문에 Turbopack은 파일시스템 경계 오류가 발생했으며 소스 오류는 아니었다. 기존 Next.js 설정처럼 웹 빌드는 타입 검증을 생략하며, 별도 웹 타입 검사의 기존 KaaS 오류 8개는 남아 있다.
+- 실제 DB 통합 테스트는 pipeline 12개·API 14개를 건너뛰었다. 새 피드 API를 운영에서 사용하려면 `docs/architecture/avalanche-categories-2026-10-12.sql` 등 문서의 마이그레이션 순서를 별도 적용해야 한다. 이번 통합은 DB 변경이나 배포를 수행하지 않았다.
+- 참고: `apps/docs/avalanche-crawler/1-backend-frontend-guide.md`의 초기 ‘머지 전’ 상태는 작성 당시 기록이며, 현재 코드는 deploy에 포함되었다. 프론트는 아직 정적 데이터를 사용한다.
