@@ -15,7 +15,7 @@ const env = Object.fromEntries(
     .map((l) => [l.slice(0, l.indexOf("=")), l.slice(l.indexOf("=") + 1).trim()]));
 (async () => {
 const c = new Client({ host: env.LOCAL_DB_HOST, port: +env.LOCAL_DB_PORT, user: env.LOCAL_DB_USER,
-  password: env.LOCAL_DB_PASSWORD, database: env.LOCAL_DB_NAME, ssl: { rejectUnauthorized: false } });
+  password: env.LOCAL_DB_PASSWORD, database: env.LOCAL_DB_NAME, ssl: env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false });
 await c.connect();
 const q = async (s) => (await c.query(s)).rows;
 const rows = await q(`SELECT ontology_node node, canonical_name label, description

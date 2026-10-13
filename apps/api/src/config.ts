@@ -3,6 +3,9 @@ import * as process from 'node:process';
 
 dotenv.config();
 
+// DB_SSL=true 일 때만 SSL 사용 (관리형 PG). 자체 호스팅/로컬 PG 는 기본 false.
+const DB_SSL = process.env.DB_SSL === 'true';
+
 const config = {
   local: {
     webEndpoint: process.env.LOCAL_WEB_ENDPOINT || 'http://localhost:3000',
@@ -12,6 +15,7 @@ const config = {
       user: process.env.LOCAL_DB_USER,
       password: process.env.LOCAL_DB_PASSWORD,
       database: process.env.LOCAL_DB_NAME,
+      ssl: DB_SSL,
     },
     redis: {
       host: process.env.LOCAL_REDIS_HOST || '127.0.0.1',
@@ -27,6 +31,7 @@ const config = {
       user: process.env.STAGING_DB_USER,
       password: process.env.STAGING_DB_PASSWORD,
       database: process.env.STAGING_DB_NAME,
+      ssl: DB_SSL,
     },
     redis: {
       host: process.env.STAGING_REDIS_HOST || 'host.docker.internal',
@@ -42,6 +47,7 @@ const config = {
       user: process.env.PROD_DB_USER,
       password: process.env.PROD_DB_PASSWORD,
       database: process.env.PROD_DB_NAME,
+      ssl: DB_SSL,
     },
     redis: {
       host: process.env.PROD_REDIS_HOST || 'localhost',

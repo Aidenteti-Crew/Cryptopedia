@@ -13,7 +13,7 @@ const env = Object.fromEntries(
     .map((l) => [l.slice(0, l.indexOf("=")), l.slice(l.indexOf("=") + 1).trim()]));
 (async () => {
 const c = new Client({ host: env.LOCAL_DB_HOST, port: +env.LOCAL_DB_PORT, user: env.LOCAL_DB_USER,
-  password: env.LOCAL_DB_PASSWORD, database: env.LOCAL_DB_NAME, ssl: { rejectUnauthorized: false } });
+  password: env.LOCAL_DB_PASSWORD, database: env.LOCAL_DB_NAME, ssl: env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false });
 await c.connect();
 const q = async (s, p) => (await c.query(s, p)).rows;
 const n = (await q(`SELECT

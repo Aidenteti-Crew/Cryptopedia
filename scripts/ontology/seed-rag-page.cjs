@@ -49,7 +49,7 @@ const REFS=[
 
 (async()=>{
 const c=new Client({host:env.LOCAL_DB_HOST,port:+env.LOCAL_DB_PORT,user:env.LOCAL_DB_USER,
-  password:env.LOCAL_DB_PASSWORD,database:env.LOCAL_DB_NAME,ssl:{rejectUnauthorized:false},statement_timeout:60000});
+  password:env.LOCAL_DB_PASSWORD,database:env.LOCAL_DB_NAME,ssl: env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,statement_timeout:60000});
 await c.connect();
 const before=await c.query(`SELECT (SELECT count(*)::int FROM content.concept_page) p,
   (SELECT count(*)::int FROM handbook.paragraph_concept_link) l`);

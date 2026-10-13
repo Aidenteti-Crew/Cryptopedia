@@ -64,7 +64,7 @@ ok(fs.existsSync(V2), `⚠️ v2 원본 보존됨: ${path.basename(V2)} (덮어�
 const P = parse(fs.readFileSync(TTL, "utf8"));
 
 const c = new Client({ host: env.LOCAL_DB_HOST, port: +env.LOCAL_DB_PORT, user: env.LOCAL_DB_USER,
-  password: env.LOCAL_DB_PASSWORD, database: env.LOCAL_DB_NAME, ssl: { rejectUnauthorized: false } });
+  password: env.LOCAL_DB_PASSWORD, database: env.LOCAL_DB_NAME, ssl: env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false });
 await c.connect();
 const q = async (s) => (await c.query(s)).rows;
 
