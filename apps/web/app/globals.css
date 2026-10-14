@@ -279,6 +279,51 @@
   outline-color: var(--editorial-accent);
 }
 
+/* ─────────────────────────────────────────────
+   Editorial 스크롤바 — 사이드바·본문·코드 블록 모두 같은 색 체계.
+   본문 스크롤바는 문서(html) 스크롤이라 :root:has() 로 함께 지정한다.
+   · Chrome / Edge / Safari: ::-webkit-scrollbar (6px, hover 색 지원)
+   · Firefox: 표준 속성(scrollbar-color / thin) — 폭은 브라우저 기본 thin 이라 정확히 6px 은 아님
+   Chrome 은 표준 속성이 있으면 ::-webkit-scrollbar 를 무시하므로 @supports 로 분리한다.
+   스크롤바를 숨기거나 스크롤 동작을 바꾸지 않는다.
+───────────────────────────────────────────── */
+:root:has(.editorial-root),
+.editorial-root {
+  --editorial-scroll-thumb: #65516F;
+  --editorial-scroll-thumb-hover: #8B719A;
+}
+
+@supports selector(::-webkit-scrollbar) {
+  :root:has(.editorial-root)::-webkit-scrollbar,
+  .editorial-root ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  :root:has(.editorial-root)::-webkit-scrollbar-track,
+  .editorial-root ::-webkit-scrollbar-track,
+  :root:has(.editorial-root)::-webkit-scrollbar-corner,
+  .editorial-root ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  :root:has(.editorial-root)::-webkit-scrollbar-thumb,
+  .editorial-root ::-webkit-scrollbar-thumb {
+    background: var(--editorial-scroll-thumb);
+    border-radius: 999px;
+  }
+  :root:has(.editorial-root)::-webkit-scrollbar-thumb:hover,
+  .editorial-root ::-webkit-scrollbar-thumb:hover {
+    background: var(--editorial-scroll-thumb-hover);
+  }
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  :root:has(.editorial-root),
+  .editorial-root * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--editorial-scroll-thumb) transparent;
+  }
+}
+
 .editorial-display {
   font-family: var(--font-editorial-display), serif;
   text-wrap: balance;
