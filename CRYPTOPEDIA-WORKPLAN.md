@@ -221,3 +221,31 @@ DATABASE_URL=postgresql://cherry:cherry_dev@localhost:15432/cherry_db \
 - 통합 소스의 웹 production 빌드는 Webpack으로 통과. 임시 폴더에서 기존 의존성 링크를 공유했기 때문에 Turbopack은 파일시스템 경계 오류가 발생했으며 소스 오류는 아니었다. 기존 Next.js 설정처럼 웹 빌드는 타입 검증을 생략하며, 별도 웹 타입 검사의 기존 KaaS 오류 8개는 남아 있다.
 - 실제 DB 통합 테스트는 pipeline 12개·API 14개를 건너뛰었다. 새 피드 API를 운영에서 사용하려면 `docs/architecture/avalanche-categories-2026-10-12.sql` 등 문서의 마이그레이션 순서를 별도 적용해야 한다. 이번 통합은 DB 변경이나 배포를 수행하지 않았다.
 - 참고: `apps/docs/avalanche-crawler/1-backend-frontend-guide.md`의 초기 ‘머지 전’ 상태는 작성 당시 기록이며, 현재 코드는 deploy에 포함되었다. 프론트는 아직 정적 데이터를 사용한다.
+
+## 9. 2026-10-14 — 로컬 DB·무료 소스 수집 정상화
+
+- 사용자가 1번 DB·수집 정상화를 승인. 로컬 Docker PostgreSQL(15432, cherry_db)을 검증하고 content 백업 후 분류 테이블 7개 생성. 원격·운영 DB는 변경하지 않음.
+- 공식 소스 수집 결과: 프로젝트 235개, 행사 16개, 원문 기사 87개. API는 500에서 200으로 정상화.
+- 실제 DB 통합 테스트 포함 pipeline 181개와 API 57개 통과. 프로젝트용 LLM 키·모델이 없어 AI 분류·채점은 보류했고 유료 Apify 수집도 제외.
+- 실행·백업·검수 기록: `apps/docs/avalanche-crawler/2-local-normalization-plan.md`. 웹 연결·자동 실행 주기·배포는 아직 진행하지 않음.
+
+### LLM·Apify 설정 후 정상화 완료
+
+- 기사 145건 AI 분류 성공, 실패 0. X 추가 수집 58건 포함.
+- 제공 데이터: 프로젝트 235개, 행사 18개, 매크로 26개, 기술 업데이트 72개, 일반 글 18개. 프로젝트·행사 전부 중요도 점수 존재.
+- 실제 DB 통합 테스트 238개와 조회 API·프론트 데이터 계약 검사 통과. 소식 데이터 공급 준비 완료이며 웹 연결은 다음 단계.
+- 로컬 실행·검수 스크립트와 결과는 `apps/docs/avalanche-crawler/2-local-normalization-plan.md`에 기록. 키 값은 저장소·로그에 포함하지 않음.
+
+### 생태계 홈 실제 수집 API 연결 완료
+
+- 최신 매크로/개발 소식과 예정 행사를 체인별 조회하여 기존 슬라이드에 연결.
+- 원문 외부 링크, 행사 일정 구분, 표시 자료 기준 Buzz 분포 적용.
+- 프로젝트 디렉터리를 뉴스로 표시하지 않음. 학습 경로와 숨긴 섹션 유지.
+- 72개 테스트 및 실제 API·데스크톱/모바일·실패 후 재시도 검증 완료.
+- 상세: `apps/docs/avalanche-crawler/3-home-api-integration-plan.md`.
+
+
+### 팀 개발용 크롤러 스냅샷
+
+- 현재 로컬 데이터 중 API 개발에 필요한 Avalanche 크롤러 테이블만 362 KiB PostgreSQL dump로 내보냄. 전체 DB·환경 변수는 미포함.
+- 데이터 건수·SHA-256·로컬 복원 절차·LLM 팀원 참고 순서: `apps/docs/avalanche-crawler/4-team-data-snapshot.md`.

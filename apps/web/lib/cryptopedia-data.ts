@@ -37,7 +37,7 @@ export class CryptopediaDataError extends Error {
 export interface CryptopediaRepository {
   getHub(chainId: string): Promise<HubData>
   getChains(): Promise<ChainCollectionPageData>
-  getEcosystem(): Promise<EcosystemPageData>
+  getEcosystem(chainId?: string): Promise<EcosystemPageData>
   getCollection(id: string): Promise<CollectionPageData>
   getProjects(): Promise<CollectionVolume[]>
   getMacroArticles(): Promise<ContentEntry[]>
@@ -187,6 +187,54 @@ export function createStaticCryptopediaRepository(
         throw new CryptopediaDataError("not-found", `Unknown book: ${id}`)
       }
       return book
+    },
+  }
+}
+
+/** Keep curated learning content while loading the home feed from the crawler API. */
+export function createCryptopediaRepository(
+  fetchImpl: typeof fetch = fetch,
+  apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000'
+): CryptopediaRepository {
+  const curated = createStaticCryptopediaRepository(fetchImpl)
+  const feedSchema = z.object({ items: z.array(contentEntrySchema) })
+  const liveFetch: typeof fetch = (input, init) =>
+    fetchImpl(input, {
+      ...init,
+      cache: 'no-store',
+      signal: AbortSignal.timeout(15000),
+    })
+  return {
+    ...curated,
+    async getEcosystem(chainId = 'avalanche') {
+      const query = `chain=${encodeURIComponent(chainId)}&limit=4`
+      const base = `${apiUrl.replace(/\/$/, '')}/api`
+      const [page, macro, updates, events] = await Promise.all([
+        curated.getEcosystem(),
+        loadJson(liveFetch, `${base}/ecosystem/macro?${query}&sort=latest`, feedSchema),
+        loadJson(liveFetch, `${base}/ecosystem/updates?${query}&sort=latest`, feedSchema),
+        loadJson(liveFetch, `${base}/events?${query}&status=upcoming`, eventFeedResponseSchema),
+      ])
+      return {
+        ...page,
+        latest: [
+          ...macro.items,
+          ...updates.items,
+          ...events.items.map(
+            (event): ContentEntry => ({
+              id: event.id,
+              title: event.title,
+              summary: event.summary,
+              kind: 'EVENT',
+              startsAt: event.startsAt,
+              sourceName: event.organizer ?? undefined,
+              sourceUrl: event.sourceUrl ?? event.registrationUrl ?? undefined,
+              publishedAt: event.publishedAt ?? undefined,
+              collectedAt: event.fetchedAt,
+            })
+          ),
+        ],
+      }
     },
   }
 }

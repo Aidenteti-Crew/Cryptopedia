@@ -73,9 +73,14 @@ export function EcosystemPage({ data, hub, onOpenScreen, onOpenLatest }: Ecosyst
               const Icon = category.Icon
               const entry = latest[index]
               return (
-                <button
-                  type="button"
-                  onClick={() => onOpenLatest(slide.i)}
+                <a
+                  href={
+                    entry.sourceUrl && /^https?:\/\//.test(entry.sourceUrl)
+                      ? entry.sourceUrl
+                      : undefined
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="relative grid min-h-[320px] w-full min-w-0 overflow-hidden rounded-[20px] text-left text-white shadow-[0_10px_34px_rgba(0,0,0,0.2)] md:grid-cols-[minmax(280px,42%)_1fr]"
                 >
                   <span
@@ -85,7 +90,7 @@ export function EcosystemPage({ data, hub, onOpenScreen, onOpenLatest }: Ecosyst
                     <span className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[1.2px] text-white/75">
                       <span>{category.label}</span>
                       <span className="rounded-full border border-white/25 px-2 py-0.5 tracking-normal">
-                        예시 소식
+                        {entry.sourceName ?? '수집 소식'}
                       </span>
                     </span>
                     <span className="mt-4 block text-[28px] font-semibold leading-[1.3] tracking-[-0.5px] sm:text-[34px]">
@@ -96,12 +101,15 @@ export function EcosystemPage({ data, hub, onOpenScreen, onOpenLatest }: Ecosyst
                     </span>
                     <span className="mt-auto flex flex-wrap items-center gap-3 pt-7 text-xs text-white/80">
                       <span>
-                        {entry.publishedAt
-                          ? '게시 ' + entry.publishedAt.slice(0, 10)
-                          : '정적 콘텐츠 미리보기'}
+                        {entry.startsAt
+                          ? '행사 ' + entry.startsAt.slice(0, 10)
+                          : entry.publishedAt
+                            ? '게시 ' + entry.publishedAt.slice(0, 10)
+                            : '게시일 미제공'}
                       </span>
                       <span className="ml-auto inline-flex items-center gap-2 font-semibold">
-                        소식 살펴보기 <ArrowRight size={15} />
+                        {entry.sourceUrl ? '원문 보기' : '원문 링크 미제공'}{' '}
+                        <ArrowRight size={15} />
                       </span>
                     </span>
                   </span>
@@ -117,7 +125,7 @@ export function EcosystemPage({ data, hub, onOpenScreen, onOpenLatest }: Ecosyst
                       <Icon size={66} strokeWidth={1.2} className="text-[#4b3567]" />
                     </span>
                   </span>
-                </button>
+                </a>
               )
             }}
           />
@@ -210,7 +218,7 @@ export function EcosystemPage({ data, hub, onOpenScreen, onOpenLatest }: Ecosyst
               Buzz Distribution
             </h2>
             <p className="mt-2 text-xs leading-6 text-[var(--editorial-muted)]">
-              예시 소식 분포 · 현재 홈에 등록된 소식의 분야별 비중
+              홈에 표시된 수집 소식·예정 행사의 분야별 비중
             </p>
           </div>
           <span className="rounded-full border border-[var(--editorial-line)] px-3 py-1.5 text-[10px] text-[var(--editorial-muted)]">
@@ -243,6 +251,9 @@ export function EcosystemPage({ data, hub, onOpenScreen, onOpenLatest }: Ecosyst
             </button>
           ))}
         </div> */}
+        <p className="mt-3 text-xs leading-6 text-[var(--editorial-muted)]">
+          표시된 자료 기준이며, 전체 수집량이나 시장 인기도를 나타내지 않습니다.
+        </p>
       </section>
 
       {/* <section

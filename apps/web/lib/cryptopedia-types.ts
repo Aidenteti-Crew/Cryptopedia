@@ -32,6 +32,7 @@ export const contentEntrySchema = z.object({
   sourceUrl: z.string().url().optional(),
   publishedAt: isoDateTimeSchema.optional(),
   collectedAt: isoDateTimeSchema.optional(),
+  startsAt: isoDateTimeSchema.optional(),
 })
 
 export const collectionPageSchema = z.object({

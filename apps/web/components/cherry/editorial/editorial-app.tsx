@@ -4,7 +4,7 @@ import { useEffect, useReducer, useState } from 'react'
 import { HUB_ENTRY_IDS, isHubEntry, type HubData } from '@/lib/cryptopedia-hub'
 
 import {
-  createStaticCryptopediaRepository,
+  createCryptopediaRepository,
   type CryptopediaRepository,
 } from '@/lib/cryptopedia-data'
 import {
@@ -95,7 +95,7 @@ type LoadState =
   | { status: 'ready'; view: LoadedView }
   | { status: 'error'; message: string }
 
-const repository = createStaticCryptopediaRepository()
+const repository = createCryptopediaRepository()
 
 const NAV_SCREEN_IDS = new Set<ScreenId>([
   ...PRIMARY_NAV.map((item) => item.id),
@@ -122,7 +122,7 @@ async function loadEditorialView(
     case 'chains':
       return { kind: 'chains', data: await data.getChains() }
     case 'ecosystem':
-      const [ecosystem, hub] = await Promise.all([data.getEcosystem(), data.getHub(chainId)])
+      const [ecosystem, hub] = await Promise.all([data.getEcosystem(chainId), data.getHub(chainId)])
       return { kind: 'ecosystem', data: ecosystem, hub }
     case 'fundamentals':
     case 'builders':
