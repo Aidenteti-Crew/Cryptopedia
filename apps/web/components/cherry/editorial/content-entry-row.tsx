@@ -15,7 +15,7 @@ export function ContentEntryRow({ entry, onOpen }: ContentEntryRowProps) {
         <span className="block text-[17px] leading-6 text-[var(--editorial-ink)] group-hover:text-[var(--editorial-accent)]">
           {entry.title}
         </span>
-        <span className="editorial-copy mt-1.5 block text-sm leading-[1.5] text-[var(--editorial-muted)]">
+        <span className="editorial-copy mt-1 block text-sm leading-[1.5] text-[var(--editorial-muted)]">
           {entry.summary}
           <span aria-hidden="true">&nbsp;&nbsp;·&nbsp;&nbsp;</span>
           <span className="whitespace-nowrap text-xs">{entry.kind}</span>
@@ -29,7 +29,7 @@ export function ContentEntryRow({ entry, onOpen }: ContentEntryRowProps) {
       </span>
     </>
   )
-  const className = "group flex min-h-[95px] w-full items-start gap-4 border-b border-[var(--editorial-line)] py-5 text-left sm:gap-6"
+  const className = "group flex w-full items-start gap-4 border-b border-[var(--editorial-line)] py-4 text-left sm:gap-6"
   if (onOpen) return <button type="button" onClick={() => onOpen(entry.id)} className={className}>{content}</button>
   if (entry.sourceUrl) return <a href={entry.sourceUrl} target="_blank" rel="noopener noreferrer" className={className}>{content}</a>
   return <div className={className}>{content}</div>

@@ -60,7 +60,7 @@ export function EcosystemPage({ data, hub, onOpenScreen, onOpenLatest }: Ecosyst
     vf: 0,
   }))
   return (
-    <article className="min-w-0 px-4 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
+    <article className="min-w-0 px-5 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
       <section aria-label="생태계 최신 소식">
         {slides.length ? (
           <HeroCarousel

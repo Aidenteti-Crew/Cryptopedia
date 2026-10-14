@@ -21,7 +21,7 @@ export function FeedPage({
   onOpenEntry,
 }: FeedPageProps) {
   return (
-    <article className="px-4 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
+    <article className="px-5 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
       <p className="text-[11px] text-[var(--editorial-accent)]">{eyebrow}</p>
       <h1 className="mt-3 text-[34px] font-normal leading-[1.55]">{title}</h1>
       <p className="editorial-copy mt-4 text-sm leading-6 text-[var(--editorial-muted)]">

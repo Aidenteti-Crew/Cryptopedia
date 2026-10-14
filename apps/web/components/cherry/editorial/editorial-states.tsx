@@ -20,7 +20,7 @@ export function EditorialLoading() {
       {[0, 1, 2].map((item) => (
         <div
           key={item}
-          className="h-[95px] animate-pulse border-b border-[var(--editorial-line)] bg-black/[0.03]"
+          className="h-[84px] animate-pulse border-b border-[var(--editorial-line)] bg-white/[0.03]"
         />
       ))}
     </div>

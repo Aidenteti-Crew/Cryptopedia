@@ -14,7 +14,7 @@ export function ChainCollectionPage({
   const current = data.items.find((item) => item.id === data.currentChainId)
 
   return (
-    <article className="px-4 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
+    <article className="px-5 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
       <h1 className="mt-3 text-[34px] font-normal leading-[1.55]">{data.title}</h1>
       <p className="editorial-copy mt-3 text-sm text-[var(--editorial-muted)]">{data.subtitle}</p>
 

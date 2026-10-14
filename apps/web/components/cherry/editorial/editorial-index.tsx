@@ -131,7 +131,7 @@ function NavButton({
         active
           ? isChild
             ? "bg-[var(--editorial-active-soft)] font-medium text-[var(--editorial-ink)]"
-            : "bg-[var(--editorial-active)] font-medium text-[var(--editorial-deep)]"
+            : "bg-[var(--editorial-active)] font-medium text-[var(--editorial-strong)]"
           : `${hasActiveChild ? "font-medium" : "font-normal"} text-[var(--editorial-ink)] hover:bg-[var(--editorial-hover)]`
       }`}
     >

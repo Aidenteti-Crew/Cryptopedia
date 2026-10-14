@@ -57,7 +57,7 @@ export function EditorialShell({
       {/* Desktop sidebar — hidden below lg */}
       <aside
         aria-label="Main navigation"
-        className="sticky top-0 hidden h-[100dvh] w-[260px] shrink-0 flex-col bg-[var(--editorial-paper)] lg:flex"
+        className="sticky top-0 hidden h-[100dvh] w-[260px] shrink-0 flex-col bg-[var(--editorial-sidebar)] lg:flex"
       >
         <EditorialBrand
           onHome={goHome}
@@ -74,7 +74,7 @@ export function EditorialShell({
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Mobile header — hidden on lg+ */}
-        <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2.5 border-b border-[var(--editorial-line)] bg-[var(--editorial-paper)] px-4 lg:hidden">
+        <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2.5 border-b border-[var(--editorial-line)] bg-[var(--editorial-sidebar)] px-4 lg:hidden">
           <EditorialBrand onHome={goHome} />
           <div className="ml-auto flex shrink-0 items-center gap-2">
             {collection}

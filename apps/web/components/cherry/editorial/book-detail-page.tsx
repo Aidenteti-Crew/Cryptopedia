@@ -16,7 +16,7 @@ export function BookDetailPage({
   onOpenChapter,
 }: BookDetailPageProps) {
   return (
-    <article className="px-4 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
+    <article className="px-5 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
       <section className="grid gap-8 border border-[var(--editorial-line)] bg-[var(--editorial-surface)] p-6 md:grid-cols-[187px_minmax(0,1fr)]">
         {book.coverAsset ? (
           <Image
@@ -24,7 +24,7 @@ export function BookDetailPage({
             alt={`${book.name} Cryptopedia 표지`}
             width={187}
             height={255}
-            className="mx-auto h-auto w-[154px] outline outline-1 outline-black/10 md:w-[187px]"
+            className="mx-auto h-auto w-[154px] outline outline-1 outline-white/10 md:w-[187px]"
           />
         ) : (
           <div className="flex aspect-[187/255] flex-col justify-between border border-[var(--editorial-line)] p-5">

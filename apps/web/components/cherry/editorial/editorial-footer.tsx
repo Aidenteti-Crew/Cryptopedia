@@ -12,7 +12,7 @@ export function EditorialFooter({
   return (
     <footer
       aria-label="사이트 푸터"
-      className="shrink-0 bg-[var(--editorial-paper)] px-4 pb-6 pt-6 sm:px-8 sm:pb-8 lg:px-[52px]"
+      className="shrink-0 bg-[var(--editorial-paper)] px-5 pb-6 pt-6 sm:px-8 sm:pb-8 lg:px-[52px]"
     >
       <div className="flex flex-col gap-6 border-t border-[var(--editorial-line)] pt-6 sm:flex-row sm:items-start sm:justify-between">
         <div>

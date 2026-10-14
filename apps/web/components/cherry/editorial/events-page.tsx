@@ -73,7 +73,7 @@ function EventGroup({
 
 export function EventsPage({ events, archiveMode = false, onOpenArchive }: EventsPageProps) {
   return (
-    <article className="px-4 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
+    <article className="px-5 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
       <p className="text-[11px] text-[var(--editorial-accent)]">AVALANCHE / COMMUNITY EVENTS</p>
       <h1 className="mt-3 text-[34px] font-normal leading-[1.55]">
         {archiveMode ? '지난 이벤트' : '행사 및 이벤트'}
