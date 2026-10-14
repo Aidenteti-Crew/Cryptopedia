@@ -2,16 +2,12 @@ import type { ContentEntry } from "@/lib/cryptopedia-types"
 
 interface ContentEntryRowProps {
   entry: ContentEntry
-  onOpen: (id: string) => void
+  onOpen?: (id: string) => void
 }
 
 export function ContentEntryRow({ entry, onOpen }: ContentEntryRowProps) {
-  return (
-    <button
-      type="button"
-      onClick={() => onOpen(entry.id)}
-      className="group flex min-h-[95px] w-full items-start gap-4 border-b border-[var(--editorial-line)] py-5 text-left sm:gap-6"
-    >
+  const content = (
+    <>
       <span className="w-7 shrink-0 pt-0.5 text-xs tabular-nums text-[var(--editorial-accent)] sm:w-11">
         {entry.order === undefined ? "" : String(entry.order).padStart(2, "0")}
       </span>
@@ -31,6 +27,10 @@ export function ContentEntryRow({ entry, onOpen }: ContentEntryRowProps) {
       >
         ↗
       </span>
-    </button>
+    </>
   )
+  const className = "group flex min-h-[95px] w-full items-start gap-4 border-b border-[var(--editorial-line)] py-5 text-left sm:gap-6"
+  if (onOpen) return <button type="button" onClick={() => onOpen(entry.id)} className={className}>{content}</button>
+  if (entry.sourceUrl) return <a href={entry.sourceUrl} target="_blank" rel="noopener noreferrer" className={className}>{content}</a>
+  return <div className={className}>{content}</div>
 }

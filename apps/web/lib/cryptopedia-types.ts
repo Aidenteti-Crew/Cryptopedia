@@ -127,6 +127,28 @@ export const eventFeedResponseSchema = z.object({
   generatedAt: isoDateTimeSchema,
 })
 
+export const ecosystemProjectSchema = z.object({
+  id: z.string().min(1),
+  key: z.string().min(1),
+  name: z.string().min(1),
+  category: z.string().nullable(),
+  developer: z.string().nullable(),
+  websiteUrl: z.string().url().nullable(),
+  documentationUrl: z.string().url().nullable(),
+  description: z.string().nullable(),
+  chains: z.array(z.string()),
+  sourceUrl: z.string().url().nullable(),
+  importance: z.number().min(1).max(5).nullable(),
+  importanceReason: z.string().nullable(),
+})
+
+export const ecosystemProjectsResponseSchema = z.object({
+  items: z.array(ecosystemProjectSchema),
+  categories: z.array(z.object({ name: z.string(), count: z.number().int().nonnegative() })),
+  total: z.number().int().nonnegative(),
+  generatedAt: isoDateTimeSchema,
+})
+
 export const collectionVolumeSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
@@ -206,6 +228,8 @@ export type EcosystemPageData = z.infer<typeof ecosystemPageSchema>
 export type EventStatus = z.infer<typeof eventStatusSchema>
 export type EventEntry = z.infer<typeof eventEntrySchema>
 export type EventFeedResponse = z.infer<typeof eventFeedResponseSchema>
+export type EcosystemProject = z.infer<typeof ecosystemProjectSchema>
+export type EcosystemProjectsResponse = z.infer<typeof ecosystemProjectsResponseSchema>
 export type CollectionVolume = z.infer<typeof collectionVolumeSchema>
 export type ArticleSection = z.infer<typeof articleSectionSchema>
 export type ArticleVariant = z.infer<typeof articleVariantSchema>

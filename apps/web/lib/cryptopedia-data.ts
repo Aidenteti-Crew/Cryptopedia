@@ -9,6 +9,7 @@ import {
   collectionVolumeSchema,
   contentEntrySchema,
   eventFeedResponseSchema,
+  ecosystemProjectsResponseSchema,
   ecosystemPageSchema,
   type ArticleDetail,
   type BookDetail,
@@ -17,6 +18,7 @@ import {
   type CollectionVolume,
   type ContentEntry,
   type EventFeedResponse,
+  type EcosystemProjectsResponse,
   type EcosystemPageData,
   type EventStatus,
 } from "./cryptopedia-types"
@@ -40,9 +42,10 @@ export interface CryptopediaRepository {
   getEcosystem(chainId?: string): Promise<EcosystemPageData>
   getCollection(id: string): Promise<CollectionPageData>
   getProjects(): Promise<CollectionVolume[]>
-  getMacroArticles(): Promise<ContentEntry[]>
-  getUpdates(): Promise<ContentEntry[]>
-  getEvents(): Promise<EventFeedResponse>
+  getEcosystemProjects(chainId?: string): Promise<EcosystemProjectsResponse>
+  getMacroArticles(chainId?: string): Promise<ContentEntry[]>
+  getUpdates(chainId?: string): Promise<ContentEntry[]>
+  getEvents(chainId?: string, status?: 'past'): Promise<EventFeedResponse>
   getArticle(id: string): Promise<ArticleDetail>
   getBook(id: string): Promise<BookDetail>
 }
@@ -146,6 +149,10 @@ export function createStaticCryptopediaRepository(
       return projects.toSorted((left, right) => left.volume - right.volume)
     },
 
+    getEcosystemProjects() {
+      throw new CryptopediaDataError('not-found', 'Static ecosystem directory is unavailable')
+    },
+
     getMacroArticles() {
       return loadJson(fetchImpl, "/cryptopedia/macro.json", contentListSchema)
     },
@@ -198,6 +205,7 @@ export function createCryptopediaRepository(
 ): CryptopediaRepository {
   const curated = createStaticCryptopediaRepository(fetchImpl)
   const feedSchema = z.object({ items: z.array(contentEntrySchema) })
+  const apiBase = `${apiUrl.replace(/\/$/, '')}/api`
   const liveFetch: typeof fetch = (input, init) =>
     fetchImpl(input, {
       ...init,
@@ -206,14 +214,38 @@ export function createCryptopediaRepository(
     })
   return {
     ...curated,
+    getEcosystemProjects(chainId = 'avalanche') {
+      return loadJson(liveFetch, `${apiBase}/ecosystem/projects?chain=${encodeURIComponent(chainId)}&limit=500`, ecosystemProjectsResponseSchema)
+    },
+    async getMacroArticles(chainId = 'avalanche') {
+      const feed = await loadJson(liveFetch, `${apiBase}/ecosystem/macro?chain=${encodeURIComponent(chainId)}&sort=latest&limit=100`, feedSchema)
+      return feed.items
+    },
+    async getUpdates(chainId = 'avalanche') {
+      const feed = await loadJson(liveFetch, `${apiBase}/ecosystem/updates?chain=${encodeURIComponent(chainId)}&sort=latest&limit=100`, feedSchema)
+      return feed.items
+    },
+    async getEvents(chainId = 'avalanche', status) {
+      const fetchStatus = (eventStatus: string) =>
+        loadJson(liveFetch, `${apiBase}/events?chain=${encodeURIComponent(chainId)}&status=${eventStatus}&limit=100`, eventFeedResponseSchema)
+      if (status) return fetchStatus(status)
+
+      const feeds = await Promise.all(
+        ['upcoming', 'ongoing', 'past', 'cancelled', 'postponed'].map(fetchStatus)
+      )
+      return {
+        items: feeds.flatMap((feed) => feed.items),
+        nextCursor: null,
+        generatedAt: feeds[0].generatedAt,
+      }
+    },
     async getEcosystem(chainId = 'avalanche') {
       const query = `chain=${encodeURIComponent(chainId)}&limit=4`
-      const base = `${apiUrl.replace(/\/$/, '')}/api`
       const [page, macro, updates, events] = await Promise.all([
         curated.getEcosystem(),
-        loadJson(liveFetch, `${base}/ecosystem/macro?${query}&sort=latest`, feedSchema),
-        loadJson(liveFetch, `${base}/ecosystem/updates?${query}&sort=latest`, feedSchema),
-        loadJson(liveFetch, `${base}/events?${query}&status=upcoming`, eventFeedResponseSchema),
+        loadJson(liveFetch, `${apiBase}/ecosystem/macro?${query}&sort=latest`, feedSchema),
+        loadJson(liveFetch, `${apiBase}/ecosystem/updates?${query}&sort=latest`, feedSchema),
+        loadJson(liveFetch, `${apiBase}/events?${query}&status=upcoming`, eventFeedResponseSchema),
       ])
       return {
         ...page,

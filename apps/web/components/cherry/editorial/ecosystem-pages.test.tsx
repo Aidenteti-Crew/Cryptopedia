@@ -2,11 +2,12 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { renderToStaticMarkup } from 'react-dom/server'
 
-import type { CollectionVolume, ContentEntry, EventEntry } from '@/lib/cryptopedia-types'
+import type { CollectionVolume, ContentEntry, EcosystemProjectsResponse, EventEntry } from '@/lib/cryptopedia-types'
 
 import { EventsPage } from './events-page'
 import { FeedPage } from './feed-page'
 import { ProjectsPage } from './projects-page'
+import { ProjectDirectoryPage } from './project-directory-page'
 
 const volumes: CollectionVolume[] = [
   {
@@ -99,6 +100,48 @@ test('renders feed filters as descriptive copy and entries as actions', () => {
   assert.doesNotMatch(html, /editorial-display[^>]*>매크로 소식/)
 })
 
+test('live feed entries open their source instead of a missing internal article', () => {
+  const html = renderToStaticMarkup(
+    <FeedPage
+      eyebrow="수집 소식"
+      title="매크로 소식"
+      introduction="실제 수집 자료"
+      filters={['최신순']}
+      entries={[{ id: 'crawler-1', title: '수집 기사', summary: '요약', kind: 'MACRO', sourceUrl: 'https://example.org/article' }]}
+    />
+  )
+  assert.match(html, /href="https:\/\/example\.org\/article"/)
+  assert.match(html, /수집 기사/)
+  assert.doesNotMatch(html, /<button[^>]*>.*수집 기사/)
+})
+
+test('curated entries keep their internal navigation when a source URL is present', () => {
+  const html = renderToStaticMarkup(
+    <FeedPage
+      eyebrow="큐레이션"
+      title="자료"
+      introduction="내부 상세 페이지"
+      filters={['전체']}
+      entries={[{ id: 'curated-1', title: '내부 자료', summary: '요약', kind: 'ARTICLE', sourceUrl: 'https://example.org/source' }]}
+      onOpenEntry={() => undefined}
+    />
+  )
+  assert.match(html, /<button[^>]*>/)
+  assert.doesNotMatch(html, /href="https:\/\/example\.org\/source"/)
+})
+
+test('project directory shows API categories and official project links', () => {
+  const data: EcosystemProjectsResponse = {
+    items: [{ id: 'project-1', key: 'project-1', name: 'Live Wallet', category: 'Wallets', developer: 'Team', websiteUrl: 'https://example.org/wallet', documentationUrl: null, description: 'Crawler project', chains: ['avalanche'], sourceUrl: 'https://example.org/source', importance: 4, importanceReason: 'Useful' }],
+    categories: [{ name: 'Wallets', count: 1 }], total: 1, generatedAt: '2026-10-14T00:00:00Z',
+  }
+  const html = renderToStaticMarkup(<ProjectDirectoryPage data={data} />)
+  assert.match(html, /Wallets/)
+  assert.match(html, /Live Wallet/)
+  assert.match(html, /href="https:\/\/example\.org\/wallet"/)
+  assert.doesNotMatch(html, /큐레이션 데모/)
+})
+
 test('renders scheduled, past, and changed event groups', () => {
   const html = renderToStaticMarkup(
     <EventsPage
@@ -128,6 +171,11 @@ test('renders the dedicated Figma event archive copy', () => {
   assert.doesNotMatch(html, /← 행사 및 이벤트/)
   assert.match(html, />지난 이벤트</)
   assert.match(html, /종료된 행사와 커뮤니티의 기록을 모았습니다/)
-  assert.match(html, /2026년 9월 · 종료일 최신순/)
+  assert.match(html, /지난 행사 · 최신순/)
   assert.doesNotMatch(html, /다가오는 만남부터/)
+})
+
+test('empty event archive explains that no past events are available', () => {
+  const html = renderToStaticMarkup(<EventsPage archiveMode events={[]} />)
+  assert.match(html, /지난 행사가 없습니다/)
 })

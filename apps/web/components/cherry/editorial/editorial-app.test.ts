@@ -4,8 +4,10 @@ import test from "node:test"
 import {
   getEditorialViewKey,
   editorialViewReducer,
+  loadEditorialView,
   type EditorialView,
 } from "./editorial-app"
+import type { CryptopediaRepository } from '@/lib/cryptopedia-data'
 
 test("creates a stable transition key for every view kind", () => {
   assert.equal(
@@ -80,4 +82,22 @@ test("restores the actual previous library or case when returning from a connect
   const previous: EditorialView = { kind: "article", id: "practice", parent: "academy" }
   const detail: EditorialView = { kind: "article", id: "case-first-contract", parent: "academy" }
   assert.deepEqual(editorialViewReducer(detail, { type: "restore-view", view: previous }), previous)
+})
+
+test('ecosystem subpages load the selected chain from live repository methods', async () => {
+  const calls: string[] = []
+  const repository = {
+    getEcosystemProjects: async (chain: string) => { calls.push(`projects:${chain}`); return { items: [], categories: [], total: 0, generatedAt: '2026-10-14T00:00:00Z' } },
+    getMacroArticles: async (chain: string) => { calls.push(`macro:${chain}`); return [] },
+    getEvents: async (chain: string, status?: string) => { calls.push(`events:${chain}:${status ?? 'all'}`); return { items: [], nextCursor: null, generatedAt: '2026-10-14T00:00:00Z' } },
+    getUpdates: async (chain: string) => { calls.push(`updates:${chain}`); return [] },
+  } as unknown as CryptopediaRepository
+
+  for (const id of ['projects', 'macro', 'events', 'event-archive', 'updates'] as const) {
+    await loadEditorialView({ kind: 'screen', id }, repository, 'avalanche')
+  }
+  assert.deepEqual(calls, [
+    'projects:avalanche', 'macro:avalanche', 'events:avalanche:all',
+    'events:avalanche:past', 'updates:avalanche',
+  ])
 })

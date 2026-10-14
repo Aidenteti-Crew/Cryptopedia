@@ -9,7 +9,7 @@ interface FeedPageProps {
   introduction: string
   filters: string[]
   entries: ContentEntry[]
-  onOpenEntry: (id: string) => void
+  onOpenEntry?: (id: string) => void
 }
 
 export function FeedPage({

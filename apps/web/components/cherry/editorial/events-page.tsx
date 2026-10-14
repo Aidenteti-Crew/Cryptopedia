@@ -1,4 +1,5 @@
 import type { EventEntry, EventStatus } from '@/lib/cryptopedia-types'
+import { EditorialEmpty } from './editorial-states'
 
 interface EventsPageProps {
   events: EventEntry[]
@@ -83,7 +84,7 @@ export function EventsPage({ events, archiveMode = false, onOpenArchive }: Event
           : '다가오는 만남부터 지난 행사까지, 생태계의 활동을 만나보세요.'}
       </p>
       <div className="mt-5 flex items-center justify-between border-y border-[var(--editorial-line)] py-4 text-xs text-[var(--editorial-muted)]">
-        <span>{archiveMode ? '2026년 9월 · 종료일 최신순' : '2026년 · 행사 일정 기준'}</span>
+        <span>{archiveMode ? '지난 행사 · 최신순' : '행사 일정 기준'}</span>
         {!archiveMode && onOpenArchive ? (
           <button
             type="button"
@@ -97,6 +98,7 @@ export function EventsPage({ events, archiveMode = false, onOpenArchive }: Event
 
       {archiveMode ? (
         <section>
+          {events.length === 0 && <EditorialEmpty message="지난 행사가 없습니다." />}
           {events
             .filter((event) => event.status === 'PAST')
             .map((event) => (
@@ -105,6 +107,7 @@ export function EventsPage({ events, archiveMode = false, onOpenArchive }: Event
         </section>
       ) : (
         <>
+          {events.length === 0 && <EditorialEmpty message="등록된 행사가 없습니다." />}
           <EventGroup title="예정된 이벤트" statuses={['UPCOMING', 'ONGOING']} events={events} />
           <EventGroup title="지난 이벤트" statuses={['PAST']} events={events} />
           <EventGroup title="일정 변경" statuses={['CANCELLED', 'POSTPONED']} events={events} />

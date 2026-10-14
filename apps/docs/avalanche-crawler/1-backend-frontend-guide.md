@@ -2,10 +2,10 @@
 
 Avalanche 공식 소스를 수집하고, AI로 분류·채점해서 화면의 4분류(생태계 프로젝트 · 매크로 소식 · 이벤트·행사 · 기술 업데이트)와 기타 정보로 제공하는 기능의 사용 설명서입니다.
 
-> **현재 상태 (2026-10-13)**
-> - 코드는 브랜치 `hansu-crawl-deploy`(`deploy` 기준)에만 있고 **아직 푸시·배포 전**입니다.
-> - DB 테이블 마이그레이션은 **공유 DB에 적용 전**입니다. 로컬 docker DB에서만 검증했습니다.
-> - 프론트(`apps/web`)는 아직 정적 JSON을 쓰며, 이 API로 교체하는 작업은 하지 않았습니다.
+> **현재 웹 상태 (2026-10-14)**
+> - 크롤러 API와 생태계 홈 연결은 Aidenteti-Crew `deploy`에 있습니다.
+> - 체인·프로젝트, 매크로 소식, 행사·이벤트/아카이브, 개발 업데이트도 API 조회로 연결했습니다. Dokploy 배포 여부는 별도 확인이 필요합니다.
+> - 첨부 dump는 별도 로컬 미리보기 DB에 복원해 확인했습니다. 공유 DB의 마이그레이션·데이터 적용 상태는 이 검증으로 확인하지 않았습니다.
 
 **누가 어디를 읽으면 되나**
 
@@ -157,12 +157,13 @@ interface EcosystemHubResponse {
 
 | 메서드 | 연결할 API | 비고 |
 |---|---|---|
-| `getEvents()` | `GET /api/events` 응답 그대로 | 실제 데이터 전체가 `eventFeedResponseSchema`를 통과함 |
-| `getMacroArticles()` | `GET /api/ecosystem/macro` 의 `items` | `contentEntrySchema` 통과 확인 |
-| `getUpdates()` | `GET /api/ecosystem/updates` 의 `items` | `contentEntrySchema` 통과 확인 |
+| `getEvents(chainId, status)` | `GET /api/events` 응답 그대로 | 행사 화면은 5개 상태를 각각 조회·결합하고, 아카이브는 `status=past`; `eventFeedResponseSchema` 검사 |
+| `getMacroArticles(chainId)` | `GET /api/ecosystem/macro` 의 `items` | `contentEntrySchema` 검사·원문 링크 |
+| `getUpdates(chainId)` | `GET /api/ecosystem/updates` 의 `items` | `contentEntrySchema` 검사·원문 링크 |
+| `getEcosystemProjects(chainId)` | `GET /api/ecosystem/projects` | 카테고리·프로젝트 디렉터리로 표시 |
 | (신규) 기타 정보 | `GET /api/ecosystem/general` 의 `items` | 화면에 보일지는 기획 결정 |
 | `getEcosystem()` | 소개 문구는 정적 유지, `latest`에 `/api/ecosystem`의 `macro`·`updates`를 쓰는 방식 추천 | 응답 모양이 다름 |
-| `getProjects()` | `GET /api/ecosystem/projects` | **모양이 다름**: 프론트 `CollectionVolume`(책장형)과 달리 234개 디렉터리라 화면 설계 결정 필요 |
+| `getProjects()` | 정적 책장 데이터 | `CollectionVolume`은 수집 프로젝트 디렉터리와 다른 계약이며 학습용 책장에만 유지 |
 
 **검증 결과(로컬 실데이터):** 매크로 26 · 업데이트 77 · 기타 20건이 `contentEntrySchema`를, 이벤트 20건이 모든 status·페이지에서 `eventFeedResponseSchema`를 통과했습니다. API는 응답 직전에 이벤트를 프론트 스키마 사본으로 검사해, 맞지 않는 항목만 빼고 응답합니다(한 건 때문에 목록 전체가 깨지지 않도록).
 

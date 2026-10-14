@@ -4,7 +4,7 @@ import { ContentEntryRow } from "./content-entry-row"
 
 interface ContentEntryListProps {
   entries: ContentEntry[]
-  onOpen: (id: string) => void
+  onOpen?: (id: string) => void
 }
 
 export function ContentEntryList({ entries, onOpen }: ContentEntryListProps) {

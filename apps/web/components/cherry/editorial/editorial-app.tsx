@@ -20,6 +20,7 @@ import type {
   ChainCollectionPageData,
   CollectionPageData,
   ContentEntry,
+  EcosystemProjectsResponse,
   EventFeedResponse,
   EcosystemPageData,
 } from '@/lib/cryptopedia-types'
@@ -34,8 +35,7 @@ import { EditorialShell } from './editorial-shell'
 import { EcosystemPage } from './ecosystem-page'
 import { EventsPage } from './events-page'
 import { FeedPage } from './feed-page'
-import { EcosystemLandscape } from './ecosystem-landscape'
-import { DevelopmentPatchNotes } from './development-patch-notes'
+import { ProjectDirectoryPage } from './project-directory-page'
 import { HubLibraryPage } from './hub-library-page'
 import { HubDetailPage } from './hub-detail-page'
 import { getEditorialBreadcrumbs } from './editorial-breadcrumb'
@@ -83,9 +83,11 @@ export function editorialViewReducer(
 type LoadedView =
   | { kind: 'chains'; data: ChainCollectionPageData }
   | { kind: 'ecosystem'; data: EcosystemPageData; hub: HubData }
+  | { kind: 'projects'; data: EcosystemProjectsResponse }
   | { kind: 'hub'; id: string; data: HubData }
   | { kind: 'collection'; data: CollectionPageData }
   | { kind: 'macro'; data: ContentEntry[] }
+  | { kind: 'updates'; data: ContentEntry[] }
   | { kind: 'events'; screen: 'events' | 'event-archive'; data: EventFeedResponse }
   | { kind: 'article'; data: ArticleDetail }
   | { kind: 'book'; data: BookDetail }
@@ -105,7 +107,7 @@ const NAV_SCREEN_IDS = new Set<ScreenId>([
   'ecosystem',
 ])
 
-async function loadEditorialView(
+export async function loadEditorialView(
   view: EditorialView,
   data: CryptopediaRepository,
   chainId: string
@@ -129,14 +131,14 @@ async function loadEditorialView(
     case 'academy':
       return { kind: 'collection', data: await data.getCollection(view.id) }
     case 'projects':
-      return { kind: 'hub', id: 'projects', data: await data.getHub(chainId) }
+      return { kind: 'projects', data: await data.getEcosystemProjects(chainId) }
     case 'macro':
-      return { kind: 'macro', data: await data.getMacroArticles() }
+      return { kind: 'macro', data: await data.getMacroArticles(chainId) }
     case 'events':
     case 'event-archive':
-      return { kind: 'events', screen: view.id, data: await data.getEvents() }
+      return { kind: 'events', screen: view.id, data: await data.getEvents(chainId, view.id === 'event-archive' ? 'past' : undefined) }
     case 'updates':
-      return { kind: 'hub', id: 'updates', data: await data.getHub(chainId) }
+      return { kind: 'updates', data: await data.getUpdates(chainId) }
     case 'article':
     case 'book':
       throw new Error(`Invalid top-level screen: ${view.id}`)
@@ -229,6 +231,9 @@ export function EditorialApp() {
           />
         )
         break
+      case 'projects':
+        content = <ProjectDirectoryPage data={loaded.data} />
+        break
       case 'collection':
         content = (
           <CollectionPage data={loaded.data} onOpenEntry={(id) => openArticle(id, activeScreen)} />
@@ -236,11 +241,7 @@ export function EditorialApp() {
         break
       case 'hub':
         content =
-          loaded.id === 'projects' ? (
-            <EcosystemLandscape data={loaded.data} onOpen={(id) => openArticle(id, 'projects')} />
-          ) : loaded.id === 'updates' ? (
-            <DevelopmentPatchNotes data={loaded.data} onOpen={(id) => openArticle(id, 'updates')} />
-          ) : HUB_ENTRY_IDS.has(loaded.id) ? (
+          HUB_ENTRY_IDS.has(loaded.id) ? (
             <HubLibraryPage
               key={loaded.id}
               id={loaded.id}
@@ -259,12 +260,22 @@ export function EditorialApp() {
       case 'macro':
         content = (
           <FeedPage
-            eyebrow="매크로 브리핑 / 예시 콘텐츠"
+            eyebrow="매크로 브리핑 / 수집 소식"
             title="매크로 소식"
             introduction="금융기관 협업과 산업의 변화를 출처와 함께 읽습니다."
             filters={['전체 소식', '기관 협업', '산업 동향']}
             entries={loaded.data}
-            onOpenEntry={(id) => openArticle(id, 'macro')}
+          />
+        )
+        break
+      case 'updates':
+        content = (
+          <FeedPage
+            eyebrow="PROTOCOL / DEVELOPMENT UPDATES"
+            title="개발 업데이트"
+            introduction="프로토콜 변경과 개발 소식을 원문 출처와 함께 읽습니다."
+            filters={['릴리스', '업그레이드', '기술 글']}
+            entries={loaded.data}
           />
         )
         break
