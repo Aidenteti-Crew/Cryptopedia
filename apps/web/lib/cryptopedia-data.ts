@@ -40,6 +40,8 @@ export interface CryptopediaRepository {
   getHub(chainId: string): Promise<HubData>
   getChains(): Promise<ChainCollectionPageData>
   getEcosystem(chainId?: string): Promise<EcosystemPageData>
+  /** 라이브 피드에 연결할 수 없을 때 쓰는 큐레이션 전용 홈 — latest 는 비어 있다 (샘플·가짜 소식을 만들지 않는다) */
+  getEcosystemOffline?(chainId?: string): Promise<EcosystemPageData>
   getCollection(id: string): Promise<CollectionPageData>
   getProjects(): Promise<CollectionVolume[]>
   getEcosystemProjects(chainId?: string): Promise<EcosystemProjectsResponse>
@@ -238,6 +240,9 @@ export function createCryptopediaRepository(
         nextCursor: null,
         generatedAt: feeds[0].generatedAt,
       }
+    },
+    async getEcosystemOffline() {
+      return { ...(await curated.getEcosystem()), latest: [] }
     },
     async getEcosystem(chainId = 'avalanche') {
       const query = `chain=${encodeURIComponent(chainId)}&limit=4`

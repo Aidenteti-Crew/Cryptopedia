@@ -21,6 +21,8 @@ interface EditorialShellProps {
   activeChainLogoUrl?: string
   /** 활성 체인 테마 — 포인트 색을 --chain-accent 로 내려보낸다 (레이아웃·배경은 바뀌지 않음) */
   chainTheme?: ChainTheme
+  /** 로고 클릭 동작 — 없으면 생태계 홈 화면으로 이동. (푸터 링크는 영향 없음) */
+  onLogoClick?: () => void
   onSelect: (screen: ScreenId) => void
   onSelectChain?: (chain: SelectedChain) => void
   onOpenEntry?: (id: string) => void
@@ -40,6 +42,7 @@ export function EditorialShell({
   activeChainName = 'Avalanche',
   activeChainLogoUrl,
   chainTheme,
+  onLogoClick,
   onSelect,
   onSelectChain,
   onOpenEntry,
@@ -64,7 +67,7 @@ export function EditorialShell({
         className="sticky top-0 hidden h-[100dvh] w-[260px] shrink-0 flex-col border-r border-[var(--editorial-line)]/60 bg-[var(--editorial-sidebar)] lg:flex"
       >
         <EditorialBrand
-          onHome={goHome}
+          onHome={onLogoClick ?? goHome}
           className="shrink-0 px-5 pb-5 pt-6"
         />
         <div className="shrink-0 px-5 pt-2">{collection}</div>
@@ -79,7 +82,7 @@ export function EditorialShell({
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Mobile header — hidden on lg+ */}
         <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2.5 border-b border-[var(--editorial-line)] bg-[var(--editorial-sidebar)] px-4 lg:hidden">
-          <EditorialBrand onHome={goHome} />
+          <EditorialBrand onHome={onLogoClick ?? goHome} />
           <div className="ml-auto flex shrink-0 items-center gap-2">
             {collection}
             <EditorialMobileNav

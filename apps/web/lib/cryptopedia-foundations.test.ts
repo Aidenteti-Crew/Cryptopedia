@@ -18,13 +18,13 @@ test("loads the exact Figma font families without removing existing fonts", () =
 
 test("scopes the exact Figma variables to the editorial root", () => {
   assert.match(globals, /\.editorial-root\s*\{/)
-  assert.match(globals, /--editorial-paper:\s*#1B111F/i)
-  assert.match(globals, /--editorial-sidebar:\s*#211A25/i)
-  assert.match(globals, /--editorial-surface:\s*#281A30/i)
+  assert.match(globals, /--editorial-paper:\s*#17151A/i)
+  assert.match(globals, /--editorial-sidebar:\s*#201D23/i)
+  assert.match(globals, /--editorial-surface:\s*#29242E/i)
   assert.match(globals, /--editorial-ink:\s*#F4EEF6/i)
-  assert.match(globals, /--editorial-muted:\s*#CFC5D7/i)
-  assert.match(globals, /--editorial-accent:\s*#B79AD6/i)
-  assert.match(globals, /--editorial-line:\s*#45334F/i)
+  assert.match(globals, /--editorial-muted:\s*#CBC4CF/i)
+  assert.match(globals, /--editorial-accent:\s*#B99ACB/i)
+  assert.match(globals, /--editorial-line:\s*rgba\(73,\s*56,\s*79,\s*0\.75\)/i)
 })
 
 test("stores the complete Figma seal export as a non-empty PNG", () => {

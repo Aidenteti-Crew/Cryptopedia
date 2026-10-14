@@ -20,7 +20,7 @@ export const CHAIN_THEME_OVERRIDES: Record<string, ChainThemeOverride> = {
 }
 
 /** 오버라이드가 없을 때 쓰는 Chainery 공통 포인트 (= --editorial-accent) */
-export const DEFAULT_CHAIN_ACCENT = '#B79AD6'
+export const DEFAULT_CHAIN_ACCENT = '#B99ACB'
 
 export interface ChainThemeSource {
   id: string

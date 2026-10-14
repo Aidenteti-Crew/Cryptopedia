@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useEffect, useReducer, useState } from 'react'
 import { HUB_ENTRY_IDS, isHubEntry, type HubData } from '@/lib/cryptopedia-hub'
 
@@ -29,10 +30,13 @@ import { ArticleReader } from './article-reader'
 import { BookDetailPage } from './book-detail-page'
 import { ChainCollectionPage } from './chain-collection-page'
 import { CollectionPage } from './collection-page'
-import { EditorialError, EditorialLoading } from './editorial-states'
+import { EditorialEmpty, EditorialError, EditorialLoading } from './editorial-states'
 import { EditorialPageTransition } from './editorial-page-transition'
 import { EditorialShell } from './editorial-shell'
 import { EcosystemPage } from './ecosystem-page'
+import { EcosystemHomeV2 } from './ecosystem-home-v2'
+import { BuilderTestPage } from './builder-test-page'
+import { getChainHomeContent } from '@/lib/avalanche-home'
 import { EventsPage } from './events-page'
 import { FeedPage } from './feed-page'
 import { ProjectDirectoryPage } from './project-directory-page'
@@ -83,7 +87,7 @@ export function editorialViewReducer(
 
 type LoadedView =
   | { kind: 'chains'; data: ChainCollectionPageData }
-  | { kind: 'ecosystem'; data: EcosystemPageData; hub: HubData }
+  | { kind: 'ecosystem'; data: EcosystemPageData; hub: HubData; feed: 'live' | 'unavailable' }
   | { kind: 'projects'; data: EcosystemProjectsResponse }
   | { kind: 'hub'; id: string; data: HubData }
   | { kind: 'collection'; data: CollectionPageData }
@@ -92,6 +96,7 @@ type LoadedView =
   | { kind: 'events'; screen: 'events' | 'event-archive'; data: EventFeedResponse }
   | { kind: 'article'; data: ArticleDetail }
   | { kind: 'book'; data: BookDetail }
+  | { kind: 'builder-test' }
 
 type LoadState =
   | { status: 'loading' }
@@ -108,10 +113,16 @@ const NAV_SCREEN_IDS = new Set<ScreenId>([
   'ecosystem',
 ])
 
+export interface LoadEditorialOptions {
+  /** true 면 소식 피드(크롤러 API)가 실패해도 큐레이션 홈을 그린다 — /new-home 전용. 기본값은 기존 동작(실패 시 오류). */
+  offlineEcosystem?: boolean
+}
+
 export async function loadEditorialView(
   view: EditorialView,
   data: CryptopediaRepository,
-  chainId: string
+  chainId: string,
+  options: LoadEditorialOptions = {}
 ): Promise<LoadedView> {
   if (view.kind === 'article') {
     if (isHubEntry(view.id)) return { kind: 'hub', id: view.id, data: await data.getHub(chainId) }
@@ -124,9 +135,23 @@ export async function loadEditorialView(
   switch (view.id) {
     case 'chains':
       return { kind: 'chains', data: await data.getChains() }
-    case 'ecosystem':
-      const [ecosystem, hub] = await Promise.all([data.getEcosystem(chainId), data.getHub(chainId)])
-      return { kind: 'ecosystem', data: ecosystem, hub }
+    case 'ecosystem': {
+      if (!options.offlineEcosystem) {
+        const [ecosystem, hub] = await Promise.all([data.getEcosystem(chainId), data.getHub(chainId)])
+        return { kind: 'ecosystem', data: ecosystem, hub, feed: 'live' }
+      }
+      // 피드가 꺼져 있어도 큐레이션 콘텐츠로 그린다 — 소식 영역만 "연결 불가"로 표시
+      const [feed, hub] = await Promise.all([
+        data.getEcosystem(chainId).then(
+          (page) => ({ ok: true as const, page }),
+          (error: unknown) => ({ ok: false as const, error })
+        ),
+        data.getHub(chainId),
+      ])
+      if (feed.ok) return { kind: 'ecosystem', data: feed.page, hub, feed: 'live' }
+      if (!data.getEcosystemOffline) throw feed.error
+      return { kind: 'ecosystem', data: await data.getEcosystemOffline(chainId), hub, feed: 'unavailable' }
+    }
     case 'fundamentals':
     case 'builders':
     case 'academy':
@@ -140,13 +165,16 @@ export async function loadEditorialView(
       return { kind: 'events', screen: view.id, data: await data.getEvents(chainId, view.id === 'event-archive' ? 'past' : undefined) }
     case 'updates':
       return { kind: 'updates', data: await data.getUpdates(chainId) }
+    case 'builder-test':
+      // 정적 화면 — 불러올 데이터가 없다 (문항은 lib/builder-test.ts)
+      return { kind: 'builder-test' }
     case 'article':
     case 'book':
       throw new Error(`Invalid top-level screen: ${view.id}`)
   }
 }
 
-export function EditorialApp() {
+export function EditorialApp({ homeVariant = 'current' }: { homeVariant?: 'current' | 'new' } = {}) {
   const [view, dispatch] = useReducer(editorialViewReducer, {
     kind: 'screen',
     id: DEFAULT_SCREEN_ID,
@@ -157,6 +185,7 @@ export function EditorialApp() {
     chainCatalog.items.find((chain) => chain.id === chainCatalog.currentChainId) ?? chainCatalog.items[0]
   )
 
+  const router = useRouter()
   const chainTheme = getChainTheme(activeChain)
   const activeScreen = view.kind === 'screen' ? view.id : view.parent
   const transitionKey = getEditorialViewKey(view)
@@ -165,7 +194,7 @@ export function EditorialApp() {
     let cancelled = false
     setLoadState({ status: 'loading' })
 
-    loadEditorialView(view, repository, activeChain.id)
+    loadEditorialView(view, repository, activeChain.id, { offlineEcosystem: homeVariant === 'new' })
       .then((loaded) => {
         if (!cancelled) setLoadState({ status: 'ready', view: loaded })
       })
@@ -179,7 +208,7 @@ export function EditorialApp() {
     return () => {
       cancelled = true
     }
-  }, [view, retryVersion, activeChain.id])
+  }, [view, retryVersion, activeChain.id, homeVariant])
 
   const selectScreen = (id: ScreenId) => {
     dispatch({ type: 'select-screen', id })
@@ -224,14 +253,25 @@ export function EditorialApp() {
         )
         break
       case 'ecosystem':
-        content = (
-          <EcosystemPage
-            data={{ ...loaded.data, title: activeChain.name, tagline: activeChain.tagline ?? loaded.data.tagline, taglineSourceUrl: activeChain.taglineSourceUrl ?? loaded.data.taglineSourceUrl }}
-            hub={loaded.hub}
-            onOpenScreen={selectScreen}
-            onOpenLatest={(id) => openArticle(id, 'ecosystem')}
-          />
-        )
+        {
+          const homeProps = {
+            data: { ...loaded.data, title: activeChain.name, tagline: activeChain.tagline ?? loaded.data.tagline, taglineSourceUrl: activeChain.taglineSourceUrl ?? loaded.data.taglineSourceUrl },
+            hub: loaded.hub,
+            onOpenScreen: selectScreen,
+            onOpenLatest: (id: string) => openArticle(id, 'ecosystem'),
+          }
+          content =
+            homeVariant === 'new' ? (
+              <EcosystemHomeV2
+                {...homeProps}
+                chainId={activeChain.id}
+                feed={loaded.feed}
+                onStartTest={getChainHomeContent(activeChain.id) ? () => selectScreen('builder-test') : undefined}
+              />
+            ) : (
+              <EcosystemPage {...homeProps} />
+            )
+        }
         break
       case 'projects':
         content = <ProjectDirectoryPage data={loaded.data} />
@@ -305,6 +345,16 @@ export function EditorialApp() {
           <BookDetailPage book={loaded.data} onOpenChapter={(id) => openArticle(id, 'projects')} />
         )
         break
+      case 'builder-test': {
+        // 홈(/new-home)의 CTA 에서만 들어온다. 체인별 콘텐츠가 없는 체인은 안내만 보여 준다.
+        const homeContent = getChainHomeContent(activeChain.id)
+        content = homeContent ? (
+          <BuilderTestPage content={homeContent} onOpen={(id) => openArticle(id, 'ecosystem')} />
+        ) : (
+          <EditorialEmpty message="이 컬렉션에는 아직 빌더 유형 테스트가 없습니다." />
+        )
+        break
+      }
     }
   }
 
@@ -330,6 +380,8 @@ export function EditorialApp() {
       activeChainName={activeChain.name}
       activeChainLogoUrl={activeChain.logoUrl}
       chainTheme={chainTheme}
+      // 로고는 항상 새 홈(/new-home)으로 — 이미 새 홈 안이면 화면만 홈으로, 아니면 경로를 이동한다
+      onLogoClick={() => (homeVariant === 'new' ? selectScreen('ecosystem') : router.push('/new-home'))}
       onSelectChain={(chain) => {
         setActiveChain(chain)
         selectScreen('ecosystem')

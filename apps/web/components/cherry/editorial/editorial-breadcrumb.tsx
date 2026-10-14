@@ -15,6 +15,7 @@ const SCREEN_LABELS: Record<string, string> = {
   ecosystem: '생태계 홈',
   chains: '컬렉션 선택',
   'event-archive': '행사 아카이브',
+  'builder-test': '빌더 유형 테스트',
   ...Object.fromEntries(
     [...PRIMARY_NAV, ...CHAPTER_NAV].map((item) => [item.id, item.label.replace(/^\d+\s+/, '')])
   ),

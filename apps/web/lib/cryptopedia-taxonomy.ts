@@ -9,6 +9,7 @@ export type ScreenId =
   | "builders"
   | "academy"
   | "event-archive"
+  | "builder-test"
   | "article"
   | "book"
 
