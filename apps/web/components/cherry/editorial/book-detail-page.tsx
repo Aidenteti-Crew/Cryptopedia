@@ -24,7 +24,7 @@ export function BookDetailPage({
             alt={`${book.name} Cryptopedia 표지`}
             width={187}
             height={255}
-            className="mx-auto h-auto w-[154px] outline outline-1 outline-white/10 md:w-[187px]"
+            className="mx-auto h-auto w-[154px] outline outline-1 outline-black/10 md:w-[187px]"
           />
         ) : (
           <div className="flex aspect-[187/255] flex-col justify-between border border-[var(--editorial-line)] p-5">

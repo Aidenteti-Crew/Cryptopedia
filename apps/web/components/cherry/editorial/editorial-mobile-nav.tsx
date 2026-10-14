@@ -26,7 +26,7 @@ export function EditorialMobileNav({
         <button
           type="button"
           aria-label="메뉴 열기"
-          className="rounded-md p-2 text-[var(--editorial-muted)] hover:bg-white/[0.06] hover:text-[var(--editorial-ink)]"
+          className="rounded-md p-2 text-[var(--editorial-muted)] hover:bg-[var(--editorial-hover)] hover:text-[var(--editorial-ink)]"
         >
           <Menu size={20} />
         </button>
@@ -34,7 +34,7 @@ export function EditorialMobileNav({
       {/* 패널은 body 로 포털되므로 editorial-root 를 다시 붙여 색 변수를 쓴다 */}
       <SheetContent
         side="right"
-        className="editorial-root w-[260px] gap-0 border-l border-[var(--editorial-line)] bg-[var(--editorial-surface)] p-0 pt-10 sm:max-w-[260px]"
+        className="editorial-root w-[260px] gap-0 border-l border-[var(--editorial-line)] bg-[var(--editorial-paper)] p-0 pt-10 sm:max-w-[260px]"
       >
         <SheetTitle className="sr-only">Cryptopedia 목차</SheetTitle>
         <EditorialIndex

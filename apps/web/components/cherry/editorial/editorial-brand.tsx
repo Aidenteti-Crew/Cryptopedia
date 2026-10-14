@@ -95,7 +95,7 @@ export function EditorialCollectionButton({
               alt=""
               width={18}
               height={18}
-              className="h-[18px] w-[18px] shrink-0 rounded-full ring-1 ring-white/15"
+              className="h-[18px] w-[18px] shrink-0 rounded-full ring-1 ring-black/5"
             />
           )}
           <SelectValue>
@@ -108,14 +108,14 @@ export function EditorialCollectionButton({
         align="start"
         sideOffset={4}
         style={{ minHeight: 0, backgroundColor: 'var(--editorial-surface)' }}
-        className="editorial-root rounded-lg border-[var(--editorial-line)] bg-[var(--editorial-surface)] text-[var(--editorial-ink)] shadow-xl"
+        className="editorial-root rounded-lg border-[var(--editorial-line)] bg-[var(--editorial-surface)] text-[var(--editorial-ink)] shadow-none"
       >
         {chains.items.map((chain) => (
           <SelectItem
             key={chain.id}
             value={chain.id}
             disabled={chain.status !== 'AVAILABLE'}
-            className="cursor-pointer rounded-md py-2 text-[12px] focus:bg-[#202832] focus:text-[var(--editorial-accent)] data-[state=checked]:text-[var(--editorial-accent)] data-[disabled]:cursor-not-allowed data-[disabled]:text-[var(--editorial-muted)] data-[disabled]:opacity-50"
+            className="cursor-pointer rounded-md py-2 text-[12px] focus:bg-[var(--editorial-hover)] focus:text-[var(--editorial-deep)] data-[state=checked]:text-[var(--editorial-accent)] data-[disabled]:cursor-not-allowed data-[disabled]:text-[var(--editorial-muted)] data-[disabled]:opacity-50"
           >
             {chain.logoUrl && (
               // eslint-disable-next-line @next/next/no-img-element -- 로컬 체인 SVG 로고

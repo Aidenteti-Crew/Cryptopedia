@@ -30,8 +30,8 @@ const AUDIENCES = [
     summary: '목표에 맞는 개념을 배우고, 공식 자료와 예제를 따라 케이스별로 실습하세요.',
     action: '케이스별 실습으로',
     Icon: BookOpen,
-    color: '#baa4df',
-    background: 'linear-gradient(135deg,rgba(123,94,167,0.18),rgba(123,94,167,0.04))',
+    color: 'var(--editorial-accent)',
+    background: 'var(--editorial-surface)',
   },
   {
     id: 'skill-library',
@@ -40,8 +40,8 @@ const AUDIENCES = [
     summary: '필요한 지식과 스킬을 찾아 지침·출처·완료 조건이 담긴 파일로 전달하세요.',
     action: '스킬 라이브러리로',
     Icon: Bot,
-    color: '#8bcab4',
-    background: 'linear-gradient(135deg,rgba(45,122,94,0.18),rgba(45,122,94,0.04))',
+    color: 'var(--editorial-accent)',
+    background: 'var(--editorial-surface)',
   },
 ]
 
@@ -81,7 +81,7 @@ export function EcosystemPage({ data, hub, onOpenScreen, onOpenLatest }: Ecosyst
                   }
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative grid min-h-[320px] w-full min-w-0 overflow-hidden rounded-[20px] text-left text-white shadow-[0_10px_34px_rgba(0,0,0,0.2)] md:grid-cols-[minmax(280px,42%)_1fr]"
+                  className="relative grid min-h-[320px] w-full min-w-0 overflow-hidden rounded-[20px] text-left text-white  md:grid-cols-[minmax(280px,42%)_1fr]"
                 >
                   <span
                     className="flex min-w-0 flex-col px-7 py-8 sm:px-10"
@@ -192,7 +192,7 @@ export function EcosystemPage({ data, hub, onOpenScreen, onOpenLatest }: Ecosyst
                   {action} <ArrowRight size={14} />
                 </span>
               </span>
-              <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] sm:h-24 sm:w-24">
+              <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-[var(--editorial-line)] bg-[var(--editorial-paper)] sm:h-24 sm:w-24">
                 <Icon className="h-8 w-8 sm:h-11 sm:w-11" strokeWidth={1.3} style={{ color }} />
               </span>
             </button>

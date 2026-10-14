@@ -240,12 +240,18 @@
    existing Cherry and /start screens keep their theme.
 ───────────────────────────────────────────── */
 .editorial-root {
-  --editorial-paper: #151a20;
-  --editorial-surface: #101419;
-  --editorial-ink: #e9edf2;
-  --editorial-muted: #a5afbb;
-  --editorial-accent: #cebd91;
-  --editorial-line: #323c48;
+  /* Chainery light editorial tokens — 색은 여기서만 정의하고 컴포넌트는 변수만 참조한다. */
+  --editorial-paper: #F1EEEE;   /* 메인·사이드바 배경 */
+  --editorial-surface: #FAF8FA; /* 카드·콘텐츠 배경 */
+  --editorial-ink: #29252D;     /* 기본 텍스트 */
+  --editorial-muted: #77717C;   /* 보조 텍스트 */
+  --editorial-accent: #76519B;  /* 브랜드 퍼플: 링크·주요 버튼·활성 상태에만 */
+  --editorial-deep: #211629;    /* 딥 퍼플: 활성 메뉴 텍스트·강한 버튼 */
+  --editorial-active: #E9E0F1;  /* 활성 메뉴 배경 */
+  --editorial-hover: #EDE7F0;   /* hover 배경 */
+  --editorial-active-soft: #F0EAF4; /* 하위 메뉴 활성 배경 */
+  --editorial-mark: #C5B4D5;    /* 하위 메뉴 선택 표시선 */
+  --editorial-line: #E6E0E8;    /* 테두리 */
 
   min-height: 100dvh;
   background: var(--editorial-paper);
