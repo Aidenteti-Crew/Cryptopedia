@@ -129,16 +129,16 @@ function NavButton({
         isChild ? "min-h-[40px] px-3 py-2 text-[14px]" : "min-h-[48px] px-3.5 py-2.5 text-[15px]"
       } ${
         active
-          ? isChild
-            ? "bg-[var(--editorial-active-soft)] font-medium text-[var(--editorial-ink)]"
-            : "bg-[var(--editorial-active)] font-medium text-[var(--editorial-strong)]"
-          : `${hasActiveChild ? "font-medium" : "font-normal"} text-[var(--editorial-ink)] hover:bg-[var(--editorial-hover)]`
+          ? "font-medium text-[var(--editorial-accent)]"
+          : `${hasActiveChild ? "font-medium" : "font-normal"} text-[var(--editorial-ink)] hover:bg-[var(--editorial-sidebar-hover)]`
       }`}
     >
-      {active && isChild && (
+      {active && (
         <span
           aria-hidden="true"
-          className="absolute -left-[15px] top-2 bottom-2 w-[2px] rounded-full bg-[var(--editorial-mark)]"
+          className={`absolute w-[2px] rounded-full bg-[var(--editorial-accent)] ${
+            isChild ? "-left-[15px] bottom-2 top-2" : "bottom-3 left-0 top-3"
+          }`}
         />
       )}
       {icon && (

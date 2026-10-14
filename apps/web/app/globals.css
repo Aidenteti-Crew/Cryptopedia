@@ -243,17 +243,17 @@
   /* Chainery dark plum editorial tokens — 색은 여기서만 정의하고 컴포넌트는 변수만 참조한다.
      영역 구분은 그림자가 아니라 배경 명도 차이(paper < sidebar < surface)로 한다. */
   --editorial-paper: #1B111F;   /* 전체 기본 배경 */
-  --editorial-sidebar: #292230; /* 사이드바·모바일 헤더 — 본문보다 밝되 채도를 낮춰 시선이 본문에 가도록 */
+  --editorial-sidebar: #211A25; /* 사이드바·모바일 헤더 — 본문과 색 차이를 줄이고 얇은 세로선으로 구분 */
   --editorial-surface: #281A30; /* 카드·콘텐츠 배경 */
   --editorial-ink: #F4EEF6;     /* 기본 텍스트 */
   --editorial-strong: #FAF6FB;  /* 활성 메뉴 등 강한 텍스트 */
   --editorial-muted: #CFC5D7;   /* 보조 텍스트 (본문·사이드바 모두 대비 7:1 이상) */
   --editorial-accent: #B79AD6;  /* 라벤더 포인트: 링크·주요 버튼·활성 상태에만 */
-  --editorial-active: #3D3246;  /* 활성 메뉴 배경 */
   --editorial-hover: #342B3C;   /* hover 배경 */
-  --editorial-active-soft: #342B3C; /* 하위 메뉴 활성 배경 */
-  --editorial-mark: #8467A3;    /* 하위 메뉴 선택 표시선 */
+  --editorial-mark: #8467A3;    /* 본문 인용 표시선 */
+  --editorial-sidebar-hover: rgba(255, 255, 255, 0.045); /* 사이드바 메뉴 hover — 아주 은은하게 */
   --editorial-line: #45334F;    /* 테두리 */
+  --chain-accent: var(--editorial-accent); /* 체인 포인트 색 — 셸이 활성 체인 값으로 덮어쓴다 (lib/chain-theme.ts) */
 
   min-height: 100dvh;
   background: var(--editorial-paper);
@@ -322,6 +322,20 @@
     scrollbar-width: thin;
     scrollbar-color: var(--editorial-scroll-thumb) transparent;
   }
+}
+
+/* 제목 서체 규칙 — 한 곳에서 관리한다.
+   · 챕터 메인 제목: 세리프 (Cormorant)
+   · 학습 상세 제목: 가독성 좋은 산세리프 (본문과 같은 Noto Sans KR)
+   · 본문·메뉴: 산세리프 */
+.editorial-chapter-title {
+  font-family: var(--font-editorial-display), serif;
+  text-wrap: balance;
+}
+
+.editorial-detail-title {
+  font-family: var(--font-editorial-body), sans-serif;
+  text-wrap: balance;
 }
 
 .editorial-display {

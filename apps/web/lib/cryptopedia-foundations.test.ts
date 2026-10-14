@@ -19,7 +19,7 @@ test("loads the exact Figma font families without removing existing fonts", () =
 test("scopes the exact Figma variables to the editorial root", () => {
   assert.match(globals, /\.editorial-root\s*\{/)
   assert.match(globals, /--editorial-paper:\s*#1B111F/i)
-  assert.match(globals, /--editorial-sidebar:\s*#292230/i)
+  assert.match(globals, /--editorial-sidebar:\s*#211A25/i)
   assert.match(globals, /--editorial-surface:\s*#281A30/i)
   assert.match(globals, /--editorial-ink:\s*#F4EEF6/i)
   assert.match(globals, /--editorial-muted:\s*#CFC5D7/i)

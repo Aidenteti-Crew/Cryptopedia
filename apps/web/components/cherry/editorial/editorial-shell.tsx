@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 
+import { chainThemeStyle, type ChainTheme } from '@/lib/chain-theme'
 import type { ScreenId } from '@/lib/cryptopedia-taxonomy'
 
 import { EditorialBrand, EditorialCollectionButton, type SelectedChain } from './editorial-brand'
@@ -18,6 +19,8 @@ interface EditorialShellProps {
   activeEntryId?: string
   activeChainName?: string
   activeChainLogoUrl?: string
+  /** 활성 체인 테마 — 포인트 색을 --chain-accent 로 내려보낸다 (레이아웃·배경은 바뀌지 않음) */
+  chainTheme?: ChainTheme
   onSelect: (screen: ScreenId) => void
   onSelectChain?: (chain: SelectedChain) => void
   onOpenEntry?: (id: string) => void
@@ -36,6 +39,7 @@ export function EditorialShell({
   activeEntryId,
   activeChainName = 'Avalanche',
   activeChainLogoUrl,
+  chainTheme,
   onSelect,
   onSelectChain,
   onOpenEntry,
@@ -53,11 +57,11 @@ export function EditorialShell({
   )
 
   return (
-    <div className="editorial-root lg:flex">
+    <div className="editorial-root lg:flex" style={chainTheme ? chainThemeStyle(chainTheme) : undefined}>
       {/* Desktop sidebar — hidden below lg */}
       <aside
         aria-label="Main navigation"
-        className="sticky top-0 hidden h-[100dvh] w-[260px] shrink-0 flex-col bg-[var(--editorial-sidebar)] lg:flex"
+        className="sticky top-0 hidden h-[100dvh] w-[260px] shrink-0 flex-col border-r border-[var(--editorial-line)]/60 bg-[var(--editorial-sidebar)] lg:flex"
       >
         <EditorialBrand
           onHome={goHome}

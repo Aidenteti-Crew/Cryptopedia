@@ -23,7 +23,7 @@ export function ArticleReader({
         <p className="text-[11px] font-semibold tracking-[0.12em] text-[var(--editorial-accent)]">
           {article.eyebrow}
         </p>
-        <h1 className="mt-4 text-[34px] font-medium leading-[1.3] tracking-[-0.5px] text-[var(--editorial-strong)] sm:text-[40px]">
+        <h1 className="editorial-detail-title mt-4 text-[34px] font-medium leading-[1.3] tracking-[-0.5px] text-[var(--editorial-strong)] sm:text-[40px]">
           {article.title}
         </h1>
         <p className="editorial-copy mt-5 text-lg leading-[1.6] text-[var(--editorial-ink)]">

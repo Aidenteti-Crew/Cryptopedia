@@ -41,6 +41,7 @@ import { HubDetailPage } from './hub-detail-page'
 import { getEditorialBreadcrumbs } from './editorial-breadcrumb'
 import chainCatalog from '@/public/cryptopedia/chains.json'
 import type { SelectedChain } from './editorial-brand'
+import { getChainTheme } from '@/lib/chain-theme'
 
 export type EditorialView =
   | { kind: 'screen'; id: ScreenId }
@@ -156,6 +157,7 @@ export function EditorialApp() {
     chainCatalog.items.find((chain) => chain.id === chainCatalog.currentChainId) ?? chainCatalog.items[0]
   )
 
+  const chainTheme = getChainTheme(activeChain)
   const activeScreen = view.kind === 'screen' ? view.id : view.parent
   const transitionKey = getEditorialViewKey(view)
 
@@ -327,6 +329,7 @@ export function EditorialApp() {
       activeEntryId={view.kind === 'article' ? view.id : undefined}
       activeChainName={activeChain.name}
       activeChainLogoUrl={activeChain.logoUrl}
+      chainTheme={chainTheme}
       onSelectChain={(chain) => {
         setActiveChain(chain)
         selectScreen('ecosystem')
