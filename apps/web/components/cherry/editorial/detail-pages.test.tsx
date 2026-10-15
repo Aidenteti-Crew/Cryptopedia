@@ -65,7 +65,7 @@ test('renders article sections, related entries, and safe official link', () => 
 test('renders book identity and chapters through one template', () => {
   const html = renderToStaticMarkup(<BookDetailPage book={book} onOpenChapter={() => undefined} />)
 
-  assert.match(html, /CHAIN COLLECTION \/ VOL. 01/)
+  assert.doesNotMatch(html, /CHAIN COLLECTION \/ VOL. 01/)
   assert.match(html, /Avalanche/)
   assert.match(html, /C-Chain/)
   assert.match(html, /이 책의 목차/)

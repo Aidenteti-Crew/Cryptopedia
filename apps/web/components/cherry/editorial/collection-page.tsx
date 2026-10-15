@@ -16,12 +16,7 @@ export function CollectionPage({ data, onOpenEntry }: CollectionPageProps) {
       <header className="relative -mr-5 -mt-4 overflow-hidden pb-7 pr-5 pt-4 sm:-mr-8 sm:pr-8 lg:-mr-[52px] lg:min-h-[236px] lg:pr-[52px]">
         {data.volume === 1 && <BrandSpheres className="w-full sm:w-[62%] lg:w-[56%]" />}
         <div className="relative">
-          <p className="text-[11px] leading-4 text-[var(--editorial-accent)]">
-            VOLUME {String(data.volume).padStart(2, '0')}
-            <span className="px-3">—</span>
-            {data.eyebrow}
-          </p>
-          <h1 className="editorial-chapter-title mt-4 text-[44px] leading-[1.15] text-[var(--editorial-ink)] lg:text-[56px]">
+          <h1 className="editorial-chapter-title text-[44px] leading-[1.15] text-[var(--editorial-ink)] lg:text-[56px]">
             {data.title}
           </h1>
           <p className="editorial-copy mt-5 text-xl leading-[1.5] text-[var(--editorial-ink)]">

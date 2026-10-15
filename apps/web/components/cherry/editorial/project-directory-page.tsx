@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { EcosystemProject, EcosystemProjectsResponse } from '@/lib/cryptopedia-types'
 import { EditorialEmpty } from './editorial-states'
 import { HUB_PAGE_CLASS, HubHeader, SearchField } from './hub-shared'
@@ -21,8 +21,16 @@ function ProjectCard({ project }: { project: EcosystemProject }) {
 
 export function ProjectDirectoryPage({ data }: { data: EcosystemProjectsResponse }) {
   const [search, setSearch] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  useEffect(() => {
+    const category = new URLSearchParams(window.location.search).get('category')
+    if (category && data.items.some((project) => project.category === category)) {
+      setSelectedCategory(category)
+    }
+  }, [data])
   const query = search.trim().toLowerCase()
   const filtered = data.items.filter((project) =>
+    (!selectedCategory || project.category === selectedCategory) &&
     [project.name, project.description, project.developer, project.category]
       .some((value) => value?.toLowerCase().includes(query))
   )
@@ -32,7 +40,6 @@ export function ProjectDirectoryPage({ data }: { data: EcosystemProjectsResponse
   return (
     <article className={HUB_PAGE_CLASS}>
       <HubHeader
-        eyebrow="ECOSYSTEM DIRECTORY / AVALANCHE"
         title="체인·프로젝트"
         description="Avalanche 생태계 프로젝트를 공식 디렉터리 기준으로 살펴보세요."
       />
@@ -41,6 +48,18 @@ export function ProjectDirectoryPage({ data }: { data: EcosystemProjectsResponse
         <span>프로젝트 공식 출처 연결</span>
       </div>
       <div className="mt-5"><SearchField value={search} onChange={setSearch} placeholder="프로젝트·분야 검색" /></div>
+      {selectedCategory && (
+        <button
+          type="button"
+          onClick={() => {
+            setSelectedCategory(null)
+            window.history.replaceState(window.history.state, '', '/ecosystem/projects')
+          }}
+          className="mt-4 rounded-full border border-[var(--editorial-accent)] px-3 py-1.5 text-xs text-[var(--editorial-accent)] hover:bg-[var(--editorial-surface)]"
+        >
+          {selectedCategory} · 전체 분야 보기 ×
+        </button>
+      )}
       {categoryNames.length ? categoryNames.map((category) => {
         const projects = filtered.filter((project) => (project.category ?? '기타') === category)
         return (

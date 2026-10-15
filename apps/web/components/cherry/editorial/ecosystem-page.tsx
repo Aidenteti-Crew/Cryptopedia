@@ -1,17 +1,24 @@
 'use client'
 
 import { ArrowRight, BookOpen, Bot, CalendarDays, Code2, Globe2, Layers3 } from 'lucide-react'
-import type { EcosystemPageData } from '@/lib/cryptopedia-types'
+import type { EcosystemPageData, EcosystemProjectsResponse } from '@/lib/cryptopedia-types'
 import type { HubData } from '@/lib/cryptopedia-hub'
 import { HeroCarousel, HERO_GRADIENTS, type OverviewHeroItem } from '../nd-overview-page'
 import { RelatedLinks } from './hub-shared'
-import { CategoryTreemap } from '../buzz-treemap'
-import { getNewsDistribution, NEWS_LABELS, sortHomeNews } from '@/lib/cryptopedia-home'
+import { getProjectHeatmapItems, sortHomeNews } from '@/lib/cryptopedia-home'
+import { getChainHomeContent } from '@/lib/avalanche-home'
+import { BuilderTestPage } from './builder-test-page'
+import { EcosystemHomeIntro } from './ecosystem-home-intro'
+import { EcosystemHeatmap } from './ecosystem-heatmap'
 
 interface EcosystemPageProps {
   data: EcosystemPageData
   hub?: HubData
+  chainId?: string
+  chainLogoUrl?: string
+  projects?: EcosystemProjectsResponse | null
   onOpenScreen: (id: 'projects' | 'macro' | 'events' | 'updates') => void
+  onOpenProjectCategory?: (category: string | null) => void
   onOpenLatest: (id: string) => void
 }
 
@@ -45,9 +52,19 @@ const AUDIENCES = [
   },
 ]
 
-export function EcosystemPage({ data, hub, onOpenScreen, onOpenLatest }: EcosystemPageProps) {
+export function EcosystemPage({
+  data,
+  hub,
+  chainId = 'avalanche',
+  chainLogoUrl,
+  projects,
+  onOpenScreen,
+  onOpenProjectCategory,
+  onOpenLatest,
+}: EcosystemPageProps) {
   const latest = sortHomeNews(data.latest)
-  const distribution = getNewsDistribution(latest)
+  const projectTiles = projects ? getProjectHeatmapItems(projects) : []
+  const builderContent = getChainHomeContent(chainId)
   const slides: OverviewHeroItem[] = latest.map((entry) => ({
     n: entry.title,
     d: entry.summary,
@@ -60,108 +77,86 @@ export function EcosystemPage({ data, hub, onOpenScreen, onOpenLatest }: Ecosyst
     vf: 0,
   }))
   return (
-    <article className="min-w-0 px-5 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
-      <section aria-label="생태계 최신 소식">
-        {slides.length ? (
-          <HeroCarousel
-            items={slides}
-            appearance="editorial"
-            renderSlide={(slide, index) => {
-              const category =
-                NEWS_CATEGORIES[slide.topic as keyof typeof NEWS_CATEGORIES] ??
-                NEWS_CATEGORIES.PROJECT
-              const Icon = category.Icon
-              const entry = latest[index]
-              return (
-                <a
-                  href={
-                    entry.sourceUrl && /^https?:\/\//.test(entry.sourceUrl)
-                      ? entry.sourceUrl
-                      : undefined
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="relative grid min-h-[320px] w-full min-w-0 overflow-hidden rounded-[20px] text-left text-white  md:grid-cols-[minmax(280px,42%)_1fr]"
-                >
-                  <span
-                    className="flex min-w-0 flex-col px-7 py-8 sm:px-10"
+    <article className="min-w-0 px-5 pb-8 pt-4 sm:px-8 lg:px-[52px] lg:pb-[52px]">
+      <EcosystemHomeIntro data={data} chainId={chainId} chainLogoUrl={chainLogoUrl} />
+
+      <div className="mt-8 grid min-w-0 items-start gap-8 lg:grid-cols-2 lg:gap-6">
+        <section className="min-w-0" aria-label="생태계 최신 소식">
+          {slides.length ? (
+            <HeroCarousel
+              items={slides}
+              appearance="editorial"
+              renderSlide={(slide, index) => {
+                const category =
+                  NEWS_CATEGORIES[slide.topic as keyof typeof NEWS_CATEGORIES] ??
+                  NEWS_CATEGORIES.PROJECT
+                const Icon = category.Icon
+                const entry = latest[index]
+                return (
+                  <a
+                    href={
+                      entry.sourceUrl && /^https?:\/\//.test(entry.sourceUrl)
+                        ? entry.sourceUrl
+                        : undefined
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative flex h-[520px] w-full min-w-0 flex-col overflow-hidden rounded-[20px] text-left text-white lg:h-[600px]"
                     style={{ background: HERO_GRADIENTS[index % HERO_GRADIENTS.length][0] }}
                   >
-                    <span className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[1.2px] text-white/75">
-                      <span>{category.label}</span>
-                      <span className="rounded-full border border-white/25 px-2 py-0.5 tracking-normal">
-                        {entry.sourceName ?? '수집 소식'}
+                    <span className="flex min-h-0 min-w-0 flex-1 flex-col px-7 py-8 sm:px-10">
+                      <span className="flex shrink-0 flex-wrap items-center gap-3 pr-12 text-[10px] font-semibold uppercase tracking-[1.2px] text-white/75">
+                        <span>{category.label}</span>
+                        <span className="rounded-full border border-white/25 px-2 py-0.5 tracking-normal">
+                          {entry.sourceName ?? '수집 소식'}
+                        </span>
+                      </span>
+                      <span className="mt-14 block shrink-0 break-words text-[28px] font-semibold leading-[1.3] tracking-[-0.5px] sm:text-[34px]">
+                        {slide.n}
+                      </span>
+                      <span className="mt-4 block min-h-0 max-w-[38ch] flex-1 overflow-y-auto overscroll-contain break-words pr-2 text-sm leading-7 text-white/80">
+                        {slide.d}
+                      </span>
+                      <span className="mt-auto flex shrink-0 flex-wrap items-center gap-3 pt-7 text-xs text-white/80">
+                        <span>
+                          {entry.startsAt
+                            ? '행사 ' + entry.startsAt.slice(0, 10)
+                            : entry.publishedAt
+                              ? '게시 ' + entry.publishedAt.slice(0, 10)
+                              : '게시일 미제공'}
+                        </span>
+                        <span className="ml-auto inline-flex items-center gap-2 font-semibold">
+                          {entry.sourceUrl ? '원문 보기' : '원문 링크 미제공'}{' '}
+                          <ArrowRight size={15} />
+                        </span>
                       </span>
                     </span>
-                    <span className="mt-4 block text-[28px] font-semibold leading-[1.3] tracking-[-0.5px] sm:text-[34px]">
-                      {slide.n}
+                    <span
+                      aria-hidden="true"
+                      className="absolute right-6 top-6 flex h-10 w-10 items-center justify-center rounded-xl border border-white/25 bg-white/15 sm:right-8 sm:top-8"
+                    >
+                      <Icon size={21} strokeWidth={1.6} />
                     </span>
-                    <span className="mt-4 block max-w-[38ch] text-sm leading-7 text-white/80">
-                      {slide.d}
-                    </span>
-                    <span className="mt-auto flex flex-wrap items-center gap-3 pt-7 text-xs text-white/80">
-                      <span>
-                        {entry.startsAt
-                          ? '행사 ' + entry.startsAt.slice(0, 10)
-                          : entry.publishedAt
-                            ? '게시 ' + entry.publishedAt.slice(0, 10)
-                            : '게시일 미제공'}
-                      </span>
-                      <span className="ml-auto inline-flex items-center gap-2 font-semibold">
-                        {entry.sourceUrl ? '원문 보기' : '원문 링크 미제공'}{' '}
-                        <ArrowRight size={15} />
-                      </span>
-                    </span>
-                  </span>
-                  <span
-                    aria-hidden="true"
-                    className="relative flex min-h-[170px] items-center justify-center overflow-hidden md:min-h-[320px]"
-                    style={{ background: HERO_GRADIENTS[index % HERO_GRADIENTS.length][1] }}
-                  >
-                    <span className="absolute -right-12 -top-24 h-[340px] w-[340px] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.28),transparent_62%)]" />
-                    <span className="absolute h-[100px] w-[100px] -translate-x-28 -translate-y-6 -rotate-12 rounded-[24px] bg-white/10 sm:h-[120px] sm:w-[120px]" />
-                    <span className="absolute h-[100px] w-[100px] translate-x-28 translate-y-8 rotate-12 rounded-[24px] bg-white/10 sm:h-[120px] sm:w-[120px]" />
-                    <span className="relative z-[1] flex h-[112px] w-[112px] -rotate-3 items-center justify-center rounded-[28px] bg-white/95 shadow-[0_22px_50px_rgba(30,10,55,0.3)] md:h-[150px] md:w-[150px]">
-                      <Icon size={66} strokeWidth={1.2} className="text-[#4b3567]" />
-                    </span>
-                  </span>
-                </a>
-              )
-            }}
-          />
-        ) : (
-          <p className="rounded-xl border border-[var(--editorial-line)] p-6 text-sm text-[var(--editorial-muted)]">
-            새 소식이 등록되면 이곳에 표시됩니다.
-          </p>
-        )}
-      </section>
-
-      <header className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[1.3px] text-[var(--editorial-accent)]">
-            {data.eyebrow}
-          </p>
-          <h1 className="mt-2 text-[28px] font-semibold leading-tight tracking-[-0.5px] sm:text-[34px]">
-            {data.title}
-          </h1>
-          <p className="mt-3 text-sm leading-7 text-[var(--editorial-muted)]">{data.tagline}</p>
-          {data.taglineSourceUrl && (
-            <a
-              href={data.taglineSourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-1 inline-block text-[10px] text-[var(--editorial-muted)] hover:text-[var(--editorial-accent)]"
-            >
-              공식 홈페이지 ↗
-            </a>
+                  </a>
+                )
+              }}
+            />
+          ) : (
+            <p className="rounded-xl border border-[var(--editorial-line)] p-6 text-sm text-[var(--editorial-muted)]">
+              새 소식이 등록되면 이곳에 표시됩니다.
+            </p>
           )}
-        </div>
-        <span className="w-fit rounded-full border border-[var(--editorial-line)] px-3 py-1.5 text-[10px] tracking-wide text-[var(--editorial-muted)]">
-          CONNECTED KNOWLEDGE
-        </span>
-      </header>
+        </section>
+        {builderContent ? (
+          <BuilderTestPage content={builderContent} onOpen={onOpenLatest} compact />
+        ) : (
+          <section className="rounded-[20px] border border-[var(--editorial-line)] p-6 text-sm text-[var(--editorial-muted)]">
+            이 컬렉션의 빌더 유형 설문은 준비 중입니다.
+          </section>
+        )}
+      </div>
 
-      <section className="mt-7" aria-labelledby="home-audience-title">
+      <section className="mt-8 lg:mt-12" aria-labelledby="home-audience-title">
         <h2 id="home-audience-title" className="text-lg font-semibold">
           어떻게 시작할까요?
         </h2>
@@ -211,48 +206,34 @@ export function EcosystemPage({ data, hub, onOpenScreen, onOpenLatest }: Ecosyst
         </section>
       )} */}
 
-      <section className="mt-12" aria-labelledby="home-buzz-title">
+      <section className="mt-8 lg:mt-12" aria-labelledby="ecosystem-heatmap-title">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 id="home-buzz-title" className="text-lg font-semibold">
-              Buzz Distribution
+            <h2 id="ecosystem-heatmap-title" className="text-lg font-semibold">
+              Ecosystem Heatmap
             </h2>
             <p className="mt-2 text-xs leading-6 text-[var(--editorial-muted)]">
-              홈에 표시된 수집 소식·예정 행사의 분야별 비중
+              타일 크기는 분야별 프로젝트 수를 나타냅니다. 분야를 선택해 프로젝트를 살펴보세요.
             </p>
           </div>
           <span className="rounded-full border border-[var(--editorial-line)] px-3 py-1.5 text-[10px] text-[var(--editorial-muted)]">
-            {distribution.reduce((sum, item) => sum + item.articleCount, 0)}개 소식
+            {projects?.total ?? 0}개 프로젝트 · {projects?.categories.length ?? 0}개 분야
           </span>
         </div>
-        {distribution.length ? (
-          <CategoryTreemap
-            items={distribution}
-            labels={NEWS_LABELS}
-            showHeader={false}
-            useStaticFallback={false}
-            appearance="editorial"
-            onSelect={(page) => onOpenScreen(page as 'projects' | 'macro' | 'events' | 'updates')}
+        {projectTiles.length ? (
+          <EcosystemHeatmap
+            items={projectTiles}
+            onSelect={(category) =>
+              onOpenProjectCategory ? onOpenProjectCategory(category) : onOpenScreen('projects')
+            }
           />
         ) : (
           <p className="rounded-xl border border-[var(--editorial-line)] p-6 text-sm text-[var(--editorial-muted)]">
-            집계할 소식이 없습니다.
+            {projects ? '등록된 프로젝트가 없습니다.' : '프로젝트 데이터를 불러오지 못했습니다.'}
           </p>
         )}
-        {/* <div className="mt-3 flex flex-wrap gap-3">
-          {distribution.map((item) => (
-            <button
-              key={item.page}
-              type="button"
-              onClick={() => onOpenScreen(item.page as 'projects' | 'macro' | 'events' | 'updates')}
-              className="rounded-lg border border-[var(--editorial-line)] px-3 py-2 text-xs text-[var(--editorial-muted)] hover:text-[var(--editorial-accent)]"
-            >
-              {NEWS_LABELS[item.page]} · {item.articleCount}건 · {item.percent}%
-            </button>
-          ))}
-        </div> */}
         <p className="mt-3 text-xs leading-6 text-[var(--editorial-muted)]">
-          표시된 자료 기준이며, 전체 수집량이나 시장 인기도를 나타내지 않습니다.
+          색상은 분야 구분용이며, 타일은 현재 등록된 프로젝트 기준입니다.
         </p>
       </section>
 

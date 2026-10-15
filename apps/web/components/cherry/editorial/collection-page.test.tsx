@@ -35,7 +35,7 @@ test('renders collection copy and numbered entries from data', () => {
   const html = renderToStaticMarkup(<CollectionPage data={data} onOpenEntry={() => undefined} />)
 
   assert.doesNotMatch(html, /COLLECTION\s+\/\s+AVALANCHE\s+\/\s+FUNDAMENTALS/)
-  assert.match(html, /VOLUME 01/)
+  assert.doesNotMatch(html, /VOLUME 01/)
   assert.match(html, /Avalanche/)
   assert.match(html, /이 권의 목차/)
   assert.match(html, /02/)

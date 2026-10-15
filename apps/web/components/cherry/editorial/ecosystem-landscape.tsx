@@ -52,7 +52,6 @@ export function EcosystemLandscape({
   return (
     <article className={HUB_PAGE_CLASS}>
       <HubHeader
-        eyebrow="ECOSYSTEM LANDSCAPE / AVALANCHE"
         title="체인·프로젝트"
         description="Avalanche의 공식 도구와 활용 가능한 공통 도구를 분야별로 탐색하세요. 프로젝트에서 개념, 실습과 에이전트 스킬로 이어집니다."
       />

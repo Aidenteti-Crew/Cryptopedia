@@ -12,26 +12,19 @@ const data = ecosystemPageSchema.parse(
 )
 const noop = () => undefined
 
-test('home shows the hero, builder test, build paths, pulse and learning list in order', () => {
+test('about shows build paths, pulse and learning list after the intro moves to ecosystem home', () => {
   const html = renderToStaticMarkup(
     <EcosystemHomeV2 data={data} onOpenScreen={noop} onOpenLatest={noop} />
   )
   const order = [
-    '<h1',
-    'FIND YOUR BUILDER TYPE',
-    'WHAT CAN YOU BUILD?',
-    'ECOSYSTEM PULSE',
-    'START LEARNING',
+    'Avalanche에서 만들 수 있는 것',
+    '지금 생태계에서는',
+    '학습 시작하기',
   ].map((marker) => html.indexOf(marker))
   assert.ok(order.every((index) => index >= 0), 'every section renders')
   assert.deepEqual([...order].sort((a, b) => a - b), order, 'sections keep the specified order')
 
-  assert.match(html, /하나의 생태계, 다양한 블록체인의 가능성\./)
-  assert.match(html, /EVM Compatible/)
-  assert.match(html, /Custom L1s/)
-  assert.match(html, /Interchain Messaging/)
-  assert.match(html, /나는 어떤 Avalanche 빌더일까\?/)
-  assert.match(html, /4 QUESTIONS · ABOUT 1 MINUTE/)
+  assert.doesNotMatch(html, /하나의 생태계, 다양한 블록체인의 가능성\.|나는 어떤 Avalanche 빌더일까\?|4 QUESTIONS · ABOUT 1 MINUTE/)
   assert.match(html, /EVM 앱 개발/)
   assert.match(html, /나만의 Avalanche L1/)
   assert.match(html, /체인 기초/)
@@ -42,45 +35,11 @@ test('home shows the hero, builder test, build paths, pulse and learning list in
   assert.doesNotMatch(html, /\bDEMO\b/)
 })
 
-test('the test CTA is inactive and silent until a test page is wired', () => {
-  const pending = renderToStaticMarkup(
-    <EcosystemHomeV2 data={data} onOpenScreen={noop} onOpenLatest={noop} />
-  )
-  assert.match(pending, /<button[^>]*\sdisabled=""[^>]*>나의 빌더 유형 찾기 ↗<\/button>/)
-  // no visible "coming soon" caption — only a tooltip on the inactive button
-  assert.doesNotMatch(pending, /테스트 페이지는 준비 중입니다/)
-  assert.match(pending, /title="곧 제공될 예정입니다"/)
-
-  const wired = renderToStaticMarkup(
-    <EcosystemHomeV2 data={data} onOpenScreen={noop} onOpenLatest={noop} onStartTest={noop} />
-  )
-  assert.match(wired, /<button[^>]*>나의 빌더 유형 찾기 ↗<\/button>/)
-  assert.doesNotMatch(wired, /<button[^>]*\sdisabled=""[^>]*>나의 빌더 유형 찾기/)
-  assert.doesNotMatch(wired, /title="곧 제공될 예정입니다"/)
-})
-
-test('the test banner is a single minimal block: title, description, CTA and a small meta line', () => {
-  const html = renderToStaticMarkup(
-    <EcosystemHomeV2 data={data} onOpenScreen={noop} onOpenLatest={noop} onStartTest={noop} />
-  )
-  const banner = html.slice(html.indexOf('aria-labelledby="builder-test-title"'), html.indexOf('WHAT CAN YOU BUILD?'))
-  assert.match(banner, /나는 어떤 Avalanche 빌더일까\?/)
-  assert.match(banner, /4가지 질문으로 나에게 맞는 Avalanche 탐험 경로를 찾아보세요\./)
-  assert.match(banner, /나의 빌더 유형 찾기 ↗/)
-  assert.match(banner, /4 QUESTIONS · ABOUT 1 MINUTE/)
-  // the stacked question-card graphic and the two-column divider are gone
-  assert.doesNotMatch(banner, />Q[1-4]</)
-  assert.doesNotMatch(banner, /새로운 기술을 발견했을 때/)
-  assert.doesNotMatch(banner, /md:grid-cols|border-l/)
-  // the CTA and the meta line share one bottom row
-  assert.match(banner, /<button[^>]*>나의 빌더 유형 찾기 ↗<\/button><p[^>]*>4 QUESTIONS/)
-})
-
 test('build paths are concise and only claim what the site really has', () => {
   const html = renderToStaticMarkup(
     <EcosystemHomeV2 data={data} onOpenScreen={noop} onOpenLatest={noop} />
   )
-  const build = html.slice(html.indexOf('WHAT CAN YOU BUILD?'), html.indexOf('ECOSYSTEM PULSE'))
+  const build = html.slice(html.indexOf('Avalanche에서 만들 수 있는 것'), html.indexOf('지금 생태계에서는'))
   // EVM card: reference items for common EVM tools, no C-Chain / process claims
   assert.match(build, /Solidity·Foundry·viem/)
   assert.doesNotMatch(build, /C-Chain|과정을 다룹니다/)
@@ -157,6 +116,6 @@ test('a chain without registered home content still renders a minimal home', () 
     <EcosystemHomeV2 data={data} chainId="unregistered" onOpenScreen={noop} onOpenLatest={noop} />
   )
   assert.match(html, /<h1/)
-  assert.match(html, /ECOSYSTEM PULSE/)
+  assert.match(html, /지금 생태계에서는/)
   assert.doesNotMatch(html, /FIND YOUR BUILDER TYPE|WHAT CAN YOU BUILD|START LEARNING/)
 })

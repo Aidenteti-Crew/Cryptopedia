@@ -71,7 +71,7 @@ export function CaseStudyPage({
 
   return (
     <article className={HUB_PAGE_CLASS}>
-      <HubHeader eyebrow="ACADEMY / BUILD BY CASE" title={study.title} description={study.summary}>
+      <HubHeader title={study.title} description={study.summary}>
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <ScopeBadge scope={study.scope} />
           <span className="text-xs text-[var(--editorial-muted)]">

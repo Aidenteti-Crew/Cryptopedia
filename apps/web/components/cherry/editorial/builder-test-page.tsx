@@ -31,6 +31,7 @@ export function BuilderTestQuestion({
   onChoose,
   onBack,
   headingRef,
+  compact = false,
 }: {
   step: number
   /** 이 문항의 선택지 — 이미 표시 순서대로 정렬돼 있다 */
@@ -40,15 +41,13 @@ export function BuilderTestQuestion({
   onChoose: (type: BuilderTypeId) => void
   onBack: () => void
   headingRef?: React.Ref<HTMLHeadingElement>
+  compact?: boolean
 }) {
   const question = BUILDER_QUESTIONS[step]
   const position = step + 1
+  const Heading = compact ? 'h3' : 'h1'
   return (
     <div>
-      <p className="text-[11px] font-semibold tracking-[0.2em] text-[var(--editorial-muted)]">
-        FIND YOUR BUILDER TYPE
-      </p>
-
       <div className="mt-6">
         <p className="text-[12px] tabular-nums tracking-[0.18em] text-[var(--editorial-muted)]">
           {position} / {TOTAL_QUESTIONS}
@@ -69,15 +68,15 @@ export function BuilderTestQuestion({
         </div>
       </div>
 
-      <h1
+      <Heading
         ref={headingRef}
         tabIndex={-1}
-        className="mt-10 text-[26px] font-medium leading-[1.4] tracking-[-0.3px] text-[var(--editorial-strong)] outline-none sm:text-[32px]"
+        className={`${compact ? 'mt-6 text-[20px] sm:text-[22px]' : 'mt-10 text-[26px] sm:text-[32px]'} font-medium leading-[1.4] tracking-[-0.3px] text-[var(--editorial-strong)] outline-none`}
       >
         {question.prompt}
-      </h1>
+      </Heading>
 
-      <ul className="mt-8 space-y-3" aria-label={`질문 ${position}의 선택지`}>
+      <ul className={`${compact ? 'mt-5 space-y-2' : 'mt-8 space-y-3'}`} aria-label={`질문 ${position}의 선택지`}>
         {options.map((option) => {
           const active = selected === option.type
           return (
@@ -87,7 +86,7 @@ export function BuilderTestQuestion({
                 aria-pressed={active}
                 data-option-type={option.type}
                 onClick={() => onChoose(option.type)}
-                className={`flex min-h-[60px] w-full items-center gap-4 rounded-[12px] border px-5 py-4 text-left text-[16px] leading-6 ${
+                className={`flex w-full items-center rounded-[12px] border text-left leading-6 ${compact ? 'min-h-[52px] gap-3 px-4 py-2.5 text-[14px]' : 'min-h-[60px] gap-4 px-5 py-4 text-[16px]'} ${
                   active
                     ? 'border-[var(--editorial-accent)] bg-[var(--editorial-surface)] text-[var(--editorial-strong)]'
                     : 'border-[var(--editorial-line)] text-[var(--editorial-ink)] hover:bg-[var(--editorial-hover)]'
@@ -108,7 +107,7 @@ export function BuilderTestQuestion({
         })}
       </ul>
 
-      <div className="mt-8 min-h-10">
+      <div className={`${compact ? 'mt-4' : 'mt-8'} min-h-10`}>
         <button
           type="button"
           onClick={onBack}
@@ -130,37 +129,37 @@ export function BuilderTestTie({
   onPick,
   onBack,
   headingRef,
+  compact = false,
 }: {
   /** 동점인 유형 (둘 이상) */
   candidates: readonly BuilderTypeResult[]
   onPick: (type: BuilderTypeId) => void
   onBack: () => void
   headingRef?: React.Ref<HTMLHeadingElement>
+  compact?: boolean
 }) {
+  const Heading = compact ? 'h3' : 'h1'
   return (
     <div>
-      <p className="text-[11px] font-semibold tracking-[0.2em] text-[var(--editorial-muted)]">
-        FIND YOUR BUILDER TYPE
-      </p>
-      <h1
+      <Heading
         ref={headingRef}
         tabIndex={-1}
-        className="mt-10 text-[26px] font-medium leading-[1.4] tracking-[-0.3px] text-[var(--editorial-strong)] outline-none sm:text-[32px]"
+        className={`${compact ? 'text-[20px] sm:text-[22px]' : 'text-[26px] sm:text-[32px]'} font-medium leading-[1.4] tracking-[-0.3px] text-[var(--editorial-strong)] outline-none`}
       >
         가장 관심 있는 방향을 골라 주세요
-      </h1>
+      </Heading>
       <p className="mt-4 max-w-[52ch] text-[15px] leading-7 text-[var(--editorial-muted)]">
         답변이 여러 방향에 고르게 나왔어요. 지금 가장 마음이 가는 쪽을 고르면 그에 맞는 탐색 경로를 보여 드려요.
       </p>
 
-      <ul className="mt-8 space-y-3" aria-label="동점인 빌더 유형">
+      <ul className={`${compact ? 'mt-5 space-y-2' : 'mt-8 space-y-3'}`} aria-label="동점인 빌더 유형">
         {candidates.map((candidate) => (
           <li key={candidate.id}>
             <button
               type="button"
               data-option-type={candidate.id}
               onClick={() => onPick(candidate.id)}
-              className="flex min-h-[72px] w-full items-center gap-5 rounded-[12px] border border-[var(--editorial-line)] px-5 py-4 text-left text-[var(--editorial-ink)] hover:bg-[var(--editorial-hover)]"
+              className={`flex w-full items-center rounded-[12px] border border-[var(--editorial-line)] text-left text-[var(--editorial-ink)] hover:bg-[var(--editorial-hover)] ${compact ? 'min-h-[60px] gap-3 px-4 py-3' : 'min-h-[72px] gap-5 px-5 py-4'}`}
             >
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--editorial-line)] text-[var(--editorial-strong)]">
                 <BuilderTypeSymbol id={candidate.id} className="h-6 w-6" />
@@ -181,7 +180,7 @@ export function BuilderTestTie({
         ))}
       </ul>
 
-      <div className="mt-8 min-h-10">
+      <div className={`${compact ? 'mt-4' : 'mt-8'} min-h-10`}>
         <button
           type="button"
           onClick={onBack}
@@ -224,10 +223,7 @@ export function BuilderTestResult({
         style={{ background: 'color-mix(in srgb, var(--editorial-paper) 92%, var(--editorial-mark))' }}
       >
         <div className={RESULT_WIDTH}>
-          <p className="text-[11px] font-semibold tracking-[0.2em] text-[var(--editorial-muted)]">
-            YOUR BUILDER PROFILE
-          </p>
-          <div className="mt-5 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-9">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-9">
             <span
               className="flex h-[96px] w-[96px] shrink-0 items-center justify-center rounded-full border border-[var(--editorial-line)] text-[var(--editorial-strong)] sm:h-[120px] sm:w-[120px]"
               style={{ background: 'color-mix(in srgb, var(--editorial-paper) 84%, var(--editorial-mark))' }}
@@ -385,14 +381,75 @@ export function BuilderTestResult({
   )
 }
 
+function BuilderTestInlineResult({
+  result,
+  onOpen,
+  onRestart,
+  headingRef,
+}: {
+  result: BuilderTypeResult
+  onOpen: (id: string) => void
+  onRestart: () => void
+  headingRef: React.Ref<HTMLHeadingElement>
+}) {
+  return (
+    <div className="mt-6">
+      <div className="flex items-center gap-4">
+        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-[var(--editorial-line)] text-[var(--editorial-strong)]">
+          <BuilderTypeSymbol id={result.id} className="h-8 w-8" />
+        </span>
+        <div>
+          <h3 ref={headingRef} tabIndex={-1} className="text-[24px] font-medium text-[var(--editorial-strong)] outline-none">
+            {result.name}
+          </h3>
+          <p className="text-[11px] font-semibold tracking-[0.18em] text-[var(--editorial-muted)]">{result.label}</p>
+        </div>
+      </div>
+      <p className="mt-5 text-[14px] leading-6 text-[var(--editorial-ink)]">{result.description}</p>
+      <p className="mt-3 text-[12px] leading-5 text-[var(--editorial-muted)]">
+        {result.keywords.map((keyword) => keyword.term).join(' · ')}
+      </p>
+      <h4 className="mt-7 text-[16px] font-medium text-[var(--editorial-strong)]">{BUILDER_RESULT_COPY.pathHeading}</h4>
+      <p className="mt-2 text-[13px] leading-6 text-[var(--editorial-muted)]">{result.rationale}</p>
+      <ol className="mt-4 border-t border-[var(--editorial-line)]">
+        {result.path.map((step, index) => (
+          <li key={`${step.title}:${index}`}>
+            <button
+              type="button"
+              onClick={() => onOpen(step.target.id)}
+              className="flex w-full items-start gap-3 border-b border-[var(--editorial-line)] py-3 text-left hover:text-[var(--editorial-accent)]"
+            >
+              <span className="text-[11px] tabular-nums text-[var(--editorial-muted)]">{String(index + 1).padStart(2, '0')}</span>
+              <span className="min-w-0 flex-1 text-[14px] leading-5">{step.title}</span>
+              <ArrowRight size={16} className="shrink-0" />
+            </button>
+          </li>
+        ))}
+      </ol>
+      <button
+        type="button"
+        onClick={onRestart}
+        className="mt-5 min-h-10 text-[13px] text-[var(--editorial-muted)] underline underline-offset-4 hover:text-[var(--editorial-strong)]"
+      >
+        다시 테스트하기
+      </button>
+      <p className="mt-3 text-[11px] leading-5 text-[var(--editorial-muted)] opacity-80">
+        {BUILDER_RESULT_COPY.disclaimer}
+      </p>
+    </div>
+  )
+}
+
 /* ── 페이지: 상태(reducer)를 들고 질문 → (동점 선택) → 결과를 전환한다 ──────── */
 export function BuilderTestPage({
   content,
   onOpen,
+  compact = false,
 }: {
   content: ChainHomeContent
   /** 화면·문서 id 를 연다 (홈과 같은 열기 함수) */
   onOpen: (id: string) => void
+  compact?: boolean
 }) {
   // 표시 순서는 마운트 시 한 번 섞이고(클라이언트에서만 렌더되므로 하이드레이션 불일치 없음) 테스트가 끝날 때까지 고정된다
   const [state, dispatch] = useReducer(builderTestReducer, undefined, () => initialBuilderTestState())
@@ -429,7 +486,14 @@ export function BuilderTestPage({
 
   let body: React.ReactNode
   if (view.kind === 'result' && typeResult(view.type)) {
-    body = (
+    body = compact ? (
+      <BuilderTestInlineResult
+        result={typeResult(view.type)!}
+        onOpen={onOpen}
+        onRestart={() => dispatch({ type: 'reset' })}
+        headingRef={headingRef}
+      />
+    ) : (
       <BuilderTestResult
         result={typeResult(view.type)!}
         onOpen={onOpen}
@@ -444,6 +508,7 @@ export function BuilderTestPage({
         onPick={(type) => dispatch({ type: 'choose', option: type })}
         onBack={() => dispatch({ type: 'back' })}
         headingRef={headingRef}
+        compact={compact}
       />
     )
   } else {
@@ -458,7 +523,25 @@ export function BuilderTestPage({
           if (choosing === null) dispatch({ type: 'back' })
         }}
         headingRef={headingRef}
+        compact={compact}
       />
+    )
+  }
+
+  if (compact) {
+    return (
+      <section
+        aria-labelledby="inline-builder-test-title"
+        className="builder-test-light min-w-0 rounded-[20px] border px-5 py-6 sm:px-7 sm:py-7 lg:h-[600px] lg:overflow-y-auto"
+      >
+        <h2 id="inline-builder-test-title" className="text-[22px] font-medium leading-snug text-[var(--editorial-strong)]">
+          {content.builderTest.title}
+        </h2>
+        <p className="mt-2 text-[13px] leading-6 text-[var(--editorial-muted)]">
+          {content.builderTest.description}
+        </p>
+        {body}
+      </section>
     )
   }
 

@@ -22,12 +22,9 @@ export function BuilderTestBanner({
         background: 'color-mix(in srgb, var(--editorial-surface) 92%, var(--editorial-mark))',
       }}
     >
-      <p className="text-[11px] font-semibold tracking-[0.2em] text-[var(--editorial-muted)]">
-        {content.label}
-      </p>
       <h2
         id="builder-test-title"
-        className="mt-3 text-[23px] font-medium leading-[1.3] tracking-[-0.4px] text-[var(--editorial-strong)] sm:text-[29px]"
+        className="text-[23px] font-medium leading-[1.3] tracking-[-0.4px] text-[var(--editorial-strong)] sm:text-[29px]"
       >
         {content.title}
       </h2>

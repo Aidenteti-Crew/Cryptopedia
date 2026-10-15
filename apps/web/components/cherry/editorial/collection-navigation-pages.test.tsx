@@ -78,8 +78,8 @@ test('renders the ecosystem overview and latest signals', () => {
     <EcosystemPage data={ecosystem} onOpenScreen={() => undefined} onOpenLatest={() => undefined} />
   )
 
-  assert.match(html, /ECOSYSTEM INTELLIGENCE/)
-  assert.match(html, /생태계의 흐름을 한곳에서/)
+  assert.doesNotMatch(html, /ECOSYSTEM INTELLIGENCE/)
+  assert.match(html, /하나의 생태계, 다양한 블록체인의 가능성/)
   assert.match(html, /체인·프로젝트/)
   assert.match(html, /최신 소식 슬라이드/)
   assert.match(html, /사람이 공부하기/)

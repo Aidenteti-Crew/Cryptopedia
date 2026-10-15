@@ -105,7 +105,7 @@ export function EditorialShell({
           />
           {children}
         </main>
-        <EditorialFooter onHome={goHome} onOpenEntry={onOpenEntry} />
+        <EditorialFooter onHome={goHome} />
       </div>
     </div>
   )

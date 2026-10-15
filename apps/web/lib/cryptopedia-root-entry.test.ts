@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url"
 import test from "node:test"
 
 const page = readFileSync(
-  fileURLToPath(new URL("../app/page.tsx", import.meta.url)),
+  fileURLToPath(new URL("../app/(cryptopedia)/page.tsx", import.meta.url)),
   "utf8",
 )
 

@@ -1,5 +1,38 @@
 import type { LandingTreemapItem } from './api'
-import type { ContentEntry } from './cryptopedia-types'
+import type { ContentEntry, EcosystemProjectsResponse } from './cryptopedia-types'
+
+export interface ProjectHeatmapItem {
+  name: string
+  count: number
+  percent: number
+  category: string | null
+}
+
+export function getProjectHeatmapItems(
+  data: Pick<EcosystemProjectsResponse, 'categories' | 'total'>,
+  visibleCategories = 20
+): ProjectHeatmapItem[] {
+  const categories = data.categories
+    .filter((category) => category.count > 0)
+    .toSorted((left, right) => right.count - left.count || left.name.localeCompare(right.name))
+  const missingCount = Math.max(0, data.total - categories.reduce((sum, category) => sum + category.count, 0))
+  if (missingCount) categories.push({ name: '미분류', count: missingCount })
+  const total = categories.reduce((sum, category) => sum + category.count, 0)
+  if (!total) return []
+  const visible = categories.slice(0, visibleCategories)
+  const remaining = categories.slice(visibleCategories)
+  const items: Array<{ name: string; count: number; category: string | null }> = visible.map(
+    (category) => ({ ...category, category: category.name === '미분류' ? null : category.name })
+  )
+  if (remaining.length) {
+    items.push({
+      name: `그 외 ${remaining.length}개 분야`,
+      count: remaining.reduce((sum, category) => sum + category.count, 0),
+      category: null,
+    })
+  }
+  return items.map((item) => ({ ...item, percent: Math.round((item.count / total) * 1000) / 10 }))
+}
 
 export const NEWS_LABELS: Record<string, string> = {
   projects: '체인·프로젝트',

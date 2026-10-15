@@ -37,10 +37,7 @@ export function BookDetailPage({
         )}
 
         <div className="min-w-0">
-          <p className="text-[11px] text-[var(--editorial-accent)]">
-            {book.type} COLLECTION / VOL. {String(book.volume).padStart(2, '0')}
-          </p>
-          <h1 className="editorial-display mt-3 text-[44px] leading-[1.1] lg:text-[56px]">
+          <h1 className="editorial-display text-[44px] leading-[1.1] lg:text-[56px]">
             {book.name}
           </h1>
           <p className="mt-4 text-base">{book.description}</p>

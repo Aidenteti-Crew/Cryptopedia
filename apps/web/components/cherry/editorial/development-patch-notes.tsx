@@ -23,7 +23,6 @@ export function DevelopmentPatchNotes({
   return (
     <article className={HUB_PAGE_CLASS}>
       <HubHeader
-        eyebrow="PATCH NOTES / CONNECTED UPDATES"
         title="개발 업데이트"
         description="변경 사항이 어떤 개념, 실습과 에이전트 스킬에 영향을 주는지 확인하세요. 현재 목록은 연결 흐름을 보여주는 데모 시나리오이며 실시간 수집 소식이 아닙니다."
       />

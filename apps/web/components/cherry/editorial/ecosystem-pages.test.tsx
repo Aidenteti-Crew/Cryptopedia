@@ -85,7 +85,6 @@ test('separates chain and project collections', () => {
 test('renders feed filters as descriptive copy and entries as actions', () => {
   const html = renderToStaticMarkup(
     <FeedPage
-      eyebrow="매크로 브리핑 / 예시 콘텐츠"
       title="매크로 소식"
       introduction="금융기관 협업과 산업의 변화를 출처와 함께 읽습니다."
       filters={['전체 소식', '기관 협업', '산업 동향']}
@@ -103,7 +102,6 @@ test('renders feed filters as descriptive copy and entries as actions', () => {
 test('live feed entries open their source instead of a missing internal article', () => {
   const html = renderToStaticMarkup(
     <FeedPage
-      eyebrow="수집 소식"
       title="매크로 소식"
       introduction="실제 수집 자료"
       filters={['최신순']}
@@ -118,7 +116,6 @@ test('live feed entries open their source instead of a missing internal article'
 test('curated entries keep their internal navigation when a source URL is present', () => {
   const html = renderToStaticMarkup(
     <FeedPage
-      eyebrow="큐레이션"
       title="자료"
       introduction="내부 상세 페이지"
       filters={['전체']}

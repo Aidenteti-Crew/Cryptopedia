@@ -7,22 +7,17 @@ export const HUB_BUTTON_CLASS =
   'inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[var(--editorial-line)] bg-[var(--editorial-surface)] px-4 py-2 text-sm text-[var(--editorial-ink)] hover:border-[var(--editorial-accent)] hover:text-[var(--editorial-accent)] disabled:cursor-not-allowed disabled:opacity-40'
 
 export function HubHeader({
-  eyebrow,
   title,
   description,
   children,
 }: {
-  eyebrow: string
   title: string
   description: string
   children?: ReactNode
 }) {
   return (
     <header className="border-b border-[var(--editorial-line)] pb-7">
-      <div className="flex flex-wrap items-center gap-3 text-[11px] tracking-wide">
-        <span className="text-[var(--editorial-accent)]">{eyebrow}</span>
-      </div>
-      <h1 className="editorial-detail-title mt-4 text-[30px] leading-snug sm:text-[38px]">{title}</h1>
+      <h1 className="editorial-detail-title text-[30px] leading-snug sm:text-[38px]">{title}</h1>
       <p className="mt-4 max-w-3xl text-sm leading-7 text-[var(--editorial-muted)]">
         {description}
       </p>

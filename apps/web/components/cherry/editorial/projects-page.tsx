@@ -50,10 +50,7 @@ export function ProjectsPage({ volumes, onOpenBook }: ProjectsPageProps) {
 
   return (
     <article className="px-5 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
-      <p className="text-[11px] text-[var(--editorial-muted)]">
-        THE LIVING LIBRARY / AVALANCHE
-      </p>
-      <h1 className="editorial-display mt-5 text-[44px] leading-[1.1] lg:text-[56px]">
+      <h1 className="editorial-display text-[44px] leading-[1.1] lg:text-[56px]">
         A world, bound in books.
       </h1>
       <p className="editorial-copy mt-5 max-w-3xl text-sm leading-6 text-[var(--editorial-muted)]">

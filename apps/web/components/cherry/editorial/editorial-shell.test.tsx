@@ -13,18 +13,23 @@ test('renders one common footer outside main on every top-level page', () => {
     const html = renderToStaticMarkup(<EditorialShell activeScreen={activeScreen} onSelect={noop} onOpenEntry={noop}><p>Content</p></EditorialShell>)
     assert.equal((html.match(/<footer/g) ?? []).length, 1)
     assert.ok(html.indexOf('</main>') < html.indexOf('<footer'))
-    assert.match(html, /푸터: 케이스별 실습/)
-    assert.match(html, /푸터: 스킬 라이브러리/)
+    assert.match(html, /소개 페이지/)
+    assert.match(html, /aidenteti-seal\.png/)
+    assert.doesNotMatch(html, />소개 페이지<|>신청폼</)
+    assert.match(html, /app\.notion\.com\/p\/kingyoungdae\/a-dent-ti-Overview-KR/)
+    assert.match(html, /https:\/\/x\.com\/Aidenteti_/)
+    assert.match(html, /https:\/\/forms\.gle\/6DVS7RqWUbwjTdFC9/)
+    assert.match(html, /chainery-logo\.png/)
     assert.match(html, /Aidenteti Crew/)
   }
 })
 
-test("renders the brand block with the local seal asset", () => {
+test("renders the brand block with a local logo asset", () => {
   const html = renderToStaticMarkup(<EditorialBrand onHome={noop} />)
 
   assert.match(html, new RegExp(EDITORIAL_BRAND.name))
   assert.match(html, /Aidenteti Crew/)
-  assert.match(html, /aidenteti-seal\.(png|svg)/)
+  assert.match(html, /(?:\/|%2F)cryptopedia(?:\/|%2F)assets(?:\/|%2F)[^" &]+\.(png|svg)/)
 })
 
 test("marks the active page and keeps primary navigation first", () => {
@@ -86,6 +91,7 @@ test("puts the desktop collection dropdown inside navigation before the index", 
   assert.doesNotMatch(trigger, /<select|<label/)
   const header = html.slice(html.indexOf("<header"), html.indexOf("</header>"))
   assert.match(header, /role="combobox"/)
+  assert.match(header, /hidden lg:inline-flex/)
   assert.equal((html.match(/role="combobox"/g) ?? []).length, 2)
   assert.doesNotMatch(html, /Login/)
 })

@@ -54,17 +54,6 @@ export function HubDetailPage({
   return (
     <article className={HUB_PAGE_CLASS}>
       <HubHeader
-        eyebrow={
-          project
-            ? 'ECOSYSTEM / PROJECT'
-            : concept
-              ? 'LEARNING / CONCEPT'
-              : skill
-                ? 'AGENT / SKILL'
-                : update
-                  ? 'PATCH NOTES'
-                  : 'BUILDERS / REFERENCE'
-        }
         title={item.title}
         description={item.summary}
       >

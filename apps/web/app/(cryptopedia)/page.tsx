@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 }
 
 export default function Page() {
-  return <EditorialApp />
+  return <EditorialApp view={{ kind: 'screen', id: 'ecosystem' }} />
 }

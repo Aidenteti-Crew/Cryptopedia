@@ -105,7 +105,7 @@ test('the tie screen lists every tied type and asks which direction interests th
 test('every result is a builder profile: label, name, English label, symbol and the top description', () => {
   for (const type of AVALANCHE_HOME.builderTypes) {
     const html = renderResult(type.id)
-    assert.match(html, /YOUR BUILDER PROFILE/)
+    assert.doesNotMatch(html, /YOUR BUILDER PROFILE/)
     assert.match(html, new RegExp(escapeRe(type.name)))
     assert.match(html, new RegExp(escapeRe(type.label)))
     assert.match(html, new RegExp(`data-symbol="${type.id}"`))

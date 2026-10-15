@@ -101,3 +101,24 @@ test('ecosystem subpages load the selected chain from live repository methods', 
     'events:avalanche:past', 'updates:avalanche',
   ])
 })
+
+test('ecosystem home loads project categories without making the news feed depend on them', async () => {
+  const projectData = { items: [], categories: [{ name: 'DeFi', count: 2 }], total: 2, generatedAt: '2026-10-14T00:00:00Z' }
+  const repository = {
+    getEcosystem: async () => ({ latest: [] }),
+    getHub: async () => ({}),
+    getEcosystemProjects: async () => projectData,
+  } as unknown as CryptopediaRepository
+  const loaded = await loadEditorialView({ kind: 'screen', id: 'ecosystem' }, repository, 'avalanche')
+  assert.equal(loaded.kind, 'ecosystem')
+  if (loaded.kind !== 'ecosystem') return
+  assert.deepEqual(loaded.projects, projectData)
+
+  const offlineProjects = {
+    ...repository,
+    getEcosystemProjects: async () => { throw new Error('project feed unavailable') },
+  } as CryptopediaRepository
+  const withoutProjects = await loadEditorialView({ kind: 'screen', id: 'ecosystem' }, offlineProjects, 'avalanche')
+  assert.equal(withoutProjects.kind, 'ecosystem')
+  if (withoutProjects.kind === 'ecosystem') assert.equal(withoutProjects.projects, null)
+})

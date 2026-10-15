@@ -98,11 +98,6 @@ export function HubLibraryPage({
   return (
     <article className={HUB_PAGE_CLASS}>
       <HubHeader
-        eyebrow={
-          id === 'practice' || id === 'skill-graph'
-            ? 'ACADEMY / LEARN & BUILD'
-            : 'CONNECTED KNOWLEDGE / AVALANCHE'
-        }
         title={page.title}
         description={page.description}
       />

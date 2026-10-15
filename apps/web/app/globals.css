@@ -264,6 +264,21 @@
   text-rendering: optimizeLegibility;
 }
 
+.editorial-root .builder-test-light {
+  --editorial-ink: #332B38;
+  --editorial-strong: #231B2A;
+  --editorial-muted: #5C5263;
+  --editorial-accent: #67407F;
+  --editorial-surface: #F2EBF5;
+  --editorial-hover: #F7F2FA;
+  --editorial-line: #D9CDE0;
+  --editorial-scroll-thumb: #B7A4C3;
+
+  background: #FFFFFF;
+  color: var(--editorial-ink);
+  border-color: var(--editorial-line);
+}
+
 .editorial-root button,
 .editorial-root a {
   transition-duration: 150ms;
