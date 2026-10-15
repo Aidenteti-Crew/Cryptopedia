@@ -16,7 +16,7 @@ export function BookDetailPage({
   onOpenChapter,
 }: BookDetailPageProps) {
   return (
-    <article className="px-4 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
+    <article className="px-5 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
       <section className="grid gap-8 border border-[var(--editorial-line)] bg-[var(--editorial-surface)] p-6 md:grid-cols-[187px_minmax(0,1fr)]">
         {book.coverAsset ? (
           <Image

@@ -13,49 +13,65 @@ export function ArticleReader({
 
   onOpenRelated,
 }: ArticleReaderProps) {
+  /* 학습 문서 — 페이지 폭은 제한하지 않고 긴 문단만 800px로 제한한다.
+     본문 섹션 간격은 44px로 통일하고, 구분선이 낀 관련 자료는 선 위·아래를 합쳐 같은 44px 안에 둔다.
+     구분선은 머리말 아래·관련 자료 위 두 곳만 쓴다.
+     위계: 제목(40) > 소제목(22) > 본문(16 / 1.7) > 메타(13) */
   return (
-    <article className="px-4 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
-      <header className="border-b border-[var(--editorial-line)] pb-6">
-        <p className="text-[11px] text-[var(--editorial-accent)]">{article.eyebrow}</p>
-        <h1 className="mt-3 text-[34px] font-normal leading-[1.55]">{article.title}</h1>
-        <p className="editorial-copy mt-4 text-xl leading-[1.5]">{article.subtitle}</p>
+    <article className="px-5 pb-10 pt-4 sm:px-8 sm:pb-12 lg:px-[52px] lg:pb-[64px]">
+      <header className="border-b border-[var(--editorial-line)] pb-8">
+        <p className="text-[11px] font-semibold tracking-[0.12em] text-[var(--editorial-accent)]">
+          {article.eyebrow}
+        </p>
+        <h1 className="editorial-detail-title mt-4 text-[34px] font-medium leading-[1.3] tracking-[-0.5px] text-[var(--editorial-strong)] sm:text-[40px]">
+          {article.title}
+        </h1>
+        <p className="editorial-copy mt-5 text-lg leading-[1.6] text-[var(--editorial-ink)]">
+          {article.subtitle}
+        </p>
       </header>
 
       {article.quickSummary ? (
-        <section className="border-b border-[var(--editorial-line)] py-6">
-          <h2 className="text-base">한눈에 읽기</h2>
-          <p className="editorial-copy mt-3 max-w-3xl text-sm leading-6 text-[var(--editorial-muted)]">
+        <section className="mt-11 border-l-2 border-[var(--editorial-mark)] pl-5">
+          <h2 className="text-[11px] font-semibold tracking-[0.12em] text-[var(--editorial-accent)]">
+            한눈에 읽기
+          </h2>
+          <p className="editorial-copy max-w-[800px] mt-3 text-base leading-[1.7] text-[var(--editorial-ink)]">
             {article.quickSummary}
           </p>
         </section>
       ) : null}
 
       {article.variant === 'graph' && (article.learningSteps?.length ?? 0) > 0 ? (
-        <section className="border-b border-[var(--editorial-line)] py-6">
-          <p className="text-[11px] text-[var(--editorial-accent)]">
+        <section className="mt-11">
+          <p className="text-[11px] font-semibold tracking-[0.12em] text-[var(--editorial-accent)]">
             FOUNDATION → UNDERSTAND → BUILD
           </p>
           <div className="mt-4">
             <ContentEntryList entries={article.learningSteps ?? []} onOpen={onOpenRelated} />
           </div>
-          <p className="mt-4 text-xs text-[var(--editorial-muted)]">
+          <p className="mt-4 text-[13px] text-[var(--editorial-muted)]">
             각 단계를 선택하면 연결된 학습 자료로 이동합니다.
           </p>
         </section>
       ) : null}
 
       {article.sections.map((section) => (
-        <section key={section.id} className="border-b border-[var(--editorial-line)] py-6">
-          <h2 className="text-base">{section.heading}</h2>
-          <p className="editorial-copy mt-3 max-w-3xl text-sm leading-6 text-[var(--editorial-muted)]">
+        <section key={section.id} className="mt-11">
+          <h2 className="text-[22px] font-medium leading-snug text-[var(--editorial-strong)]">
+            {section.heading}
+          </h2>
+          <p className="editorial-copy max-w-[800px] mt-4 text-base leading-[1.7] text-[var(--editorial-ink)]">
             {section.body}
           </p>
         </section>
       ))}
 
       {article.codeSample ? (
-        <section className="border-b border-[var(--editorial-line)] py-6">
-          <p className="text-[11px] text-[var(--editorial-accent)]">{article.codeSample.label}</p>
+        <section className="mt-11">
+          <p className="text-[11px] font-semibold tracking-[0.12em] text-[var(--editorial-accent)]">
+            {article.codeSample.label}
+          </p>
           <pre className="mt-4 overflow-x-auto border border-[var(--editorial-line)] bg-[var(--editorial-surface)] p-5 text-sm leading-6 text-[var(--editorial-ink)]">
             <code>{article.codeSample.code}</code>
           </pre>
@@ -63,9 +79,9 @@ export function ArticleReader({
       ) : null}
 
       {(article.sourceInfo?.length ?? 0) > 0 ? (
-        <section className="border-b border-[var(--editorial-line)] py-6">
-          <h2 className="text-base">원문 정보</h2>
-          <div className="mt-3 space-y-1 text-sm leading-6 text-[var(--editorial-muted)]">
+        <section className="mt-11">
+          <h2 className="text-[13px] font-semibold text-[var(--editorial-muted)]">원문 정보</h2>
+          <div className="mt-2 space-y-1 text-[13px] leading-6 text-[var(--editorial-muted)]">
             {article.sourceInfo?.map((line) => (
               <p key={line}>{line}</p>
             ))}
@@ -74,15 +90,15 @@ export function ArticleReader({
       ) : null}
 
       {article.relatedItems.length > 0 ? (
-        <section className="mt-6">
-          <h2 className="text-base">관련 자료</h2>
-          <div className="mt-3">
+        <section className="mt-5 border-t border-[var(--editorial-line)] pt-6">
+          <h2 className="text-[22px] font-medium leading-snug text-[var(--editorial-strong)]">관련 자료</h2>
+          <div className="mt-4">
             <ContentEntryList entries={article.relatedItems} onOpen={onOpenRelated} />
           </div>
         </section>
       ) : null}
 
-      <div className="mt-8 flex flex-col items-start gap-4 border-t border-[var(--editorial-line)] pt-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
         {article.officialUrl ? (
           <a
             href={article.officialUrl}

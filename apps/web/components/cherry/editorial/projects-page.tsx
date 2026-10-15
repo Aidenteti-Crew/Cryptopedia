@@ -49,7 +49,7 @@ export function ProjectsPage({ volumes, onOpenBook }: ProjectsPageProps) {
   const projects = volumes.filter((volume) => volume.type === "PROJECT")
 
   return (
-    <article className="px-4 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
+    <article className="px-5 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
       <p className="text-[11px] text-[var(--editorial-muted)]">
         THE LIVING LIBRARY / AVALANCHE
       </p>

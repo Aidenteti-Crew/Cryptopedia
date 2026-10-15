@@ -41,12 +41,12 @@ interface SectionDef {
   groups: GroupDef[]
 }
 
-const ICON_SIZE = 16
+const ICON_SIZE = 18
 
 const CHAPTER_ICON: Partial<Record<ScreenId, ReactNode>> = {
-  fundamentals: <BookOpen size={ICON_SIZE} strokeWidth={1.9} />,
-  builders: <Code2 size={ICON_SIZE} strokeWidth={1.9} />,
-  academy: <GraduationCap size={ICON_SIZE} strokeWidth={1.9} />,
+  fundamentals: <BookOpen size={ICON_SIZE} strokeWidth={1.6} />,
+  builders: <Code2 size={ICON_SIZE} strokeWidth={1.6} />,
+  academy: <GraduationCap size={ICON_SIZE} strokeWidth={1.6} />,
 }
 
 const SECTIONS: SectionDef[] = [
@@ -57,7 +57,7 @@ const SECTIONS: SectionDef[] = [
       {
         id: "ecosystem",
         label: "생태계 홈",
-        icon: <Globe size={ICON_SIZE} strokeWidth={1.9} />,
+        icon: <Globe size={ICON_SIZE} strokeWidth={1.6} />,
         childKind: "screen",
         children: PRIMARY_NAV.map((item) => ({ id: item.id, label: item.label })),
       },
@@ -102,6 +102,7 @@ function NavButton({
   icon,
   active,
   isChild = false,
+  hasActiveChild = false,
   collapsed,
   onClick,
   onToggle,
@@ -110,6 +111,8 @@ function NavButton({
   icon?: ReactNode
   active: boolean
   isChild?: boolean
+  /** 펼쳐진 그룹 안에 실제 선택된 하위 항목이 있을 때 — 배경 없이 글자만 살짝 진하게 */
+  hasActiveChild?: boolean
   collapsed?: boolean
   onClick: () => void
   onToggle?: () => void
@@ -122,14 +125,22 @@ function NavButton({
       onClick={onClick}
       aria-current={active ? "page" : undefined}
       aria-expanded={hasToggle ? !collapsed : undefined}
-      className={`flex w-full items-center gap-3 rounded-lg text-left leading-[1.25] ${
-        isChild ? "px-2 py-2 text-[12.5px]" : "px-2.5 py-2.5 text-[13.5px]"
+      className={`relative flex w-full items-center gap-3 rounded-[12px] text-left leading-[1.25] ${
+        isChild ? "min-h-[40px] px-3 py-2 text-[14px]" : "min-h-[48px] px-3.5 py-2.5 text-[15px]"
       } ${
         active
-          ? "bg-[#202832] font-semibold text-[var(--editorial-accent)]"
-          : "font-medium text-[var(--editorial-muted)] hover:bg-white/[0.04] hover:text-[var(--editorial-ink)]"
+          ? "font-medium text-[var(--editorial-accent)]"
+          : `${hasActiveChild ? "font-medium" : "font-normal"} text-[var(--editorial-ink)] hover:bg-[var(--editorial-sidebar-hover)]`
       }`}
     >
+      {active && (
+        <span
+          aria-hidden="true"
+          className={`absolute w-[2px] rounded-full bg-[var(--editorial-accent)] ${
+            isChild ? "-left-[15px] bottom-2 top-2" : "bottom-3 left-0 top-3"
+          }`}
+        />
+      )}
       {icon && (
         <span className="flex h-4 w-4 shrink-0 items-center justify-center">{icon}</span>
       )}
@@ -142,7 +153,7 @@ function NavButton({
             event.stopPropagation()
             onToggle()
           }}
-          className="-my-2 -mr-2.5 flex w-10 shrink-0 cursor-pointer items-center justify-center self-stretch rounded-md hover:bg-white/[0.06]"
+          className="-my-2 -mr-2 flex w-8 shrink-0 cursor-pointer items-center justify-center self-stretch"
         >
           <ChevronDown
             size={13}
@@ -177,11 +188,11 @@ export function EditorialIndex({
   return (
     <nav
       aria-label="Cryptopedia 목차"
-      className={`flex-1 overflow-y-auto px-2 pb-7 pt-3.5 ${className}`}
+      className={`flex-1 overflow-y-auto px-3 pb-7 pt-3.5 ${className}`}
     >
       {SECTIONS.map((section, si) => (
         <div key={section.id} className={si === 0 ? "mt-0.5" : "mt-6"}>
-          <div className="mb-3 px-2 text-[10px] font-extrabold uppercase tracking-[0.9px] text-[var(--editorial-muted)] opacity-80">
+          <div className="mb-3 px-2 text-[10px] font-semibold uppercase tracking-[1.1px] text-[var(--editorial-muted)]">
             {section.label}
           </div>
 
@@ -195,11 +206,12 @@ export function EditorialIndex({
             const groupActive = activeScreen === group.id && !childActive && !activeEntryId
 
             return (
-              <div key={group.id} className="mb-2 last:mb-0">
+              <div key={group.id} className="mb-1 last:mb-0">
                 <NavButton
                   label={group.label}
                   icon={group.icon}
                   active={groupActive}
+                  hasActiveChild={childActive}
                   collapsed={isCollapsed}
                   onClick={() => {
                     open(group.id)
@@ -208,7 +220,7 @@ export function EditorialIndex({
                   onToggle={() => toggle(group.id)}
                 />
                 {!isCollapsed && (
-                  <div className="ml-[18px] mt-2 space-y-1 border-l border-[var(--editorial-line)] pl-3">
+                  <div className="ml-[18px] mt-1 mb-1 space-y-1 border-l border-[var(--editorial-line)]/60 pl-3.5">
                     {group.children.map((child) => {
                       const active =
                         group.childKind === "screen"

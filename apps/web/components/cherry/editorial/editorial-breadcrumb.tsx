@@ -15,6 +15,7 @@ const SCREEN_LABELS: Record<string, string> = {
   ecosystem: '생태계 홈',
   chains: '컬렉션 선택',
   'event-archive': '행사 아카이브',
+  'builder-test': '빌더 유형 테스트',
   ...Object.fromEntries(
     [...PRIMARY_NAV, ...CHAPTER_NAV].map((item) => [item.id, item.label.replace(/^\d+\s+/, '')])
   ),
@@ -88,7 +89,7 @@ export function EditorialBreadcrumb({
   return (
     <nav
       aria-label="현재 위치"
-      className="min-w-0 px-4 pt-6 text-xs sm:px-8 sm:pt-8 lg:px-[52px] lg:pt-[52px]"
+      className="min-w-0 px-5 pt-6 text-xs sm:px-8 sm:pt-8 lg:px-[52px] lg:pt-[52px]"
     >
       <ol className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1.5 leading-6">
         {items.map((item, index) => (
