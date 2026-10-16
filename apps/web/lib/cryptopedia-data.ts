@@ -1,5 +1,5 @@
-import { z } from "zod"
-import { filterHubForChain, hubSchema, type HubData } from "./cryptopedia-hub"
+import { z } from 'zod'
+import { filterHubForChain, hubSchema, type HubData } from './cryptopedia-hub'
 
 import {
   articleDetailSchema,
@@ -21,18 +21,18 @@ import {
   type EcosystemProjectsResponse,
   type EcosystemPageData,
   type EventStatus,
-} from "./cryptopedia-types"
+} from './cryptopedia-types'
 
-export type CryptopediaDataErrorKind = "network" | "validation" | "not-found"
+export type CryptopediaDataErrorKind = 'network' | 'validation' | 'not-found'
 
 export class CryptopediaDataError extends Error {
   constructor(
     readonly kind: CryptopediaDataErrorKind,
     message: string,
-    readonly cause?: unknown,
+    readonly cause?: unknown
   ) {
     super(message)
-    this.name = "CryptopediaDataError"
+    this.name = 'CryptopediaDataError'
   }
 }
 
@@ -69,26 +69,23 @@ const STATUS_ORDER: Record<EventStatus, number> = {
 async function loadJson<T>(
   fetchImpl: typeof fetch,
   path: string,
-  schema: z.ZodType<T, z.ZodTypeDef, unknown>,
+  schema: z.ZodType<T, z.ZodTypeDef, unknown>
 ): Promise<T> {
   let response: Response
   try {
     response = await fetchImpl(path)
   } catch (error) {
-    throw new CryptopediaDataError("network", `Failed to load ${path}`, error)
+    throw new CryptopediaDataError('network', `Failed to load ${path}`, error)
   }
 
   if (!response.ok) {
-    throw new CryptopediaDataError(
-      "network",
-      `Failed to load ${path} (${response.status})`,
-    )
+    throw new CryptopediaDataError('network', `Failed to load ${path} (${response.status})`)
   }
 
   try {
     return schema.parse(await response.json())
   } catch (error) {
-    throw new CryptopediaDataError("validation", `Invalid data in ${path}`, error)
+    throw new CryptopediaDataError('validation', `Invalid data in ${path}`, error)
   }
 }
 
@@ -99,55 +96,43 @@ function sortEvents(feed: EventFeedResponse): EventFeedResponse {
 
     const leftTime = new Date(left.startsAt).getTime()
     const rightTime = new Date(right.startsAt).getTime()
-    return left.status === "PAST" ? rightTime - leftTime : leftTime - rightTime
+    return left.status === 'PAST' ? rightTime - leftTime : leftTime - rightTime
   })
 
   return { ...feed, items }
 }
 
 export function createStaticCryptopediaRepository(
-  fetchImpl: typeof fetch = fetch,
+  fetchImpl: typeof fetch = fetch
 ): CryptopediaRepository {
   return {
     async getHub(chainId) {
-      const data = await loadJson(fetchImpl, "/cryptopedia/hub.json", hubSchema)
+      const data = await loadJson(fetchImpl, '/cryptopedia/hub.json', hubSchema)
       return filterHubForChain(data, chainId)
     },
     getChains() {
-      return loadJson(
-        fetchImpl,
-        "/cryptopedia/chains.json",
-        chainCollectionPageSchema,
-      )
+      return loadJson(fetchImpl, '/cryptopedia/chains.json', chainCollectionPageSchema)
     },
 
     getEcosystem() {
-      return loadJson(
-        fetchImpl,
-        "/cryptopedia/ecosystem.json",
-        ecosystemPageSchema,
-      )
+      return loadJson(fetchImpl, '/cryptopedia/ecosystem.json', ecosystemPageSchema)
     },
 
     async getCollection(id) {
       const collections = await loadJson(
         fetchImpl,
-        "/cryptopedia/collections.json",
-        collectionListSchema,
+        '/cryptopedia/collections.json',
+        collectionListSchema
       )
       const collection = collections.find((item) => item.id === id)
       if (!collection) {
-        throw new CryptopediaDataError("not-found", `Unknown collection: ${id}`)
+        throw new CryptopediaDataError('not-found', `Unknown collection: ${id}`)
       }
       return collection
     },
 
     async getProjects() {
-      const projects = await loadJson(
-        fetchImpl,
-        "/cryptopedia/projects.json",
-        projectListSchema,
-      )
+      const projects = await loadJson(fetchImpl, '/cryptopedia/projects.json', projectListSchema)
       return projects.toSorted((left, right) => left.volume - right.volume)
     },
 
@@ -156,44 +141,32 @@ export function createStaticCryptopediaRepository(
     },
 
     getMacroArticles() {
-      return loadJson(fetchImpl, "/cryptopedia/macro.json", contentListSchema)
+      return loadJson(fetchImpl, '/cryptopedia/macro.json', contentListSchema)
     },
 
     getUpdates() {
-      return loadJson(fetchImpl, "/cryptopedia/updates.json", contentListSchema)
+      return loadJson(fetchImpl, '/cryptopedia/updates.json', contentListSchema)
     },
 
     async getEvents() {
-      const feed = await loadJson(
-        fetchImpl,
-        "/cryptopedia/events.json",
-        eventFeedResponseSchema,
-      )
+      const feed = await loadJson(fetchImpl, '/cryptopedia/events.json', eventFeedResponseSchema)
       return sortEvents(feed)
     },
 
     async getArticle(id) {
-      const articles = await loadJson(
-        fetchImpl,
-        "/cryptopedia/articles.json",
-        articleListSchema,
-      )
+      const articles = await loadJson(fetchImpl, '/cryptopedia/articles.json', articleListSchema)
       const article = articles.find((item) => item.id === id)
       if (!article) {
-        throw new CryptopediaDataError("not-found", `Unknown article: ${id}`)
+        throw new CryptopediaDataError('not-found', `Unknown article: ${id}`)
       }
       return article
     },
 
     async getBook(id) {
-      const books = await loadJson(
-        fetchImpl,
-        "/cryptopedia/books.json",
-        bookListSchema,
-      )
+      const books = await loadJson(fetchImpl, '/cryptopedia/books.json', bookListSchema)
       const book = books.find((item) => item.id === id)
       if (!book) {
-        throw new CryptopediaDataError("not-found", `Unknown book: ${id}`)
+        throw new CryptopediaDataError('not-found', `Unknown book: ${id}`)
       }
       return book
     },
@@ -216,27 +189,104 @@ export function createCryptopediaRepository(
     })
   return {
     ...curated,
-    getEcosystemProjects(chainId = 'avalanche') {
-      return loadJson(liveFetch, `${apiBase}/ecosystem/projects?chain=${encodeURIComponent(chainId)}&limit=500`, ecosystemProjectsResponseSchema)
+    async getEcosystemProjects(chainId = 'avalanche') {
+      const first = await loadJson(
+        liveFetch,
+        `${apiBase}/ecosystem/projects?chain=${encodeURIComponent(chainId)}&limit=500`,
+        ecosystemProjectsResponseSchema
+      )
+      const items = [...first.items]
+      const seen = new Set<string>()
+      let cursor = first.nextCursor
+      while (cursor) {
+        if (seen.has(cursor))
+          throw new CryptopediaDataError('validation', 'Repeated project cursor')
+        seen.add(cursor)
+        const page = await loadJson(
+          liveFetch,
+          `${apiBase}/ecosystem/projects?chain=${encodeURIComponent(chainId)}&limit=500&cursor=${encodeURIComponent(cursor)}`,
+          ecosystemProjectsResponseSchema
+        )
+        items.push(...page.items)
+        cursor = page.nextCursor
+      }
+      return {
+        ...first,
+        items: [...new Map(items.map((item) => [item.id, item])).values()],
+        nextCursor: null,
+      }
     },
     async getMacroArticles(chainId = 'avalanche') {
-      const feed = await loadJson(liveFetch, `${apiBase}/ecosystem/macro?chain=${encodeURIComponent(chainId)}&sort=latest&limit=100`, feedSchema)
-      return feed.items
+      const schema = feedSchema.extend({ nextCursor: z.string().nullable().optional() })
+      const items: ContentEntry[] = []
+      const seen = new Set<string>()
+      let cursor: string | null = null
+      do {
+        const feed: z.infer<typeof schema> = await loadJson(
+          liveFetch,
+          `${apiBase}/ecosystem/macro?chain=${encodeURIComponent(chainId)}&sort=latest&limit=100${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ''}`,
+          schema
+        )
+        items.push(...feed.items)
+        cursor = feed.nextCursor ?? null
+        if (cursor && seen.has(cursor))
+          throw new CryptopediaDataError('validation', 'Repeated macro cursor')
+        if (cursor) seen.add(cursor)
+      } while (cursor)
+      return items
     },
     async getUpdates(chainId = 'avalanche') {
-      const feed = await loadJson(liveFetch, `${apiBase}/ecosystem/updates?chain=${encodeURIComponent(chainId)}&sort=latest&limit=100`, feedSchema)
-      return feed.items
+      const schema = feedSchema.extend({ nextCursor: z.string().nullable().optional() })
+      const items: ContentEntry[] = []
+      const seen = new Set<string>()
+      let cursor: string | null = null
+      do {
+        const feed: z.infer<typeof schema> = await loadJson(
+          liveFetch,
+          `${apiBase}/ecosystem/updates?chain=${encodeURIComponent(chainId)}&sort=latest&limit=100${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ''}`,
+          schema
+        )
+        items.push(...feed.items)
+        cursor = feed.nextCursor ?? null
+        if (cursor && seen.has(cursor))
+          throw new CryptopediaDataError('validation', 'Repeated update cursor')
+        if (cursor) seen.add(cursor)
+      } while (cursor)
+      return items
     },
     async getEvents(chainId = 'avalanche', status) {
-      const fetchStatus = (eventStatus: string) =>
-        loadJson(liveFetch, `${apiBase}/events?chain=${encodeURIComponent(chainId)}&status=${eventStatus}&limit=100`, eventFeedResponseSchema)
+      const fetchStatus = async (eventStatus: string) => {
+        const first = await loadJson(
+          liveFetch,
+          `${apiBase}/events?chain=${encodeURIComponent(chainId)}&status=${eventStatus}&limit=100`,
+          eventFeedResponseSchema
+        )
+        const items = [...first.items]
+        const seen = new Set<string>()
+        let cursor = first.nextCursor
+        while (cursor) {
+          if (seen.has(cursor))
+            throw new CryptopediaDataError('validation', 'Repeated event cursor')
+          seen.add(cursor)
+          const page = await loadJson(
+            liveFetch,
+            `${apiBase}/events?chain=${encodeURIComponent(chainId)}&status=${eventStatus}&limit=100&cursor=${encodeURIComponent(cursor)}`,
+            eventFeedResponseSchema
+          )
+          items.push(...page.items)
+          cursor = page.nextCursor
+        }
+        return { ...first, items, nextCursor: null }
+      }
       if (status) return fetchStatus(status)
 
       const feeds = await Promise.all(
         ['upcoming', 'ongoing', 'past', 'cancelled', 'postponed'].map(fetchStatus)
       )
       return {
-        items: feeds.flatMap((feed) => feed.items),
+        items: [
+          ...new Map(feeds.flatMap((feed) => feed.items).map((item) => [item.id, item])).values(),
+        ],
         nextCursor: null,
         generatedAt: feeds[0].generatedAt,
       }

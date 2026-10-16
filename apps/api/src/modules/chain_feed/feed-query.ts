@@ -7,6 +7,38 @@ export interface ContentFeedQuery {
   limit: number;
   minImportance: number | null;
   sort: 'latest' | 'importance';
+  before?: { publishedAt: string; id: string };
+}
+
+export function parseUpdateQuery(
+  raw: Record<string, unknown>,
+): ContentFeedQuery {
+  const query = parseContentFeedQuery(raw);
+  const cursor = single(raw.cursor, 'cursor');
+  if (!cursor) return query;
+  if (query.sort !== 'latest')
+    throw new InvalidEventQueryError('cursor requires latest sort');
+  try {
+    const decoded: unknown = JSON.parse(
+      Buffer.from(cursor, 'base64url').toString('utf8'),
+    );
+    if (!decoded || typeof decoded !== 'object') throw new Error();
+    const value = decoded as Record<string, unknown>;
+    if (
+      typeof value.publishedAt !== 'string' ||
+      !/^\d{4}-\d\d-\d\dT/.test(value.publishedAt) ||
+      !Number.isFinite(Date.parse(value.publishedAt)) ||
+      typeof value.id !== 'string' ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        value.id,
+      )
+    )
+      throw new Error();
+    query.before = { publishedAt: value.publishedAt, id: value.id };
+    return query;
+  } catch {
+    throw new InvalidEventQueryError('invalid update cursor');
+  }
 }
 
 export interface ProjectsQuery {
@@ -14,6 +46,7 @@ export interface ProjectsQuery {
   category: string | null;
   sort: 'name' | 'importance';
   limit: number;
+  after?: { name: string; id: string };
 }
 
 function single(value: unknown, name: string): string | undefined {
@@ -68,10 +101,34 @@ function parseProjectSort(value: string | undefined): 'name' | 'importance' {
 export function parseProjectsQuery(
   raw: Record<string, unknown>,
 ): ProjectsQuery {
-  return {
+  const query: ProjectsQuery = {
     chain: parseChain(raw),
     category: single(raw.category, 'category') ?? null,
     sort: parseProjectSort(single(raw.sort, 'sort')),
     limit: intInRange(single(raw.limit, 'limit'), 'limit', 1, 500) ?? 500,
   };
+  const cursor = single(raw.cursor, 'cursor');
+  if (cursor) {
+    if (query.sort !== 'name')
+      throw new InvalidEventQueryError('project cursor requires name sort');
+    try {
+      const value = JSON.parse(
+        Buffer.from(cursor, 'base64url').toString('utf8'),
+      ) as Record<string, unknown>;
+      if (
+        !value ||
+        typeof value.name !== 'string' ||
+        value.name.length > 1000 ||
+        typeof value.id !== 'string' ||
+        !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+          value.id,
+        )
+      )
+        throw new Error();
+      query.after = { name: value.name, id: value.id };
+    } catch {
+      throw new InvalidEventQueryError('invalid project cursor');
+    }
+  }
+  return query;
 }

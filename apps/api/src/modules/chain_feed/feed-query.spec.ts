@@ -1,5 +1,33 @@
 import { InvalidEventQueryError } from './event-query';
-import { parseContentFeedQuery, parseProjectsQuery } from './feed-query';
+import {
+  parseContentFeedQuery,
+  parseProjectsQuery,
+  parseUpdateQuery,
+} from './feed-query';
+
+describe('update cursor', () => {
+  it('validates a publication date and UUID before constructing SQL bindings', () => {
+    const before = {
+      publishedAt: '2026-10-01T00:00:00Z',
+      id: '00000000-0000-4000-8000-000000000001',
+    };
+    const cursor = Buffer.from(JSON.stringify(before)).toString('base64url');
+    expect(parseUpdateQuery({ cursor }).before).toEqual(before);
+    expect(() => parseUpdateQuery({ cursor, sort: 'importance' })).toThrow(
+      InvalidEventQueryError,
+    );
+    expect(() => parseUpdateQuery({ cursor: 'not-json' })).toThrow(
+      InvalidEventQueryError,
+    );
+    expect(() =>
+      parseUpdateQuery({
+        cursor: Buffer.from(
+          JSON.stringify({ ...before, id: "'; DROP TABLE" }),
+        ).toString('base64url'),
+      }),
+    ).toThrow(InvalidEventQueryError);
+  });
+});
 
 describe('parseContentFeedQuery', () => {
   it('defaults to the 30 latest', () => {
@@ -47,6 +75,20 @@ describe('parseContentFeedQuery', () => {
 });
 
 describe('parseProjectsQuery', () => {
+  it('accepts a validated name/id cursor only for name ordering', () => {
+    const after = {
+      name: 'Project name',
+      id: '00000000-0000-4000-8000-000000000001',
+    };
+    const cursor = Buffer.from(JSON.stringify(after)).toString('base64url');
+    expect(parseProjectsQuery({ cursor }).after).toEqual(after);
+    expect(() => parseProjectsQuery({ cursor, sort: 'importance' })).toThrow(
+      InvalidEventQueryError,
+    );
+    expect(() => parseProjectsQuery({ cursor: 'invalid' })).toThrow(
+      InvalidEventQueryError,
+    );
+  });
   it('defaults to all projects and allows a category filter', () => {
     expect(parseProjectsQuery({})).toEqual({
       chain: 'avalanche',

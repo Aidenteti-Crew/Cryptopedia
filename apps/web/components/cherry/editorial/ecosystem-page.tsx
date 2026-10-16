@@ -4,7 +4,6 @@ import { ArrowRight, BookOpen, Bot, CalendarDays, Code2, Globe2, Layers3 } from 
 import type { EcosystemPageData, EcosystemProjectsResponse } from '@/lib/cryptopedia-types'
 import type { HubData } from '@/lib/cryptopedia-hub'
 import { HeroCarousel, HERO_GRADIENTS, type OverviewHeroItem } from '../nd-overview-page'
-import { RelatedLinks } from './hub-shared'
 import { getProjectHeatmapItems, sortHomeNews } from '@/lib/cryptopedia-home'
 import { getChainHomeContent } from '@/lib/avalanche-home'
 import { BuilderTestPage } from './builder-test-page'
@@ -37,8 +36,6 @@ const AUDIENCES = [
     summary: '목표에 맞는 개념을 배우고, 공식 자료와 예제를 따라 케이스별로 실습하세요.',
     action: '케이스별 실습으로',
     Icon: BookOpen,
-    color: 'var(--editorial-accent)',
-    background: 'var(--editorial-surface)',
   },
   {
     id: 'skill-library',
@@ -47,14 +44,11 @@ const AUDIENCES = [
     summary: '필요한 지식과 스킬을 찾아 지침·출처·완료 조건이 담긴 파일로 전달하세요.',
     action: '스킬 라이브러리로',
     Icon: Bot,
-    color: 'var(--editorial-accent)',
-    background: 'var(--editorial-surface)',
   },
 ]
 
 export function EcosystemPage({
   data,
-  hub,
   chainId = 'avalanche',
   chainLogoUrl,
   projects,
@@ -164,18 +158,19 @@ export function EcosystemPage({
           같은 지식을, 사람의 학습과 에이전트의 작업에 맞게.
         </p>
         <div className="mt-5 grid gap-4 lg:grid-cols-2">
-          {AUDIENCES.map(({ id, title, label, summary, action, Icon, color, background }) => (
+          {AUDIENCES.map(({ id, title, label, summary, action, Icon }) => (
             <button
               key={id}
               type="button"
               onClick={() => onOpenLatest(id)}
-              className="group flex min-h-[230px] items-center gap-5 rounded-[18px] border border-[var(--editorial-line)] p-6 text-left transition-transform hover:-translate-y-0.5 hover:border-[var(--editorial-accent)] sm:p-7"
-              style={{ background }}
+              data-audience={id}
+              data-tone={id === 'practice' ? 'projects' : 'updates'}
+              className="editorial-audience-card group flex min-h-[230px] items-center gap-5 rounded-[18px] border p-6 text-left hover:border-white/60 sm:p-7"
             >
               <span className="min-w-0 flex-1">
                 <span
                   className="block text-[10px] font-semibold tracking-[1.2px]"
-                  style={{ color }}
+                  style={{ color: 'var(--editorial-accent)' }}
                 >
                   {label}
                 </span>
@@ -187,8 +182,12 @@ export function EcosystemPage({
                   {action} <ArrowRight size={14} />
                 </span>
               </span>
-              <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-[var(--editorial-line)] bg-[var(--editorial-paper)] sm:h-24 sm:w-24">
-                <Icon className="h-8 w-8 sm:h-11 sm:w-11" strokeWidth={1.3} style={{ color }} />
+              <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/10 sm:h-24 sm:w-24">
+                <Icon
+                  className="h-8 w-8 sm:h-11 sm:w-11"
+                  strokeWidth={1.3}
+                  style={{ color: 'var(--editorial-accent)' }}
+                />
               </span>
             </button>
           ))}

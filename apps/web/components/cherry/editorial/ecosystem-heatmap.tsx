@@ -3,17 +3,7 @@
 import { useEffect, useState } from 'react'
 import { ResponsiveContainer, Treemap } from 'recharts'
 import type { ProjectHeatmapItem } from '@/lib/cryptopedia-home'
-
-const COLORS = [
-  ['#693AB4', '#9162D0'],
-  ['#087E99', '#18A6B6'],
-  ['#A9456B', '#D76683'],
-  ['#A35C1D', '#D68B35'],
-  ['#2869A6', '#4594CF'],
-  ['#387D57', '#54A875'],
-  ['#7653AA', '#A17CC8'],
-  ['#A64D46', '#D27467'],
-] as const
+import { getProjectCategoryPalette } from '@/lib/project-category-colors'
 
 const SHORT_LABELS: Record<string, string> = {
   'Blockchain as a Service': 'Blockchain Services',
@@ -62,7 +52,7 @@ function HeatmapTileContent({
     index === undefined
   )
     return null
-  const [start, end] = category === null ? ['#41404E', '#646174'] : COLORS[index % COLORS.length]
+  const { start, end } = getProjectCategoryPalette(category)
   const showTitle = compactLabels || (width > 92 && height > 52)
   const showCount = compactLabels ? width > 80 && height > 95 : width > 64 && height > 42
   const showPercent = !compactLabels && width > 135 && height > 85
@@ -124,7 +114,7 @@ function HeatmapTileContent({
               <span className="flex flex-wrap items-end gap-x-2 leading-none">
                 <span className="text-[20px] font-bold tabular-nums sm:text-[27px]">{count}</span>
                 {showPercent && (
-                  <span className="pb-0.5 text-[11px] font-medium text-white/80">{percent}%</span>
+                  <span className="pb-0.5 text-[11px] font-medium text-white">{percent}%</span>
                 )}
               </span>
             )}

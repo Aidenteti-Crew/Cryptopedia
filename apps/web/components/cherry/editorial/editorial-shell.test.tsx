@@ -14,7 +14,7 @@ test('renders one common footer outside main on every top-level page', () => {
     assert.equal((html.match(/<footer/g) ?? []).length, 1)
     assert.ok(html.indexOf('</main>') < html.indexOf('<footer'))
     assert.match(html, /소개 페이지/)
-    assert.match(html, /aidenteti-seal\.png/)
+    assert.match(html, /aidenteti-seal\.svg/)
     assert.doesNotMatch(html, />소개 페이지<|>신청폼</)
     assert.match(html, /app\.notion\.com\/p\/kingyoungdae\/a-dent-ti-Overview-KR/)
     assert.match(html, /https:\/\/x\.com\/Aidenteti_/)

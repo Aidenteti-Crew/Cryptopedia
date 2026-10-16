@@ -30,6 +30,24 @@ export const contentEntrySchema = z.object({
   kind: contentKindSchema,
   sourceName: z.string().min(1).optional(),
   sourceUrl: z.string().url().optional(),
+  subKind: z.string().min(1).optional(),
+  version: z.string().nullable().optional(),
+  upgradeName: z.string().nullable().optional(),
+  activatedAt: isoDateTimeSchema.nullable().optional(),
+  relatedProject: z.string().nullable().optional(),
+  network: z.string().nullable().optional(),
+  importance: z.number().min(1).max(5).nullable().optional(),
+  importanceReason: z.string().nullable().optional(),
+  prerelease: z.boolean().nullable().optional(),
+  compareUrl: z.string().url().nullable().optional(),
+  changeFlags: z.array(z.object({
+    kind: z.enum(['mandatory', 'breaking', 'security', 'protocol']),
+    evidence: z.string().min(1), sourceUrl: z.string().url(),
+  })).optional(),
+  activations: z.array(z.object({
+    network: z.enum(['MAINNET', 'FUJI']), at: isoDateTimeSchema,
+    evidence: z.string().min(1), sourceUrl: z.string().url(),
+  })).optional(),
   publishedAt: isoDateTimeSchema.optional(),
   collectedAt: isoDateTimeSchema.optional(),
   startsAt: isoDateTimeSchema.optional(),
@@ -147,6 +165,7 @@ export const ecosystemProjectsResponseSchema = z.object({
   categories: z.array(z.object({ name: z.string(), count: z.number().int().nonnegative() })),
   total: z.number().int().nonnegative(),
   generatedAt: isoDateTimeSchema,
+  nextCursor: z.string().nullable().optional(),
 })
 
 export const collectionVolumeSchema = z.object({

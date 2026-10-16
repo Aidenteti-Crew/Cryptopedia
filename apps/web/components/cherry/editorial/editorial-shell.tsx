@@ -94,7 +94,7 @@ export function EditorialShell({
           </div>
         </header>
 
-        <main className="min-w-0 flex-1 bg-[var(--editorial-paper)]">
+        <main className="min-h-[calc(100dvh-64px)] min-w-0 flex-1 bg-[var(--editorial-paper)] lg:min-h-dvh">
           <EditorialBreadcrumb
             items={breadcrumbs ?? getEditorialBreadcrumbs({ kind: 'screen', id: activeScreen })}
             onNavigate={

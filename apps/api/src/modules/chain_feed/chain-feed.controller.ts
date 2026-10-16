@@ -12,7 +12,7 @@ import {
   parseChain,
   parseEventQuery,
 } from './event-query';
-import { parseContentFeedQuery, parseProjectsQuery } from './feed-query';
+import { parseContentFeedQuery, parseProjectsQuery, parseUpdateQuery } from './feed-query';
 
 // Validation failures become HTTP 400 with the {code, message} body the event contract asks for;
 // anything else (database errors) stays a plain 500 so no query text or credentials leak.
@@ -86,7 +86,7 @@ export class EcosystemController {
     @Query() query: Record<string, unknown>,
   ): Promise<ContentFeedResponse> {
     try {
-      return await this.feed.listMacro(parseContentFeedQuery(query));
+      return await this.feed.listMacro(parseUpdateQuery(query));
     } catch (error) {
       return badRequest('INVALID_FEED_QUERY', error);
     }
@@ -109,13 +109,13 @@ export class EcosystemController {
 
   @Get('updates')
   @ApiOperation({
-    summary: '기술 업데이트 (limit, minImportance, sort=latest|importance)',
+    summary: '기술 업데이트 (limit<=100, minImportance, sort=latest|importance, cursor는 latest 전용)',
   })
   async updates(
     @Query() query: Record<string, unknown>,
   ): Promise<ContentFeedResponse> {
     try {
-      return await this.feed.listUpdates(parseContentFeedQuery(query));
+      return await this.feed.listUpdates(parseUpdateQuery(query));
     } catch (error) {
       return badRequest('INVALID_FEED_QUERY', error);
     }

@@ -1,4 +1,5 @@
 import type { EventStatus } from './event-query';
+import type { UpdateEvidence } from './update-evidence';
 
 // Response shapes. EventEntry/EventFeedResponse mirror apps/web/lib/cryptopedia-types.ts;
 // the ecosystem items extend the frontend ContentEntry with the extra fields the crawler knows.
@@ -56,11 +57,16 @@ export interface ContentFeedItem {
   upgradeName?: string | null;
   version?: string | null;
   activatedAt?: string | null;
+  prerelease?: boolean | null;
+  compareUrl?: string | null;
+  changeFlags?: UpdateEvidence['changeFlags'];
+  activations?: UpdateEvidence['activations'];
 }
 
 export interface ContentFeedResponse {
   items: ContentFeedItem[];
   generatedAt: string;
+  nextCursor?: string | null;
 }
 
 export interface ProjectItem {
@@ -88,6 +94,7 @@ export interface ProjectsResponse {
   categories: ProjectCategoryCount[];
   total: number;
   generatedAt: string;
+  nextCursor?: string | null;
 }
 
 export interface EcosystemHubResponse {

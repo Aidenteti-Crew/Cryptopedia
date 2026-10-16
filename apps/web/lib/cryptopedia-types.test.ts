@@ -6,10 +6,23 @@ import {
   chainCollectionPageSchema,
   collectionPageSchema,
   collectionVolumeSchema,
+  contentEntrySchema,
   ecosystemPageSchema,
   eventEntrySchema,
   eventFeedResponseSchema,
 } from "./cryptopedia-types"
+
+test('keeps crawler fields needed for readable update filters and dates', () => {
+  const item = contentEntrySchema.parse({
+    id: 'release', title: 'Helicon', summary: 'Protocol upgrade', kind: 'UPDATE',
+    subKind: 'RELEASE', sourceName: 'Builder Hub', sourceUrl: 'https://example.org/release',
+    publishedAt: '2026-09-08T00:00:00Z', version: 'v1.15.0',
+    upgradeName: 'Helicon', activatedAt: '2026-09-22T15:00:00Z',
+  })
+  assert.equal(item.subKind, 'RELEASE')
+  assert.equal(item.version, 'v1.15.0')
+  assert.equal(item.activatedAt, '2026-09-22T15:00:00Z')
+})
 
 test("accepts the Figma collection data contract", () => {
   const value = collectionPageSchema.parse({

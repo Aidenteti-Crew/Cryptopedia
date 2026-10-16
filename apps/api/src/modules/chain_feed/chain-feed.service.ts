@@ -13,6 +13,8 @@ import { eventEntryContract } from './event-contract';
 import { toEventEntry, type EventRow } from './event-mapper';
 import { encodeCursor, type EventQuery } from './event-query';
 import type { ContentFeedQuery, ProjectsQuery } from './feed-query';
+import { extractUpdateEvidence, releaseIdentity } from './update-evidence';
+import { officialReleases, officialCompareUrl } from './official-releases';
 
 interface MacroRow {
   importance_reason: string | null;
@@ -29,6 +31,7 @@ interface MacroRow {
 }
 
 interface TechRow {
+  content_raw: string | null;
   importance_reason: string | null;
   id: string;
   kind: string;
@@ -165,11 +168,16 @@ export class ChainFeedService {
       importance = 'AND m.importance >= ?';
       bindings.push(query.minImportance);
     }
-    bindings.push(query.limit);
+    let cursor = '';
+    if (query.before) {
+      cursor = 'AND (m.published_at, m.id) < (?::timestamptz, ?::uuid)';
+      bindings.push(query.before.publishedAt, query.before.id);
+    }
+    bindings.push(query.limit + 1);
     const order =
       query.sort === 'importance'
         ? 'm.importance DESC NULLS LAST, m.published_at DESC'
-        : 'm.published_at DESC';
+        : 'm.published_at DESC, m.id DESC';
 
     const result = await this.knex.raw<{ rows: MacroRow[] }>(
       `SELECT m.id, m.kind, m.related_project, m.title, m.summary, m.importance,
@@ -179,13 +187,24 @@ export class ChainFeedService {
          JOIN content.article_raw a ON a.id = m.article_raw_id
          JOIN content.source s ON s.id = a.source_id
          LEFT JOIN content.article_classification c ON c.article_raw_id = m.article_raw_id
-        WHERE m.revoked_at IS NULL AND m.chain = ? ${importance}
+        WHERE m.revoked_at IS NULL AND m.chain = ? ${importance} ${cursor}
         ORDER BY ${order}
         LIMIT ?`,
       bindings,
     );
+    const rows = result.rows.slice(0, query.limit);
+    const last = rows.at(-1);
     return {
-      items: result.rows.map(
+      nextCursor:
+        query.sort === 'latest' && result.rows.length > query.limit && last
+          ? Buffer.from(
+              JSON.stringify({
+                publishedAt: last.published_at.toISOString(),
+                id: last.id,
+              }),
+            ).toString('base64url')
+          : null,
+      items: rows.map(
         (r): ContentFeedItem => ({
           id: r.id,
           title: r.title,
@@ -212,28 +231,58 @@ export class ChainFeedService {
       importance = 'AND t.importance >= ?';
       bindings.push(query.minImportance);
     }
-    bindings.push(query.limit);
+    let cursor = '';
+    if (query.before) {
+      cursor = 'AND (t.published_at, t.id) < (?::timestamptz, ?::uuid)';
+      bindings.push(query.before.publishedAt, query.before.id);
+    }
+    bindings.push(query.limit + 1);
     const order =
       query.sort === 'importance'
         ? 't.importance DESC NULLS LAST, t.published_at DESC'
-        : 't.published_at DESC';
+        : 't.published_at DESC, t.id DESC';
 
     const result = await this.knex.raw<{ rows: TechRow[] }>(
       `SELECT t.id, t.kind, t.network, t.upgrade_name, t.version, t.title, t.change_summary,
-              t.activated_at, t.importance, t.published_at, t.created_at, a.url,
+              t.activated_at, t.importance, t.published_at, t.created_at, a.url, a.content_raw,
               c.raw_json->>'importance_reason' AS importance_reason,
               s.name AS source_name
          FROM content.tech_update t
          JOIN content.article_raw a ON a.id = t.article_raw_id
          JOIN content.source s ON s.id = a.source_id
          LEFT JOIN content.article_classification c ON c.article_raw_id = t.article_raw_id
-        WHERE t.revoked_at IS NULL AND t.chain = ? ${importance}
+        WHERE t.revoked_at IS NULL AND t.chain = ? ${importance} ${cursor}
         ORDER BY ${order}
         LIMIT ?`,
       bindings,
     );
+    const rows = result.rows.slice(0, query.limit);
+    const repos = [
+      ...new Set(
+        rows
+          .map((r) => releaseIdentity(r.url)?.repo)
+          .filter((r): r is string => !!r),
+      ),
+    ];
+    const official = new Map(
+      await Promise.all(
+        repos.map(
+          async (repo) => [repo, await officialReleases(repo)] as const,
+        ),
+      ),
+    );
+    const last = rows.at(-1);
     return {
-      items: result.rows.map(
+      nextCursor:
+        query.sort === 'latest' && result.rows.length > query.limit && last
+          ? Buffer.from(
+              JSON.stringify({
+                publishedAt: last.published_at.toISOString(),
+                id: last.id,
+              }),
+            ).toString('base64url')
+          : null,
+      items: rows.map(
         (r): ContentFeedItem => ({
           id: r.id,
           title: r.title,
@@ -250,6 +299,32 @@ export class ChainFeedService {
           upgradeName: r.upgrade_name,
           version: r.version,
           activatedAt: r.activated_at ? r.activated_at.toISOString() : null,
+          ...(() => {
+            const identity = releaseIdentity(r.url);
+            const release = identity
+              ? official
+                  .get(identity.repo)
+                  ?.find(
+                    (v) => v.tag_name === identity.tag && v.html_url === r.url,
+                  )
+              : undefined;
+            return {
+              ...extractUpdateEvidence(
+                r.url,
+                release?.body ?? r.content_raw ?? '',
+              ),
+              prerelease: release?.prerelease ?? null,
+              compareUrl: release ? officialCompareUrl(release) : null,
+              ...(release
+                ? {
+                    version: release.tag_name,
+                    ...(release.published_at
+                      ? { publishedAt: release.published_at }
+                      : {}),
+                  }
+                : {}),
+            };
+          })(),
         }),
       ),
       generatedAt: new Date().toISOString(),
@@ -335,22 +410,35 @@ export class ChainFeedService {
       category = 'AND category = ?';
       bindings.push(query.category);
     }
-    bindings.push(query.limit);
+    let cursor = '';
+    if (query.after) {
+      cursor = 'AND (name, id) > (?::text, ?::uuid)';
+      bindings.push(query.after.name, query.after.id);
+    }
+    bindings.push(query.limit + 1);
 
     const [result, summary] = await Promise.all([
       this.knex.raw<{ rows: ProjectRow[] }>(
         `SELECT id, external_key, name, category, developer, website_url, documentation_url,
                 description, chains, source_url, importance, importance_reason
            FROM content.eco_project
-          WHERE revoked_at IS NULL AND chain = ? ${category}
-          ORDER BY ${query.sort === 'importance' ? 'importance DESC NULLS LAST, name' : 'name'}
+          WHERE revoked_at IS NULL AND chain = ? ${category} ${cursor}
+          ORDER BY ${query.sort === 'importance' ? 'importance DESC NULLS LAST, name, id' : 'name, id'}
           LIMIT ?`,
         bindings,
       ),
       this.projectCategories(query.chain),
     ]);
+    const rows = result.rows.slice(0, query.limit);
+    const last = rows.at(-1);
     return {
-      items: result.rows.map(
+      nextCursor:
+        query.sort === 'name' && result.rows.length > query.limit && last
+          ? Buffer.from(
+              JSON.stringify({ name: last.name, id: last.id }),
+            ).toString('base64url')
+          : null,
+      items: rows.map(
         (r): ProjectItem => ({
           id: r.id,
           key: r.external_key,

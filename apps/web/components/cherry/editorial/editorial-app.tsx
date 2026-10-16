@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
+import { rememberDiscoveryScroll } from './discovery-state'
 import { HUB_ENTRY_IDS, isHubEntry, type HubData } from '@/lib/cryptopedia-hub'
 
 import { createCryptopediaRepository, type CryptopediaRepository } from '@/lib/cryptopedia-data'
@@ -83,7 +84,13 @@ export function editorialViewReducer(
 
 type LoadedView =
   | { kind: 'chains'; data: ChainCollectionPageData }
-  | { kind: 'ecosystem'; data: EcosystemPageData; hub: HubData; projects: EcosystemProjectsResponse | null; feed: 'live' | 'unavailable' }
+  | {
+      kind: 'ecosystem'
+      data: EcosystemPageData
+      hub: HubData
+      projects: EcosystemProjectsResponse | null
+      feed: 'live' | 'unavailable'
+    }
   | { kind: 'projects'; data: EcosystemProjectsResponse }
   | { kind: 'hub'; id: string; data: HubData }
   | { kind: 'collection'; data: CollectionPageData }
@@ -228,6 +235,8 @@ export function EditorialApp({
   }, [view, retryVersion, activeChain.id, isNewHome])
 
   const selectScreen = (id: ScreenId) => {
+    if (view.kind === 'screen' && ['projects', 'macro', 'events', 'updates'].includes(activeScreen))
+      rememberDiscoveryScroll(`${activeChain.id}:${activeScreen}`)
     router.push(pathForEditorialView({ kind: 'screen', id }))
   }
 
@@ -236,6 +245,8 @@ export function EditorialApp({
       selectScreen(id as ScreenId)
       return
     }
+    if (view.kind === 'screen' && ['projects', 'macro', 'events', 'updates'].includes(activeScreen))
+      rememberDiscoveryScroll(`${activeChain.id}:${activeScreen}`)
     router.push(
       pathForEditorialView({
         kind: 'article',
@@ -286,11 +297,7 @@ export function EditorialApp({
             onOpenLatest: (id: string) => openArticle(id, 'ecosystem'),
           }
           content = isNewHome ? (
-            <EcosystemHomeV2
-              {...homeProps}
-              chainId={activeChain.id}
-              feed={loaded.feed}
-            />
+            <EcosystemHomeV2 {...homeProps} chainId={activeChain.id} feed={loaded.feed} />
           ) : (
             <EcosystemPage
               {...homeProps}
@@ -306,7 +313,9 @@ export function EditorialApp({
         }
         break
       case 'projects':
-        content = <ProjectDirectoryPage data={loaded.data} />
+        content = (
+          <ProjectDirectoryPage data={loaded.data} stateKey={`${activeChain.id}:projects`} />
+        )
         break
       case 'collection':
         content = (
@@ -335,7 +344,8 @@ export function EditorialApp({
           <FeedPage
             title="매크로 소식"
             introduction="금융기관 협업과 산업의 변화를 출처와 함께 읽습니다."
-            filters={['전체 소식', '기관 협업', '산업 동향']}
+            stateKey={`${activeChain.id}:macro`}
+            mode="macro"
             entries={loaded.data}
           />
         )
@@ -345,7 +355,8 @@ export function EditorialApp({
           <FeedPage
             title="개발 업데이트"
             introduction="프로토콜 변경과 개발 소식을 원문 출처와 함께 읽습니다."
-            filters={['릴리스', '업그레이드', '기술 글']}
+            stateKey={`${activeChain.id}:updates`}
+            mode="updates"
             entries={loaded.data}
           />
         )
@@ -353,6 +364,7 @@ export function EditorialApp({
       case 'events':
         content = (
           <EventsPage
+            stateKey={`${activeChain.id}:events`}
             events={loaded.data.items}
             archiveMode={loaded.screen === 'event-archive'}
             onOpenArchive={

@@ -45,4 +45,5 @@ function PopoverAnchor({
   return <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />
 }
 
-export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor }
+const PopoverClose = PopoverPrimitive.Close
+export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor, PopoverClose }
