@@ -100,7 +100,7 @@ function EventRow({ event }: { event: EventEntry }) {
         {location}
       </p>
       {event.summary && !hostSummary && (
-        <p className="mt-3 line-clamp-2 text-sm leading-6 text-[var(--editorial-muted)]">
+        <p className="mt-3 whitespace-pre-line break-words text-sm leading-6 text-[var(--editorial-muted)] [overflow-wrap:anywhere]">
           {event.summary}
         </p>
       )}

@@ -75,12 +75,12 @@ function MacroRow({ entry, onOpen }: { entry: ContentEntry; onOpen: (id: string)
       <button
         type="button"
         onClick={() => onOpen(entry.id)}
-        className="text-left text-[17px] font-semibold leading-7 tracking-[-.02em] hover:text-[var(--editorial-accent)]"
+        className="break-words text-left text-[17px] font-semibold leading-7 tracking-[-.02em] [overflow-wrap:anywhere] hover:text-[var(--editorial-accent)]"
       >
         {entry.title}
       </button>
       {entry.summary && (
-        <p className="mt-2 line-clamp-2 text-sm leading-6 text-[var(--editorial-muted)]">
+        <p className="mt-2 whitespace-pre-line break-words text-sm leading-6 text-[var(--editorial-muted)] [overflow-wrap:anywhere]">
           {entry.summary}
         </p>
       )}

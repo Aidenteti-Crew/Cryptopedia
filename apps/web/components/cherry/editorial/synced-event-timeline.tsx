@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react'
 import type { EventEntry } from '@/lib/cryptopedia-types'
 import { groupTimelineEvents } from '@/lib/event-timeline'
+import { useReadingScroll } from './use-reading-scroll'
 
 export function SyncedEventTimeline({
   events,
@@ -66,6 +67,7 @@ export function SyncedDateList<T extends { id: string; startsAt: string; endsAt:
   omitEmptyDates?: boolean
 }) {
   const root = useRef<HTMLDivElement>(null)
+  useReadingScroll(root)
   const sections = useRef(new Map<string, HTMLElement>())
   const settleTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const groups = useMemo(() => {
@@ -140,7 +142,7 @@ export function SyncedDateList<T extends { id: string; startsAt: string; endsAt:
       role="region"
       aria-label={label}
       tabIndex={0}
-      className="h-[var(--editorial-list-height,70vh)] min-h-[320px] max-h-[720px] overflow-y-auto overscroll-contain rounded-2xl px-3 py-3 outline-none focus-visible:ring-1 focus-visible:ring-[var(--editorial-accent)] [overflow-anchor:none]"
+      className="h-[var(--editorial-list-height,70vh)] min-h-[320px] max-h-[calc(100dvh-48px)] overflow-y-auto overscroll-contain rounded-2xl px-3 py-3 outline-none focus-visible:ring-1 focus-visible:ring-[var(--editorial-accent)] [overflow-anchor:none]"
     >
       {groups.map(([date, items]) => (
         <section
