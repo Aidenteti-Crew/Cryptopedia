@@ -1,0 +1,71 @@
+{
+  "items": [
+    {
+      "id": "luma-evt-5I3vezpRHD0bJ1z",
+      "title": "Univ Connect: Aidenteti Crew",
+      "summary": "Hosted by Team1 Korea, Team1 & AidentetiCrew",
+      "startsAt": "2026-10-17T14:00:00+09:00",
+      "endsAt": "2026-10-17T16:00:00+09:00",
+      "timezone": "Asia/Seoul",
+      "allDay": false,
+      "status": "UPCOMING",
+      "organizer": "Team1 Korea",
+      "venueName": "서울용산시제품제작소",
+      "venueAddress": "South Korea, Seoul, Yongsan District, Cheongpa-ro, 77 서울용산시제품제작소 2층, 3층",
+      "city": "Seoul",
+      "country": "KR",
+      "isOnline": false,
+      "sourceUrl": "https://luma.com/f95ppglk",
+      "registrationUrl": null,
+      "imageUrl": null,
+      "category": "COMMUNITY",
+      "tags": [
+        "Avalanche",
+        "Team1",
+        "Team1 Korea"
+      ],
+      "chain": "Avalanche",
+      "project": null,
+      "publishedAt": null,
+      "fetchedAt": "2026-10-13T17:16:18.558Z",
+      "confidence": 1,
+      "importance": 2,
+      "importanceReason": "대학생 커뮤니티 연계 행사로 아발란체 생태계 전반에 미치는 실무적 영향은 작고, 특정 학생 그룹 대상의 틈새 성격이 강함."
+    },
+    {
+      "id": "28fa2558a2-2026-10-21",
+      "title": "대전교육청 연계 현직 초등/중등교사 대상 디지털자산 역량교육",
+      "summary": "팀1 코리아가 10월 21일부터 23일까지 3일간 대전교육청과 연계해 진행되는 현직 초등·중등교사 대상 디지털자산 역량교육에 교육 프로그램 설계와 연사로 참여한다. IDAC 팀과 원은석 이사장이 자리를 마련했으며, 토크콘서트 참여 링크가 공개됐다.",
+      "startsAt": "2026-10-21T00:00:00+09:00",
+      "endsAt": "2026-10-23T00:00:00+09:00",
+      "timezone": "Asia/Seoul",
+      "allDay": true,
+      "status": "UPCOMING",
+      "organizer": "대전교육청, IDAC",
+      "venueName": null,
+      "venueAddress": null,
+      "city": "대전",
+      "country": "KR",
+      "isOnline": false,
+      "sourceUrl": "https://x.com/Team1KOR/status/2109515094623449441",
+      "registrationUrl": "https://t.co/xAVrWJ3Hm8",
+      "imageUrl": null,
+      "category": "OTHER",
+      "tags": [
+        "교육",
+        "디지털자산",
+        "교사연수",
+        "토크콘서트"
+      ],
+      "chain": "Avalanche",
+      "project": null,
+      "publishedAt": "2026-10-12T05:22:46.000Z",
+      "fetchedAt": "2026-10-13T17:25:29.210Z",
+      "confidence": 0.6,
+      "importance": 2,
+      "importanceReason": null
+    }
+  ],
+  "nextCursor": null,
+  "generatedAt": "2026-10-17T02:41:23.145Z"
+}

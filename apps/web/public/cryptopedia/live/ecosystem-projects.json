@@ -1,0 +1,3988 @@
+{
+  "nextCursor": null,
+  "items": [
+    {
+      "id": "01a13643-d30b-7617-ba39-9ae10bec0dee",
+      "key": "0xgasless",
+      "name": "0xGasless",
+      "category": "x402",
+      "developer": "0xGasless",
+      "websiteUrl": "https://0xgasless.com/",
+      "documentationUrl": "https://docs.0xgasless.com/",
+      "description": "0xGasless offers x402 facilitator for the AVALANCHE Chain open payment standard, AgentKit SDK for on-chain agent execution for developers to build user friendly blockchain applications",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/0xgasless",
+      "importance": 3,
+      "importanceReason": "x402 결제 표준과 에이전트 실행 SDK를 Avalanche에 제공하는 개발자 도구로, 생태계 동향을 알면 좋은 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d325-7138-a6c3-53270634a9bb",
+      "key": "3sigma",
+      "name": "3Sigma",
+      "category": "Security Audits",
+      "developer": "3Sigma",
+      "websiteUrl": "https://threesigma.xyz/",
+      "documentationUrl": null,
+      "description": "3Sigma provides good-quality security audits with additional expertise in economic modeling for tokenomics and protocol design.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/3sigma",
+      "importance": 3,
+      "importanceReason": "보안 감사와 토크노믹스 모델링을 제공하는 전문 서비스로, 프로젝트 보안에는 중요하지만 생태계 전체가 즉시 알아야 할 범위는 아니다."
+    },
+    {
+      "id": "01a13643-d327-753a-88cd-d27513ecaee5",
+      "key": "aave",
+      "name": "Aave",
+      "category": "DeFi",
+      "developer": "Aave",
+      "websiteUrl": "https://aave.com/",
+      "documentationUrl": "https://docs.aave.com/",
+      "description": "Aave is a leading decentralized lending protocol deployed on Avalanche for lending, borrowing, flash loans, and stable rate borrowing.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/aave",
+      "importance": 5,
+      "importanceReason": "Avalanche C-Chain의 핵심 DeFi 렌딩 프로토콜로 TVL과 사용자 영향력이 크고, 생태계 참여자라면 반드시 알아야 하는 인프라다."
+    },
+    {
+      "id": "01a13643-d329-711e-b687-07e7a61388f7",
+      "key": "agora",
+      "name": "Agora",
+      "category": "Stablecoins as a Service",
+      "developer": "Agora",
+      "websiteUrl": "https://www.agora.finance/",
+      "documentationUrl": "https://docs.agora.finance/",
+      "description": "Agora provides AUSD, an institutional-grade digital dollar designed for integration across blockchain ecosystems.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/agora",
+      "importance": 4,
+      "importanceReason": "AUSD는 기관급 디지털 달러로 C-Chain과 L1에 통합될 수 있어 스테이블코인 유동성 측면에서 의미가 있다."
+    },
+    {
+      "id": "01a13643-d32a-721b-bf48-360a58940eb8",
+      "key": "alchemy",
+      "name": "Alchemy",
+      "category": "RPC Endpoints",
+      "developer": "Alchemy",
+      "websiteUrl": "https://www.alchemy.com/",
+      "documentationUrl": "https://docs.alchemy.com/",
+      "description": "Alchemy is a blockchain developer platform that provides a suite of APIs and tools for building and scaling blockchain applications.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/alchemy",
+      "importance": 4,
+      "importanceReason": "C-Chain 개발자에게 널리 쓰이는 RPC/API 플랫폼으로 실무 영향이 크지만, Aave처럼 생태계 전반을 즉시 바꾸는 급성은 덜하다."
+    },
+    {
+      "id": "01a13643-d32b-7555-b91b-fec28b02356f",
+      "key": "allbridge-core",
+      "name": "Allbridge Core",
+      "category": "Crosschain Solutions",
+      "developer": "Allbridge",
+      "websiteUrl": "https://core.allbridge.io/",
+      "documentationUrl": "https://docs-core.allbridge.io/",
+      "description": "Allbridge Core enables native stablecoin transfers across blockchains without wrapping — powering frictionless DeFi and multi-chain liquidity.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/allbridge-core",
+      "importance": 3,
+      "importanceReason": "네이티브 스테이블코인 크로스체인 전송을 지원해 DeFi 유동성에 도움이 되지만, 여러 브리지 중 하나라 실무 영향은 중간 정도다."
+    },
+    {
+      "id": "01a13643-d32c-70b0-9970-f4a42253ad4d",
+      "key": "allnodes",
+      "name": "Allnodes",
+      "category": "Validator Infrastructure",
+      "developer": "Allnodes",
+      "websiteUrl": "https://www.allnodes.com/",
+      "documentationUrl": "https://help.allnodes.com/",
+      "description": "Allnodes is a non-custodial platform for hosting nodes and staking, providing reliable validator infrastructure for Avalanche networks.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/allnodes",
+      "importance": 4,
+      "importanceReason": "검증자 노드 호스팅과 스테이킹을 비수탁으로 제공하는 핵심 인프라로, Avalanche 검증자 운영에 실질적 영향이 크다."
+    },
+    {
+      "id": "01a13643-d33d-7024-ab09-9eca9610bee1",
+      "key": "aws-avalanche",
+      "name": "Amazon AWS",
+      "category": "Validator Infrastructure",
+      "developer": "Amazon Web Services",
+      "websiteUrl": "https://aws.amazon.com/",
+      "documentationUrl": "https://docs.aws.amazon.com/managed-blockchain/",
+      "description": "Amazon Web Services provides cloud infrastructure for running Avalanche nodes, validators, and blockchain applications.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/aws-avalanche",
+      "importance": 4,
+      "importanceReason": "Avalanche 노드·검증자 운영에 널리 쓰이는 클라우드 기반으로 중요하지만, Avalanche 전용 서비스는 아니라 범용 인프라 성격이 강하다."
+    },
+    {
+      "id": "01a13643-d32d-7042-90b3-5f916896579f",
+      "key": "anchorage",
+      "name": "Anchorage Digital",
+      "category": "Stablecoins as a Service",
+      "developer": "Anchorage Digital",
+      "websiteUrl": "https://www.anchorage.com/",
+      "documentationUrl": "https://www.anchorage.com/who-we-serve",
+      "description": "Anchorage Digital is a federally chartered digital asset bank providing institutional-grade custody and stablecoin infrastructure services.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/anchorage",
+      "importance": 4,
+      "importanceReason": "기관급 커스터디와 스테이블코인 인프라를 제공해 Avalanche의 기관 채택에 기여할 수 있으나, 일반 사용자 접점은 제한적이다."
+    },
+    {
+      "id": "01a13643-d32e-76a9-974e-2d8715e88dcb",
+      "key": "angle",
+      "name": "Angle",
+      "category": "Assets",
+      "developer": "Angle Protocol",
+      "websiteUrl": "https://www.angle.money/",
+      "documentationUrl": "https://docs.angle.money/",
+      "description": "Angle Protocol provides decentralized stablecoins including EURA, offering over-collateralized and capital-efficient stable assets on blockchain.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/angle",
+      "importance": 3,
+      "importanceReason": "EURA 등 분산형 스테이블자산을 C-Chain에 제공하지만, Avalanche 내 채택과 영향력은 아직 틈새 수준이다."
+    },
+    {
+      "id": "01a13643-d32f-7655-bff4-e99df81c631c",
+      "key": "ankr",
+      "name": "ANKR",
+      "category": "Validator Infrastructure",
+      "developer": "ANKR",
+      "websiteUrl": "https://www.ankr.com/",
+      "documentationUrl": "https://www.ankr.com/docs/",
+      "description": "ANKR provides decentralized Web3 infrastructure including node hosting, staking, and RPC services for Avalanche networks.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/ankr",
+      "importance": 4,
+      "importanceReason": "Avalanche의 노드 호스팅·스테이킹·RPC를 제공하는 주요 인프라로, 검증자와 개발자에게 실질적 영향이 크다. 다만 생태계 전략을 바꿀 정도의 긴급성은 낮다."
+    },
+    {
+      "id": "01a13643-d330-71be-8e87-ef329cd6229c",
+      "key": "api3",
+      "name": "API3",
+      "category": "Oracles",
+      "developer": "API3 Alliance",
+      "websiteUrl": "https://api3.org/",
+      "documentationUrl": "https://docs.api3.org/",
+      "description": "API3 is a first-party oracle solution that enables dApps to access APIs in a decentralized and trust-minimized way.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/api3",
+      "importance": 3,
+      "importanceReason": "C-Chain에서 동작하는 탈중앙 오라클로 dApp에 유용하지만, Avalanche 오라클 시장에서의 영향력은 제한적이다. 알아두면 좋은 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d332-7486-b671-e3ac00f73660",
+      "key": "apollo",
+      "name": "Apollo",
+      "category": "Assets",
+      "developer": "Apollo Global Management",
+      "websiteUrl": "https://www.apollo.com/",
+      "documentationUrl": "https://www.apollo.com/",
+      "description": "Apollo Global Management offers tokenized investment products including ACRED, bringing alternative asset management to blockchain infrastructure.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/apollo",
+      "importance": 4,
+      "importanceReason": "Apollo Global Management의 토큰화 상품이 C-Chain에 온다는 점은 기관 자산 유입 측면에서 의미 있다. 다만 실제 채택 규모와 지속성은 더 지켜봐야 한다."
+    },
+    {
+      "id": "01a13643-d333-70b6-ae49-fa184ce6ecbd",
+      "key": "areta",
+      "name": "Areta",
+      "category": "Audit Firms",
+      "developer": "Areta",
+      "websiteUrl": "https://areta.market/avalanche",
+      "documentationUrl": "https://areta.market/avalanche",
+      "description": "Areta is the Avalanche security marketplace, where one audit request returns competing quotes from vetted audit firms.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/areta",
+      "importance": 3,
+      "importanceReason": "Avalanche 전용 보안 감사 마켓플레이스로 개발자에게 유용하지만, 생태계 전체 영향은 틈새 수준이다. 보안 관련 배경 지식으로 알면 좋다."
+    },
+    {
+      "id": "01a13643-d334-72cc-a580-5c16c4d0aeba",
+      "key": "artemis",
+      "name": "Artemis",
+      "category": "Analytics & Data",
+      "developer": "Artemis",
+      "websiteUrl": "https://www.artemis.xyz/",
+      "documentationUrl": "https://docs.artemis.xyz/",
+      "description": "Artemis provides institutional-grade blockchain analytics, protocol metrics, and cross-chain data for the Avalanche ecosystem.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/artemis",
+      "importance": 3,
+      "importanceReason": "Avalanche 생태계의 프로토콜 지표와 크로스체인 데이터를 제공하는 분석 도구다. 데이터 분석가에게 유용하나 광범위한 필수 정보는 아니다."
+    },
+    {
+      "id": "01a13643-d335-723e-8ef5-10b025be02de",
+      "key": "ash",
+      "name": "Ash",
+      "category": "Blockchain as a Service",
+      "developer": "E36 Knots",
+      "websiteUrl": "https://ash.center/",
+      "documentationUrl": "https://ash.center/docs/toolkit/",
+      "description": "Ash is the one-stop shop for L1 development and operation on Avalanche, 100% cloud-agnostic.",
+      "chains": [
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/ash",
+      "importance": 3,
+      "importanceReason": "Avalanche L1 개발·운영을 클라우드 비종속적으로 지원하는 BaaS다. L1 빌더에게 유용하지만 AvaCloud 대비 차별성과 채택은 더 지켜봐야 한다."
+    },
+    {
+      "id": "01a13643-d38e-7243-be38-84670c72e27a",
+      "key": "nethermind-auditagent",
+      "name": "AuditAgent",
+      "category": "Developer Tooling",
+      "developer": "Nethermind",
+      "websiteUrl": "https://auditagent.nethermind.io/",
+      "documentationUrl": "https://docs.auditagent.nethermind.io/",
+      "description": "AuditAgent is an AI-powered smart contract security agent that proactively detects vulnerabilities and provides continuous monitoring for Solidity projects.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/nethermind-auditagent",
+      "importance": 3,
+      "importanceReason": "Nethermind의 AI 기반 스마트컨트랙트 보안 도구로 개발자에게 유용하다. 다만 AI 보안 도구의 실효성과 채택은 아직 검증이 필요하다."
+    },
+    {
+      "id": "01a13643-d336-753f-88a5-ea6544bf128d",
+      "key": "avacloud",
+      "name": "AvaCloud",
+      "category": "Blockchain as a Service",
+      "developer": "Ava Labs",
+      "websiteUrl": "https://avacloud.io/",
+      "documentationUrl": "https://docs.avacloud.io/",
+      "description": "AvaCloud is the leading managed blockchain service that empowers organizations to effortlessly build, deploy, and scale high-performance decentralized L1 networks.",
+      "chains": [
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/avacloud",
+      "importance": 5,
+      "importanceReason": "Ava Labs가 제공하는 관리형 L1 서비스로 Avalanche의 L1 전략과 생태계 확장에 핵심적이다. 영향 범위가 넓고 장기적이라 팔로워라면 반드시 알아야 한다."
+    },
+    {
+      "id": "01a13643-d337-750f-b897-f4ecafefa073",
+      "key": "avail-nexus",
+      "name": "Avail Nexus",
+      "category": "Crosschain Solutions",
+      "developer": "Avail",
+      "websiteUrl": "https://www.availproject.org/",
+      "documentationUrl": "https://docs.availproject.org/docs/nexus",
+      "description": "Avail Nexus is a cross-chain coordination layer that enables Avalanche apps to use funds from all major chains through plug-n-play widgets and SDKs. Builders can embed native funding flows directly into their apps, eliminating bridging friction and helping users move from wallet to action in just a few clicks.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/avail-nexus",
+      "importance": 4,
+      "importanceReason": "Avalanche 앱이 주요 체인의 자금을 브릿지 없이 활용하도록 돕는 크로스체인 조정 레이어다. 크로스체인 UX 개선에 의미 있지만 채택과 보안 검증은 더 필요하다."
+    },
+    {
+      "id": "01a13643-d339-71bf-b972-ecc92977b2fe",
+      "key": "avalanche-explorer",
+      "name": "Avalanche Explorer",
+      "category": "Explorers",
+      "developer": "Ava Labs",
+      "websiteUrl": "https://explorer.avax.network/",
+      "documentationUrl": "https://build.avax.network/docs",
+      "description": "Avalanche L1 Explorer is an analytics tool for exploring Avalanche L1 transactions, addresses, statistics, and other platform activities.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/avalanche-explorer",
+      "importance": 4,
+      "importanceReason": "Ava Labs가 제공하는 공식 L1 탐색기로 트랜잭션·주소·통계 확인에 필수적이다. 다만 전략적 영향보다는 기본 도구에 가깝다."
+    },
+    {
+      "id": "01a13643-d33a-707a-bc1b-28f16df006c6",
+      "key": "avalanchestables",
+      "name": "Avalanche Stables",
+      "category": "Analytics & Data",
+      "developer": "Avalanche Stables",
+      "websiteUrl": "https://avalanchestables.com/",
+      "documentationUrl": "https://avalanchestables.com/",
+      "description": "Avalanche Stables provides analytics and tracking for stablecoin activity across the Avalanche network.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/avalanchestables",
+      "importance": 3,
+      "importanceReason": "스테이블코인 활동 분석 도구로 유용하지만, 생태계 전반에 즉각적인 영향을 주는 핵심 인프라는 아니라 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d33b-74ec-8313-2555b1f6ea38",
+      "key": "avant",
+      "name": "Avant",
+      "category": "DeFi",
+      "developer": "Avant Protocol",
+      "websiteUrl": "https://avantprotocol.com",
+      "documentationUrl": "https://docs.avantprotocol.com/",
+      "description": "Avant is a DeFi protocol on Avalanche offering stable-value tokens (avUSD) and yield through market-neutral strategies.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/avant",
+      "importance": 3,
+      "importanceReason": "아발란체 디파이에 수익형 스테이블 토큰을 제공하지만, 아직 널리 채택된 핵심 프로토콜로 보기는 어려워 의미 있는 배경 정보 정도다."
+    },
+    {
+      "id": "01a13643-d33d-7024-ab09-9b5dec776846",
+      "key": "avascan",
+      "name": "Avascan",
+      "category": "Explorers",
+      "developer": "Routescan",
+      "websiteUrl": "https://avascan.info/",
+      "documentationUrl": "https://docs.avascan.info/",
+      "description": "Avascan is a block explorer for the Avalanche network, providing real-time data on transactions, blocks, validators, and more.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/avascan",
+      "importance": 5,
+      "importanceReason": "아발란체의 대표 블록 익스플로러로 트랜잭션·블록·검증인 데이터를 확인하는 필수 인프라라 모두가 알아야 한다."
+    },
+    {
+      "id": "01a13643-d33e-725a-9761-e3d8d364492a",
+      "key": "axelar",
+      "name": "Axelar",
+      "category": "Crosschain Solutions",
+      "developer": "Axelar Foundation",
+      "websiteUrl": "https://axelar.network/",
+      "documentationUrl": "https://docs.axelar.dev/",
+      "description": "Axelar is a decentralized interoperability network securely connecting 80+ blockchains, enabling seamless multichain token transfers, smart contract calls, and application deployment through a single programmable interface.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/axelar",
+      "importance": 5,
+      "importanceReason": "80개 이상 체인을 연결하는 주요 크로스체인 상호운용 네트워크로, 아발란체의 멀티체인 자산 이동과 앱 배포에 넓은 영향을 준다."
+    },
+    {
+      "id": "01a13643-d33f-77f9-b4df-140452136fc0",
+      "key": "axiym",
+      "name": "Axiym",
+      "category": "Payments",
+      "developer": "Axiym",
+      "websiteUrl": "https://axiym.io/",
+      "documentationUrl": "https://axiym.io/",
+      "description": "Axiym is a Liquidity-as-a-Service (LaaS) solution funding global cross-border payments by assisting with pre-funding, enhancing speed and reducing capital intensity through stablecoin settlement integration.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/axiym",
+      "importance": 3,
+      "importanceReason": "스테이블코인 결제를 활용한 국경 간 결제 유동성 서비스로 실사용 사례지만, 기업 대상이라 일반 생태계 팔로워에게는 틈새 정보에 가깝다."
+    },
+    {
+      "id": "01a13643-d340-7577-b0fd-f10a4408bd15",
+      "key": "bailsec",
+      "name": "BailSec",
+      "category": "Audit Firms",
+      "developer": "BailSec",
+      "websiteUrl": "https://bailsec.io/",
+      "documentationUrl": "https://bailsec.io/",
+      "description": "BailSec provides smart contract auditing and blockchain security services for protocols on Avalanche and other EVM chains.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/bailsec",
+      "importance": 2,
+      "importanceReason": "아발란체 스마트 컨트랙트 감사 및 보안 서비스를 제공하지만, 다수의 감사 업체 중 하나라 직접적인 생태계 영향은 작다."
+    },
+    {
+      "id": "01a13643-d341-751f-9929-93347f5a8530",
+      "key": "balcony",
+      "name": "Balcony",
+      "category": "Tokenization Platforms",
+      "developer": "Balcony",
+      "websiteUrl": "https://www.balcony.io/",
+      "documentationUrl": "https://www.balcony.io/developers",
+      "description": "Balcony is a tokenization platform enabling the creation and management of tokenized real-world assets on blockchain.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/balcony",
+      "importance": 3,
+      "importanceReason": "실물자산 토큰화 플랫폼으로 아발란체의 기관용 토큰화 흐름과 맞닿아 있으나, 채택 규모와 영향은 아직 제한적이다."
+    },
+    {
+      "id": "01a13643-d342-720d-8346-fd7e2e828ae1",
+      "key": "banxa",
+      "name": "Banxa",
+      "category": "Fiat On-Ramp",
+      "developer": "Banxa",
+      "websiteUrl": "https://banxa.com/",
+      "documentationUrl": "https://docs.banxa.com/",
+      "description": "Banxa provides global fiat-to-crypto payment infrastructure with support for 100+ cryptocurrencies and 150+ fiat currencies across multiple payment methods.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/banxa",
+      "importance": 3,
+      "importanceReason": "글로벌 법정화폐 온램프 인프라로 사용자 유입에 도움이 되지만, 아발란체 전용 서비스가 아니라 일반적인 배경 지식에 해당한다."
+    },
+    {
+      "id": "01a13643-d343-7345-beb3-9c8adc08d9a2",
+      "key": "bastion",
+      "name": "Bastion",
+      "category": "Stablecoins as a Service",
+      "developer": "Bastion",
+      "websiteUrl": "https://www.bastion.com/",
+      "documentationUrl": null,
+      "description": "Bastion provides institutional stablecoin infrastructure with enterprise-grade security, compliance, and API services.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/bastion",
+      "importance": 3,
+      "importanceReason": "기관용 스테이블코인 인프라를 제공해 아발란체 스테이블코인 생태계에 기여할 수 있으나, B2B 서비스라 보편적 중요성은 제한적이다."
+    },
+    {
+      "id": "01a13643-d3bd-7188-b798-7cfb4080783f",
+      "key": "woori-bank",
+      "name": "BDACS / Woori Bank",
+      "category": "Assets",
+      "developer": "BDACS / Woori Bank",
+      "websiteUrl": "https://www.bdacs.co.kr/",
+      "documentationUrl": "https://www.bdacs.co.kr/",
+      "description": "BDACS in partnership with Woori Bank provides KRW1 (Korean Won stablecoin), offering a regulated tokenized representation of the Korean Won.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/woori-bank",
+      "importance": 4,
+      "importanceReason": "우리은행과의 제휴로 규제된 원화 스테이블코인을 아발란체에 제공한다는 점에서 의미가 크지만, 지역적 범위라 영향이 아직 제한적일 수 있다."
+    },
+    {
+      "id": "01a13643-d344-7465-a2ec-6612aa50d3c1",
+      "key": "benqi",
+      "name": "Benqi",
+      "category": "DeFi",
+      "developer": "Benqi Finance",
+      "websiteUrl": "https://benqi.fi/",
+      "documentationUrl": "https://docs.benqi.fi/",
+      "description": "Benqi is an Avalanche-native algorithmic liquidity market protocol, enabling users to effortlessly lend, borrow, and earn interest with their digital assets.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/benqi",
+      "importance": 5,
+      "importanceReason": "Avalanche 네이티브 대표 렌딩 프로토콜로 TVL과 DeFi 생태계 영향력이 커서 반드시 알아야 한다."
+    },
+    {
+      "id": "01a13643-d345-758c-9f47-07f8a791e0b1",
+      "key": "biconomy",
+      "name": "Biconomy",
+      "category": "Wallets and Account Abstraction",
+      "developer": "Biconomy",
+      "websiteUrl": "https://www.biconomy.io/",
+      "documentationUrl": "https://docs.biconomy.io/",
+      "description": "Leverage the Biconomy Smart Accounts Platform to endlessly add UX capability by easily & securely plugging in programmable modules.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/biconomy",
+      "importance": 4,
+      "importanceReason": "계정 추상화 인프라로 Avalanche UX 개선에 기여하지만 Avalanche 전용은 아니어서 영향 범위가 제한적이다."
+    },
+    {
+      "id": "01a13643-d345-758c-9f47-09dc772bc31a",
+      "key": "bilira",
+      "name": "Bilira",
+      "category": "Assets",
+      "developer": "Bilira",
+      "websiteUrl": "https://www.bilira.co/",
+      "documentationUrl": "https://www.bilira.co/",
+      "description": "Bilira provides TRYB (Turkish Lira stablecoin), offering a regulated tokenized representation of the Turkish Lira on blockchain.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/bilira",
+      "importance": 3,
+      "importanceReason": "터키 리라 스테이블코인으로 지역적 수요에는 의미가 있으나 Avalanche 전체 생태계 영향은 제한적이다."
+    },
+    {
+      "id": "01a13643-d346-758e-bb0e-16db592ebbd0",
+      "key": "bitgo",
+      "name": "BitGo",
+      "category": "Custody",
+      "developer": "BitGo",
+      "websiteUrl": "https://www.bitgo.com/",
+      "documentationUrl": "https://developers.bitgo.com/",
+      "description": "BitGo provides institutional digital asset custody, wallets, and security solutions with multi-signature technology and insurance coverage.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/bitgo",
+      "importance": 4,
+      "importanceReason": "기관급 수탁 인프라로 C-Chain과 모든 Avalanche L1을 지원해 기관 채택에 중요한 역할을 한다."
+    },
+    {
+      "id": "01a13643-d347-730d-a805-66818c6837f5",
+      "key": "blackhole",
+      "name": "Blackhole",
+      "category": "DeFi",
+      "developer": "Blackhole",
+      "websiteUrl": "https://blackhole.xyz",
+      "documentationUrl": "https://docs.blackhole.xyz",
+      "description": "Blackhole is a decentralized exchange protocol providing liquidity solutions and trading services on Avalanche.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/blackhole",
+      "importance": 3,
+      "importanceReason": "Avalanche DEX로 DeFi 유동성에 기여하지만 생태계 핵심 프로토콜로 보기는 어렵다."
+    },
+    {
+      "id": "01a13643-d348-711f-99e6-76592b19bee0",
+      "key": "blackrock",
+      "name": "BlackRock",
+      "category": "Assets",
+      "developer": "BlackRock",
+      "websiteUrl": "https://www.blackrock.com/",
+      "documentationUrl": "https://www.blackrock.com/us/individual/products/326614/ishares-blockchain-and-tech-etf",
+      "description": "BlackRock is the world's largest asset manager offering tokenized funds including BUIDL, providing institutional-grade investment solutions.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/blackrock",
+      "importance": 5,
+      "importanceReason": "BUIDL 등 토큰화 펀드가 Avalanche에 상장되며 기관 RWA 채택을 이끄는 핵심 사건으로 영향이 넓고 오래간다."
+    },
+    {
+      "id": "01a13643-d349-7523-ba89-79678585df36",
+      "key": "blockdaemon",
+      "name": "Blockdaemon",
+      "category": "Validator Infrastructure",
+      "developer": "Blockdaemon",
+      "websiteUrl": "https://www.blockdaemon.com/",
+      "documentationUrl": "https://docs.blockdaemon.com/",
+      "description": "Blockdaemon is an institutional-grade blockchain infrastructure platform providing node management, staking, and API services.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/blockdaemon",
+      "importance": 4,
+      "importanceReason": "검증자 인프라와 스테이킹 서비스를 제공하는 기관급 제공자로 Avalanche 네트워크 운영에 중요하다."
+    },
+    {
+      "id": "01a13643-d34a-7590-a696-84e6591aaae1",
+      "key": "blocknative",
+      "name": "Blocknative",
+      "category": "Developer Tooling",
+      "developer": "Blocknative",
+      "websiteUrl": "https://www.blocknative.com/",
+      "documentationUrl": "https://docs.blocknative.com/",
+      "description": "Blocknative provides real-time blockchain infrastructure including mempool monitoring, transaction simulation, and gas estimation.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/blocknative",
+      "importance": 3,
+      "importanceReason": "멤풀 모니터링과 가스 추정 등 개발자 도구로 유용하나 일반 생태계 팔로워에게는 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d34b-74a7-a967-50f86ff9fcbe",
+      "key": "blockpass",
+      "name": "Blockpass",
+      "category": "KYC / Identity Verification",
+      "developer": "Blockpass",
+      "websiteUrl": "https://www.blockpass.org/",
+      "documentationUrl": "https://www.blockpass.org/",
+      "description": "Blockpass provides KYC identity verification services for blockchain applications, enabling compliant user onboarding.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/blockpass",
+      "importance": 2,
+      "importanceReason": "KYC 인증은 규제 준수에 필요하지만 Avalanche 생태계 전반에 미치는 영향은 작은 틈새 도구다."
+    },
+    {
+      "id": "01a13643-d34c-7305-9362-ceaebad931ec",
+      "key": "blockscout",
+      "name": "Blockscout",
+      "category": "Explorers",
+      "developer": "Blockscout",
+      "websiteUrl": "https://www.blockscout.com/",
+      "documentationUrl": "https://docs.blockscout.com/",
+      "description": "Blockscout is an open-source, multichain block explorer for EVM-based networks, providing tools for searching, analyzing, and verifying blockchain data across hundreds of chains. It supports transaction tracking, contract verification, token and NFT analytics, and developer APIs.",
+      "chains": [
+        "C-Chain",
+        "All EVM Chains"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/blockscout",
+      "importance": 3,
+      "importanceReason": "EVM 익스플로러로 C-Chain 데이터 조회를 지원하지만 Avalanche 주력 탐색기는 아니라 보조적이다."
+    },
+    {
+      "id": "01a13643-d34d-76ce-92b8-b7362b06dd5a",
+      "key": "blocksec",
+      "name": "Blocksec",
+      "category": "Security Audits",
+      "developer": "BlockSec",
+      "websiteUrl": "https://blocksec.com/",
+      "documentationUrl": null,
+      "description": "BlockSec provides high-quality security audits with particular expertise in USP exploit detection and blockchain security.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/blocksec",
+      "importance": 3,
+      "importanceReason": "Avalanche C-Chain과 모든 L1을 지원하는 보안 감사 업체로, 익스플로잇 탐지 전문성이 있다. 보안은 중요하지만 특정 감사 업체라 개발자 중심의 배경 지식에 가깝다."
+    },
+    {
+      "id": "01a13643-d34e-7762-b5f2-6cc2ef0a288f",
+      "key": "blockworks",
+      "name": "Blockworks",
+      "category": "Analytics & Data",
+      "developer": "Blockworks",
+      "websiteUrl": "https://blockworks.co/",
+      "documentationUrl": "https://blockworks.co/",
+      "description": "Blockworks provides institutional-grade research, market analysis, and data insights for the Avalanche ecosystem and broader crypto markets.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/blockworks",
+      "importance": 3,
+      "importanceReason": "Avalanche 및 암호화폐 시장에 대한 기관급 리서치와 데이터 인사이트를 제공한다. 생태계 동향 파악에 유용하지만 핵심 인프라는 아니라 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d34f-75f8-b0ad-2a00432652b6",
+      "key": "boltrpc",
+      "name": "BoltRPC",
+      "category": "RPC Endpoints",
+      "developer": "BoltRPC",
+      "websiteUrl": "https://boltrpc.io/",
+      "documentationUrl": "https://boltrpc.io/docs",
+      "description": "BoltRPC provides managed Avalanche C-Chain JSON-RPC and WebSocket endpoints with published request-unit pricing and ISO/IEC 27001:2022 certified infrastructure.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/boltrpc",
+      "importance": 3,
+      "importanceReason": "Avalanche C-Chain용 관리형 JSON-RPC/WebSocket 엔드포인트를 제공하며 ISO 인증 인프라를 갖췄다. RPC는 개발에 필수적이지만 대체 제공자가 많아 틈새 인프라로 볼 수 있다."
+    },
+    {
+      "id": "01a13643-d350-741c-9c90-290a4b9c244d",
+      "key": "bridge-orchestrator",
+      "name": "Bridge",
+      "category": "Orchestrators",
+      "developer": "Bridge",
+      "websiteUrl": "https://www.bridge.xyz/",
+      "documentationUrl": "https://apidocs.bridge.xyz/",
+      "description": "Bridge is a payment orchestration platform enabling stablecoin and fiat integration for modern applications.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/bridge-orchestrator",
+      "importance": 4,
+      "importanceReason": "스테이블코인과 법정화폐 통합을 위한 결제 오케스트레이션 플랫폼으로 Avalanche L1 전반을 지원한다. 결제 인프라로서 의미가 크지만 특정 업체 의존도가 있어 4점."
+    },
+    {
+      "id": "01a13643-d351-70b9-9447-3c35e4679f2b",
+      "key": "bridge-stablecoin",
+      "name": "Bridge",
+      "category": "Stablecoins as a Service",
+      "developer": "Bridge",
+      "websiteUrl": "https://www.bridge.xyz/",
+      "documentationUrl": "https://apidocs.bridge.xyz/",
+      "description": "Bridge provides stablecoin orchestration infrastructure for integrating digital dollars into any application.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/bridge-stablecoin",
+      "importance": 4,
+      "importanceReason": "Avalanche C-Chain과 모든 L1에서 스테이블코인 오케스트레이션 인프라를 제공해 디지털 달러 통합을 돕는다. 스테이블코인은 결제·DeFi에서 영향력이 크지만 Avalanche 전용은 아니라 4점."
+    },
+    {
+      "id": "01a13643-d352-73e9-a7d4-e629e88a6791",
+      "key": "certora",
+      "name": "Certora",
+      "category": "Security Audits",
+      "developer": "Certora",
+      "websiteUrl": "https://www.certora.com/",
+      "documentationUrl": "https://docs.certora.com/en/latest/",
+      "description": "Certora provides high-quality formal verification and security audits for smart contracts with specialized expertise in mathematical verification.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/certora",
+      "importance": 3,
+      "importanceReason": "Avalanche C-Chain과 모든 L1에 형식 검증 및 보안 감사를 제공하는 전문 업체다. 수학적 검증은 가치가 높지만 범용적이지 않아 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d352-73e9-a7d4-e982b4bf1724",
+      "key": "chainbase",
+      "name": "Chainbase",
+      "category": "RPC Endpoints",
+      "developer": "Chainbase",
+      "websiteUrl": "https://chainbase.com/",
+      "documentationUrl": "https://docs.chainbase.com/",
+      "description": "Chainbase provides blockchain data infrastructure with RPC services and data APIs for Web3 development.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/chainbase",
+      "importance": 3,
+      "importanceReason": "Avalanche C-Chain용 RPC와 데이터 API를 제공하는 블록체인 데이터 인프라다. 개발자에게 유용하지만 차별화나 광범위한 영향은 제한적이다."
+    },
+    {
+      "id": "01a13643-d355-76b7-8e61-a1055033a3e3",
+      "key": "chainlink-oracles",
+      "name": "Chainlink",
+      "category": "Oracles",
+      "developer": "Chainlink Labs",
+      "websiteUrl": "https://chain.link/",
+      "documentationUrl": "https://docs.chain.link/",
+      "description": "Chainlink is a decentralized oracle network that enables smart contracts to securely interact with real-world data.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/chainlink-oracles",
+      "importance": 4,
+      "importanceReason": "Avalanche C-Chain에서 널리 쓰이는 탈중앙 오라클 네트워크로 스마트 컨트랙트의 외부 데이터 연동을 가능하게 한다. DeFi 등 핵심 인프라지만 Avalanche 고유의 긴급 이슈는 아니다."
+    },
+    {
+      "id": "01a13643-d353-704a-9437-5bc7dfd8a4f0",
+      "key": "chainlink-ccip",
+      "name": "Chainlink CCIP",
+      "category": "Crosschain Solutions",
+      "developer": "Chainlink",
+      "websiteUrl": "https://chain.link/cross-chain",
+      "documentationUrl": "https://docs.chain.link/ccip",
+      "description": "Chainlink CCIP (Cross-Chain Interoperability Protocol) enables secure cross-chain messaging and token transfers on Avalanche with built-in security features and DON support.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/chainlink-ccip",
+      "importance": 4,
+      "importanceReason": "Avalanche C-Chain에서 보안 크로스체인 메시징과 토큰 전송을 지원하는 상호운용성 프로토콜이다. 크로스체인은 중요하지만 경쟁 솔루션이 많아 4점."
+    },
+    {
+      "id": "01a13643-d354-70cb-9a77-2d1dbbf4f3a6",
+      "key": "chainlink-data-feeds",
+      "name": "Chainlink Data Feeds",
+      "category": "Data Feeds",
+      "developer": "Chainlink Labs",
+      "websiteUrl": "https://chain.link/",
+      "documentationUrl": "https://chain.link/data-feeds",
+      "description": "Chainlink Data Feeds are the quickest way to connect your smart contracts to the real-world data such as asset prices and reserve balances.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/chainlink-data-feeds",
+      "importance": 4,
+      "importanceReason": "Avalanche C-Chain 스마트 컨트랙트에 가격 등 실세계 데이터를 연결하는 핵심 데이터 피드다. DeFi에 필수적이지만 오라클 인프라 특성상 4점."
+    },
+    {
+      "id": "01a13643-d356-7448-ac0d-d14743b3fc43",
+      "key": "chainlink-vrf",
+      "name": "Chainlink VRF",
+      "category": "VRF",
+      "developer": "Chainlink Labs",
+      "websiteUrl": "https://chain.link/vrf",
+      "documentationUrl": "https://docs.chain.link/vrf",
+      "description": "Chainlink VRF (Verifiable Random Function) is a provably fair and verifiable random number generator (RNG) that enables smart contracts to access random values without compromising security or usability.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/chainlink-vrf",
+      "importance": 5,
+      "importanceReason": "Chainlink VRF는 Avalanche C-Chain과 L1에서 널리 쓰이는 검증 가능한 난수 인프라로, 게임·NFT 등 생태계 전반에 영향이 크고 장기적으로 필요하다."
+    },
+    {
+      "id": "01a13643-d357-723e-be5a-0baca1fa295f",
+      "key": "chainstack",
+      "name": "Chainstack",
+      "category": "RPC Endpoints",
+      "developer": "Chainstack",
+      "websiteUrl": "https://chainstack.com/",
+      "documentationUrl": "https://docs.chainstack.com/",
+      "description": "Chainstack is a multi-cloud, multi-protocol blockchain Platform as a Service (PaaS) that enables developers to deploy, manage, and scale nodes and networks across multiple cloud providers.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/chainstack",
+      "importance": 4,
+      "importanceReason": "Chainstack은 C-Chain RPC 인프라를 제공하는 주요 노드 서비스로 개발자에게 유용하지만, 대체 제공자가 많아 긴급성과 독점적 영향은 제한적이다."
+    },
+    {
+      "id": "01a13643-d357-723e-be5a-0c8d27db20ae",
+      "key": "chaos-labs",
+      "name": "Chaos Labs Oracles",
+      "category": "Oracles",
+      "developer": "Chaos Labs",
+      "websiteUrl": "https://chaoslabs.xyz/oracles",
+      "documentationUrl": "https://docs.chaoslabs.xyz/",
+      "description": "Decentralized oracle protocol built for real-time risk, providing unified price feeds, risk feeds, and proof of reserves with ultra-low latency.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/chaos-labs",
+      "importance": 3,
+      "importanceReason": "Chaos Labs 오라클은 리스크·가격 피드를 제공해 DeFi에 의미가 있으나, Avalanche에서는 아직 틈새 영역이라 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d358-76ac-9999-13c9eb70c967",
+      "key": "chronicle-data-feeds",
+      "name": "Chronicle",
+      "category": "Oracles",
+      "developer": "Chronicle Labs",
+      "websiteUrl": "https://chroniclelabs.org/",
+      "documentationUrl": "https://docs.chroniclelabs.org/",
+      "description": "Chronicle Oracles enable you to access verifiable data onchain.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/chronicle-data-feeds",
+      "importance": 3,
+      "importanceReason": "Chronicle은 검증 가능한 오라클 데이터를 제공하지만 Avalanche 생태계 내 채택과 영향력이 아직 제한적이어서 알아두면 좋은 정도다."
+    },
+    {
+      "id": "01a13643-d35a-738f-af48-940dd586cdb5",
+      "key": "circlepay",
+      "name": "Circle",
+      "category": "Assets",
+      "developer": "Circle",
+      "websiteUrl": "https://www.circle.com/",
+      "documentationUrl": "https://developers.circle.com/",
+      "description": "Circle provides regulated digital currencies (USDC and EURC) and enterprise-grade payment infrastructure for building on-chain applications on Avalanche.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/circlepay",
+      "importance": 5,
+      "importanceReason": "Circle의 USDC·EURC는 Avalanche에서 핵심 스테이블코인 자산이자 결제 인프라로, 생태계 참여자라면 반드시 알아야 할 광범위하고 지속적인 영향이 있다."
+    },
+    {
+      "id": "01a13643-d359-7667-8a36-56dbc82d17c0",
+      "key": "circle-cctp",
+      "name": "Circle CCTP",
+      "category": "Crosschain Solutions",
+      "developer": "Circle",
+      "websiteUrl": "https://www.circle.com/cross-chain-transfer-protocol",
+      "documentationUrl": "https://developers.circle.com/stablecoins/cctp-getting-started",
+      "description": "Circle CCTP (Cross-Chain Transfer Protocol) enables native USDC transfers between Avalanche and other supported blockchains.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/circle-cctp",
+      "importance": 5,
+      "importanceReason": "Circle CCTP는 Avalanche와 타 체인 간 네이티브 USDC 전송을 가능하게 해 DeFi·L1 유동성에 광범위한 영향을 주는 핵심 인프라다."
+    },
+    {
+      "id": "01a13643-d35c-708f-aac5-ca2ef21e2425",
+      "key": "coinbase",
+      "name": "Coinbase",
+      "category": "Custody",
+      "developer": "Coinbase",
+      "websiteUrl": "https://www.coinbase.com/wealth",
+      "documentationUrl": "https://www.coinbase.com/wealth",
+      "description": "Coinbase provides institutional custody and prime brokerage services with regulatory compliance and digital asset infrastructure.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/coinbase",
+      "importance": 4,
+      "importanceReason": "Coinbase 커스터디는 기관 자금 유입과 규제 준수 측면에서 Avalanche에 의미 있지만, 일반 생태계 팔로워에게 즉각적 실행 정보는 아니다."
+    },
+    {
+      "id": "01a13643-d35b-7059-a578-d7144dcc6cf6",
+      "key": "coinbase-cloud",
+      "name": "Coinbase Developer Platform (CDP)",
+      "category": "Validator Infrastructure",
+      "developer": "Coinbase",
+      "websiteUrl": "https://www.coinbase.com/developer-platform",
+      "documentationUrl": "https://docs.cdp.coinbase.com/",
+      "description": "Coinbase Developer Platform (CDP), formerly Coinbase Cloud, provides enterprise blockchain infrastructure including validator services, staking, and developer APIs.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/coinbase-cloud",
+      "importance": 4,
+      "importanceReason": "Coinbase Developer Platform은 검증인·스테이킹·개발자 API를 제공해 Avalanche 인프라에 중요하지만, 여러 대안이 있어 영향 범위는 중간 정도다."
+    },
+    {
+      "id": "01a13643-d35d-71ab-91a4-4f80282a22ee",
+      "key": "coingecko",
+      "name": "CoinGecko",
+      "category": "Token Aggregators",
+      "developer": "CoinGecko",
+      "websiteUrl": "https://www.coingecko.com/",
+      "documentationUrl": "https://www.coingecko.com/api/documentation",
+      "description": "CoinGecko provides cryptocurrency data including prices, trading volume, market cap, and analytics for tokens on Avalanche.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/coingecko",
+      "importance": 3,
+      "importanceReason": "CoinGecko는 Avalanche 토큰 시세·거래량 확인에 널리 쓰이지만, Avalanche 고유의 핵심 인프라는 아니어서 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d35e-73da-b6a4-6f19c3417a4c",
+      "key": "coinmarketcap",
+      "name": "CoinMarketCap",
+      "category": "Token Aggregators",
+      "developer": "CoinMarketCap",
+      "websiteUrl": "https://coinmarketcap.com/",
+      "documentationUrl": "https://coinmarketcap.com/api/documentation/v1/",
+      "description": "CoinMarketCap provides market data, analytics, and insights for Avalanche ecosystem tokens.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/coinmarketcap",
+      "importance": 3,
+      "importanceReason": "CoinMarketCap도 시장 데이터 집계 서비스로 유용하나 Avalanche 생태계에 특화된 영향은 크지 않아 알아두면 좋은 정도다."
+    },
+    {
+      "id": "01a13643-d35e-73da-b6a4-73418014763c",
+      "key": "colossus",
+      "name": "Colossus Digital",
+      "category": "Custody",
+      "developer": "Colossus Digital",
+      "websiteUrl": "https://colossus.digital/",
+      "documentationUrl": "https://docs.colossus.digital/",
+      "description": "The Colossus Institutional Hub is a unified platform for institutional staking, governance, and custody workflows across multiple chains and custody providers.",
+      "chains": [
+        "C-Chain",
+        "P-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/colossus",
+      "importance": 3,
+      "importanceReason": "기관용 스테이킹·거버넌스·커스터디 워크플로를 통합 제공해 아발란체 기관 인프라 이해에 도움되지만, 일반 사용자에게는 틈새 영역이라 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d35f-723d-86f7-a15371189632",
+      "key": "copper",
+      "name": "Copper",
+      "category": "Custody",
+      "developer": "Copper",
+      "websiteUrl": "https://copper.co/",
+      "documentationUrl": "https://copper.co/",
+      "description": "Copper provides institutional digital asset custody and treasury management with MPC-based security.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/copper",
+      "importance": 4,
+      "importanceReason": "MPC 기반 기관 커스터디 및 트레저리 관리로 C-Chain과 모든 L1을 지원해 아발란체 기관 채택에 의미 있는 인프라지만, 모든 생태계 참여자에게 필수는 아니다."
+    },
+    {
+      "id": "01a13643-d360-77fb-af98-a05e1d2fe86d",
+      "key": "core",
+      "name": "Core",
+      "category": "Wallets and Account Abstraction",
+      "developer": "Ava Labs",
+      "websiteUrl": "https://core.app/en/",
+      "documentationUrl": "https://docs.core.app/",
+      "description": "Core is the native wallet SDK for the Avalanche blockchain.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/core",
+      "importance": 5,
+      "importanceReason": "Ava Labs가 만든 아발란체 네이티브 지갑 SDK로 C-Chain과 모든 L1을 지원해 생태계 참여자라면 반드시 알아야 하는 핵심 인프라다."
+    },
+    {
+      "id": "01a13643-d361-757d-b1b2-e3ac3d93d659",
+      "key": "covalent",
+      "name": "Covalent",
+      "category": "RPC Endpoints",
+      "developer": "Covalent",
+      "websiteUrl": "https://www.covalenthq.com/",
+      "documentationUrl": "https://www.covalenthq.com/docs/",
+      "description": "Covalent provides blockchain data APIs and RPC infrastructure for accessing on-chain data across multiple networks.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/covalent",
+      "importance": 3,
+      "importanceReason": "C-Chain 온체인 데이터 API와 RPC를 제공해 개발자에게 유용하지만, 대체 인프라가 많아 배경 지식으로 알아두면 충분하다."
+    },
+    {
+      "id": "01a13643-d362-73ee-b85d-87a6d8c83584",
+      "key": "crossmint",
+      "name": "Crossmint",
+      "category": "Enterprise Solutions",
+      "developer": "Crossmint",
+      "websiteUrl": "https://crossmint.com/",
+      "documentationUrl": "https://docs.crossmint.com/",
+      "description": "Crossmint is a stablecoin infrastructure platform providing APIs for embedded wallets, stablecoin orchestration, onramps and offramps, and agentic payments — trusted by 40,000+ enterprises and developers including MoneyGram, Western Union, and Wirex.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/crossmint",
+      "importance": 4,
+      "importanceReason": "스테이블코인 인프라와 임베디드 월렛, 온·오프램프를 4만여 기업에 제공하며 C-Chain을 지원해 아발란체 엔터프라이즈·스테이블코인 확장에 의미 있다."
+    },
+    {
+      "id": "01a13643-d363-769e-8757-e5eae9eb041a",
+      "key": "cubist",
+      "name": "Cubist",
+      "category": "Wallets and Account Abstraction",
+      "developer": "Cubist",
+      "websiteUrl": "https://cubist.dev/",
+      "documentationUrl": "https://cubist.dev/",
+      "description": "Low-latency API for generating keys and signing transactions inside secure hardware.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/cubist",
+      "importance": 3,
+      "importanceReason": "보안 하드웨어 내 키 생성·서명 API로 C-Chain과 모든 L1을 지원하지만, 개발자용 틈새 인프라라 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d363-769e-8757-ea9b3c32d8d5",
+      "key": "defilama",
+      "name": "DeFi Llama",
+      "category": "Analytics & Data",
+      "developer": "DeFi Llama",
+      "websiteUrl": "https://defillama.com/",
+      "documentationUrl": "https://docs.llama.fi/",
+      "description": "DeFi Llama is a transparent, open-source DeFi analytics platform providing TVL, yield, and protocol data for Avalanche.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/defilama",
+      "importance": 4,
+      "importanceReason": "아발란체 TVL·수익률·프로토콜 데이터를 투명하게 제공해 생태계 모니터링에 널리 쓰이지만, 아발란체 전용 도구는 아니다."
+    },
+    {
+      "id": "01a13643-d364-768e-8a44-a81134a72f83",
+      "key": "dexguru",
+      "name": "DexGuru",
+      "category": "Explorers",
+      "developer": "DexGuru",
+      "websiteUrl": "https://dex.guru/",
+      "documentationUrl": "https://docs.dex.guru/",
+      "description": "DexGuru is a DeFi analytics platform providing real-time trading data, token analysis, and transaction exploration across DEXs.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/dexguru",
+      "importance": 2,
+      "importanceReason": "C-Chain DEX 실시간 분석과 탐색을 제공하지만, 더 널리 쓰이는 대체 도구가 많아 실무 영향이 작은 틈새 도구다."
+    },
+    {
+      "id": "01a13643-d365-77f8-847d-739e9454e7c8",
+      "key": "dexscreener",
+      "name": "DEX Screener",
+      "category": "Token Aggregators",
+      "developer": "DEX Screener",
+      "websiteUrl": "https://dexscreener.com/",
+      "documentationUrl": "https://docs.dexscreener.com/",
+      "description": "DEX Screener provides real-time analytics and trading data for decentralized exchanges on Avalanche.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/dexscreener",
+      "importance": 4,
+      "importanceReason": "C-Chain과 모든 L1의 DEX 실시간 분석·거래 데이터를 제공해 아발란체 토큰 추적에 널리 쓰이는 필수에 가까운 도구다."
+    },
+    {
+      "id": "01a13643-d365-77f8-847d-75aab158dc84",
+      "key": "dia",
+      "name": "DIA",
+      "category": "Oracles",
+      "developer": "DIA",
+      "websiteUrl": "https://diadata.org/",
+      "documentationUrl": "https://docs.diadata.org/",
+      "description": "DIA is an open-source oracle platform that provides transparent, crowd-verified price oracles for DeFi applications.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/dia",
+      "importance": 3,
+      "importanceReason": "C-Chain에 투명한 가격 오라클을 제공해 DeFi 인프라 이해에 도움되지만, 오라클 시장 내 대체재가 많아 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d366-71fb-8fd2-195af8efa075",
+      "key": "dinari",
+      "name": "Dinari",
+      "category": "Tokenization Platforms",
+      "developer": "Dinari",
+      "websiteUrl": "https://dinari.com/",
+      "documentationUrl": "https://docs.dinari.com/",
+      "description": "Dinari provides tokenized access to U.S. public equities for non-U.S. retail investors through a B2B2C model, partnering with neobanks and fintech platforms to offer regulated blockchain-based stock exposure.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/dinari",
+      "importance": 4,
+      "importanceReason": "RWA 토큰화는 아발란체의 핵심 성장 축 중 하나이며, Dinari는 규제 기반 주식 토큰화로 실사용 자산 유입 가능성이 있다. 다만 B2B2C·비미국 리테일 한정이라 범위와 확실성은 제한적이다."
+    },
+    {
+      "id": "01a13643-d367-71d8-bd29-0ce6a9a9cb9a",
+      "key": "dipdup",
+      "name": "DipDup",
+      "category": "Indexers",
+      "developer": "DipDup",
+      "websiteUrl": "https://dipdup.io/",
+      "documentationUrl": "https://dipdup.io/docs",
+      "description": "DipDup is a Python framework for building smart contract indexers. It helps developers focus on business logic instead of writing boilerplate code to store and serve data.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/dipdup",
+      "importance": 3,
+      "importanceReason": "아발란체 개발자가 스마트 컨트랙트 인덱서를 빠르게 구축하는 데 유용한 도구다. 다만 특정 개발자층에 국한된 틈새 인프라라 생태계 전반의 필수 정보는 아니다."
+    },
+    {
+      "id": "01a13643-d368-738e-97e2-79f7bd6af71c",
+      "key": "dkit",
+      "name": "dKiT API/SDK",
+      "category": "Crosschain Solutions",
+      "developer": "dKit Team",
+      "websiteUrl": "https://eldorito.club/",
+      "documentationUrl": "https://docs.eldorito.club/dkit-by-eldorito",
+      "description": "dKit is a production-ready cross-chain DEX aggregation API/SDK that enables native swaps across 15+ blockchains including Avalanche by routing liquidity through THORChain, Chainflip, Maya, Jupiter, Garden and 1inch.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/dkit",
+      "importance": 3,
+      "importanceReason": "아발란체를 포함한 크로스체인 스왑 집계를 제공해 유동성 접근성을 높일 수 있다. 그러나 API/SDK 수준의 보조 인프라라 즉각적이고 광범위한 영향은 제한적이다."
+    },
+    {
+      "id": "01a13643-d369-714d-afa0-c8368a8c3054",
+      "key": "dreamspace",
+      "name": "Dreamspace",
+      "category": "Developer Tooling",
+      "developer": "Dreamspace",
+      "websiteUrl": "https://dreamspace.xyz",
+      "documentationUrl": "https://docs.makeinfinite.com/docs/getting-started",
+      "description": "Dreamspace is a drag and drop vibe coding canvas that lets anyone build apps and deploy smart contracts on any EVM-compatible chain.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/dreamspace",
+      "importance": 2,
+      "importanceReason": "드래그앤드롭 바이브 코딩 도구로 진입장벽을 낮출 수 있지만, 아발란체 생태계에 미치는 실질적 영향과 검증된 채택은 아직 작다."
+    },
+    {
+      "id": "01a13643-d369-714d-afa0-cdc4b1acc161",
+      "key": "dsrv",
+      "name": "DSRV",
+      "category": "Validator Infrastructure",
+      "developer": "DSRV",
+      "websiteUrl": "https://www.dsrvlabs.com/",
+      "documentationUrl": null,
+      "description": "DSRV is a blockchain infrastructure company providing institutional-grade validator services and Web3 development tools.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/dsrv",
+      "importance": 4,
+      "importanceReason": "아발란체 C체인과 L1의 검증자 인프라를 제공하는 주요 기관급 운영사로, 네트워크 보안과 탈중앙화에 의미 있는 기여를 한다. 다만 여러 검증자 중 하나라 독점적 긴급성은 낮다."
+    },
+    {
+      "id": "01a13643-d36a-73f2-b694-2c0862e78946",
+      "key": "due",
+      "name": "Due",
+      "category": "Payments",
+      "developer": "Due Network",
+      "websiteUrl": "https://www.opendue.com/",
+      "documentationUrl": "https://www.opendue.com/api",
+      "description": "Due is a blockchain-based payment network enabling instant, low-cost peer-to-peer and business payments with cryptocurrency and stablecoin support.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/due",
+      "importance": 3,
+      "importanceReason": "스테이블코인 기반 결제 네트워크로 아발란체 결제 유즈케이스에 기여할 수 있다. 그러나 아발란체 고유의 긴급하거나 광범위한 영향은 아직 제한적이다."
+    },
+    {
+      "id": "01a13643-d36a-73f2-b694-30174855a777",
+      "key": "dynamic",
+      "name": "Dynamic",
+      "category": "Wallets and Account Abstraction",
+      "developer": "Dynamic",
+      "websiteUrl": "https://www.dynamic.xyz/",
+      "documentationUrl": "https://docs.dynamic.xyz/",
+      "description": "Dynamic simplifies the creation of multi-chain experiences with its customizable suite of tools, offering onboarding, embedded wallets, efficient authentication, and scalable user management.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/dynamic",
+      "importance": 4,
+      "importanceReason": "임베디드 지갑과 계정 추상화로 아발란체 dApp의 온보딩·사용자 관리를 개선하는 주요 인프라라 실무적 가치가 크다. 다만 멀티체인 지향이라 아발란체만의 차별적 긴급성은 약하다."
+    },
+    {
+      "id": "01a13643-d36b-73ed-90c9-e0ebf3f8155c",
+      "key": "eden",
+      "name": "Eden Network",
+      "category": "Validator Infrastructure",
+      "developer": "Eden Network",
+      "websiteUrl": "https://www.edennetwork.io/",
+      "documentationUrl": "https://docs.edennetwork.io/",
+      "description": "[Deprecated] Eden Network provided MEV-protected validator infrastructure and transaction services for blockchain networks.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/eden",
+      "importance": 1,
+      "importanceReason": "이미 Deprecated된 MEV/검증자 인프라로 현재 아발란체 생태계에서 참고하거나 실행할 가치가 없다."
+    },
+    {
+      "id": "01a13643-d36c-7066-876e-824b887ed4af",
+      "key": "encrypted-erc",
+      "name": "Encrypted ERC (eERC)",
+      "category": "Privacy",
+      "developer": "AvaCloud",
+      "websiteUrl": "https://www.avax.network/",
+      "documentationUrl": "https://github.com/ava-labs/EncryptedERC",
+      "description": "Encrypted ERC is Avalanche's confidential token standard — it keeps token balances and transfer amounts encrypted on-chain using zk-SNARKs and partially homomorphic encryption, while senders, receivers, and timestamps stay public.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/encrypted-erc",
+      "importance": 4,
+      "importanceReason": "AvaCloud가 만든 아발란체의 기밀 토큰 표준으로 프라이버시와 기관용 L1 활용 가능성을 넓히는 중요한 표준이다. 다만 아직 채택과 확산은 지켜봐야 한다."
+    },
+    {
+      "id": "01a13643-d36d-778f-9fc8-8c8d65af0108",
+      "key": "envio",
+      "name": "Envio",
+      "category": "Indexers",
+      "developer": "Envio",
+      "websiteUrl": "https://envio.dev/",
+      "documentationUrl": "https://docs.envio.dev/docs/HyperIndex/overview",
+      "description": "Envio is a full-featured data indexing solution that lets developers index and aggregate real-time and historical blockchain data for any EVM.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/envio",
+      "importance": 3,
+      "importanceReason": "아발란체 개발자가 실시간·과거 데이터를 인덱싱하는 데 유용한 인프라다. 그러나 모든 생태계 참여자가 알아야 할 핵심 뉴스는 아니고 개발자 도구 성격이 강하다."
+    },
+    {
+      "id": "01a13643-d36d-778f-9fc8-906853afefce",
+      "key": "ethena",
+      "name": "Ethena",
+      "category": "Stablecoins as a Service",
+      "developer": "Ethena Labs",
+      "websiteUrl": "https://ethena.fi/",
+      "documentationUrl": "https://docs.ethena.fi/",
+      "description": "Ethena provides USDe, a synthetic dollar protocol offering a crypto-native stable asset with yield-generating capabilities.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/ethena",
+      "importance": 4,
+      "importanceReason": "USDe는 주요 탈중앙 스테이블코인으로 Avalanche C-Chain의 DeFi 유동성과 수익 기회에 영향을 준다. 다만 Avalanche 고유의 핵심 인프라는 아니므로 4점."
+    },
+    {
+      "id": "01a13643-d36e-712a-b7c1-14e678b07751",
+      "key": "ethernal",
+      "name": "Ethernal",
+      "category": "Explorers",
+      "developer": "Ethernal",
+      "websiteUrl": "https://tryethernal.com/",
+      "documentationUrl": "https://doc.tryethernal.com/",
+      "description": "Ethernal is a block explorer designed for private EVM chains and Avalanche L1s, providing local development and testing capabilities.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/ethernal",
+      "importance": 2,
+      "importanceReason": "Avalanche L1 및 프라이빗 EVM 체인 개발·테스트용 탐색기로 틈새 개발 도구에 가깝다. 일반 생태계 팔로워에게 실무 영향은 제한적."
+    },
+    {
+      "id": "01a13643-d36f-74fa-afc0-e1b54723f660",
+      "key": "etherscan",
+      "name": "Etherscan",
+      "category": "Explorers",
+      "developer": "Etherscan",
+      "websiteUrl": "https://etherscan.io/",
+      "documentationUrl": "https://docs.etherscan.io/",
+      "description": "Etherscan provides blockchain explorer services for EVM networks, offering transaction and contract analysis tools.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/etherscan",
+      "importance": 4,
+      "importanceReason": "EVM 네트워크 표준 탐색기로 C-Chain과 Avalanche L1에서 거래·컨트랙트 확인에 널리 쓰인다. Avalanche 사용자에게 필수적 인프라지만 Avalanche 전용은 아니다."
+    },
+    {
+      "id": "01a13643-d370-743c-a99a-661e07a7c5b0",
+      "key": "euler",
+      "name": "Euler Finance",
+      "category": "DeFi",
+      "developer": "Euler Finance",
+      "websiteUrl": "https://euler.finance",
+      "documentationUrl": "https://docs.euler.finance",
+      "description": "Euler Finance is a DeFi protocol offering advanced liquidity solutions and permissionless lending markets on Avalanche.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/euler",
+      "importance": 3,
+      "importanceReason": "Avalanche C-Chain에 렌딩 마켓을 제공하는 DeFi 프로토콜로 유동성과 대출 생태계에 기여한다. 다만 Avalanche 내 영향력은 아직 제한적일 수 있어 배경 지식 수준."
+    },
+    {
+      "id": "01a13643-d371-7081-b4f9-af91c27065e7",
+      "key": "figment",
+      "name": "Figment",
+      "category": "Validator Infrastructure",
+      "developer": "Figment",
+      "websiteUrl": "https://www.figment.io/",
+      "documentationUrl": "https://docs.figment.io/",
+      "description": "Figment is a leading blockchain infrastructure provider offering staking, data services, and institutional-grade validator operations.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/figment",
+      "importance": 4,
+      "importanceReason": "Avalanche 검증자 인프라와 기관급 스테이킹을 제공하는 주요 사업자다. 네트워크 보안과 스테이킹 접근성에 의미 있는 영향을 준다."
+    },
+    {
+      "id": "01a13643-d371-7081-b4f9-b3c3e0cae7e9",
+      "key": "fireblocks",
+      "name": "Fireblocks",
+      "category": "Custody",
+      "developer": "Fireblocks",
+      "websiteUrl": "https://www.fireblocks.com/",
+      "documentationUrl": "https://developers.fireblocks.com/",
+      "description": "Fireblocks is an institutional-grade platform for securing digital assets, providing secure storage, transfer, and management of cryptocurrencies.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/fireblocks",
+      "importance": 4,
+      "importanceReason": "기관급 커스터디로 Avalanche 자산 보관·이전을 지원해 기관 채택에 기여한다. 생태계 전반에 중요한 인프라지만 긴급성은 상대적으로 낮다."
+    },
+    {
+      "id": "01a13643-d372-72e5-8efc-79b9e3b6a6e8",
+      "key": "flair",
+      "name": "Flair",
+      "category": "Indexers",
+      "developer": "Flair",
+      "websiteUrl": "https://flair.dev/",
+      "documentationUrl": "https://docs.flair.dev/",
+      "description": "Flair provides real-time and historical custom data indexing for any EVM-compatible chain.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/flair",
+      "importance": 2,
+      "importanceReason": "EVM 체인용 커스텀 데이터 인덱싱 도구로 개발자에게 유용하나 범용성과 영향력은 제한적이다. 틈새 도구에 가깝다."
+    },
+    {
+      "id": "01a13643-d373-7145-ac30-9398d31714a1",
+      "key": "fordefi",
+      "name": "FordeFi",
+      "category": "Wallets and Account Abstraction",
+      "developer": "FordeFi",
+      "websiteUrl": "https://www.fordefi.com/",
+      "documentationUrl": "https://docs.fordefi.com/",
+      "description": "FordeFi is an institutional-grade MPC wallet platform providing secure key management and transaction infrastructure.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/fordefi",
+      "importance": 2,
+      "importanceReason": "기관용 MPC 월렛 플랫폼으로 Avalanche L1과 C-Chain을 지원하지만 인지도와 실사용 영향은 아직 작다. 틈새 인프라."
+    },
+    {
+      "id": "01a13643-d373-7145-ac30-95970c85e99a",
+      "key": "foundry",
+      "name": "Foundry",
+      "category": "Developer Tooling",
+      "developer": "Paradigm",
+      "websiteUrl": "https://book.getfoundry.sh/",
+      "documentationUrl": "https://book.getfoundry.sh/",
+      "description": "Foundry is a blockchain development platform that provides a suite of tools for building and deploying blockchain applications.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/foundry",
+      "importance": 4,
+      "importanceReason": "EVM 개발의 사실상 표준 툴체인으로 Avalanche C-Chain 및 L1 개발자에게 필수적이다. 생태계 개발 생산성에 넓은 영향을 준다."
+    },
+    {
+      "id": "01a13643-d375-73d5-97a3-10aaacb6338d",
+      "key": "franklin",
+      "name": "Franklin",
+      "category": "Payments",
+      "developer": "Franklin",
+      "websiteUrl": "https://hellofranklin.co/",
+      "documentationUrl": "https://www.hellofranklin.co/knowledge-center",
+      "description": "Franklin is a modern payroll and payments platform built for the stablecoin era, managing U.S. payroll, global contractor payments, vendor invoices, and onchain operations in USD and crypto.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/franklin",
+      "importance": 2,
+      "importanceReason": "스테이블코인 기반 급여·결제 플랫폼으로 C-Chain을 지원하지만 Avalanche 생태계 내 영향력은 아직 제한적이다. 틈새 결제 사례."
+    },
+    {
+      "id": "01a13643-d374-757b-bdcb-8b52ee9be5b4",
+      "key": "franklin-templeton",
+      "name": "Franklin Templeton",
+      "category": "Assets",
+      "developer": "Franklin Templeton",
+      "websiteUrl": "https://www.franklintempleton.com/",
+      "documentationUrl": "https://www.franklintempleton.com/digital-assets",
+      "description": "Franklin Templeton is a global investment management firm offering tokenized funds including BENJI, bridging traditional asset management with blockchain technology.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/franklin-templeton",
+      "importance": 5,
+      "importanceReason": "프랭클린 템플턴의 BENJI 등 토큰화 펀드가 아발란체에서 운용되며 기관 자금 유입과 RWA 내러티브를 이끄는 핵심 사례다. 생태계 전반의 신뢰도와 장기적 확장에 넓은 영향을 준다."
+    },
+    {
+      "id": "01a13643-d376-765e-b45c-a39d13bd0f13",
+      "key": "frostymetrics",
+      "name": "FrostyMetrics",
+      "category": "Analytics & Data",
+      "developer": "FrostyMetrics",
+      "websiteUrl": "https://www.frostymetrics.com/",
+      "documentationUrl": "https://docs.frostymetrics.com/",
+      "description": "FrostyMetrics provides analytics APIs and SDKs for accessing real-time and historical Avalanche blockchain data.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/frostymetrics",
+      "importance": 3,
+      "importanceReason": "아발란체 실시간·과거 데이터를 API와 SDK로 제공하는 분석 도구로 개발자에게 유용하지만, 생태계 전체를 움직이는 핵심 인프라는 아니다. 알아두면 좋은 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d376-765e-b45c-a6f1f73cfc4b",
+      "key": "galaxy",
+      "name": "Galaxy",
+      "category": "Assets",
+      "developer": "Galaxy Digital",
+      "websiteUrl": "https://www.galaxy.com/",
+      "documentationUrl": "https://www.galaxy.com/",
+      "description": "Galaxy is an institutional digital assets leader offering tokenized investment products including the Galaxy CLO 2025-1, a collateralized loan obligation tokenized on Avalanche.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/galaxy",
+      "importance": 4,
+      "importanceReason": "갤럭시 디지털의 기관용 토큰화 상품이 아발란체에 발행되는 것은 RWA와 기관 채택 측면에서 의미 있는 진전이다. 다만 프랭클린 템플턴보다 파급 범위나 확실성은 다소 제한적이다."
+    },
+    {
+      "id": "01a13643-d377-7308-94bd-3d32942dfe69",
+      "key": "gelato",
+      "name": "Gelato",
+      "category": "Blockchain as a Service",
+      "developer": "Gelato Network",
+      "websiteUrl": "https://gelato.network/",
+      "documentationUrl": "https://docs.gelato.network/",
+      "description": "Gelato Cloud now supports Avalanche L1s delivering enterprise-grade infrastructure for building, deploying, and scaling custom Avalanche networks.",
+      "chains": [
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/gelato",
+      "importance": 4,
+      "importanceReason": "아발란체 L1 구축·배포·확장을 지원하는 엔터프라이즈급 인프라로, L1 생태계 확장에 실질적으로 기여한다. 다만 모든 사용자가 즉시 체감하는 서비스는 아니다."
+    },
+    {
+      "id": "01a13643-d377-7308-94bd-404de33e6a37",
+      "key": "gmx",
+      "name": "GMX",
+      "category": "DeFi",
+      "developer": "GMX Team",
+      "websiteUrl": "https://gmx.io/",
+      "documentationUrl": "https://docs.gmx.io/",
+      "description": "GMX is a decentralized perpetual exchange offering low fees, deep liquidity and minimal price impact.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/gmx",
+      "importance": 4,
+      "importanceReason": "아발란체 C-Chain에서 높은 유동성을 제공하는 대표적 탈중앙 영구 선물 거래소로 DeFi 생태계에 중요하다. 다만 아발란체 내 독자적 영향력은 다른 체인 대비 제한적일 수 있다."
+    },
+    {
+      "id": "01a13643-d378-70a8-a89d-0eb18e752837",
+      "key": "goldrush",
+      "name": "GoldRush",
+      "category": "Indexers",
+      "developer": "Covalent",
+      "websiteUrl": "https://goldrush.dev/",
+      "documentationUrl": "https://goldrush.dev/docs/chains/avalanche-c-chain",
+      "description": "GoldRush (powered by Covalent) provides structured onchain data for easy app development.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/goldrush",
+      "importance": 3,
+      "importanceReason": "Covalent 기반의 온체인 데이터 인덱싱 도구로 아발란체 앱 개발에 유용하지만, 대체 가능한 데이터 서비스가 많아 차별성은 크지 않다. 배경 지식으로 알아둘 만하다."
+    },
+    {
+      "id": "01a13643-d379-7048-ac29-9e408977caca",
+      "key": "halliday",
+      "name": "Halliday",
+      "category": "Fiat On-Ramp",
+      "developer": "Halliday",
+      "websiteUrl": "https://halliday.xyz/",
+      "documentationUrl": "https://docs.halliday.xyz/",
+      "description": "The commerce automation platform for modular chains. Empower your users with smart accounts and fiat onramps and offramps.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/halliday",
+      "importance": 3,
+      "importanceReason": "모듈러 체인용 스마트 계정과 법정화폐 온·오프램프를 제공해 사용자 온보딩에 도움을 주는 도구다. 아발란체 생태계에서 유용하지만 영향 범위는 틈새적이다."
+    },
+    {
+      "id": "01a13643-d37a-71d9-bf87-8476bd97b3d7",
+      "key": "hardhat",
+      "name": "Hardhat",
+      "category": "Developer Tooling",
+      "developer": "Nomic Labs",
+      "websiteUrl": "https://hardhat.org/",
+      "documentationUrl": "https://hardhat.org/getting-started/",
+      "description": "Hardhat is a development environment for building, testing, and deploying smart contracts on Avalanche and other Ethereum-compatible networks.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/hardhat",
+      "importance": 5,
+      "importanceReason": "아발란체 C-Chain과 L1에서 스마트 컨트랙트를 개발·테스트·배포하는 사실상 표준 개발 환경이다. 아발란체 개발자라면 반드시 알아야 하는 핵심 도구다."
+    },
+    {
+      "id": "01a13643-d37b-7149-aad2-ca9385f21a8c",
+      "key": "hypha",
+      "name": "Hypha",
+      "category": "Validator Marketplace",
+      "developer": "Multisig Labs",
+      "websiteUrl": "https://www.gogopool.com/",
+      "documentationUrl": "https://docs.gogopool.com/",
+      "description": "Hypha (formerly GoGoPool) enables permissionless Layer 1 validation and liquid staking with decentralized validator infrastructure.",
+      "chains": [
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/hypha",
+      "importance": 4,
+      "importanceReason": "GoGoPool에서 개명한 아발란체 특화 검증자 마켓플레이스이자 리퀴드 스테이킹 인프라로, L1 검증 민주화와 스테이킹 접근성에 기여한다. 생태계 인프라로서 중요하지만 모든 사용자에게 긴급한 정보는 아니다."
+    },
+    {
+      "id": "01a13643-d37b-7149-aad2-cfa439ae7d14",
+      "key": "idos",
+      "name": "idOS",
+      "category": "KYC / Identity Verification",
+      "developer": "idOS",
+      "websiteUrl": "https://idos.network/",
+      "documentationUrl": "https://docs.idos.network/",
+      "description": "idOS provides decentralized identity infrastructure enabling privacy-preserving credential management for Web3 applications.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/idos",
+      "importance": 3,
+      "importanceReason": "아발란체에서 프라이버시 보존형 탈중앙 신원·자격 증명 관리를 제공하는 인프라로, 규제 친화적 Web3 서비스에 필요할 수 있다. 다만 현재 영향력은 제한적이고 틈새 영역이다."
+    },
+    {
+      "id": "01a13643-d37c-7629-b5c9-2166ce206975",
+      "key": "indexingco",
+      "name": "IndexingCo",
+      "category": "Indexers",
+      "developer": "IndexingCo",
+      "websiteUrl": "https://www.indexing.co/",
+      "documentationUrl": "https://docs.indexing.co/",
+      "description": "IndexingCo provides managed blockchain indexing services enabling developers to access on-chain data through simple APIs.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/indexingco",
+      "importance": 3,
+      "importanceReason": "Avalanche 개발자에게 인덱싱 API는 유용하지만, 대체 서비스가 많고 생태계 전반을 바꿀 만큼 독보적이지는 않다."
+    },
+    {
+      "id": "01a13643-d37d-7214-927c-47478f044fe0",
+      "key": "infura",
+      "name": "Infura",
+      "category": "RPC Endpoints",
+      "developer": "Consensys",
+      "websiteUrl": "https://infura.io/",
+      "documentationUrl": "https://docs.infura.io/",
+      "description": "Infura provides reliable, scalable blockchain infrastructure and RPC services for Web3 applications, powered by Consensys.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/infura",
+      "importance": 4,
+      "importanceReason": "Consensys의 주요 RPC 제공자로 C-Chain 접근성을 높이지만, Avalanche 네이티브 인프라는 아니며 다른 RPC 대안도 많다."
+    },
+    {
+      "id": "01a13643-d37d-7214-927c-4a0b5ec4b603",
+      "key": "intain",
+      "name": "Intain",
+      "category": "Tokenization Platforms",
+      "developer": "Intain",
+      "websiteUrl": "https://www.intainft.com/",
+      "documentationUrl": "https://www.intainft.com/resource",
+      "description": "Intain provides blockchain infrastructure for structured finance, enabling tokenization and management of asset-backed securities.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/intain",
+      "importance": 4,
+      "importanceReason": "구조화 금융 자산 토큰화는 Avalanche의 기관용 RWA 전략과 맞닿아 있어 주목할 만하다."
+    },
+    {
+      "id": "01a13643-d37e-720c-9f55-c2a4e3c1da7e",
+      "key": "janus-henderson",
+      "name": "Janus Henderson",
+      "category": "Assets",
+      "developer": "Janus Henderson",
+      "websiteUrl": "https://www.janushenderson.com/",
+      "documentationUrl": "https://www.janushenderson.com/",
+      "description": "Janus Henderson is a global asset manager offering tokenized funds including JAAA and JTRSY, integrating blockchain technology into traditional investment management.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/janus-henderson",
+      "importance": 4,
+      "importanceReason": "글로벌 자산운용사가 Avalanche에서 토큰화 펀드를 선보인 것은 기관 채택 측면에서 상징성이 크다."
+    },
+    {
+      "id": "01a13643-d37f-750c-8364-66f8938a6bcf",
+      "key": "jaw",
+      "name": "JAW",
+      "category": "Wallets and Account Abstraction",
+      "developer": "JAW",
+      "websiteUrl": "https://jaw.id/",
+      "documentationUrl": "https://docs.jaw.id/",
+      "description": "Identity-centric smart account infrastructure with passkey authentication, gasless transactions, and programmable permissions for Avalanche applications.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/jaw",
+      "importance": 3,
+      "importanceReason": "패스키 기반 스마트 계정과 가스리스 기능은 유용하지만, 아직 특정 앱 개발자에게 더 관련 있는 틈새 인프라다."
+    },
+    {
+      "id": "01a13643-d37f-750c-8364-6aa67686df60",
+      "key": "jpyc",
+      "name": "JPYC",
+      "category": "Assets",
+      "developer": "JPYC",
+      "websiteUrl": "https://corporate.jpyc.co.jp/en",
+      "documentationUrl": "https://corporate.jpyc.co.jp/en",
+      "description": "JPYC provides a Japanese Yen stablecoin, offering a regulated tokenized representation of the Japanese Yen on blockchain.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/jpyc",
+      "importance": 3,
+      "importanceReason": "일본 엔화 스테이블코인은 지역 시장에서 의미 있지만, Avalanche 전체 생태계에 미치는 영향은 제한적이다."
+    },
+    {
+      "id": "01a13643-d380-771e-9092-eeea34269ac1",
+      "key": "jumio",
+      "name": "Jumio",
+      "category": "KYC / Identity Verification",
+      "developer": "Jumio",
+      "websiteUrl": "https://www.jumio.com/",
+      "documentationUrl": "https://www.jumio.com/resources/",
+      "description": "Jumio provides AI-powered identity verification and KYC/AML compliance solutions that integrate with txAllowlist precompiles for regulatory-compliant blockchain applications.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/jumio",
+      "importance": 3,
+      "importanceReason": "txAllowlist 프리컴파일과 연동되는 KYC 솔루션은 규제 준수형 앱에 필요하지만, 일반 사용자에게는 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d380-771e-9092-f1bd222f1477",
+      "key": "juno",
+      "name": "Juno",
+      "category": "Assets",
+      "developer": "Juno",
+      "websiteUrl": "https://buildwithjuno.com/",
+      "documentationUrl": "https://docs.bitso.com/juno/",
+      "description": "Juno provides stablecoins including MXNB (Mexican Peso stablecoin), offering tokenized fiat currencies for Mexican and Latin American markets.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/juno",
+      "importance": 3,
+      "importanceReason": "멕시코 페소 스테이블코인은 라틴아메리카 결제에 기여할 수 있으나, 현재 Avalanche 생태계에서의 영향력은 틈새 수준이다."
+    },
+    {
+      "id": "01a13643-d381-74c8-acac-1cdc77a5ba5a",
+      "key": "kaleido",
+      "name": "Kaleido",
+      "category": "Blockchain as a Service",
+      "developer": "Kaleido",
+      "websiteUrl": "https://www.kaleido.io/",
+      "documentationUrl": "https://docs.kaleido.io/",
+      "description": "Kaleido is an enterprise blockchain platform offering instant Avalanche node deployment, digital asset management, and 500+ pre-built Web3 services with enterprise-grade security.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/kaleido",
+      "importance": 4,
+      "importanceReason": "기업용 Avalanche 노드 배포와 디지털 자산 관리를 지원하는 BaaS로, 엔터프라이즈 도입에 의미가 있다."
+    },
+    {
+      "id": "01a13643-d381-74c8-acac-20f264a4e653",
+      "key": "keyring",
+      "name": "Keyring",
+      "category": "KYC / Identity Verification",
+      "developer": "Keyring Network",
+      "websiteUrl": "https://www.keyring.network/",
+      "documentationUrl": "https://docs.keyring.network/docs",
+      "description": "Keyring provides privacy-preserving identity verification using zero-knowledge technology, enabling compliance for blockchain applications implementing txAllowlist precompiles.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/keyring",
+      "importance": 3,
+      "importanceReason": "ZK 기반 프라이버시 보존 신원 인증은 규제 준수 L1에 유용하지만, 아직 채택 범위가 좁다."
+    },
+    {
+      "id": "01a13643-d382-7246-bd3f-bb692afa7627",
+      "key": "keystone",
+      "name": "Keystone",
+      "category": "Hardware Wallets",
+      "developer": "Keystone",
+      "websiteUrl": "https://keyst.one/",
+      "documentationUrl": "https://docs.keyst.one/",
+      "description": "Integrate Keystone hardware wallet support into your applications using Keystone's SDK.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/keystone",
+      "importance": 3,
+      "importanceReason": "하드웨어 월렛 지원은 보안 강화에 유용하지만, Avalanche 생태계 전반의 핵심 인프라는 아니며 Ledger 대비 영향력이 제한적이다. 알아두면 좋은 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d382-7246-bd3f-bf1736b955ea",
+      "key": "kkr",
+      "name": "KKR",
+      "category": "Assets",
+      "developer": "KKR",
+      "websiteUrl": "https://www.kkr.com/",
+      "documentationUrl": "https://www.kkr.com/",
+      "description": "KKR offers tokenized investment products including the Health Care Growth Fund, bringing private equity and alternative investments to blockchain.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/kkr",
+      "importance": 4,
+      "importanceReason": "KKR의 토큰화 펀드는 기관 자금 유입과 RWA 내러티브를 보여주는 의미 있는 사례로, Avalanche 생태계의 제도권 채택을 이해하는 데 중요하다. 다만 즉각적인 실행이나 광범위한 영향은 제한적이다."
+    },
+    {
+      "id": "01a13643-d383-733c-b375-35fa79b19413",
+      "key": "l1beat",
+      "name": "L1Beat",
+      "category": "Analytics & Data",
+      "developer": "L1Beat",
+      "websiteUrl": "https://l1beat.io/",
+      "documentationUrl": "https://l1beat.io/",
+      "description": "L1Beat provides analytics and comparison data for Avalanche L1s, tracking network performance, adoption metrics, and ecosystem growth.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/l1beat",
+      "importance": 4,
+      "importanceReason": "Avalanche L1들의 성능과 채택 지표를 비교·분석하는 도구로, L1 중심 전략을 따르는 사람에게 유용한 데이터를 제공한다. 생태계 모니터링에 의미 있는 자료다."
+    },
+    {
+      "id": "01a13643-d383-733c-b375-3a6464e256a6",
+      "key": "layerzero",
+      "name": "LayerZero",
+      "category": "Crosschain Solutions",
+      "developer": "LayerZero Labs",
+      "websiteUrl": "https://layerzero.network/",
+      "documentationUrl": "https://docs.layerzero.network/",
+      "description": "LayerZero is an omnichain interoperability protocol for secure, censorship-resistant, and permissionless messaging across blockchains with immutable smart contracts powering cross-chain dApps, tokens, and data transfer.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/layerzero",
+      "importance": 4,
+      "importanceReason": "크로스체인 메시징의 주요 프로토콜로 Avalanche C-Chain의 상호운용성과 dApp 확장에 기여한다. 생태계 참여자라면 알아야 할 인프라지만 Avalanche 고유 프로젝트는 아니다."
+    },
+    {
+      "id": "01a13643-d384-7588-b5cb-de54fc77ab0d",
+      "key": "leastauthority",
+      "name": "Least Authority",
+      "category": "Security Audits",
+      "developer": "Least Authority",
+      "websiteUrl": "https://leastauthority.com/",
+      "documentationUrl": null,
+      "description": "Least Authority delivers top-tier security audits for blockchain systems with specialized expertise in cryptography and distributed systems.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/leastauthority",
+      "importance": 3,
+      "importanceReason": "암호학과 분산시스템에 특화된 보안 감사 기관으로 Avalanche 프로젝트의 신뢰도 제고에 기여한다. 다만 개별 프로젝트가 아닌 서비스 제공자라 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d385-74b3-9138-561d4751215e",
+      "key": "ledger",
+      "name": "Ledger",
+      "category": "Hardware Wallets",
+      "developer": "Ledger",
+      "websiteUrl": "https://www.ledger.com/",
+      "documentationUrl": "https://developers.ledger.com/",
+      "description": "Integrate Ledger hardware wallet support into your applications using official Ledger SDKs for Avalanche.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/ledger",
+      "importance": 4,
+      "importanceReason": "가장 널리 쓰이는 하드웨어 월렛으로 Avalanche 자산 보관과 dApp 연동에 필수적인 지원이다. 사용자 보안과 접근성 측면에서 의미 있는 인프라다."
+    },
+    {
+      "id": "01a13643-d386-7755-a7b7-ad8b05a5a4aa",
+      "key": "lfj",
+      "name": "LFJ",
+      "category": "DeFi",
+      "developer": "LFJ Team",
+      "websiteUrl": "https://lfj.gg/",
+      "documentationUrl": "https://lfj.gg/",
+      "description": "LFJ is a leading decentralized exchange (DEX) on Avalanche, offering trading, lending, and yield farming capabilities.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/lfj",
+      "importance": 5,
+      "importanceReason": "Avalanche의 대표 DEX로 거래·대출·유동성 공급 등 핵심 DeFi 기능을 제공한다. 생태계 참여자라면 반드시 알아야 할 주요 프로토콜이다."
+    },
+    {
+      "id": "01a13643-d386-7755-a7b7-b38553988d72",
+      "key": "libeara-wellington",
+      "name": "Libeara/Wellington Management",
+      "category": "Assets",
+      "developer": "Libeara",
+      "websiteUrl": "https://libeara.com/",
+      "documentationUrl": "https://libeara.com/",
+      "description": "Libeara, in partnership with Wellington Management, offers tokenized investment products including ULTRA, bringing institutional asset management to blockchain.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/libeara-wellington",
+      "importance": 4,
+      "importanceReason": "웰링턴 매니지먼트와 협력한 토큰화 상품은 기관 자산 운용의 블록체인 도입을 보여주는 사례다. Avalanche의 RWA 확장을 이해하는 데 의미 있다."
+    },
+    {
+      "id": "01a13643-d387-708c-8067-d69f9971f81d",
+      "key": "liquify",
+      "name": "Liquify",
+      "category": "Blockchain as a Service",
+      "developer": "Liquify",
+      "websiteUrl": "https://www.liquify.com/",
+      "documentationUrl": null,
+      "description": "Liquify is a bare-metal infrastructure provider offering high-performance, customizable solutions for launching and managing Avalanche L1s.",
+      "chains": [
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/liquify",
+      "importance": 3,
+      "importanceReason": "Avalanche L1을 위한 베어메탈 인프라와 BaaS를 제공하는 틈새 서비스다. L1 출시를 고려하는 개발자에게 유용하지만 생태계 전반의 영향은 제한적이다."
+    },
+    {
+      "id": "01a13643-d387-708c-8067-da3abd3692da",
+      "key": "luganodes",
+      "name": "Luganodes",
+      "category": "Validator Infrastructure",
+      "developer": "Luganodes",
+      "websiteUrl": "https://www.luganodes.com/",
+      "documentationUrl": "https://docs.luganodes.com/",
+      "description": "Luganodes is an institutional-grade blockchain infrastructure provider offering validator services and staking solutions.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/luganodes",
+      "importance": 3,
+      "importanceReason": "기관급 검증인 및 스테이킹 서비스를 제공해 Avalanche 네트워크 보안에 기여한다. 검증인 인프라에 관심 있는 사람에게 알아둘 만한 배경 지식이다."
+    },
+    {
+      "id": "01a13643-d388-725e-92ae-681eb6c1f1a3",
+      "key": "m0",
+      "name": "M^0",
+      "category": "Stablecoins as a Service",
+      "developer": "M^0 Foundation",
+      "websiteUrl": "https://www.m0.org/",
+      "documentationUrl": "https://docs.m0.org/",
+      "description": "M^0 is a decentralized stablecoin infrastructure protocol enabling permissionless minting of digital dollars backed by high-quality collateral.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/m0",
+      "importance": 4,
+      "importanceReason": "스테이블코인 인프라는 아발란체 결제·유동성에 중요하고 L1 전반 확장 가능성이 있으나, 실제 채택과 긴급성은 지켜봐야 함."
+    },
+    {
+      "id": "01a13643-d388-725e-92ae-6dd0249233f7",
+      "key": "magic",
+      "name": "Magic",
+      "category": "Wallets and Account Abstraction",
+      "developer": "Magic Labs",
+      "websiteUrl": "https://magic.link/",
+      "documentationUrl": "https://magic.link/docs",
+      "description": "Enterprise-grade wallet infrastructure with proven reliability. Create wallets, trigger onchain actions, and stay compliant with one powerful API.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/magic",
+      "importance": 3,
+      "importanceReason": "지갑·계정 추상화 인프라로 개발자 온보딩에 유용하지만, 아발란체 특화 이슈는 아니고 대체 서비스도 많음."
+    },
+    {
+      "id": "01a13643-d389-77cd-b23c-e5536a78c713",
+      "key": "mercuryo",
+      "name": "Mercuryo",
+      "category": "Fiat On-Ramp",
+      "developer": "Mercuryo",
+      "websiteUrl": "https://mercuryo.io/",
+      "documentationUrl": "https://developers.mercuryo.io/",
+      "description": "Mercuryo is a fiat-to-crypto payment gateway enabling easy purchase of cryptocurrencies with credit cards and bank transfers.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/mercuryo",
+      "importance": 3,
+      "importanceReason": "법정화폐 온램프는 사용자 유입에 실질적이지만, 여러 온램프 중 하나라 생태계 전체를 좌우할 정도는 아님."
+    },
+    {
+      "id": "01a13643-d38a-7335-a4fd-e5428d5f5893",
+      "key": "messari",
+      "name": "Messari Avalanche",
+      "category": "Analytics & Data",
+      "developer": "Messari",
+      "websiteUrl": "https://avalanche.messari.io/key-updates",
+      "documentationUrl": "https://messari.io/avalanche",
+      "description": "Messari provides research, analytics, and key updates for the Avalanche ecosystem, including network metrics, governance data, and market insights.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/messari",
+      "importance": 4,
+      "importanceReason": "메사리가 제공하는 아발란체 리서치·지표는 생태계 추적에 신뢰도 높은 정보원이며, L1 전반 데이터를 아우름."
+    },
+    {
+      "id": "01a13643-d38a-7335-a4fd-ea55e2f7c092",
+      "key": "messiah",
+      "name": "Messiah",
+      "category": "Development Infrastructure",
+      "developer": "Messiah Network",
+      "websiteUrl": "https://messiah.network",
+      "documentationUrl": "https://docs.messiah.network/",
+      "description": "Messiah is a decentralized infrastructure platform that simplifies Web3 participation through one-click node deployment, fractional ownership, and AI-powered yield optimization.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/messiah",
+      "importance": 2,
+      "importanceReason": "노드 배포·AI 수익 최적화를 내세우지만 아발란체 생태계 내 인지도와 실질 영향이 아직 작고 추측성 요소가 있음."
+    },
+    {
+      "id": "01a13643-d38b-723b-a6a7-a61597522e79",
+      "key": "mobula",
+      "name": "Mobula",
+      "category": "Analytics & Data",
+      "developer": "Mobula",
+      "websiteUrl": "https://mobula.io/",
+      "documentationUrl": "https://docs.mobula.io/introduction",
+      "description": "Mobula provides low latency, real-time onchain data through a unified API to power any Web3 app across multiple chains.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/mobula",
+      "importance": 3,
+      "importanceReason": "실시간 온체인 데이터 API는 개발자에게 유용한 인프라이지만, 아발란체 사용자 대다수에게 직접적 영향은 제한적임."
+    },
+    {
+      "id": "01a13643-d38b-723b-a6a7-a80018eee8f5",
+      "key": "moca-id",
+      "name": "Moca ID",
+      "category": "KYC / Identity Verification",
+      "developer": "Moca ID",
+      "websiteUrl": "https://moca.network/",
+      "documentationUrl": "https://moca.network/",
+      "description": "Moca ID provides decentralized identity (DID) solutions for Web3 applications with user-controlled credentials.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/moca-id",
+      "importance": 3,
+      "importanceReason": "탈중앙 신원은 컴플라이언스와 Web3 신원 인프라로 의미가 있으나, 아발란체에서의 채택 범위는 아직 틈새 수준임."
+    },
+    {
+      "id": "01a13643-d38c-75bb-9ba6-6b7c40cfad80",
+      "key": "moonpay",
+      "name": "MoonPay",
+      "category": "Fiat On-Ramp",
+      "developer": "MoonPay",
+      "websiteUrl": "https://www.moonpay.com/",
+      "documentationUrl": "https://dev.moonpay.com/docs/on-ramp-overview",
+      "description": "MoonPay is a financial technology company that provides payment infrastructure for cryptocurrencies, enabling easy fiat-to-crypto on-ramp and off-ramp solutions.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/moonpay",
+      "importance": 4,
+      "importanceReason": "글로벌 법정화폐 온램프로 아발란체 자산 구매 접근성을 넓히는 실질적 인프라이며, C-Chain과 L1 전반을 지원함."
+    },
+    {
+      "id": "01a13643-d38c-75bb-9ba6-6d7aec864135",
+      "key": "moralis",
+      "name": "Moralis",
+      "category": "RPC Endpoints",
+      "developer": "Moralis",
+      "websiteUrl": "https://moralis.io/",
+      "documentationUrl": "https://docs.moralis.io/",
+      "description": "Moralis is a leading crypto data provider that helps companies build great user experiences and drive engagement, growth, and revenue in their applications through Moralis’ suite of APIs and Moralis Nodes.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/moralis",
+      "importance": 3,
+      "importanceReason": "RPC·데이터 API는 개발자에게 유용하지만, 아발란체 생태계 전반의 방향성을 좌우하는 핵심 뉴스는 아님."
+    },
+    {
+      "id": "01a13643-d38d-719f-b945-d096b585a5ad",
+      "key": "mtpelerin",
+      "name": "Mt Pelerin",
+      "category": "Fiat On-Ramp",
+      "developer": "Mt Pelerin Group",
+      "websiteUrl": "https://www.mtpelerin.com/",
+      "documentationUrl": "https://developers.mtpelerin.com/",
+      "description": "Mt Pelerin is a Swiss-regulated crypto gateway offering easy and secure buying, selling, and swapping of cryptocurrencies in 163 countries with their Bridge Wallet app.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/mtpelerin",
+      "importance": 2,
+      "importanceReason": "스위스 규제 기반 온램프로 틈새 사용자에게 유용하나, 아발란체 생태계 전체 영향력은 제한적임."
+    },
+    {
+      "id": "01a13643-d38d-719f-b945-d7dcea2cedad",
+      "key": "nansen",
+      "name": "Nansen",
+      "category": "Analytics & Data",
+      "developer": "Nansen",
+      "websiteUrl": "https://www.nansen.ai/",
+      "documentationUrl": "https://docs.nansen.ai/",
+      "description": "Nansen provides blockchain analytics with smart money tracking, wallet labeling, and on-chain insights for the Avalanche ecosystem.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/nansen",
+      "importance": 4,
+      "importanceReason": "Avalanche 온체인 데이터와 스마트머니 추적을 제공하는 대표 분석 플랫폼으로, 생태계 참여자에게 실질적 인사이트를 준다. 다만 Avalanche 전용은 아니므로 5점까지는 아니다."
+    },
+    {
+      "id": "01a13643-d38e-7243-be38-8b87ada93a08",
+      "key": "nethermind",
+      "name": "Nethermind",
+      "category": "Security Audits",
+      "developer": "Nethermind",
+      "websiteUrl": "https://nethermind.io/",
+      "documentationUrl": null,
+      "description": "Nethermind offers good-quality security audits with deep Ethereum expertise and a 20% discount for Avalanche ecosystem projects.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/nethermind",
+      "importance": 4,
+      "importanceReason": "이더리움 보안 감사 역량이 깊고 Avalanche 프로젝트에 20% 할인을 제공해 생태계 보안 수요에 직접 기여한다. 감사는 중요하지만 모든 사용자가 즉시 알아야 할 정보는 아니다."
+    },
+    {
+      "id": "01a13643-d38f-743c-b63f-a4369f1ee8a9",
+      "key": "nexera",
+      "name": "Nexera",
+      "category": "KYC / Identity Verification",
+      "developer": "Nexera",
+      "websiteUrl": "https://www.nexera.network/",
+      "documentationUrl": "https://docs.nexera.network/",
+      "description": "Nexera provides flexible accreditation and decentralized identity (DID) solutions for compliant blockchain applications.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/nexera",
+      "importance": 3,
+      "importanceReason": "Avalanche C-Chain에서 규제 준수와 DID를 위한 KYC/신원 솔루션을 제공한다. 특정 컴플라이언스 니즈에 유용한 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d38f-743c-b63f-a8ecb436984c",
+      "key": "nonco",
+      "name": "Nonco",
+      "category": "Payments",
+      "developer": "Nonco",
+      "websiteUrl": "https://www.nonco.com/",
+      "documentationUrl": "https://www.nonco.com/protocol",
+      "description": "Nonco is an institutional digital asset trading firm backed by VanEck that has launched an institutional-grade FX trading protocol on Avalanche, bringing real-world FX liquidity to stablecoin markets.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/nonco",
+      "importance": 4,
+      "importanceReason": "VanEck 후원 기관급 FX 트레이딩 프로토콜을 Avalanche에 출시해 스테이블코인 시장에 실물 FX 유동성을 공급한다. Avalanche 실사용 확대 측면에서 의미 있지만 아직 범위는 제한적이다."
+    },
+    {
+      "id": "01a13643-d390-75e7-8123-36f881f8b080",
+      "key": "nuggets",
+      "name": "Nuggets",
+      "category": "KYC / Identity Verification",
+      "developer": "Nuggets",
+      "websiteUrl": "https://nuggets.life/",
+      "documentationUrl": "https://nuggets.life/",
+      "description": "Nuggets offers privacy-focused KYC verification with self-sovereign identity management for blockchain applications.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/nuggets",
+      "importance": 2,
+      "importanceReason": "프라이버시 중심 KYC와 자기주권 신원 관리를 제공하는 틈새 도구다. Avalanche 생태계 전반에 미치는 실무 영향은 작다."
+    },
+    {
+      "id": "01a13643-d390-75e7-8123-39e6ff606a13",
+      "key": "octane",
+      "name": "Octane",
+      "category": "Security Tooling",
+      "developer": "Octane",
+      "websiteUrl": "https://octane.security/",
+      "documentationUrl": "https://docs.octane.security/introduction",
+      "description": "Octane's AI-powered security platform provides continuous vulnerability detection and deep codebase analysis integrated directly into developer workflows.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/octane",
+      "importance": 3,
+      "importanceReason": "AI 기반 보안 플랫폼으로 개발 워크플로에 취약점 탐지를 통합한다. 보안 도구로서 알아둘 만하지만 영향 범위는 제한적이다."
+    },
+    {
+      "id": "01a13643-d391-70de-8732-0625b33c67f5",
+      "key": "okxos",
+      "name": "OKX OS",
+      "category": "Wallets and Account Abstraction",
+      "developer": "OKX",
+      "websiteUrl": "https://www.okx.com/web3/build",
+      "documentationUrl": "https://www.okx.com/web3/build/docs/waas/okx-waas-what-is-waas",
+      "description": "Onchain infrastructure suite for building and scaling applications across 100+ chains.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/okxos",
+      "importance": 4,
+      "importanceReason": "OKX의 온체인 인프라 스위트로 100개 이상 체인을 지원하며 C-Chain 개발·지갑·계정 추상화에 활용될 수 있다. 대형 플레이어의 인프라라 의미 있지만 Avalanche 특화는 아니다."
+    },
+    {
+      "id": "01a13643-d391-70de-8732-0b51d9644a48",
+      "key": "olympix",
+      "name": "Olympix",
+      "category": "Security Tooling",
+      "developer": "Olympix.ai",
+      "websiteUrl": "https://olympix.ai",
+      "documentationUrl": "https://olympix.github.io",
+      "description": "Olympix is an institutional-grade proactive security suite for smart contract developers, providing automated vulnerability detection and testing integrated into developer workflows.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/olympix",
+      "importance": 3,
+      "importanceReason": "스마트 컨트랙트 개발자를 위한 자동 취약점 탐지·테스트 보안 스위트다. 보안 실무에 유용한 배경 지식이다."
+    },
+    {
+      "id": "01a13643-d392-70a8-8c95-ac12795105b1",
+      "key": "omniscia",
+      "name": "Omniscia",
+      "category": "Security Audits",
+      "developer": "Omniscia",
+      "websiteUrl": "https://omniscia.io/",
+      "documentationUrl": null,
+      "description": "Omniscia provides good-quality security audits with efficient processes and competitive rates for projects on Avalanche.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/omniscia",
+      "importance": 3,
+      "importanceReason": "Avalanche 프로젝트에 효율적이고 경쟁력 있는 보안 감사를 제공하는 감사 업체다. 보안 감사 선택지로서 알아둘 만하다."
+    },
+    {
+      "id": "01a13643-d392-70a8-8c95-b3fe07660367",
+      "key": "onfinality",
+      "name": "OnFinality",
+      "category": "RPC Endpoints",
+      "developer": "OnFinality",
+      "websiteUrl": "https://onfinality.io",
+      "documentationUrl": null,
+      "description": "Blockchain Infrastructure Made Smarter. OnFinality empowers web3 developers with easy-to-use, reliable, and scalable blockchain infrastructure.",
+      "chains": [
+        "C-Chain",
+        "P-Chain",
+        "X-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/onfinality",
+      "importance": 4,
+      "importanceReason": "C/P/X-Chain을 포함한 Avalanche RPC 인프라를 제공하는 신뢰성 높은 인프라 사업자다. 개발자에게 중요한 인프라지만 일반 사용자에게는 덜 긴급하다."
+    },
+    {
+      "id": "01a13643-d393-730c-91fe-bfb77da5de52",
+      "key": "openfort",
+      "name": "Openfort",
+      "category": "Wallets and Account Abstraction",
+      "developer": "Openfort",
+      "websiteUrl": "https://openfort.io",
+      "documentationUrl": "https://www.openfort.io/docs",
+      "description": "Create secure embedded wallets with easy authentication flows and gas sponsorship capabilities.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/openfort",
+      "importance": 4,
+      "importanceReason": "계정 추상화와 임베디드 월렛은 Avalanche L1의 사용자 온보딩과 가스 대납에 중요하지만, 아직 모든 생태계 참여자가 즉시 알아야 할 정도는 아니다."
+    },
+    {
+      "id": "01a13643-d393-730c-91fe-c30e64cafec1",
+      "key": "opentrade",
+      "name": "OpenTrade",
+      "category": "Tokenization Platforms",
+      "developer": "OpenTrade",
+      "websiteUrl": "https://www.opentrade.io/",
+      "documentationUrl": "https://www.opentrade.io/",
+      "description": "OpenTrade provides institutional-grade, asset-backed yield products for the stablecoin economy, offering exchanges and neobanks access to tokenized real-world assets like money market funds.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/opentrade",
+      "importance": 3,
+      "importanceReason": "스테이블코인 경제를 위한 기관급 RWA 수익 상품은 Avalanche의 토큰화 트렌드에 부합하지만, 특정 플랫폼이라 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d394-7258-82f7-c1e8e26b0736",
+      "key": "openzeppelin",
+      "name": "OpenZeppelin",
+      "category": "Security Audits",
+      "developer": "OpenZeppelin",
+      "websiteUrl": "https://www.openzeppelin.com/security-audits",
+      "documentationUrl": "https://docs.openzeppelin.com/",
+      "description": "OpenZeppelin provides high-quality security audits for smart contracts with additional auditing hours for community contributions.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/openzeppelin",
+      "importance": 4,
+      "importanceReason": "OpenZeppelin은 업계 표준 보안 감사 및 라이브러리로 Avalanche 빌더에게 매우 유용하지만, Avalanche 고유의 긴급 이슈는 아니다."
+    },
+    {
+      "id": "01a13643-d394-7258-82f7-bd395221b27b",
+      "key": "openzeppelin-audit",
+      "name": "OpenZeppelin Audits",
+      "category": "Audit Firms",
+      "developer": "OpenZeppelin",
+      "websiteUrl": "https://openzeppelin.com/",
+      "documentationUrl": "https://openzeppelin.com/security-audits",
+      "description": "OpenZeppelin provides expert smart contract audits, security tools, and the industry's most widely used smart contract libraries trusted by thousands of projects.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/openzeppelin-audit",
+      "importance": 4,
+      "importanceReason": "OpenZeppelin의 감사 서비스는 신뢰도가 높고 Avalanche 프로젝트 보안에 중요하지만, 중복 항목이라 실무 영향은 제한적이다."
+    },
+    {
+      "id": "01a13643-d395-76db-8a30-4c9be4d20036",
+      "key": "orbital",
+      "name": "Orbital",
+      "category": "Payments",
+      "developer": "Orbital",
+      "websiteUrl": "https://getorbital.com/",
+      "documentationUrl": "https://docs.getorbital.com/",
+      "description": "Orbital provides payment solutions including merchant acquiring, payment gateway, and transaction processing with support for traditional and digital currencies.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/orbital",
+      "importance": 3,
+      "importanceReason": "결제 게이트웨이와 가맹점 인수는 Avalanche 결제 도입에 기여할 수 있지만, 아직 생태계 전반에 미치는 영향은 제한적이다."
+    },
+    {
+      "id": "01a13643-d395-76db-8a30-512352c1ff9d",
+      "key": "paladinsec",
+      "name": "Paladin Security",
+      "category": "Audit Firms",
+      "developer": "Paladin Security",
+      "websiteUrl": "https://paladinsec.co/",
+      "documentationUrl": "https://paladinsec.co/services",
+      "description": "Paladin Security provides smart contract audits and security assessments for DeFi, NFT, and infrastructure protocols.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/paladinsec",
+      "importance": 2,
+      "importanceReason": "스마트 컨트랙트 감사는 중요하지만, Paladin Security는 상대적으로 틈새 감사 업체로 Avalanche 생태계 전반의 실무 영향은 작다."
+    },
+    {
+      "id": "01a13643-d396-736d-af47-5664802504e0",
+      "key": "palmera-infra-provider",
+      "name": "Palmera",
+      "category": "Wallets and Account Abstraction",
+      "developer": "Palmera",
+      "websiteUrl": "https://www.palmeradao.xyz/",
+      "documentationUrl": "https://docs.palmeradao.xyz/safe-multisig-deployment",
+      "description": "Palmera is a Safe multisig infrastructure provider powering secure smart-account deployments, white-label UIs, and backend services for Avalanche L1s.",
+      "chains": [
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/palmera-infra-provider",
+      "importance": 4,
+      "importanceReason": "Safe 멀티시그 인프라를 Avalanche L1에 제공하는 것은 L1 보안과 운영에 의미 있는 인프라지만, 모든 참여자가 즉시 알아야 할 정도는 아니다."
+    },
+    {
+      "id": "01a13643-d396-736d-af47-59353deb7a0f",
+      "key": "pancakeswap",
+      "name": "PancakeSwap",
+      "category": "DeFi",
+      "developer": "PancakeSwap",
+      "websiteUrl": "https://pancakeswap.finance/",
+      "documentationUrl": "https://docs.pancakeswap.finance/",
+      "description": "PancakeSwap is a leading DEX offering token swaps, yield farming, and perpetual trading on Avalanche's C-Chain with gamified features.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/pancakeswap",
+      "importance": 4,
+      "importanceReason": "PancakeSwap은 주요 DEX로 Avalanche C-Chain DeFi에 의미 있는 유동성과 사용자를 제공하지만, Avalanche 네이티브 프로젝트는 아니다."
+    },
+    {
+      "id": "01a13643-d397-7379-a683-70546e3a6681",
+      "key": "pangolin",
+      "name": "Pangolin",
+      "category": "DeFi",
+      "developer": "Pangolin DAO",
+      "websiteUrl": "https://pangolin.exchange/",
+      "documentationUrl": "https://docs.pangolin.exchange/",
+      "description": "Pangolin is a community-driven decentralized exchange for Avalanche and Ethereum assets with fast settlement, low transaction fees, and a democratic distribution.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/pangolin",
+      "importance": 4,
+      "importanceReason": "Pangolin은 Avalanche 네이티브 DEX로 생태계 초기부터 중요한 DeFi 인프라를 제공해 왔지만, 최근 영향력은 다른 DEX와 경쟁 중이다."
+    },
+    {
+      "id": "01a13643-d397-7379-a683-7543b0f33117",
+      "key": "parafi",
+      "name": "ParaFi",
+      "category": "Assets",
+      "developer": "ParaFi Capital",
+      "websiteUrl": "https://www.parafi.capital/",
+      "documentationUrl": "https://www.parafi.capital/",
+      "description": "ParaFi Capital is a digital asset investment firm offering tokenized investment products and DeFi strategies.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/parafi",
+      "importance": 3,
+      "importanceReason": "ParaFi Capital은 유명 디지털 자산 투자사지만, Avalanche 생태계에 대한 직접적 영향은 설명만으로는 제한적이다."
+    },
+    {
+      "id": "01a13643-d398-7632-902c-f9dbe1e56a6b",
+      "key": "parallel-markets",
+      "name": "Parallel Markets",
+      "category": "KYC / Identity Verification",
+      "developer": "Parallel Markets",
+      "websiteUrl": "https://parallelmarkets.com/",
+      "documentationUrl": "https://developer.parallelmarkets.com/",
+      "description": "Parallel Markets provides KYC/AML solutions with a portable identity system, well suited for crypto platforms implementing txAllowlist precompiles.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/parallel-markets",
+      "importance": 3,
+      "importanceReason": "KYC/AML은 규제 대응에 필요하지만 일반 사용자에게는 틈새 영역이라 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d398-7632-902c-fd9c49d47b43",
+      "key": "particle-network",
+      "name": "Particle Network",
+      "category": "Chain Abstraction",
+      "developer": "Particle Network",
+      "websiteUrl": "https://particle.network/",
+      "documentationUrl": "https://developers.particle.network/intro/introduction",
+      "description": "Chain abstraction powered by Universal Accounts. One account, one balance, any chain.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/particle-network",
+      "importance": 4,
+      "importanceReason": "체인 추상화는 Avalanche 생태계의 멀티체인 UX를 개선할 수 있는 의미 있는 인프라지만, 아직 확실성이나 긴급성은 제한적이다."
+    },
+    {
+      "id": "01a13643-d399-701c-ab6b-182ac92c6af7",
+      "key": "payai",
+      "name": "PayAI",
+      "category": "x402",
+      "developer": "PayAI",
+      "websiteUrl": "https://payai.network/",
+      "documentationUrl": "https://docs.payai.network/introduction",
+      "description": "PayAI offers the x402 protocol, a payment infrastructure that enables monetization of AI agents and services on Avalanche.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/payai",
+      "importance": 2,
+      "importanceReason": "x402와 AI 에이전트 결제는 초기 단계라 실무 영향이 작고 추측성 측면이 있다."
+    },
+    {
+      "id": "01a13643-d399-701c-ab6b-1fe329e8f99b",
+      "key": "peckshield",
+      "name": "PeckShield",
+      "category": "Audit Firms",
+      "developer": "PeckShield",
+      "websiteUrl": "https://peckshield.com/",
+      "documentationUrl": "https://peckshield.com/services",
+      "description": "PeckShield is a leading blockchain security company providing smart contract audits, security solutions, and real-time threat monitoring for protocols across multiple blockchain ecosystems.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/peckshield",
+      "importance": 3,
+      "importanceReason": "보안 감사는 생태계 신뢰에 중요하지만, 개별 감사 업체는 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d39a-77f8-bfdf-cacef8213441",
+      "key": "pharaoh",
+      "name": "Pharaoh",
+      "category": "DeFi",
+      "developer": "Pharaoh",
+      "websiteUrl": "https://pharaoh.exchange",
+      "documentationUrl": "https://pharaoh.exchange",
+      "description": "Pharaoh is a decentralized exchange offering advanced liquidity solutions and trading features on Avalanche.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/pharaoh",
+      "importance": 4,
+      "importanceReason": "Avalanche 네이티브 DEX로서 DeFi 유동성과 거래에 직접 영향을 주는 의미 있는 프로젝트다."
+    },
+    {
+      "id": "01a13643-d39a-77f8-bfdf-cddd68394178",
+      "key": "pocket-network",
+      "name": "Pocket Network",
+      "category": "RPC Endpoints",
+      "developer": "Pocket Network",
+      "websiteUrl": "https://www.pokt.network/",
+      "documentationUrl": "https://docs.pokt.network/",
+      "description": "Pocket Network is a decentralized RPC provider offering reliable, censorship-resistant access to blockchain networks.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/pocket-network",
+      "importance": 3,
+      "importanceReason": "RPC 인프라는 개발자에게 중요하지만, 여러 대안이 있어 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d39b-748a-b9f9-21e73c50b5fa",
+      "key": "privy",
+      "name": "Privy",
+      "category": "Wallets and Account Abstraction",
+      "developer": "Privy",
+      "websiteUrl": "https://privy.io/",
+      "documentationUrl": "https://docs.privy.io/",
+      "description": "Spin up embedded wallets and beautiful authentication flows for all users.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/privy",
+      "importance": 4,
+      "importanceReason": "지갑 및 계정 추상화는 Avalanche L1 전반의 온보딩을 개선하는 핵심 인프라로 의미 있다."
+    },
+    {
+      "id": "01a13643-d39b-748a-b9f9-2648239e89a3",
+      "key": "proof-of-play",
+      "name": "Proof of Play vRNG",
+      "category": "VRF",
+      "developer": "Proof of Play",
+      "websiteUrl": "https://proofofplay.com/",
+      "documentationUrl": "https://docs.proofofplay.com/",
+      "description": "A hyper-optimized, secure, onchain verified random number generator (vRNG). Battle-tested at scale, faster, more reliable, and more affordable than alternatives.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/proof-of-play",
+      "importance": 3,
+      "importanceReason": "게임 특화 VRF로 Avalanche 게이밍 생태계에 유용하지만 범용성은 낮다."
+    },
+    {
+      "id": "01a13643-d39c-76e3-a366-ccc0f375c756",
+      "key": "pyth",
+      "name": "Pyth Network",
+      "category": "Oracles",
+      "developer": "Pyth Network",
+      "websiteUrl": "https://pyth.network/",
+      "documentationUrl": "https://docs.pyth.network/",
+      "description": "Pyth Network is a decentralized oracle solution that provides high-fidelity data for DeFi applications.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/pyth",
+      "importance": 4,
+      "importanceReason": "DeFi에 필수적인 오라클로 Avalanche 생태계에서 영향력이 크지만, 모든 사용자가 즉시 알아야 할 정도는 아니다."
+    },
+    {
+      "id": "01a13643-d39c-76e3-a366-d3d36b34ebae",
+      "key": "quicknode",
+      "name": "QuickNode",
+      "category": "RPC Endpoints",
+      "developer": "QuickNode",
+      "websiteUrl": "https://www.quicknode.com/",
+      "documentationUrl": "https://www.quicknode.com/docs",
+      "description": "QuickNode is a blockchain developer platform that provides a suite of APIs and tools for building and scaling blockchain applications.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/quicknode",
+      "importance": 3,
+      "importanceReason": "널리 쓰이는 RPC 제공자지만 인프라 도구로서 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d39d-7658-ad70-687588267d1f",
+      "key": "rain",
+      "name": "Rain",
+      "category": "Payments",
+      "developer": "Rain",
+      "websiteUrl": "https://www.rain.xyz/",
+      "documentationUrl": "https://www.rain.xyz/resources",
+      "description": "Rain is a global card issuing platform enabling partners to launch fully integrated credit and debit card programs with direct wallet spending, supporting fintechs globally as a Visa principal member.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/rain",
+      "importance": 3,
+      "importanceReason": "Avalanche C-Chain 기반 카드 발급/결제 인프라로 결제 생태계 확장에 기여할 수 있지만, Avalanche 전반에 미치는 즉각적 영향은 제한적이다."
+    },
+    {
+      "id": "01a13643-d39d-7658-ad70-6da3476f2a3e",
+      "key": "ramp-network",
+      "name": "Ramp Network",
+      "category": "Fiat On-Ramp",
+      "developer": "Ramp Network",
+      "websiteUrl": "https://ramp.network/",
+      "documentationUrl": "https://docs.ramp.network/",
+      "description": "Ramp Network is a global provider of fiat-to-crypto on-ramp and off-ramp infrastructure, enabling users to purchase and sell cryptocurrencies directly within applications.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/ramp-network",
+      "importance": 4,
+      "importanceReason": "Avalanche C-Chain과 모든 L1을 지원하는 대표적인 법정화폐 온램프로, 생태계 유입과 dApp 사용성에 직접 기여하는 핵심 인프라다."
+    },
+    {
+      "id": "01a13643-d39e-7045-9721-f51060e6a619",
+      "key": "rdtechnology",
+      "name": "RD Technology",
+      "category": "Payments",
+      "developer": "RD Technology",
+      "websiteUrl": "https://rd.group/",
+      "documentationUrl": "https://rd.group/products/wallet/enterprise-solution/",
+      "description": "RD Technology provides blockchain payment solutions and infrastructure for businesses to integrate cryptocurrency and digital asset payment capabilities.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/rdtechnology",
+      "importance": 2,
+      "importanceReason": "Avalanche 기반 결제 솔루션이지만 구체적 성과나 차별점이 드러나지 않아 실무 영향이 작고 틈새 성격이다."
+    },
+    {
+      "id": "01a13643-d39f-722b-89a6-907d3f701104",
+      "key": "re",
+      "name": "Re",
+      "category": "Assets",
+      "developer": "Re",
+      "websiteUrl": "https://www.re.xyz/",
+      "documentationUrl": "https://docs.re.xyz/",
+      "description": "Re provides tokenized insurance and risk products, bringing traditional insurance mechanisms to blockchain infrastructure.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/re",
+      "importance": 2,
+      "importanceReason": "토큰화 보험/리스크 상품은 실험적 영역으로, Avalanche 생태계 내 영향력이 아직 제한적이다."
+    },
+    {
+      "id": "01a13643-d39f-722b-89a6-947d4a5b3113",
+      "key": "reactive-network",
+      "name": "Reactive Network",
+      "category": "Crosschain Solutions",
+      "developer": "PARSIQ",
+      "websiteUrl": "https://reactive.network/",
+      "documentationUrl": "https://dev.reactive.network",
+      "description": "Reactive Network is a fully on-chain, EVM-compatible, events-driven if-this-then-that network for decentralized automation of on-chain workflows through enabling reactivity between contracts deployed either on the same or different chains.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/reactive-network",
+      "importance": 3,
+      "importanceReason": "PARSIQ의 크로스체인 자동화 네트워크로 Avalanche dApp 개발에 참고할 만하지만, Avalanche 고유의 핵심 인프라는 아니다."
+    },
+    {
+      "id": "01a13643-d3a0-70aa-8100-bdbb174990d0",
+      "key": "reap-protocol",
+      "name": "Reap Protocol",
+      "category": "x402",
+      "developer": "April Labs",
+      "websiteUrl": "https://protocol.reap.deals/",
+      "documentationUrl": "https://docs.reap.deals/",
+      "description": "Reap Protocol gives AI Agent's the power to search real products, verify inventory, and purchase autonomously. Reap bridges Web2 shops with Web3 settlement so agents can operate in the real economy — safely, verifiably, and on-chain.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/reap-protocol",
+      "importance": 2,
+      "importanceReason": "AI 에이전트 기반 상거래 프로토콜로 x402 카테고리의 초기 실험이며, Avalanche 실사용 영향은 아직 불확실하다."
+    },
+    {
+      "id": "01a13643-d3a0-70aa-8100-c13807fdb79a",
+      "key": "redstone-oracles",
+      "name": "RedStone Oracles",
+      "category": "Data Feeds",
+      "developer": "RedStone Oracles",
+      "websiteUrl": "https://redstone.finance/",
+      "documentationUrl": "https://docs.redstone.finance/docs/introduction",
+      "description": "RedStone is a modular, gas-optimized oracle providing diverse and reliable price feeds for dApps.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/redstone-oracles",
+      "importance": 4,
+      "importanceReason": "Avalanche DeFi에 가격 피드를 제공하는 주요 모듈러 오라클로, 안정적인 데이터 인프라 측면에서 의미가 크다."
+    },
+    {
+      "id": "01a13643-d3a0-70aa-8100-c4313cce351e",
+      "key": "republic",
+      "name": "Republic",
+      "category": "Tokenization Platforms",
+      "developer": "Republic",
+      "websiteUrl": "https://republic.com/",
+      "documentationUrl": "https://republic.com/tokenization",
+      "description": "Republic is a global investment and advisory platform that merges private markets with Web3 technologies, enabling tokenized investments in startups, real estate, and digital securities.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/republic",
+      "importance": 3,
+      "importanceReason": "토큰화 투자 플랫폼으로 Avalanche에서 자산 토큰화 가능성을 보여주지만, 일상적 생태계 영향은 중간 수준이다."
+    },
+    {
+      "id": "01a13643-d3a1-752f-9e2f-e6ff34305f7e",
+      "key": "request",
+      "name": "Request Network",
+      "category": "Payments",
+      "developer": "Request Network",
+      "websiteUrl": "https://www.request.finance/",
+      "documentationUrl": "https://docs.request.network/",
+      "description": "Request Network is the all-in-one finance platform for Web3 CFOs to manage stablecoin, crypto, and fiat operations covering accounts payable, receivable, payroll, and accounting in a compliant, audit-ready hub.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/request",
+      "importance": 3,
+      "importanceReason": "Web3 CFO를 위한 결제/회계 플랫폼으로 Avalanche 기반 기업 금융 활용에 도움이 되는 배경 지식이다."
+    },
+    {
+      "id": "01a13643-d3a1-752f-9e2f-eb7e75a44aac",
+      "key": "revolut",
+      "name": "Revolut",
+      "category": "Fiat On-Ramp",
+      "developer": "Revolut",
+      "websiteUrl": "https://www.revolut.com/",
+      "documentationUrl": "https://developer.revolut.com/",
+      "description": "Revolut is a global fintech platform enabling users to buy, hold, and manage cryptocurrencies alongside traditional banking services.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/revolut",
+      "importance": 4,
+      "importanceReason": "글로벌 핀테크의 Avalanche 지원은 법정화폐 온램프와 사용자 유입 측면에서 의미 있는 진전이다."
+    },
+    {
+      "id": "01a13643-d3a2-7625-9d2f-07e6916e0ff8",
+      "key": "rise",
+      "name": "Rise",
+      "category": "Payments",
+      "developer": "Rise",
+      "websiteUrl": "https://riseworks.io/",
+      "documentationUrl": "https://docs.riseworks.io/",
+      "description": "Rise is a global payroll and compliance platform enabling businesses to pay teams in 190+ countries with flexible options in local currencies, stablecoins, and cryptocurrencies with automated compliance.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/rise",
+      "importance": 3,
+      "importanceReason": "Avalanche C-Chain 기반 결제·급여 서비스로 실사용 가능성이 있지만, 생태계 전반을 좌우하는 핵심 인프라는 아니라 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d3a2-7625-9d2f-0bd704cc19b6",
+      "key": "rockx",
+      "name": "RockX",
+      "category": "RPC Endpoints",
+      "developer": "RockX",
+      "websiteUrl": "https://www.rockx.com/",
+      "documentationUrl": "https://www.rockx.com/",
+      "description": "RockX provides blockchain infrastructure services including RPC endpoints and staking solutions for Web3 applications.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/rockx",
+      "importance": 3,
+      "importanceReason": "RPC 엔드포인트와 스테이킹을 제공하는 인프라 사업자로 알아두면 좋지만, Avalanche 생태계에서 독보적이거나 즉각적인 영향은 제한적이다."
+    },
+    {
+      "id": "01a13643-d3a3-731b-95c9-3c9b156dd2ce",
+      "key": "routescan",
+      "name": "Routescan",
+      "category": "Explorers",
+      "developer": "Routescan",
+      "websiteUrl": "https://routescan.io/explorer-as-a-service",
+      "documentationUrl": "https://routescan.io/documentation",
+      "description": "Routescan provides block explorer as a service for Avalanche L1s, offering real-time data on transactions, blocks, validators, and more.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/routescan",
+      "importance": 4,
+      "importanceReason": "Avalanche L1을 포함한 블록 익스플로러 서비스로 L1 생태계 확장에 중요한 인프라다. 다만 모든 사용자가 당장 알아야 할 긴급성은 낮다."
+    },
+    {
+      "id": "01a13643-d3a3-731b-95c9-42a43f3739d2",
+      "key": "rwa-xyz",
+      "name": "RWA.xyz",
+      "category": "Analytics & Data",
+      "developer": "RWA.xyz",
+      "websiteUrl": "https://rwa.xyz/",
+      "documentationUrl": "https://rwa.xyz/",
+      "description": "RWA.xyz provides analytics and data tracking for Real World Assets (RWA) tokenized on blockchain, including Avalanche.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/rwa-xyz",
+      "importance": 3,
+      "importanceReason": "Avalanche상 RWA 토큰화 데이터를 추적하는 분석 플랫폼으로 RWA 내러티브를 따라가려면 유용하다. 실무 영향은 제한적이다."
+    },
+    {
+      "id": "01a13643-d378-70a8-a89d-0a2263f12fae",
+      "key": "gnosis-safe",
+      "name": "Safe (formerly Gnosis Safe)",
+      "category": "Wallets and Account Abstraction",
+      "developer": "Safe (formerly Gnosis)",
+      "websiteUrl": "https://safe.global/",
+      "documentationUrl": "https://docs.safe.global/",
+      "description": "An open-source and modular account abstraction stack. It's the essential tooling and infrastructure for integrating the Safe Smart Account into any digital platform.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/gnosis-safe",
+      "importance": 4,
+      "importanceReason": "Avalanche C-Chain에서 멀티시그와 계정 추상화를 지원하는 핵심 툴로, 자산 관리와 보안에 의미가 크다. 다만 모든 생태계 참여자에게 필수는 아니다."
+    },
+    {
+      "id": "01a13643-d3a4-71e9-8e0d-8c86e8d0172c",
+      "key": "sardine",
+      "name": "Sardine",
+      "category": "Fiat On-Ramp",
+      "developer": "Sardine",
+      "websiteUrl": "https://www.sardine.ai/",
+      "documentationUrl": "https://docs.sardine.ai/",
+      "description": "Sardine provides fraud prevention and risk management infrastructure for crypto on-ramp and off-ramp solutions with built-in compliance and KYC capabilities.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/sardine",
+      "importance": 3,
+      "importanceReason": "Avalanche 기반 온·오프램프의 사기 방지와 KYC 인프라를 제공해 사용자 온보딩에 도움을 준다. 틈새 결제 인프라로 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d3a4-71e9-8e0d-90dd7abaef51",
+      "key": "securitize",
+      "name": "Securitize",
+      "category": "Tokenization Platforms",
+      "developer": "Securitize",
+      "websiteUrl": "https://securitize.io/",
+      "documentationUrl": "https://sec-connect-api-docs.securitize.io/",
+      "description": "Securitize is a leading regulated platform that enables compliant tokenization, issuance, trading, and management of real-world assets on blockchain, serving institutional and retail investors.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/securitize",
+      "importance": 4,
+      "importanceReason": "규제 준수 RWA 토큰화 플랫폼으로 Avalanche의 기관 자산 유입에 중요한 역할을 할 수 있다. 다만 즉각적 실행보다는 중장기적 의미가 크다."
+    },
+    {
+      "id": "01a13643-d3a5-77ef-9934-564e044d4984",
+      "key": "sensei-node",
+      "name": "Sensei Node",
+      "category": "Validator Infrastructure",
+      "developer": "Sensei Node",
+      "websiteUrl": "https://www.senseinode.com/",
+      "documentationUrl": "https://docs.senseinode.com/",
+      "description": "Sensei Node provides institutional-grade validator infrastructure and staking services for proof-of-stake networks.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/sensei-node",
+      "importance": 3,
+      "importanceReason": "Avalanche C-Chain과 L1의 검증자 인프라를 제공하는 스테이킹 사업자다. 네트워크 보안에 기여하지만 개별 사업자로 차별성은 크지 않다."
+    },
+    {
+      "id": "01a13643-d3a5-77ef-9934-5b51014cba85",
+      "key": "sherry-protocol",
+      "name": "Sherry",
+      "category": "Mini-Apps",
+      "developer": "Sherry Labs",
+      "websiteUrl": "https://sherry.social",
+      "documentationUrl": "https://docs.sherry.social/docs/intro",
+      "description": "Sherry is the publishing layer that turns any interaction — from a tweet to a chatbot message — into a verifiable, tappable onchain action.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/sherry-protocol",
+      "importance": 2,
+      "importanceReason": "트윗이나 챗봇 메시지를 온체인 액션으로 바꾸는 미니앱 레이어로 실험적이고 틈새적이다. Avalanche 생태계 전반에 미치는 영향은 작다."
+    },
+    {
+      "id": "01a13643-d3a6-7049-80d0-f711b62d812a",
+      "key": "silo",
+      "name": "Silo",
+      "category": "DeFi",
+      "developer": "Silo Finance",
+      "websiteUrl": "https://silo.finance",
+      "documentationUrl": "https://docs.silo.finance",
+      "description": "Silo is a decentralized lending protocol with isolated money markets, providing secure liquidity solutions on Avalanche.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/silo",
+      "importance": 3,
+      "importanceReason": "Avalanche C-Chain의 격리형 렌딩 프로토콜로 DeFi 유동성에 기여한다. 다만 여러 렌딩 프로토콜 중 하나라 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d3a6-7049-80d0-fa882e85c13d",
+      "key": "skybridge",
+      "name": "Skybridge",
+      "category": "Assets",
+      "developer": "Skybridge Capital",
+      "websiteUrl": "https://www.skybridge.com/",
+      "documentationUrl": null,
+      "description": "Skybridge Capital offers tokenized fund products providing institutional investors access to digital asset strategies.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/skybridge",
+      "importance": 3,
+      "importanceReason": "기관 투자자 대상 토큰화 펀드 상품으로 Avalanche의 기관 자금 유입 가능성을 보여주지만, 생태계 전반에 즉각적인 영향은 제한적이다."
+    },
+    {
+      "id": "01a13643-d3a7-700e-b571-cc992bf3ae6c",
+      "key": "snowpeer",
+      "name": "Snowpeer",
+      "category": "Analytics & Data",
+      "developer": "Snowpeer",
+      "websiteUrl": "https://snowpeer.io/",
+      "documentationUrl": "https://snowpeer.io/",
+      "description": "Snowpeer provides Avalanche network analytics, offering real-time monitoring, validator insights, and network performance metrics.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/snowpeer",
+      "importance": 3,
+      "importanceReason": "Avalanche 네트워크 분석과 검증인 인사이트를 제공하는 도구로, 검증인과 데이터 분석가에게 유용하지만 널리 알려진 핵심 인프라는 아니다."
+    },
+    {
+      "id": "01a13643-d3a7-700e-b571-d21c7f06a757",
+      "key": "snowscan",
+      "name": "SnowScan",
+      "category": "Explorers",
+      "developer": "Etherscan",
+      "websiteUrl": "https://snowscan.xyz/",
+      "documentationUrl": "https://docs.snowscan.xyz/",
+      "description": "SnowScan is a block explorer for the Avalanche network, providing real-time data on transactions, blocks, validators, and more.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/snowscan",
+      "importance": 4,
+      "importanceReason": "Etherscan이 운영하는 Avalanche 블록 익스플로러로, C-Chain과 모든 L1을 지원해 생태계 참여자 대부분이 사용할 가능성이 높다."
+    },
+    {
+      "id": "01a13643-d3a8-7349-bde2-81a2921829f5",
+      "key": "snowtrace",
+      "name": "SnowTrace",
+      "category": "Explorers",
+      "developer": "Routescan",
+      "websiteUrl": "https://snowtrace.io/",
+      "documentationUrl": "https://snowtrace.io/documentation",
+      "description": "SnowTrace is a block explorer for the Avalanche network, now operated by Routescan, providing real-time data on transactions, blocks, and more.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/snowtrace",
+      "importance": 4,
+      "importanceReason": "Routescan이 운영하는 Avalanche 대표 익스플로러로, 여전히 많은 사용자가 거래와 블록 데이터를 확인하는 핵심 도구다."
+    },
+    {
+      "id": "01a13643-d3a8-7349-bde2-85b381c99ab0",
+      "key": "socialscan",
+      "name": "SocialScan",
+      "category": "Explorers",
+      "developer": "SocialScan",
+      "websiteUrl": "https://socialscan.io/",
+      "documentationUrl": "https://docs.thehemera.com/",
+      "description": "SocialScan is a social-focused blockchain explorer providing address labeling, identity verification, and community-driven data.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/socialscan",
+      "importance": 2,
+      "importanceReason": "소셜 중심 익스플로러로 주소 라벨링과 평판 데이터를 제공하지만, 실무 영향은 틈새 수준이다."
+    },
+    {
+      "id": "01a13643-d3a9-72ec-a02d-852011023e6b",
+      "key": "spaceandtime",
+      "name": "Space and Time",
+      "category": "Analytics & Data",
+      "developer": "Space and Time",
+      "websiteUrl": "https://www.spaceandtime.io",
+      "documentationUrl": "https://docs.spaceandtime.io",
+      "description": "SpaceandTime is a decentralized data warehouse for indexing blockchain data and supporting onchain/offchain analytics.",
+      "chains": [
+        "C-Chain",
+        "Subnet"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/spaceandtime",
+      "importance": 3,
+      "importanceReason": "블록체인 데이터 인덱싱과 분석을 지원하는 탈중앙 데이터 웨어하우스로, Avalanche 데이터 활용에 의미가 있지만 긴급성은 낮다."
+    },
+    {
+      "id": "01a13643-d3aa-7508-867f-e972c03f9739",
+      "key": "spearbit",
+      "name": "Spearbit",
+      "category": "Audit Firms",
+      "developer": "Spearbit",
+      "websiteUrl": "https://spearbit.com/",
+      "documentationUrl": "https://cantina.xyz/portfolio?section=spearbit-guild",
+      "description": "Spearbit is a network of top security researchers providing smart contract audits through a decentralized model that matches projects with the right auditor expertise.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/spearbit",
+      "importance": 3,
+      "importanceReason": "스마트 컨트랙트 보안 감사 네트워크로 Avalanche 프로젝트의 보안에 기여하지만, 일반 사용자에게 직접적인 영향은 제한적이다."
+    },
+    {
+      "id": "01a13643-d3aa-7508-867f-ece596dfc421",
+      "key": "stork-oracle-integration",
+      "name": "Stork",
+      "category": "Oracles",
+      "developer": "Stork Labs",
+      "websiteUrl": "https://stork.network",
+      "documentationUrl": "https://docs.stork.network",
+      "description": "Stork is a low-latency oracle delivering verifiable price feeds for DeFi protocols on Avalanche",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/stork-oracle-integration",
+      "importance": 4,
+      "importanceReason": "Avalanche DeFi에 저지연 가격 피드를 제공하는 오라클로, DeFi 프로토콜 운영에 중요한 인프라다."
+    },
+    {
+      "id": "01a13643-d3ab-7080-a663-4ca86de05fd2",
+      "key": "straitsx",
+      "name": "StraitsX",
+      "category": "Assets",
+      "developer": "StraitsX",
+      "websiteUrl": "https://www.straitsx.com/",
+      "documentationUrl": "https://www.straitsx.com/",
+      "description": "StraitsX provides regulated stablecoins including XSGD (Singapore Dollar stablecoin), offering tokenized fiat currencies for Southeast Asian markets.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/straitsx",
+      "importance": 3,
+      "importanceReason": "싱가포르 달러 스테이블코인 XSGD 등을 통해 동남아 시장의 토큰화 법정화폐 수요를 겨냥하지만, Avalanche 생태계 내 채택 규모는 아직 제한적이다."
+    },
+    {
+      "id": "01a13643-d3ab-7080-a663-53f12172793d",
+      "key": "stripe",
+      "name": "Stripe",
+      "category": "Fiat On-Ramp",
+      "developer": "Stripe",
+      "websiteUrl": "https://stripe.com/",
+      "documentationUrl": "https://docs.stripe.com/crypto/onramp",
+      "description": "Stripe's fiat-to-crypto onramp enables users to securely purchase cryptocurrencies including AVAX and USDC directly from your platform or decentralized application.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/stripe",
+      "importance": 4,
+      "importanceReason": "Stripe의 법정화폐 온램프는 AVAX와 USDC 구매를 지원해 Avalanche로의 신규 사용자 유입에 실질적으로 기여할 수 있다."
+    },
+    {
+      "id": "01a13643-d3ac-7146-bf53-ce0fa517c120",
+      "key": "subquery",
+      "name": "SubQuery",
+      "category": "Indexers",
+      "developer": "SubQuery",
+      "websiteUrl": "https://subquery.network/indexer",
+      "documentationUrl": "https://academy.subquery.network/",
+      "description": "SubQuery's decentralized infrastructure makes your dApp lightning quick, infinitely scalable, and absolutely unstoppable.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/subquery",
+      "importance": 4,
+      "importanceReason": "Avalanche C-Chain을 지원하는 대표적인 인덱싱 인프라로, dApp 개발·운영에 실질적으로 필요하다. 다만 모든 생태계 참여자가 즉시 알아야 할 필수 정보는 아니라 4점."
+    },
+    {
+      "id": "01a13643-d3ac-7146-bf53-d08799ba16e0",
+      "key": "subsquid",
+      "name": "Subsquid",
+      "category": "Indexers",
+      "developer": "Subsquid",
+      "websiteUrl": "https://www.subsquid.io/",
+      "documentationUrl": "https://docs.subsquid.io/",
+      "description": "Subsquid is a decentralized data indexing network providing fast, customizable blockchain data access for Web3 applications.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/subsquid",
+      "importance": 4,
+      "importanceReason": "C-Chain과 모든 Avalanche L1을 지원하는 탈중앙화 인덱싱 네트워크로, L1 확장에 따라 중요성이 크다. 인덱싱 인프라로서 의미 있지만 긴급성이나 범위가 보편적이진 않아 4점."
+    },
+    {
+      "id": "01a13643-d3ad-71df-8ff9-74ff1c079408",
+      "key": "sumsub",
+      "name": "Sumsub",
+      "category": "KYC / Identity Verification",
+      "developer": "Sumsub",
+      "websiteUrl": "https://sumsub.com/",
+      "documentationUrl": "https://docs.sumsub.com/",
+      "description": "Sumsub is an identity verification platform that offers KYC/AML solutions for compliant user onboarding, well suited for txAllowlist implementations.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/sumsub",
+      "importance": 3,
+      "importanceReason": "KYC/AML 및 txAllowlist 구현에 적합한 신원인증 솔루션으로, 규제 준수형 Avalanche 활용에 도움이 된다. 다만 일반 생태계 참여자에게는 틈새 영역이라 3점."
+    },
+    {
+      "id": "01a13643-d3ae-7568-a597-6db02258b9a9",
+      "key": "supra",
+      "name": "Supra",
+      "category": "Oracles",
+      "developer": "Supra Labs",
+      "websiteUrl": "https://supra.com/",
+      "documentationUrl": "https://docs.supra.com/",
+      "description": "Supra is the first MultiVM Layer 1 with full vertical integration of Native Oracles, dVRF, bridging, automation — creating a unified platform for building Super dApps.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/supra",
+      "importance": 4,
+      "importanceReason": "Avalanche C-Chain을 지원하는 오라클·dVRF·자동화 통합 플랫폼으로, DeFi·게임 등에 필요한 인프라다. 오라클 경쟁 구도에서 의미 있지만 Avalanche 전체를 좌우할 정도는 아니라 4점."
+    },
+    {
+      "id": "01a13643-d3ad-71df-8ff9-78d5aeb14a16",
+      "key": "supra-vrf",
+      "name": "Supra dVRF",
+      "category": "VRF",
+      "developer": "Supra Labs",
+      "websiteUrl": "https://supra.com/",
+      "documentationUrl": "https://docs.supra.com/dvrf",
+      "description": "Supra dVRF work behind the scenes to make dApps more engaging, fair, and secure.",
+      "chains": [
+        "C-Chain",
+        "EVM L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/supra-vrf",
+      "importance": 3,
+      "importanceReason": "Avalanche C-Chain과 EVM L1에서 공정한 난수 생성이 필요한 dApp에 유용한 VRF 서비스다. 특정 사용 사례에 한정된 도구라 배경 지식 수준의 3점."
+    },
+    {
+      "id": "01a13643-d3ae-7568-a597-716efc65b6e9",
+      "key": "sushiswap",
+      "name": "SushiSwap",
+      "category": "DeFi",
+      "developer": "Sushi",
+      "websiteUrl": "https://www.sushi.com/",
+      "documentationUrl": "https://docs.sushi.com/",
+      "description": "SushiSwap is a multichain automated market maker (AMM) that enables users to trade, earn, and build on Avalanche's C-Chain.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/sushiswap",
+      "importance": 4,
+      "importanceReason": "Avalanche C-Chain에서 거래·유동성 공급을 지원하는 대표적인 멀티체인 AMM이다. DeFi 사용자에게 중요하지만 Avalanche 고유의 핵심 인프라는 아니어서 4점."
+    },
+    {
+      "id": "01a13643-d3af-73cc-9b72-cd73bbbdbc39",
+      "key": "suzaku",
+      "name": "Suzaku",
+      "category": "Validator Marketplace",
+      "developer": "Suzaku",
+      "websiteUrl": "https://suzaku.network",
+      "documentationUrl": "https://docs.suzaku.network",
+      "description": "Suzaku is the (re)staking protocol for sovereign networks.",
+      "chains": [
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/suzaku",
+      "importance": 4,
+      "importanceReason": "모든 Avalanche L1을 대상으로 하는 재스테이킹·검증자 마켓플레이스로, 소버린 네트워크 경제에 직접 관련된다. 생태계 방향성과 맞닿아 있으나 아직 확실성·보편성이 제한적이라 4점."
+    },
+    {
+      "id": "01a13643-d3af-73cc-9b72-d17737bd6b7d",
+      "key": "synapse",
+      "name": "Synapse Protocol",
+      "category": "Crosschain Solutions",
+      "developer": "Synapse Protocol",
+      "websiteUrl": "https://synapseprotocol.com/",
+      "documentationUrl": "https://docs.synapseprotocol.com/",
+      "description": "Synapse is a cross-chain liquidity network enabling asset bridging and swaps across 20+ blockchain networks with optimized routing and unified liquidity pools.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/synapse",
+      "importance": 4,
+      "importanceReason": "Avalanche C-Chain을 포함한 크로스체인 유동성·브리징 네트워크로, 자산 이동과 상호운용성에 기여한다. 브리지 경쟁이 많아 독보적이진 않지만 의미 있는 인프라라 4점."
+    },
+    {
+      "id": "01a13643-d3b0-75ca-843f-f105d674b6b0",
+      "key": "tatum",
+      "name": "Tatum",
+      "category": "Developer Tooling",
+      "developer": "Tatum",
+      "websiteUrl": "https://tatum.io/",
+      "documentationUrl": "https://docs.tatum.io/",
+      "description": "Tatum is a blockchain development platform providing unified APIs and SDKs for building Web3 applications across multiple networks.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/tatum",
+      "importance": 4,
+      "importanceReason": "C-Chain과 모든 Avalanche L1을 지원하는 개발자 API·SDK 플랫폼으로, Web3 앱 구축을 단순화한다. 개발 도구로서 유용하지만 모든 참여자가 알아야 할 필수 항목은 아니라 4점."
+    },
+    {
+      "id": "01a13643-d3b0-75ca-843f-f783a7529263",
+      "key": "taurus",
+      "name": "Taurus",
+      "category": "Custody",
+      "developer": "Taurus",
+      "websiteUrl": "https://www.taurusgroup.ch/",
+      "documentationUrl": "https://www.taurusgroup.ch/",
+      "description": "Taurus provides institutional-grade digital asset infrastructure including custody, trading, and tokenization solutions for financial institutions.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/taurus",
+      "importance": 3,
+      "importanceReason": "기관급 커스터디·토큰화 인프라를 Avalanche C-Chain과 L1에 제공해 기관 채택에 기여한다. 일반 사용자보다는 기관·규제 영역에 가까워 3점."
+    },
+    {
+      "id": "01a13643-d3b1-730e-b321-faba49d0bded",
+      "key": "tenderly",
+      "name": "Tenderly",
+      "category": "Development Infrastructure",
+      "developer": "Tenderly",
+      "websiteUrl": "https://tenderly.co/",
+      "documentationUrl": "https://docs.tenderly.co/",
+      "description": "Tenderly is a full-stack Web3 infrastructure platform that combines high-performance node services, mainnet-like development environments, and developer tools for building, testing, debugging, and scaling decentralized applications with real-time monitoring, transaction simulation, and automated security responses.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/tenderly",
+      "importance": 4,
+      "importanceReason": "Avalanche C-Chain과 모든 L1을 지원하는 개발 인프라로, 디버깅·시뮬레이션·모니터링 등 실무 활용도가 높다. 다만 Avalanche 전용은 아니므로 4점."
+    },
+    {
+      "id": "01a13643-d3b1-730e-b321-fc95cbe94307",
+      "key": "tesseract",
+      "name": "Tesseract",
+      "category": "Crosschain Solutions",
+      "developer": "Yield Yak Contributors",
+      "websiteUrl": "https://www.tesseract.finance/swap",
+      "documentationUrl": "https://docs.tesseract.finance/",
+      "description": "Avalanche's liquidity marketplace enabling fast asset movement and swaps across Avalanche and its ecosystem of L1s using ICM and ICTT technology.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/tesseract",
+      "importance": 4,
+      "importanceReason": "ICM/ICTT를 활용해 Avalanche와 L1 간 자산 이동·스왑을 지원하는 Avalanche 네이티브 크로스체인 유동성 마켓이다. 생태계 확장에 의미가 크지만 아직 확실성은 지켜봐야 해 4점."
+    },
+    {
+      "id": "01a13643-d3b2-73cc-9e33-c98acf2f972e",
+      "key": "the-graph",
+      "name": "The Graph",
+      "category": "Indexers",
+      "developer": "The Graph",
+      "websiteUrl": "https://thegraph.com/",
+      "documentationUrl": "https://thegraph.com/docs/",
+      "description": "The Graph is a decentralized indexing protocol that enables easy querying of blockchain data using GraphQL.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/the-graph",
+      "importance": 4,
+      "importanceReason": "C-Chain 데이터를 GraphQL로 인덱싱·쿼리할 수 있는 핵심 인덱싱 프로토콜이다. Avalanche dApp 개발에 널리 쓰이지만 Avalanche 고유 기술은 아니어서 4점."
+    },
+    {
+      "id": "01a13643-d3b2-73cc-9e33-cd871c82fc90",
+      "key": "thetie",
+      "name": "The TIE",
+      "category": "Analytics & Data",
+      "developer": "The TIE",
+      "websiteUrl": "https://thetie.io/",
+      "documentationUrl": "https://docs.thetie.io/",
+      "description": "The TIE provides real-time and historical data APIs for Avalanche, offering sentiment analysis, trading signals, and on-chain metrics through their SigDev Terminal.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/thetie",
+      "importance": 3,
+      "importanceReason": "Avalanche 실시간·과거 데이터 API와 감성 분석, 온체인 지표를 제공한다. 트레이더·기관에 유용하나 범위가 분석에 한정돼 3점."
+    },
+    {
+      "id": "01a13643-d3b3-75a3-b1d3-1dfcf70c2024",
+      "key": "thirdweb",
+      "name": "ThirdWeb",
+      "category": "Wallets and Account Abstraction",
+      "developer": "ThirdWeb",
+      "websiteUrl": "https://thirdweb.com/",
+      "documentationUrl": "https://portal.thirdweb.com/",
+      "description": "ThirdWeb provides a low-latency API for generating keys and signing transactions within secure hardware.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/thirdweb",
+      "importance": 4,
+      "importanceReason": "C-Chain과 모든 L1에서 키 생성·트랜잭션 서명을 지원하는 지갑/계정 추상화 인프라다. 개발자 접근성을 높이는 중요한 도구라 4점."
+    },
+    {
+      "id": "01a13643-d3b3-75a3-b1d3-1a91e852327e",
+      "key": "thirdweb-x402",
+      "name": "Thirdweb x402",
+      "category": "x402",
+      "developer": "Thirdweb",
+      "websiteUrl": "https://thirdweb.com/",
+      "documentationUrl": "https://portal.thirdweb.com/payments/x402/facilitator",
+      "description": "Thirdweb provides an x402 facilitator service that handles verifying and submitting x402 payments on Avalanche.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/thirdweb-x402",
+      "importance": 3,
+      "importanceReason": "Avalanche에서 x402 결제를 검증·제출하는 퍼실리테이터 서비스다. 결제 표준 실험으로 유망하지만 아직 틈새·초기 단계라 3점."
+    },
+    {
+      "id": "01a13643-d3b4-7458-85b4-e8d3380c5abf",
+      "key": "token-relations",
+      "name": "Token Relations",
+      "category": "Analytics & Data",
+      "developer": "Token Relations",
+      "websiteUrl": "https://www.token-relations.com/",
+      "documentationUrl": "https://www.token-relations.com/",
+      "description": "Token Relations provides advanced token analytics, relationship mapping, and on-chain data insights for the Avalanche ecosystem.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/token-relations",
+      "importance": 2,
+      "importanceReason": "Avalanche 토큰 분석과 관계 매핑, 온체인 인사이트를 제공하는 데이터 도구다. 실무 영향이 제한적인 틈새 분석 서비스라 2점."
+    },
+    {
+      "id": "01a13643-d3b4-7458-85b4-eee4ddbe23b5",
+      "key": "tokeny",
+      "name": "Tokeny",
+      "category": "Tokenization Platforms",
+      "developer": "Tokeny / Apex Group",
+      "websiteUrl": "https://tokeny.com/",
+      "documentationUrl": "https://docs.tokeny.com/",
+      "description": "Tokeny (now part of Apex Group) is a leading onchain finance platform enabling financial institutions to securely and compliantly issue, manage, and distribute tokenized securities using the ERC-3643 standard.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/tokeny",
+      "importance": 3,
+      "importanceReason": "ERC-3643 기반 토큰증권 발행·관리 플랫폼으로 기관용 RWA 토큰화에 강점이 있다. Avalanche 토큰화 서사에 의미 있지만 범위가 제한적이라 3점."
+    },
+    {
+      "id": "01a13643-d3b5-73f7-96e1-2ea605c95b78",
+      "key": "tomnext",
+      "name": "TomNext",
+      "category": "Tokenization Platforms",
+      "developer": "TomNext",
+      "websiteUrl": "https://www.tomnext.co/",
+      "documentationUrl": "https://www.tomnext.co/company",
+      "description": "TomNext is a discovery and management platform for wealth managers, advisors, and qualified investors to evaluate and access tokenized alternative assets across multiple issuers and blockchain networks.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/tomnext",
+      "importance": 2,
+      "importanceReason": "토큰화 대체자산을 탐색·관리하는 플랫폼으로 자산운용가·기관 투자자 대상이다. Avalanche 생태계 전반의 영향은 작은 틈새 서비스라 2점."
+    },
+    {
+      "id": "01a13643-d3b5-73f7-96e1-3359d0b421f7",
+      "key": "traceye",
+      "name": "Traceye",
+      "category": "Indexers",
+      "developer": "Traceye",
+      "websiteUrl": "https://traceye.io/",
+      "documentationUrl": "https://doc.traceye.io",
+      "description": "Traceye is a full-stack Blockchain indexing platform supporting multiple indexing protocols like 'The Graph' and 'Subquery Network'.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/traceye",
+      "importance": 2,
+      "importanceReason": "The Graph, SubQuery 등을 지원하는 풀스택 인덱싱 플랫폼이다. 개발자에게 유용하나 대체 가능한 틈새 도구라 2점."
+    },
+    {
+      "id": "01a13643-d3b6-72b9-a697-837b0507ee03",
+      "key": "trailofbits",
+      "name": "Trail of Bits",
+      "category": "Audit Firms",
+      "developer": "Trail of Bits",
+      "websiteUrl": "https://www.trailofbits.com/",
+      "documentationUrl": "https://www.trailofbits.com/services/software-assurance",
+      "description": "Trail of Bits is a leading security research firm providing smart contract audits, blockchain security assessments, and advanced security tooling for enterprise and Web3 protocols.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/trailofbits",
+      "importance": 4,
+      "importanceReason": "Avalanche 생태계 프로토콜의 보안 감사를 담당하는 최상위 보안 기업으로, 신뢰도와 안전성에 직접 영향을 준다. 다만 특정 Avalanche 업데이트나 즉각적 실행 이슈는 아니라 4점."
+    },
+    {
+      "id": "01a13643-d3b6-72b9-a697-862d3bf378ae",
+      "key": "transak",
+      "name": "Transak",
+      "category": "Fiat On-Ramp",
+      "developer": "Transak",
+      "websiteUrl": "https://transak.com/",
+      "documentationUrl": "https://docs.transak.com/",
+      "description": "Transak is a global fiat-to-crypto payment gateway that enables users to buy cryptocurrencies with fiat directly within your application.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/transak",
+      "importance": 4,
+      "importanceReason": "Avalanche C-Chain과 모든 L1에서 법정화폐 온램프를 제공해 신규 사용자 유입에 실질적으로 기여한다. 널리 쓰이는 인프라지만 긴급하거나 Avalanche 고유의 변화는 아니어서 4점."
+    },
+    {
+      "id": "01a13643-d3b7-728a-bf97-14dff4b55413",
+      "key": "transfero",
+      "name": "Transfero",
+      "category": "Assets",
+      "developer": "Transfero",
+      "websiteUrl": "https://www.transfero.com/",
+      "documentationUrl": "https://www.transfero.com/",
+      "description": "Transfero provides regulated stablecoins including BRZ (Brazilian Real stablecoin), offering tokenized fiat currencies for Latin American markets.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/transfero",
+      "importance": 3,
+      "importanceReason": "BRZ 등 규제 준수 스테이블코인으로 라틴아메리카 시장에서 Avalanche 자산 생태계를 넓힌다. 지역·자산 특화라 전체 생태계 필수 지식은 아니어서 3점."
+    },
+    {
+      "id": "01a13643-d3b7-728a-bf97-1a56d3b862fe",
+      "key": "truffle",
+      "name": "Truffle Suite",
+      "category": "Developer Tooling",
+      "developer": "Consensys",
+      "websiteUrl": "https://archive.trufflesuite.com/",
+      "documentationUrl": "https://archive.trufflesuite.com/docs/",
+      "description": "[Deprecated] Truffle Suite is a development environment for Ethereum and EVM-compatible smart contracts including testing and deployment tools.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/truffle",
+      "importance": 1,
+      "importanceReason": "이미 지원 종료된 개발 도구로 현재 Avalanche 개발 환경에서는 사실상 가치가 없다. 낡은 정보이므로 1점."
+    },
+    {
+      "id": "01a13643-d3b8-710a-998d-995a68c8c81c",
+      "key": "turnkey",
+      "name": "Turnkey",
+      "category": "Wallets and Account Abstraction",
+      "developer": "Turnkey",
+      "websiteUrl": "https://www.turnkey.com/",
+      "documentationUrl": "https://docs.turnkey.com/",
+      "description": "Turnkey provides programmable wallet infrastructure with secure key management for building Web3 applications.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/turnkey",
+      "importance": 4,
+      "importanceReason": "프로그래머블 지갑과 키 관리 인프라를 제공해 Avalanche 앱 개발·계정 추상화에 유용하다. 다만 모든 사용자가 즉시 알아야 할 핵심 뉴스는 아니어서 4점."
+    },
+    {
+      "id": "01a13643-d3b8-710a-998d-9f2ea811f5c7",
+      "key": "twinstake",
+      "name": "Twinstake",
+      "category": "Validator Infrastructure",
+      "developer": "Twinstake",
+      "websiteUrl": "https://twinstake.io/",
+      "documentationUrl": "https://docs.twinstake.io/",
+      "description": "Twinstake is an institutional digital asset staking provider offering secure validator infrastructure and staking-as-a-service.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/twinstake",
+      "importance": 3,
+      "importanceReason": "기관 대상 스테이킹 및 검증자 인프라로 Avalanche 네트워크 보안과 기관 참여에 기여한다. 틈새 기관 서비스 성격이 강해 배경 지식 수준인 3점."
+    },
+    {
+      "id": "01a13643-d3b9-70bf-b93d-36a1bf45965a",
+      "key": "ultravioletadao",
+      "name": "Ultravioleta DAO",
+      "category": "x402",
+      "developer": "Ultravioleta DAO",
+      "websiteUrl": "https://ultravioletadao.xyz",
+      "documentationUrl": "https://facilitator.ultravioletadao.xyz",
+      "description": "Ultravioleta DAO offers the x402 protocol, a payment infrastructure that enables monetization of AI agents and APIs on Avalanche.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/ultravioletadao",
+      "importance": 2,
+      "importanceReason": "x402 결제 프로토콜로 AI 에이전트·API 수익화를 Avalanche에 연결하려는 시도다. 아직 틈새·실험적 성격이 커 실무 영향은 제한적이므로 2점."
+    },
+    {
+      "id": "01a13643-d3b9-70bf-b93d-3b090bb5cd9c",
+      "key": "unlink",
+      "name": "Unlink",
+      "category": "Privacy",
+      "developer": "Unlink",
+      "websiteUrl": "https://www.unlink.xyz/",
+      "documentationUrl": "https://docs.unlink.xyz/",
+      "description": "Unlink adds private accounts to applications on existing chains — users own, send, receive, and interact with contracts without exposing balances, tokens, amounts, or transaction history, using zero-knowledge proofs.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/unlink",
+      "importance": 3,
+      "importanceReason": "영지식 증명 기반 프라이버시 계정을 Avalanche 앱에 추가해 거래 내역·잔액 노출을 줄인다. 프라이버시는 의미 있지만 아직 선택적·틈새 기능에 가까워 3점."
+    },
+    {
+      "id": "01a13643-d3ba-75fb-9ed5-d52964203a62",
+      "key": "van-eck",
+      "name": "Van Eck",
+      "category": "Assets",
+      "developer": "Van Eck",
+      "websiteUrl": "https://www.vaneck.com/",
+      "documentationUrl": "https://www.vaneck.com/us/en/digital-assets/",
+      "description": "Van Eck is a global investment management firm offering tokenized funds including VBILL, providing innovative blockchain-based investment solutions.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/van-eck",
+      "importance": 4,
+      "importanceReason": "VBILL 등 토큰화 펀드를 통해 전통 금융 자산을 Avalanche로 끌어오는 대형 운용사다. RWA·기관 자금 유입 측면에서 의미 있지만 즉각적 실행 이슈는 아니어서 4점."
+    },
+    {
+      "id": "01a13643-d3ba-75fb-9ed5-db580ee93481",
+      "key": "vialabs",
+      "name": "VIA Labs",
+      "category": "Crosschain Solutions",
+      "developer": "VIA Labs",
+      "websiteUrl": "https://vialabs.tech/",
+      "documentationUrl": "https://developer.vialabs.tech/docs/",
+      "description": "VIA Labs enables Avalanche L1s to integrate cross-chain USDC with Proto-USD, leveraging Avalanche's ICM infrastructure and Circle's CCTP.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/vialabs",
+      "importance": 4,
+      "importanceReason": "Avalanche L1들이 ICM과 CCTP를 활용해 크로스체인 USDC와 Proto-USD를 통합하도록 돕는다. L1 상호운용성에 중요한 인프라지만 특정 개발자·L1 대상이라 4점."
+    },
+    {
+      "id": "01a13643-d3bb-761e-9bab-6a6488069514",
+      "key": "vnx",
+      "name": "VNX",
+      "category": "Assets",
+      "developer": "VNX",
+      "websiteUrl": "https://vnx.li/",
+      "documentationUrl": "https://docs.vnx.li/",
+      "description": "VNX provides regulated stablecoins including VEUR and VCHF, offering tokenized fiat currencies backed by traditional financial infrastructure.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/vnx",
+      "importance": 3,
+      "importanceReason": "규제 준수 스테이블코인 VEUR/VCHF를 C-Chain에 제공해 DeFi와 RWA에 기여할 수 있지만, 아발란체 생태계 전반을 바꿀 만큼의 영향력은 아직 제한적이다. 알아둘 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d3bb-761e-9bab-6eed9471c6f0",
+      "key": "web3auth",
+      "name": "Web3Auth",
+      "category": "Developer Tooling",
+      "developer": "Web3Auth",
+      "websiteUrl": "https://web3auth.io/",
+      "documentationUrl": "https://web3auth.io/docs/",
+      "description": "Web3Auth provides authentication infrastructure enabling social logins and passwordless authentication for Web3 applications.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/web3auth",
+      "importance": 4,
+      "importanceReason": "소셜 로그인과 패스워드리스 인증으로 아발란체 dApp 온보딩 장벽을 낮추는 핵심 개발 도구다. 다만 아발란체 전용은 아니어서 5점까지는 아니다."
+    },
+    {
+      "id": "01a13643-d3bc-7015-80e4-7c270445a888",
+      "key": "whitewallet",
+      "name": "Whitewallet",
+      "category": "Wallets and Account Abstraction",
+      "developer": "Whitewallet",
+      "websiteUrl": "https://whitewallet.app/?utm_source=avax_eco&utm_campaign=catalogues",
+      "documentationUrl": "https://whitewallet.app/?utm_source=avax_eco&utm_campaign=catalogues",
+      "description": "Secure, non-custodial multi-chain wallet for managing, swapping, and exploring Web3 assets.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/whitewallet",
+      "importance": 2,
+      "importanceReason": "C-Chain을 지원하는 멀티체인 지갑이지만 차별화나 생태계 영향력이 크지 않아 실무 영향이 작다. 틈새 도구로 분류된다."
+    },
+    {
+      "id": "01a13643-d3bc-7015-80e4-83d6d73b0d50",
+      "key": "wisdomtree",
+      "name": "WisdomTree",
+      "category": "Assets",
+      "developer": "WisdomTree",
+      "websiteUrl": "https://www.wisdomtree.com/",
+      "documentationUrl": "https://www.wisdomtree.com/digital-assets",
+      "description": "WisdomTree is a global financial innovator offering exchange-traded products, a blockchain-native app (WisdomTree Prime), and institutional platform (WisdomTree Connect) bridging traditional finance with tokenized real-world assets.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/wisdomtree",
+      "importance": 4,
+      "importanceReason": "대형 전통 금융사가 토큰화 RWA와 기관용 플랫폼을 C-Chain에 연결한다는 점에서 아발란체 RWA 서사에 의미가 크다. 다만 즉각적·광범위한 실행 단계는 더 지켜봐야 한다."
+    },
+    {
+      "id": "01a13643-d3bd-7188-b798-810c5d6c1030",
+      "key": "wormhole",
+      "name": "Wormhole",
+      "category": "Crosschain Solutions",
+      "developer": "Wormhole Foundation",
+      "websiteUrl": "https://wormhole.com/",
+      "documentationUrl": "https://docs.wormhole.com/",
+      "description": "Wormhole is a leading interoperability platform powering multichain applications, messaging, and native token transfers across 30+ blockchains with secure, permissionless infrastructure.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/wormhole",
+      "importance": 5,
+      "importanceReason": "30개 이상 체인을 잇는 대표 상호운용성 플랫폼으로 C-Chain 자산·메시징에 광범위하게 쓰인다. 아발란체 생태계를 따라가는 사람이라면 반드시 알아야 할 인프라다."
+    },
+    {
+      "id": "01a13643-d3be-76b2-b51e-06c2ad369021",
+      "key": "wyre",
+      "name": "Wyre",
+      "category": "Fiat On-Ramp",
+      "developer": "Wyre",
+      "websiteUrl": "https://wyre.studiofreight.com/",
+      "documentationUrl": "https://docs.sendwyre.com/",
+      "description": "[Deprecated] Wyre offers powerful APIs for fiat-to-crypto on-ramp and off-ramp solutions, enabling users to purchase and sell cryptocurrencies directly within applications.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/wyre",
+      "importance": 1,
+      "importanceReason": "설명에 Deprecated로 표시된 서비스라 현재 아발란체 생태계에서 실질적 가치가 없다. 낡은 정보에 해당한다."
+    },
+    {
+      "id": "01a13643-d3be-76b2-b51e-0930c8258d35",
+      "key": "x402-rs",
+      "name": "x402-rs",
+      "category": "x402",
+      "developer": "x402-rs",
+      "websiteUrl": "https://github.com/x402-rs/x402-rs",
+      "documentationUrl": "https://github.com/x402-rs/x402-rs",
+      "description": "A Rust-based implementation of the x402 protocol for accepting blockchain payments through HTTP on Avalanche.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/x402-rs",
+      "importance": 2,
+      "importanceReason": "아발란체에서 HTTP 기반 결제를 가능하게 하는 x402 프로토콜의 Rust 구현이지만 아직 틈새 도구에 가깝다. 실무 영향은 제한적이고 추측성 요소가 있다."
+    },
+    {
+      "id": "01a13643-d3bf-700b-8aba-ab0f79dfee79",
+      "key": "xangle",
+      "name": "Xangle",
+      "category": "Development Infrastructure",
+      "developer": "Xangle",
+      "websiteUrl": "https://infra.xangle.io/hub",
+      "documentationUrl": "https://business.xangle.io/",
+      "description": "Xangle provides blockchain infrastructure solutions including node services, custom block explorers, and the Xangle Hub, helping projects deploy, monitor, and scale on Avalanche and beyond. Analytics and market insights are also available.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/xangle",
+      "importance": 3,
+      "importanceReason": "노드 서비스, 커스텀 익스플로러, 분석 허브 등 아발란체 프로젝트 운영에 도움되는 인프라를 제공한다. 다만 생태계 전체를 좌우할 만큼의 긴급성은 낮다."
+    },
+    {
+      "id": "01a13643-d3bf-700b-8aba-ad5e3d1a1c58",
+      "key": "zeeve",
+      "name": "Zeeve",
+      "category": "Blockchain as a Service",
+      "developer": "Zeeve",
+      "websiteUrl": "https://www.zeeve.io/appchains/avalanche-subnets/",
+      "documentationUrl": "https://docs.zeeve.io/",
+      "description": "Build and Deploy Avalanche L1s with plug-and-play dev tools and Zeeve infrastructure platform.",
+      "chains": [
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/zeeve",
+      "importance": 3,
+      "importanceReason": "아발란체 L1을 플러그앤플레이로 배포·운영할 수 있게 돕는 BaaS로 L1 생태계에 유용하다. 다만 모든 사용자가 알아야 할 핵심은 아니어서 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d3c0-76c0-b40e-74ce89cf7395",
+      "key": "zellic",
+      "name": "Zellic",
+      "category": "Security Audits",
+      "developer": "Zellic",
+      "websiteUrl": "https://zellic.io/",
+      "documentationUrl": null,
+      "description": "Zellic provides highly recommended security audits with deep expertise in VM audits and advanced cybersecurity techniques.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/zellic",
+      "importance": 3,
+      "importanceReason": "VM 감사와 고급 보안 기술에 강점을 가진 감사 업체로 아발란체 L1·C-Chain 보안에 기여한다. 보안은 중요하지만 일상적 실행보다는 참고할 배경 지식에 가깝다."
+    },
+    {
+      "id": "01a13643-d3c0-76c0-b40e-78606f66714c",
+      "key": "zerion",
+      "name": "Zerion",
+      "category": "Analytics & Data",
+      "developer": "Zerion",
+      "websiteUrl": "https://zerion.io/api/",
+      "documentationUrl": "https://developers.zerion.io/introduction",
+      "description": "Zerion API gives wallet balances, DeFi positions, decoded transaction history, NFTs, PnL and token prices for Avalanche C-Chain addresses through one REST API.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/zerion",
+      "importance": 3,
+      "importanceReason": "Avalanche C-Chain 주소의 잔고, DeFi 포지션, 거래 내역 등을 한 API로 제공하는 데이터 인프라로, 생태계 분석에 유용하지만 Avalanche 전용은 아니어서 배경 지식 수준이다."
+    },
+    {
+      "id": "01a13643-d3c1-76af-ba81-25facee151a6",
+      "key": "zerodev",
+      "name": "ZeroDev",
+      "category": "Wallets and Account Abstraction",
+      "developer": "ZeroDev",
+      "websiteUrl": "https://zerodev.app/",
+      "documentationUrl": "https://docs.zerodev.app/",
+      "description": "ZeroDev is an account abstraction toolkit that enables developers to build applications with smart accounts, gasless transactions, and session keys.",
+      "chains": [
+        "C-Chain",
+        "All Avalanche L1s"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/zerodev",
+      "importance": 4,
+      "importanceReason": "스마트 계정, 가스리스 트랜잭션, 세션 키를 지원하는 계정 추상화 툴킷으로 C-Chain과 모든 Avalanche L1을 지원해 개발자 UX 개선에 의미가 크다."
+    },
+    {
+      "id": "01a13643-d3c1-76af-ba81-2a34806a8314",
+      "key": "zerohash",
+      "name": "Zero Hash",
+      "category": "Fiat On-Ramp",
+      "developer": "Zero Hash",
+      "websiteUrl": "https://zerohash.com/",
+      "documentationUrl": "https://docs.zerohash.com/",
+      "description": "Zero Hash provides enterprise-grade infrastructure for crypto trading, tokenization, payments, and on-ramp/off-ramp solutions across 200+ countries with full regulatory compliance.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/zerohash",
+      "importance": 3,
+      "importanceReason": "200개국 이상에서 규제 준수 기반 법정화폐 온·오프램프를 제공하는 기업용 인프라로, C-Chain 접근성 확대에 기여하지만 Avalanche 고유의 긴급 이슈는 아니다."
+    },
+    {
+      "id": "01a13643-d3c2-70fe-b3e4-1d2de0d077ad",
+      "key": "zkme",
+      "name": "Zk.Me",
+      "category": "KYC / Identity Verification",
+      "developer": "Zk.Me",
+      "websiteUrl": "https://zk.me/",
+      "documentationUrl": "https://zk.me/",
+      "description": "Zk.Me provides zero-knowledge proof (ZKP) based KYC solutions for privacy-preserving identity verification on blockchain platforms.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/zkme",
+      "importance": 2,
+      "importanceReason": "ZKP 기반 KYC로 프라이버시 보존 신원 인증을 제공하지만, Avalanche 생태계 전반에 미치는 실무 영향은 제한적인 틈새 도구다."
+    },
+    {
+      "id": "01a13643-d3c2-70fe-b3e4-2338e741a98c",
+      "key": "zokyo",
+      "name": "Zokyo",
+      "category": "Audit Firms",
+      "developer": "Zokyo",
+      "websiteUrl": "https://www.zokyo.io/",
+      "documentationUrl": "https://www.zokyo.io/services",
+      "description": "Zokyo provides blockchain security services including smart contract audits, penetration testing, and continuous security monitoring for protocols across multiple ecosystems.",
+      "chains": [
+        "C-Chain"
+      ],
+      "sourceUrl": "https://build.avax.network/integrations/zokyo",
+      "importance": 2,
+      "importanceReason": "스마트 컨트랙트 감사와 보안 모니터링을 제공하는 감사 업체로, 보안은 중요하나 다수 업체 중 하나라 Avalanche 생태계를 따라가는 일반인에게는 틈새 정보다."
+    }
+  ],
+  "categories": [
+    {
+      "name": "Assets",
+      "count": 21
+    },
+    {
+      "name": "Wallets and Account Abstraction",
+      "count": 16
+    },
+    {
+      "name": "Analytics & Data",
+      "count": 15
+    },
+    {
+      "name": "Crosschain Solutions",
+      "count": 12
+    },
+    {
+      "name": "DeFi",
+      "count": 12
+    },
+    {
+      "name": "Fiat On-Ramp",
+      "count": 12
+    },
+    {
+      "name": "RPC Endpoints",
+      "count": 11
+    },
+    {
+      "name": "Validator Infrastructure",
+      "count": 11
+    },
+    {
+      "name": "Explorers",
+      "count": 10
+    },
+    {
+      "name": "KYC / Identity Verification",
+      "count": 10
+    },
+    {
+      "name": "Indexers",
+      "count": 9
+    },
+    {
+      "name": "Payments",
+      "count": 9
+    },
+    {
+      "name": "Audit Firms",
+      "count": 8
+    },
+    {
+      "name": "Developer Tooling",
+      "count": 8
+    },
+    {
+      "name": "Oracles",
+      "count": 8
+    },
+    {
+      "name": "Security Audits",
+      "count": 8
+    },
+    {
+      "name": "Tokenization Platforms",
+      "count": 8
+    },
+    {
+      "name": "Blockchain as a Service",
+      "count": 6
+    },
+    {
+      "name": "Custody",
+      "count": 6
+    },
+    {
+      "name": "Stablecoins as a Service",
+      "count": 6
+    },
+    {
+      "name": "x402",
+      "count": 6
+    },
+    {
+      "name": "Development Infrastructure",
+      "count": 3
+    },
+    {
+      "name": "Token Aggregators",
+      "count": 3
+    },
+    {
+      "name": "VRF",
+      "count": 3
+    },
+    {
+      "name": "Data Feeds",
+      "count": 2
+    },
+    {
+      "name": "Hardware Wallets",
+      "count": 2
+    },
+    {
+      "name": "Privacy",
+      "count": 2
+    },
+    {
+      "name": "Security Tooling",
+      "count": 2
+    },
+    {
+      "name": "Validator Marketplace",
+      "count": 2
+    },
+    {
+      "name": "Chain Abstraction",
+      "count": 1
+    },
+    {
+      "name": "Enterprise Solutions",
+      "count": 1
+    },
+    {
+      "name": "Mini-Apps",
+      "count": 1
+    },
+    {
+      "name": "Orchestrators",
+      "count": 1
+    }
+  ],
+  "total": 235,
+  "generatedAt": "2026-10-17T02:41:22.302Z"
+}

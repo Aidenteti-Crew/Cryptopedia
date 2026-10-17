@@ -6,6 +6,7 @@ import { rememberDiscoveryScroll } from './discovery-state'
 import { HUB_ENTRY_IDS, isHubEntry, type HubData } from '@/lib/cryptopedia-hub'
 
 import { createCryptopediaRepository, type CryptopediaRepository } from '@/lib/cryptopedia-data'
+import { createSnapshotFetch } from '@/lib/cryptopedia-live-snapshot'
 import {
   CHAPTER_NAV,
   PRIMARY_NAV,
@@ -106,7 +107,10 @@ type LoadState =
   | { status: 'ready'; view: LoadedView }
   | { status: 'error'; message: string }
 
-const repository = createCryptopediaRepository()
+/* API 주소가 없는 배포(Vercel 데모)는 LIVE 화면을 굳힌 응답(public/cryptopedia/live)으로 그린다 */
+const repository = process.env.NEXT_PUBLIC_API_URL
+  ? createCryptopediaRepository()
+  : createCryptopediaRepository(createSnapshotFetch(), '')
 
 const NAV_SCREEN_IDS = new Set<ScreenId>([
   ...PRIMARY_NAV.map((item) => item.id),
