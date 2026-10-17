@@ -48,12 +48,6 @@ export function DevelopmentChangelog({
           <ol className="mt-4 list-none space-y-3 p-0">
             {items.map((entry) => {
               const products = updateProducts(entry)
-              const color =
-                entry.subKind === 'RELEASE'
-                  ? 'text-[#a2d7c1]'
-                  : entry.subKind === 'BLOG'
-                    ? 'text-[#c7b2e7]'
-                    : 'text-[#a9bde9]'
               return (
                 <li
                   key={entry.id}
@@ -69,12 +63,8 @@ export function DevelopmentChangelog({
                     )}
                     <span
                       data-color={updateContentColor(entry)}
-                      className={`editorial-color-badge ${color}`}
+                      className="editorial-color-badge"
                     >
-                      <span
-                        aria-hidden="true"
-                        className="h-1.5 w-1.5 shrink-0 rounded-full bg-current"
-                      />
                       {updateKindLabel(entry)}
                     </span>
                   </div>
@@ -101,7 +91,7 @@ export function DevelopmentChangelog({
                             type="button"
                             aria-label={`${p.name} 업데이트만 보기`}
                             onClick={() => onProductSelect(p.id)}
-                            className="rounded-full border border-white/10 bg-white/[.035] px-2.5 py-1 text-[var(--editorial-accent)] hover:border-[var(--editorial-accent)]"
+                            className="border border-white/10 bg-white/[.035] px-2.5 py-1 text-[var(--editorial-accent)] hover:border-[var(--editorial-accent)]"
                           >
                             {p.name}
                           </button>
@@ -115,7 +105,7 @@ export function DevelopmentChangelog({
                         </span>
                       )}
                       {entry.changeFlags?.map((flag) => (
-                        <span key={flag.kind} className="text-[#ddcca5]">
+                        <span key={flag.kind} className="text-[var(--editorial-accent)]">
                           {CHANGE_LABELS[flag.kind]}
                         </span>
                       ))}

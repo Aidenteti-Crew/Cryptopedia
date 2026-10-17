@@ -27,8 +27,8 @@ test('about shows build paths, pulse and learning list after the intro moves to 
   assert.doesNotMatch(html, /하나의 생태계, 다양한 블록체인의 가능성\.|나는 어떤 Avalanche 빌더일까\?|4 QUESTIONS · ABOUT 1 MINUTE/)
   assert.match(html, /EVM 앱 개발/)
   assert.match(html, /나만의 Avalanche L1/)
-  assert.match(html, /체인 기초/)
-  assert.match(html, /빌더 라이브러리/)
+  assert.match(html, /핵심 개념/)
+  assert.match(html, /에이전트 스킬/)
   assert.match(html, /아카데미/)
   // the previous home sections are gone
   assert.doesNotMatch(html, /Buzz Distribution|사람이 공부하기|최신 소식 슬라이드/)
@@ -46,7 +46,7 @@ test('build paths are concise and only claim what the site really has', () => {
   // L1 / Interchain: honest that dedicated material is not ready, once per card
   assert.equal((build.match(/전용 학습 자료는 준비 중이며/g) ?? []).length, 2)
   // each card ends in links to screens that exist
-  assert.match(build, /빌더 라이브러리 <svg/)
+  assert.match(build, /코드·도구 레퍼런스 <svg/)
   assert.equal((build.match(/공식 문서 <svg/g) ?? []).length, 2)
   // no removed bullets, no new documents, no promises of exercises
   assert.doesNotMatch(build, /관련 아카데미 및 공식 문서로 연결|관련 공식 문서 및 학습 콘텐츠로 연결|준비 중 · |L1 입문|Interchain 입문|실습을 제공/)

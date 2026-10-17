@@ -14,7 +14,7 @@ export function CollectionPage({ data, onOpenEntry }: CollectionPageProps) {
       {/* 구체 그래픽은 Avalanche 대표 페이지(VOLUME 01) 헤더 안에서만 — 목차 영역은 침범하지 않는다.
           헤더를 오른쪽·위쪽 여백까지 확장(-mr/-mt)해 화면 가장자리에서 잘리게 한다. */}
       <header className="relative -mr-5 -mt-4 overflow-hidden pb-7 pr-5 pt-4 sm:-mr-8 sm:pr-8 lg:-mr-[52px] lg:min-h-[236px] lg:pr-[52px]">
-        {data.volume === 1 && <BrandSpheres className="w-full sm:w-[62%] lg:w-[56%]" />}
+        {/* {data.volume === 1 && <BrandSpheres className="w-full sm:w-[62%] lg:w-[56%]" />} */}
         <div className="relative">
           <h1 className="editorial-chapter-title text-[44px] leading-[1.15] text-[var(--editorial-ink)] lg:text-[56px]">
             {data.title}
@@ -30,16 +30,16 @@ export function CollectionPage({ data, onOpenEntry }: CollectionPageProps) {
         </div>
       </header>
 
-        <div className="border-t border-[var(--editorial-line)] pt-5">
-          <h2 className="text-base leading-6 text-[var(--editorial-ink)]">
-            {data.sectionTitle}
-            <span className="px-2">/</span>
-            <span className="tabular-nums">{String(data.entries.length).padStart(2, '0')}</span>
-          </h2>
-          <div className="mt-4">
-            <ContentEntryList entries={data.entries} onOpen={onOpenEntry} />
+      <div className="border-t border-[var(--editorial-line)] pt-5">
+        <h2 className="text-base leading-6 text-[var(--editorial-ink)]">
+          {data.sectionTitle}
+          <span className="px-2">/</span>
+          <span className="tabular-nums">{String(data.entries.length).padStart(2, '0')}</span>
+        </h2>
+        <div className="mt-4">
+          <ContentEntryList entries={data.entries} onOpen={onOpenEntry} />
         </div>
-        </div>
-      </article>
-    )
-  }
+      </div>
+    </article>
+  )
+}

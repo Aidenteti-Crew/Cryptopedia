@@ -1,45 +1,28 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { CalendarDays, Code2, Globe2, Layers3, Search, X } from 'lucide-react'
+import { Search, X } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
 
-const THEMES = {
-  projects: { Icon: Layers3 },
-  macro: { Icon: Globe2 },
-  events: { Icon: CalendarDays },
-  updates: { Icon: Code2 },
-}
-
+/* 페이지 제목 — 장식 아이콘 없이 제목·개수·설명만 (생태계 홈·챕터 페이지와 같은 조용한 톤) */
 export function DiscoveryHeader({
   title,
   description,
-  theme,
   count,
 }: {
   title: string
   description: string
-  theme: keyof typeof THEMES
   count: number
 }) {
-  const { Icon } = THEMES[theme]
   return (
-    <header className="flex items-center gap-4 pb-7 sm:gap-5">
-      <span
-        data-tone={theme}
-        className="discovery-tone-icon flex h-14 w-14 shrink-0 items-center justify-center rounded-[18px] border sm:h-[68px] sm:w-[68px]"
-      >
-        <Icon size={28} strokeWidth={1.5} />
-      </span>
-      <div className="min-w-0">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <h1 className="text-[28px] font-semibold leading-tight tracking-[-.7px] sm:text-[34px]">
-            {title}
-          </h1>
-          <span className="text-xs tabular-nums text-[var(--editorial-muted)]">{count}개</span>
-        </div>
-        <p className="mt-2 text-sm leading-6 text-[var(--editorial-muted)]">{description}</p>
+    <header className="pb-7">
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <h1 className="text-[28px] font-semibold leading-tight tracking-[-.7px] sm:text-[34px]">
+          {title}
+        </h1>
+        <span className="font-mono text-xs tabular-nums text-[var(--editorial-muted)]">{count}</span>
       </div>
+      <p className="mt-2 text-sm leading-6 text-[var(--editorial-muted)]">{description}</p>
     </header>
   )
 }
@@ -126,7 +109,7 @@ export function DiscoveryChips({
           key={item.label}
           type="button"
           onClick={item.remove}
-          className="inline-flex items-center gap-2 rounded-full bg-[#cebd91]/10 px-3 py-1.5 text-xs text-[#ddcca5]"
+          className="inline-flex items-center gap-2 bg-[var(--discovery-selection)] px-3 py-1.5 text-xs text-[var(--editorial-accent)]"
         >
           {item.label}
           <X size={12} />

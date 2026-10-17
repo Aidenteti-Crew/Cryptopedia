@@ -22,7 +22,7 @@ const raw = JSON.parse(
 const data = hubSchema.parse(raw)
 
 test('validates the complete connected demo and rejects missing references and duplicate identities', () => {
-  assert.equal(data.cases.length, 3)
+  assert.equal(data.cases.length, 4)
   assert.equal(data.demo, true)
   assert.equal(
     data.updates.every((update) => update.isDemo),
@@ -57,7 +57,7 @@ test('loads the selected chain through the repository and validates data before 
     requested.push(String(url))
     return new Response(JSON.stringify(raw))
   }) as typeof fetch)
-  assert.equal((await repository.getHub('avalanche')).cases.length, 3)
+  assert.equal((await repository.getHub('avalanche')).cases.length, 4)
   assert.deepEqual(requested, ['/cryptopedia/hub.json'])
 })
 
@@ -83,6 +83,13 @@ test('all navigation targets and connected items resolve to their intended paren
   assert.equal(resolveParentScreen('project-viem'), 'projects')
   assert.equal(resolveParentScreen('skill-chain-reader'), 'builders')
   assert.equal(resolveParentScreen('change-network-guide'), 'updates')
+  // 공식 문서·강의는 핵심 개념, 코드·도구 자료만 에이전트 스킬 소속
+  for (const resource of data.resources)
+    assert.equal(
+      resolveParentScreen(resource.id),
+      resource.kind === 'CODE' || resource.kind === 'TOOL' ? 'builders' : 'fundamentals',
+      resource.id
+    )
 })
 
 test('downloads only selected skills belonging to the case, with sources and completion criteria', () => {

@@ -5,6 +5,8 @@ import { BookOpen, ChevronDown, Code2, Globe, GraduationCap } from "lucide-react
 
 import {
   CHAPTER_NAV,
+  ECOSYSTEM_HOME_NAV,
+  NAV_SECTION_LABELS,
   PRIMARY_NAV,
   type ScreenId,
 } from "@/lib/cryptopedia-taxonomy"
@@ -16,7 +18,8 @@ import {
 ───────────────────────────────────────────── */
 
 export interface EditorialIndexProps {
-  activeScreen: ScreenId
+  /** 현재 화면 — 목차 밖 화면(/about 등)에서는 비워 둔다 */
+  activeScreen?: ScreenId
   /** 문서 상세를 보고 있을 때 그 문서 id — 해당 하위 항목을 활성으로 표시 */
   activeEntryId?: string
   onSelect: (screen: ScreenId) => void
@@ -52,11 +55,11 @@ const CHAPTER_ICON: Partial<Record<ScreenId, ReactNode>> = {
 const SECTIONS: SectionDef[] = [
   {
     id: "ecosystem",
-    label: "ECOSYSTEM",
+    label: NAV_SECTION_LABELS.live,
     groups: [
       {
         id: "ecosystem",
-        label: "생태계 홈",
+        label: ECOSYSTEM_HOME_NAV.label,
         icon: <Globe size={ICON_SIZE} strokeWidth={1.6} />,
         childKind: "screen",
         children: PRIMARY_NAV.map((item) => ({ id: item.id, label: item.label })),
@@ -65,7 +68,7 @@ const SECTIONS: SectionDef[] = [
   },
   {
     id: "chapters",
-    label: "CHAPTERS",
+    label: NAV_SECTION_LABELS.learn,
     groups: CHAPTER_NAV.map((item) => ({
       id: item.id,
       label: item.label,
@@ -84,7 +87,8 @@ const DEFAULT_COLLAPSED: Record<string, boolean> = {
   academy: true,
 }
 
-function groupOf(screen: ScreenId, entryId?: string): ScreenId | null {
+function groupOf(screen: ScreenId | undefined, entryId?: string): ScreenId | null {
+  if (!screen) return null
   for (const section of SECTIONS) {
     for (const group of section.groups) {
       if (group.id === screen) return group.id
@@ -144,7 +148,7 @@ function NavButton({
       {icon && (
         <span className="flex h-4 w-4 shrink-0 items-center justify-center">{icon}</span>
       )}
-      <span className="min-w-0 flex-1 whitespace-pre-wrap">{label}</span>
+      <span className="min-w-0 flex-1">{label}</span>
       {hasToggle && (
         <span
           role="button"
@@ -172,7 +176,11 @@ export function EditorialIndex({
   onOpenEntry,
   className = "",
 }: EditorialIndexProps) {
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>(DEFAULT_COLLAPSED)
+  // 주소로 바로 들어와도 첫 화면부터 현재 그룹이 펼쳐져 있게 (접혔다 펼쳐지는 깜빡임 없이)
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() => {
+    const group = groupOf(activeScreen, activeEntryId)
+    return group ? { ...DEFAULT_COLLAPSED, [group]: false } : DEFAULT_COLLAPSED
+  })
 
   /* 현재 보고 있는 화면이 속한 그룹은 자동으로 펼친다 (닫지는 않는다 → 메뉴가 튀지 않음) */
   useEffect(() => {

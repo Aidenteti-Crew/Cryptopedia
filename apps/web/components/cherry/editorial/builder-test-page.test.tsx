@@ -235,9 +235,9 @@ test('bottom actions: a filled primary start button, and a quieter underlined re
 test('each type\'s path points at the documents and screens specified for it', () => {
   // (static markup cannot click — the click flow itself is covered by running the page in a browser)
   const target = (id: string) => typeOf(id).path.map((step) => step.target.id)
-  assert.deepEqual(target('maker'), ['builders', 'mcp-tools', 'skill-library'])
+  assert.deepEqual(target('maker'), ['code-reference', 'mcp-tools', 'skill-library'])
   assert.deepEqual(target('analyst'), ['fundamentals', 'validator-structure'])
-  assert.deepEqual(target('architect'), ['structure', 'official-docs'])
+  assert.deepEqual(target('architect'), ['pcx-chains', 'official-docs'])
   assert.deepEqual(target('connector'), ['official-docs'])
 })
 

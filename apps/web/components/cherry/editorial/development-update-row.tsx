@@ -102,7 +102,7 @@ export function DevelopmentUpdateRow({
       )}
       <div className={compact ? 'hidden' : 'mt-3 flex flex-wrap items-center gap-x-4 gap-y-1'}>
         {entry.changeFlags?.map((flag) => (
-          <span key={flag.kind} className="text-[11px] font-medium text-[#ddcca5]">
+          <span key={flag.kind} className="text-[11px] font-medium text-[var(--editorial-accent)]">
             {CHANGE_LABELS[flag.kind]}
           </span>
         ))}

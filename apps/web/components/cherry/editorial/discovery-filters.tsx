@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, type ReactNode } from 'react'
-import { SlidersHorizontal, X, type LucideIcon } from 'lucide-react'
+import { SlidersHorizontal, X } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger, PopoverClose } from '@/components/ui/popover'
 
 export function DiscoveryFilterPanel({
@@ -37,7 +37,7 @@ export function DiscoveryFilterPanel({
         <SlidersHorizontal size={16} />
         {label}
         {count > 0 && (
-          <span className="rounded-full bg-[var(--discovery-selection)] px-1.5 py-0.5 text-[10px] tabular-nums">
+          <span className="bg-[var(--discovery-selection)] px-1.5 py-0.5 text-[10px] tabular-nums">
             {count}
           </span>
         )}
@@ -179,13 +179,7 @@ export function DiscoveryTypeBar({
   label: string
   value: string
   onChange: (value: string) => void
-  options: {
-    value: string
-    label: string
-    Icon?: LucideIcon
-    color?: string
-    background?: string
-  }[]
+  options: { value: string; label: string }[]
   children?: ReactNode
 }) {
   return (
@@ -195,32 +189,17 @@ export function DiscoveryTypeBar({
         aria-label={label}
         className="flex min-w-0 flex-1 gap-1 overflow-x-auto [scrollbar-width:none] sm:gap-4 [&::-webkit-scrollbar]:hidden"
       >
-        {options.map(
-          ({
-            value: option,
-            label: caption,
-            Icon,
-            color = 'text-[#c4cbd4]',
-            background = 'bg-white/[.06]',
-          }) => (
-            <button
-              key={option}
-              type="button"
-              aria-pressed={value === option}
-              onClick={() => onChange(option)}
-              className={`relative flex min-h-11 shrink-0 items-center gap-2 px-2 py-2 text-xs transition-colors sm:text-sm ${value === option ? 'font-semibold text-[var(--editorial-ink)] after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-[var(--editorial-accent)]' : 'text-[var(--editorial-muted)] hover:text-white'}`}
-            >
-              {Icon && (
-                <span
-                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md ${color} ${background}`}
-                >
-                  <Icon size={15} strokeWidth={1.7} />
-                </span>
-              )}
-              <span className="whitespace-nowrap">{caption}</span>
-            </button>
-          )
-        )}
+        {options.map(({ value: option, label: caption }) => (
+          <button
+            key={option}
+            type="button"
+            aria-pressed={value === option}
+            onClick={() => onChange(option)}
+            className={`relative flex min-h-11 shrink-0 items-center gap-2 px-2 py-2 text-xs transition-colors sm:text-sm ${value === option ? 'font-semibold text-[var(--editorial-ink)] after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-[var(--editorial-accent)]' : 'text-[var(--editorial-muted)] hover:text-white'}`}
+          >
+            <span className="whitespace-nowrap">{caption}</span>
+          </button>
+        ))}
       </div>
       {children}
     </div>

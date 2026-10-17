@@ -43,6 +43,140 @@
       "name": "Ethereum Developer Documentation",
       "url": "https://ethereum.org/en/developers/docs/",
       "origin": "STANDARD"
+    },
+    {
+      "id": "source-primary-network-docs",
+      "name": "Primary Network — Official Docs",
+      "url": "https://build.avax.network/docs/primary-network",
+      "origin": "OFFICIAL",
+      "materialType": "DOCS",
+      "reviewStatus": "CHECKED",
+      "checkedAt": "2026-10-17"
+    },
+    {
+      "id": "source-avalanche-l1-docs",
+      "name": "Avalanche L1s — Official Docs",
+      "url": "https://build.avax.network/docs/avalanche-l1s",
+      "origin": "OFFICIAL",
+      "materialType": "DOCS",
+      "reviewStatus": "CHECKED",
+      "checkedAt": "2026-10-17"
+    },
+    {
+      "id": "source-acp-77",
+      "name": "ACP-77: Reinventing Subnets",
+      "url": "https://github.com/avalanche-foundation/ACPs/blob/main/ACPs/77-reinventing-subnets/README.md",
+      "origin": "OFFICIAL",
+      "materialType": "ACP",
+      "reviewStatus": "CHECKED",
+      "checkedAt": "2026-10-17"
+    },
+    {
+      "id": "source-avalanche-fundamentals-course",
+      "name": "Avalanche Fundamentals — Academy",
+      "url": "https://build.avax.network/academy/avalanche-l1/avalanche-fundamentals",
+      "origin": "OFFICIAL",
+      "materialType": "ACADEMY",
+      "reviewStatus": "CHECKED",
+      "checkedAt": "2026-10-17"
+    },
+    {
+      "id": "source-avalanche-l1s-course",
+      "name": "Avalanche L1s — Multi-Chain Architecture lesson",
+      "url": "https://build.avax.network/academy/avalanche-l1/avalanche-fundamentals/03-multi-chain-architecture-intro/03-L1",
+      "origin": "OFFICIAL",
+      "materialType": "ACADEMY",
+      "reviewStatus": "CHECKED",
+      "checkedAt": "2026-10-17"
+    },
+    {
+      "id": "source-network-architecture-course",
+      "name": "Network Architecture — Academy lesson",
+      "url": "https://build.avax.network/academy/avalanche-l1/avalanche-fundamentals/04-creating-an-l1/03-network-architecture",
+      "origin": "OFFICIAL",
+      "materialType": "ACADEMY",
+      "reviewStatus": "COMPARE_REQUIRED",
+      "checkedAt": "2026-10-17",
+      "reviewNote": "Subnet 용어와 변환 절차가 포함되어 있습니다. 현행 L1 문서와 대조한 뒤 절차 자료로 사용하세요."
+    },
+    {
+      "id": "source-avalanchego-architecture",
+      "name": "AvalancheGo Architecture — Official Docs",
+      "url": "https://build.avax.network/docs/nodes/architecture",
+      "origin": "OFFICIAL",
+      "materialType": "DOCS",
+      "reviewStatus": "CHECKED",
+      "checkedAt": "2026-10-17"
+    },
+    {
+      "id": "source-acp-99",
+      "name": "ACP-99: Validator Manager Solidity Standard",
+      "url": "https://github.com/avalanche-foundation/ACPs/blob/main/ACPs/99-validatorsetmanager-contract/README.md",
+      "origin": "OFFICIAL",
+      "materialType": "ACP",
+      "reviewStatus": "CHECKED",
+      "checkedAt": "2026-10-17"
+    },
+    {
+      "id": "source-validator-manager-docs",
+      "name": "Validator Manager Contracts — Official Docs",
+      "url": "https://build.avax.network/docs/avalanche-l1s/validator-manager/contract",
+      "origin": "OFFICIAL",
+      "materialType": "DOCS",
+      "reviewStatus": "CHECKED",
+      "checkedAt": "2026-10-17"
+    },
+    {
+      "id": "source-l1-registration-docs",
+      "name": "Add a Validator to an L1 — Official Docs",
+      "url": "https://build.avax.network/docs/avalanche-l1s/validator-manager/registration-flow",
+      "origin": "OFFICIAL",
+      "materialType": "DOCS",
+      "reviewStatus": "CHECKED",
+      "checkedAt": "2026-10-17"
+    },
+    {
+      "id": "source-avalanche-consensus-docs",
+      "name": "Avalanche Consensus — Official Docs",
+      "url": "https://build.avax.network/docs/primary-network/avalanche-consensus",
+      "origin": "OFFICIAL",
+      "materialType": "DOCS",
+      "reviewStatus": "CHECKED",
+      "checkedAt": "2026-10-17"
+    },
+    {
+      "id": "source-avalanche-consensus-course",
+      "name": "Avalanche Consensus — Academy lesson",
+      "url": "https://build.avax.network/academy/avalanche-l1/avalanche-fundamentals/02-avalanche-consensus-intro/01-avalanche-consensus-intro",
+      "origin": "OFFICIAL",
+      "materialType": "ACADEMY",
+      "reviewStatus": "CHECKED",
+      "checkedAt": "2026-10-17"
+    },
+    {
+      "id": "source-avalanche-staking-docs",
+      "name": "How to Stake — Official Docs",
+      "url": "https://build.avax.network/docs/primary-network/validate/how-to-stake",
+      "origin": "OFFICIAL",
+      "materialType": "DOCS",
+      "reviewStatus": "CHECKED",
+      "checkedAt": "2026-10-17"
+    },
+    {
+      "id": "source-ethereum-consensus",
+      "name": "Consensus Mechanisms — ethereum.org",
+      "url": "https://ethereum.org/developers/docs/consensus-mechanisms/",
+      "origin": "STANDARD",
+      "materialType": "STANDARD",
+      "checkedAt": "2026-10-17"
+    },
+    {
+      "id": "source-ethereum-pos",
+      "name": "Proof-of-Stake — ethereum.org",
+      "url": "https://ethereum.org/developers/docs/consensus-mechanisms/pos/",
+      "origin": "STANDARD",
+      "materialType": "STANDARD",
+      "checkedAt": "2026-10-17"
     }
   ],
   "categories": [
@@ -201,8 +335,7 @@
       "detail": "공식 MCP는 읽기 전용 조회 도구입니다. Cryptopedia는 목적별 지침과 근거를 묶어 이 도구를 활용하도록 안내합니다.",
       "website": "https://build.avax.network/docs/tooling/ai-llm/mcp-server",
       "conceptIds": [
-        "concept-rpc",
-        "concept-provenance"
+        "concept-rpc"
       ],
       "caseIds": [
         "case-ecosystem-research",
@@ -232,7 +365,7 @@
         "source-avalanche"
       ],
       "kind": "DOCS",
-      "body": "체인 기초를 읽은 뒤 현재 목적에 맞는 Builder Hub 문서로 이동하세요. 테스트 환경과 운영 환경은 구분해서 기록합니다.",
+      "body": "핵심 개념을 읽은 뒤 현재 목적에 맞는 Builder Hub 문서로 이동하세요. 테스트 환경과 운영 환경은 구분해서 기록합니다.",
       "conceptIds": [
         "concept-network"
       ],
@@ -340,7 +473,6 @@
       "kind": "TOOL",
       "body": "연결 설정은 에이전트 클라이언트에서 적용합니다. 공식 MCP는 읽기 전용이며 로컬 배포 명령을 대신 실행하지 않습니다.",
       "conceptIds": [
-        "concept-provenance",
         "concept-rpc"
       ],
       "caseIds": [
@@ -393,15 +525,317 @@
       ],
       "kind": "ARTICLE",
       "body": "이 글은 Cryptopedia가 구성한 데모 학습 안내입니다. 개념은 공통으로 읽고, 네트워크·도구·실행 조건은 해당 체인의 공식 자료에서 확인합니다.",
-      "conceptIds": [
-        "concept-provenance"
-      ],
+      "conceptIds": [],
       "caseIds": [
         "case-ecosystem-research"
       ],
       "skillIds": [
         "skill-ecosystem-research"
       ],
+      "projectIds": []
+    },
+    {
+      "id": "resource-primary-network-docs",
+      "title": "Primary Network: P·C·X 체인",
+      "summary": "Primary Network의 세 체인이 맡은 역할과 서로의 관계를 설명하는 공식 개요.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-primary-network-docs"
+      ],
+      "kind": "DOCS",
+      "body": "Avalanche Primary Network는 P-Chain, C-Chain, X-Chain을 함께 운영합니다. 각 체인의 목적을 구분하고, 상세 동작은 체인별 공식 문서에서 확인하세요.",
+      "conceptIds": [
+        "concept-primary-network",
+        "concept-p-chain",
+        "concept-c-chain",
+        "concept-x-chain"
+      ],
+      "caseIds": [
+        "case-primary-network-map"
+      ],
+      "skillIds": [
+        "skill-primary-network-map"
+      ],
+      "projectIds": []
+    },
+    {
+      "id": "resource-avalanche-l1-docs",
+      "title": "Avalanche L1: 독립 네트워크 구조",
+      "summary": "L1의 검증자·규칙과 Primary Network P-Chain의 연결을 정리하는 공식 문서.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-avalanche-l1-docs",
+        "source-acp-77"
+      ],
+      "kind": "DOCS",
+      "body": "Avalanche L1은 자체 규칙과 검증자 집합을 가질 수 있습니다. 한 L1이 여러 블록체인을 검증할 수도 있습니다. Etna 이후 검증 방식과 P-Chain 동기화 범위를 원문에서 확인하세요.",
+      "conceptIds": [
+        "concept-primary-network",
+        "concept-avalanche-l1",
+        "concept-l1-validator"
+      ],
+      "caseIds": [
+        "case-primary-network-map"
+      ],
+      "skillIds": [
+        "skill-primary-network-map"
+      ],
+      "projectIds": []
+    },
+    {
+      "id": "resource-acp-77",
+      "title": "ACP-77: L1 검증 방식의 설계 근거",
+      "summary": "Primary Network 검증과 L1 검증을 분리한 프로토콜 제안을 확인합니다.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-acp-77"
+      ],
+      "kind": "DOCS",
+      "body": "L1 검증자 집합 관리, P-Chain과 주고받는 검증자 정보, 연속 수수료의 설계 근거를 설명하는 ACP입니다. 실제 네트워크 상태와 적용 방법은 최신 공식 Docs와 함께 확인하세요.",
+      "conceptIds": [
+        "concept-avalanche-l1",
+        "concept-l1-validator",
+        "concept-validator-manager"
+      ],
+      "caseIds": [
+        "case-primary-network-map"
+      ],
+      "skillIds": [
+        "skill-primary-network-map"
+      ],
+      "projectIds": []
+    },
+    {
+      "id": "resource-avalanche-fundamentals-course",
+      "title": "Avalanche Fundamentals",
+      "summary": "Avalanche 합의, 다중 체인 구조, VM을 다루는 공식 입문 과정.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-avalanche-fundamentals-course"
+      ],
+      "kind": "COURSE",
+      "body": "공식 과정의 전체 강의와 순서는 Avalanche Academy에서 확인하세요. Cryptopedia는 관련 개념을 연결하는 학습 경로만 제공합니다.",
+      "conceptIds": [
+        "concept-primary-network",
+        "concept-avalanche-l1"
+      ],
+      "caseIds": [],
+      "skillIds": [],
+      "projectIds": []
+    },
+    {
+      "id": "resource-academy-l1s-intro",
+      "title": "Avalanche L1s: 개념 수업",
+      "summary": "Avalanche L1의 독립성과 다중 체인 구조를 소개하는 공식 강의.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-avalanche-l1s-course"
+      ],
+      "kind": "COURSE",
+      "body": "공식 Academy 강의를 열어 전체 설명을 확인하고, 이 페이지의 개념 지도에서 Primary Network와의 관계를 이어서 살펴보세요.",
+      "conceptIds": [
+        "concept-primary-network",
+        "concept-avalanche-l1"
+      ],
+      "caseIds": [],
+      "skillIds": [],
+      "projectIds": []
+    },
+    {
+      "id": "resource-academy-network-architecture",
+      "title": "Network Architecture: P-Chain과 L1 생성 수업",
+      "summary": "P-Chain 역할과 L1 구성을 설명하는 공식 Academy 강의.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-network-architecture-course"
+      ],
+      "kind": "COURSE",
+      "body": "이 강의는 P-Chain을 통한 네트워크 등록과 변환 흐름을 소개합니다. 원문에 Subnet 용어가 포함되어 있으므로, 현재 L1을 만드는 절차에 적용하기 전에 최신 공식 Docs와 대조하세요.",
+      "conceptIds": [
+        "concept-p-chain",
+        "concept-avalanche-l1",
+        "concept-l1-validator"
+      ],
+      "caseIds": [],
+      "skillIds": [],
+      "projectIds": []
+    },
+    {
+      "id": "resource-avalanchego-architecture",
+      "title": "AvalancheGo Architecture",
+      "summary": "노드 구성 요소와 체인 실행 구조를 살펴보는 공식 기술 문서.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-avalanchego-architecture"
+      ],
+      "kind": "DOCS",
+      "body": "네트워크·체인 관리자·합의 엔진·VM·API의 역할을 연결해서 설명합니다. Primary Network 개요를 읽은 뒤 구조를 더 깊게 볼 때 참고하세요.",
+      "conceptIds": [
+        "concept-primary-network",
+        "concept-p-chain"
+      ],
+      "caseIds": [],
+      "skillIds": [],
+      "projectIds": []
+    },
+    {
+      "id": "resource-acp-99",
+      "title": "ACP-99: Validator Manager 표준",
+      "summary": "Avalanche L1 검증자 관리 컨트랙트의 공통 인터페이스 제안.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-acp-99",
+        "source-acp-77"
+      ],
+      "kind": "DOCS",
+      "body": "ACP-77에서 도입한 L1 검증자 집합 관리 흐름을 EVM 기반 Validator Manager에서 다루기 위한 표준입니다. ACP-77을 먼저 이해한 뒤 읽으세요.",
+      "conceptIds": [
+        "concept-avalanche-l1",
+        "concept-l1-validator",
+        "concept-validator-manager"
+      ],
+      "caseIds": [],
+      "skillIds": [],
+      "projectIds": []
+    },
+    {
+      "id": "resource-validator-manager",
+      "title": "Validator Manager Contracts",
+      "summary": "ACP-77/ACP-99와 연결되는 공식 계약 구현 자료.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-validator-manager-docs",
+        "source-acp-99"
+      ],
+      "kind": "CODE",
+      "body": "Validator Manager가 검증자 등록과 집합 변경을 어떻게 관리하는지 살펴봅니다. 실제 코드 사용 전 저장소·계약 버전과 감사 정보를 확인하세요.",
+      "conceptIds": [
+        "concept-l1-validator",
+        "concept-validator-manager"
+      ],
+      "caseIds": [],
+      "skillIds": [],
+      "projectIds": []
+    },
+    {
+      "id": "resource-l1-registration",
+      "title": "Add a Validator to an L1",
+      "summary": "L1 검증자 등록을 단계별로 설명하는 공식 절차와 코드 예제.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-l1-registration-docs",
+        "source-acp-77",
+        "source-acp-99"
+      ],
+      "kind": "DOCS",
+      "body": "L1 계약, Warp 메시지, 집계 서명, P-Chain 등록이 연결되는 흐름을 설명합니다. SDK 패키지와 코드 예제의 버전을 확인하고, 이 데모에서는 트랜잭션을 실행하지 않습니다.",
+      "conceptIds": [
+        "concept-p-chain",
+        "concept-l1-validator",
+        "concept-validator-manager"
+      ],
+      "caseIds": [
+        "case-primary-network-map"
+      ],
+      "skillIds": [
+        "skill-primary-network-map"
+      ],
+      "projectIds": []
+    },
+    {
+      "id": "resource-avalanche-consensus",
+      "title": "Avalanche 합의: Snowman",
+      "summary": "무작위 표본에 반복해서 묻는 방식으로 몇 초 안에 최종 확정하는 Avalanche 합의 설명.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-avalanche-consensus-docs",
+        "source-avalanche-consensus-course"
+      ],
+      "kind": "DOCS",
+      "body": "합의가 푸는 문제, 반복 무작위 표본 조회의 원리, Snowman 구현과 최종 확정 특성을 다루는 공식 문서입니다. 합의 파라미터 같은 세부 값은 공식 문서에서 최신 내용을 확인하세요.",
+      "conceptIds": [
+        "concept-consensus",
+        "concept-validator"
+      ],
+      "caseIds": [],
+      "skillIds": [],
+      "projectIds": []
+    },
+    {
+      "id": "resource-avalanche-staking",
+      "title": "Primary Network 스테이킹",
+      "summary": "Primary Network 검증자가 되기 위한 예치 조건과 보상 기준을 설명하는 공식 문서.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-avalanche-staking-docs"
+      ],
+      "kind": "DOCS",
+      "body": "검증자의 역할, 최소 예치량과 기간, 보상을 받기 위한 응답 조건을 다룹니다. 예치 기간 같은 값은 네트워크 업그레이드로 바뀔 수 있으니 공식 문서의 현재 값을 확인하세요.",
+      "conceptIds": [
+        "concept-validator"
+      ],
+      "caseIds": [],
+      "skillIds": [],
       "projectIds": []
     }
   ],
@@ -643,35 +1077,334 @@
       ]
     },
     {
-      "id": "concept-provenance",
-      "title": "출처·적용 범위",
-      "summary": "정보의 작성자와 적용 가능한 환경을 따로 확인하는 방법.",
+      "id": "concept-primary-network",
+      "title": "Primary Network",
+      "summary": "P-Chain, C-Chain, X-Chain을 함께 운영하는 Avalanche의 기본 네트워크.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-primary-network-docs",
+        "source-avalanche-l1-docs"
+      ],
+      "body": "Primary Network는 P-Chain, C-Chain, X-Chain으로 이루어져 있습니다. Avalanche L1과의 관계를 볼 때는 이 세 체인 각각의 역할과 Primary Network의 검증자 집합을 구분하세요.",
+      "relations": [
+        {
+          "id": "concept-p-chain",
+          "type": "SUBTOPIC"
+        },
+        {
+          "id": "concept-c-chain",
+          "type": "SUBTOPIC"
+        },
+        {
+          "id": "concept-x-chain",
+          "type": "SUBTOPIC"
+        },
+        {
+          "id": "concept-avalanche-l1",
+          "type": "RELATED"
+        },
+        {
+          "id": "concept-consensus",
+          "type": "RELATED"
+        }
+      ],
+      "resourceIds": [
+        "resource-primary-network-docs",
+        "resource-avalanche-l1-docs",
+        "resource-avalanche-fundamentals-course"
+      ],
+      "caseIds": [
+        "case-primary-network-map"
+      ],
+      "skillIds": [
+        "skill-primary-network-map"
+      ]
+    },
+    {
+      "id": "concept-p-chain",
+      "title": "P-Chain",
+      "summary": "검증자와 Avalanche 네트워크 수준의 작업을 관리하는 Platform Chain.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-primary-network-docs",
+        "source-avalanche-l1-docs",
+        "source-network-architecture-course"
+      ],
+      "body": "P-Chain은 Primary Network의 플랫폼 작업을 담당하며 L1 관련 검증자 정보와 네트워크 작업이 연결되는 지점입니다. P-Chain 자체는 C-Chain의 EVM과 다른 실행 환경을 사용합니다.",
+      "relations": [
+        {
+          "id": "concept-primary-network",
+          "type": "PREREQUISITE"
+        },
+        {
+          "id": "concept-avalanche-l1",
+          "type": "RELATED"
+        }
+      ],
+      "resourceIds": [
+        "resource-primary-network-docs",
+        "resource-academy-network-architecture",
+        "resource-l1-registration"
+      ],
+      "caseIds": [
+        "case-primary-network-map"
+      ],
+      "skillIds": [
+        "skill-primary-network-map"
+      ]
+    },
+    {
+      "id": "concept-c-chain",
+      "title": "C-Chain",
+      "summary": "EVM 기반 스마트 컨트랙트를 실행하는 Contract Chain.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-primary-network-docs"
+      ],
+      "body": "C-Chain은 EVM 호환 환경에서 스마트 컨트랙트를 실행합니다. P-Chain의 네트워크 관리 역할과 구별하고, EVM 공통 개발 도구는 Avalanche 전용 기능과 적용 범위를 나누어 확인하세요.",
+      "relations": [
+        {
+          "id": "concept-primary-network",
+          "type": "PREREQUISITE"
+        },
+        {
+          "id": "concept-evm",
+          "type": "RELATED"
+        }
+      ],
+      "resourceIds": [
+        "resource-primary-network-docs"
+      ],
+      "caseIds": [],
+      "skillIds": []
+    },
+    {
+      "id": "concept-x-chain",
+      "title": "X-Chain",
+      "summary": "Primary Network에서 자산 기능을 담당하는 Exchange Chain.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-primary-network-docs"
+      ],
+      "body": "X-Chain은 Primary Network의 한 체인입니다. C-Chain의 스마트 컨트랙트 실행과 P-Chain의 플랫폼 관리 역할과 나누어 이해하세요. 세부 기능과 현재 상태는 공식 체인 문서를 기준으로 확인합니다.",
+      "relations": [
+        {
+          "id": "concept-primary-network",
+          "type": "PREREQUISITE"
+        }
+      ],
+      "resourceIds": [
+        "resource-primary-network-docs"
+      ],
+      "caseIds": [],
+      "skillIds": []
+    },
+    {
+      "id": "concept-avalanche-l1",
+      "title": "Avalanche L1",
+      "summary": "자체 규칙과 검증자 집합으로 운영되는 Avalanche 네트워크.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-avalanche-l1-docs",
+        "source-acp-77",
+        "source-avalanche-l1s-course"
+      ],
+      "body": "Avalanche L1은 자체 검증자 집합과 실행 규칙을 가질 수 있고, 한 L1은 여러 블록체인을 검증할 수 있습니다. L1 검증자는 Primary Network 검증자와 역할 및 요구 조건이 같지 않습니다.",
+      "relations": [
+        {
+          "id": "concept-primary-network",
+          "type": "PREREQUISITE"
+        },
+        {
+          "id": "concept-p-chain",
+          "type": "RELATED"
+        },
+        {
+          "id": "concept-l1-validator",
+          "type": "SUBTOPIC"
+        }
+      ],
+      "resourceIds": [
+        "resource-avalanche-l1-docs",
+        "resource-acp-77",
+        "resource-academy-l1s-intro",
+        "resource-academy-network-architecture"
+      ],
+      "caseIds": [
+        "case-primary-network-map"
+      ],
+      "skillIds": [
+        "skill-primary-network-map"
+      ]
+    },
+    {
+      "id": "concept-l1-validator",
+      "title": "L1 Validator",
+      "summary": "특정 Avalanche L1의 블록체인을 검증하는 노드 운영자.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-avalanche-l1-docs",
+        "source-acp-77",
+        "source-l1-registration-docs"
+      ],
+      "body": "Etna 이후 L1 검증 방식은 Primary Network 검증과 구분됩니다. 검증자가 동기화해야 하는 체인, 등록 절차, 수수료와 보안 조건은 변경될 수 있으므로 실행 전에 최신 L1 공식 Docs와 해당 ACP를 확인하세요.",
+      "relations": [
+        {
+          "id": "concept-avalanche-l1",
+          "type": "PREREQUISITE"
+        },
+        {
+          "id": "concept-validator",
+          "type": "PREREQUISITE"
+        },
+        {
+          "id": "concept-p-chain",
+          "type": "RELATED"
+        },
+        {
+          "id": "concept-validator-manager",
+          "type": "SUBTOPIC"
+        }
+      ],
+      "resourceIds": [
+        "resource-avalanche-l1-docs",
+        "resource-acp-77",
+        "resource-l1-registration"
+      ],
+      "caseIds": [
+        "case-primary-network-map"
+      ],
+      "skillIds": [
+        "skill-primary-network-map"
+      ]
+    },
+    {
+      "id": "concept-validator-manager",
+      "title": "Validator Manager",
+      "summary": "L1의 검증자 집합 변경을 관리하고 P-Chain과 연동하는 구성 요소.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-acp-77",
+        "source-acp-99",
+        "source-validator-manager-docs"
+      ],
+      "body": "Validator Manager는 L1의 검증자 등록·가중치 변경 같은 작업을 관리할 수 있습니다. ACP-77은 P-Chain 연동의 프로토콜 기반을, ACP-99는 EVM 계약의 공통 표준을 설명합니다.",
+      "relations": [
+        {
+          "id": "concept-l1-validator",
+          "type": "PREREQUISITE"
+        },
+        {
+          "id": "concept-p-chain",
+          "type": "RELATED"
+        }
+      ],
+      "resourceIds": [
+        "resource-acp-77",
+        "resource-acp-99",
+        "resource-validator-manager",
+        "resource-l1-registration"
+      ],
+      "caseIds": [
+        "case-primary-network-map"
+      ],
+      "skillIds": [
+        "skill-primary-network-map"
+      ]
+    },
+    {
+      "id": "concept-consensus",
+      "title": "합의",
+      "summary": "네트워크 참여자들이 공유 원장에 어떤 변경을 반영할지 하나로 맞추는 방식.",
       "scope": {
         "kind": "BLOCKCHAIN",
         "chainIds": []
       },
       "sourceIds": [
-        "source-avalanche",
-        "source-ethereum"
+        "source-ethereum-consensus",
+        "source-avalanche-consensus-docs",
+        "source-avalanche-consensus-course"
       ],
-      "body": "공식 출처라는 사실과 특정 작업에 적용 가능하다는 사실은 별개입니다. 출처 주소·확인 시점·지원 환경을 결과에 남깁니다.",
+      "body": "블록체인은 중앙 관리자 없이 여러 노드가 같은 원장을 유지하므로, 어떤 거래를 어떤 순서로 확정할지 합의해야 합니다. 합의 방식에 따라 확정까지 걸리는 시간과, 확정된 결과가 되돌려질 수 있는지(완결성)가 달라집니다. Avalanche는 무작위로 고른 일부 검증자에게 반복해서 묻는 방식(Snowman 합의)을 쓰며, 공식 문서는 수락·거부가 몇 초 안에 최종 확정되어 되돌릴 수 없다고 설명합니다.",
       "relations": [
         {
-          "id": "concept-rpc",
+          "id": "concept-validator",
+          "type": "SUBTOPIC"
+        },
+        {
+          "id": "concept-primary-network",
           "type": "RELATED"
         }
       ],
       "resourceIds": [
-        "resource-build-guide",
-        "resource-mcp"
+        "resource-avalanche-consensus"
       ],
-      "caseIds": [
-        "case-ecosystem-research"
+      "caseIds": [],
+      "skillIds": []
+    },
+    {
+      "id": "concept-validator",
+      "title": "검증자",
+      "summary": "자산을 예치하고 합의에 참여해 거래를 검증하고 블록을 만드는 노드.",
+      "scope": {
+        "kind": "BLOCKCHAIN",
+        "chainIds": []
+      },
+      "sourceIds": [
+        "source-ethereum-pos",
+        "source-avalanche-staking-docs"
       ],
-      "skillIds": [
-        "skill-ecosystem-research",
-        "skill-avalanche-mcp"
-      ]
+      "body": "지분증명 계열 체인에서 검증자는 자산을 예치(스테이킹)하고 합의에 참여하며, 예치한 양이 합의에서의 영향력과 보상에 연결됩니다. Avalanche Primary Network에서는 공식 문서 기준 최소 2,000 AVAX를 예치해야 검증자가 될 수 있고, 검증 기간 동안 90% 이상 응답해야 보상을 받습니다. 체인 전용 개념인 L1 Validator는 이 공통 개념 위에서, L1마다 따로 운영되는 검증자 집합을 다룹니다.",
+      "relations": [
+        {
+          "id": "concept-consensus",
+          "type": "PREREQUISITE"
+        },
+        {
+          "id": "concept-l1-validator",
+          "type": "EXTENDS"
+        }
+      ],
+      "resourceIds": [
+        "resource-avalanche-staking"
+      ],
+      "caseIds": [],
+      "skillIds": []
     }
   ],
   "skills": [
@@ -812,9 +1545,7 @@
       "resourceIds": [
         "resource-mcp"
       ],
-      "conceptIds": [
-        "concept-provenance"
-      ]
+      "conceptIds": []
     },
     {
       "id": "skill-ecosystem-research",
@@ -847,8 +1578,53 @@
         "resource-build-guide",
         "resource-avalanche-start"
       ],
+      "conceptIds": []
+    },
+    {
+      "id": "skill-primary-network-map",
+      "title": "Primary Network와 L1 구조 조사",
+      "summary": "공식 출처를 대조해 Primary Network와 Avalanche L1의 차이를 설명하는 조사 지침.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-primary-network-docs",
+        "source-avalanche-l1-docs",
+        "source-acp-77"
+      ],
+      "type": "skill",
+      "environment": "문서 조회가 가능한 LLM 에이전트. 지갑 연결, RPC 호출, 트랜잭션 실행은 필요하지 않습니다.",
+      "content": "1. Primary Network 공식 Docs와 Avalanche L1 공식 Docs를 먼저 확인합니다.\n2. 프로토콜 세부 주장이 필요하면 ACP-77을 대조하고, 계약 표준은 ACP-99를 별도로 확인합니다.\n3. Primary Network validator와 L1 validator의 책임·동기화·등록 흐름을 구분해 요약합니다.\n4. Academy 자료에서 Subnet 용어나 변환 절차가 나오면 현행 Docs와 대조한 뒤 차이를 표시합니다.\n5. 시간에 따라 바뀌는 수치나 절차는 추정하지 말고 출처 링크와 확인 날짜를 함께 적습니다.\n6. 출처에서 확인되지 않는 내용은 사실처럼 보충하지 않습니다.",
+      "inputs": [
+        "조사할 네트워크 또는 검증자 질문",
+        "원하는 깊이: 입문 / 구현 / 운영"
+      ],
+      "outputs": [
+        "Primary Network와 L1 역할 비교",
+        "선행 개념과 읽기 순서",
+        "공식 출처 링크 및 확인 날짜",
+        "확인하지 못한 항목 목록"
+      ],
+      "checks": [
+        "P-Chain·C-Chain·X-Chain 역할을 혼동하지 않았는가",
+        "Primary Network validator와 L1 validator를 구분했는가",
+        "절차·수치는 공식 Docs 또는 ACP 근거가 있는가",
+        "오래된 Academy 절차를 현행 절차라고 단정하지 않았는가"
+      ],
+      "resourceIds": [
+        "resource-primary-network-docs",
+        "resource-avalanche-l1-docs",
+        "resource-acp-77"
+      ],
       "conceptIds": [
-        "concept-provenance"
+        "concept-primary-network",
+        "concept-p-chain",
+        "concept-avalanche-l1",
+        "concept-l1-validator",
+        "concept-validator-manager"
       ]
     }
   ],
@@ -973,9 +1749,7 @@
         {
           "title": "결과 해석하기",
           "body": "조회 결과와 해석을 구분하고 실패 경로를 기록합니다.",
-          "conceptIds": [
-            "concept-provenance"
-          ],
+          "conceptIds": [],
           "resourceIds": [
             "resource-build-guide"
           ]
@@ -1017,9 +1791,7 @@
         {
           "title": "목표 정하기",
           "body": "필요한 결과물과 조사할 분야를 정합니다.",
-          "conceptIds": [
-            "concept-provenance"
-          ],
+          "conceptIds": [],
           "resourceIds": [
             "resource-build-guide"
           ]
@@ -1037,9 +1809,7 @@
         {
           "title": "공식 자료로 확인",
           "body": "MCP 또는 원문에서 지원 환경을 확인하고 근거를 남깁니다.",
-          "conceptIds": [
-            "concept-provenance"
-          ],
+          "conceptIds": [],
           "resourceIds": [
             "resource-mcp"
           ]
@@ -1057,6 +1827,71 @@
         "공식 자료 링크 포함",
         "미확인 사항 구분",
         "목표에 맞는 다음 실습 연결"
+      ]
+    },
+    {
+      "id": "case-primary-network-map",
+      "title": "Primary Network와 L1 구조 지도 만들기",
+      "summary": "세 Primary Network 체인과 독립 Avalanche L1의 관계를 근거 링크와 함께 정리합니다.",
+      "scope": {
+        "kind": "CHAIN",
+        "chainIds": [
+          "avalanche"
+        ]
+      },
+      "sourceIds": [
+        "source-primary-network-docs",
+        "source-avalanche-l1-docs",
+        "source-acp-77"
+      ],
+      "level": "BEGINNER",
+      "minutes": 20,
+      "outcome": "Primary Network, P/C/X 체인, Avalanche L1, 검증자 관계를 설명하는 한 장의 구조 지도를 만듭니다.",
+      "steps": [
+        {
+          "title": "Primary Network 구분하기",
+          "body": "P-Chain, C-Chain, X-Chain의 역할을 공식 개요에서 찾고 한 문장씩 적습니다.",
+          "conceptIds": [
+            "concept-primary-network",
+            "concept-p-chain",
+            "concept-c-chain",
+            "concept-x-chain"
+          ],
+          "resourceIds": [
+            "resource-primary-network-docs"
+          ]
+        },
+        {
+          "title": "Avalanche L1과 비교하기",
+          "body": "L1이 자체로 정하는 요소와 Primary Network의 P-Chain에 연결되는 요소를 분리합니다.",
+          "conceptIds": [
+            "concept-avalanche-l1",
+            "concept-l1-validator"
+          ],
+          "resourceIds": [
+            "resource-avalanche-l1-docs",
+            "resource-acp-77"
+          ]
+        },
+        {
+          "title": "출처와 확인 시점 기록하기",
+          "body": "각 주장에 공식 Docs 또는 ACP 링크를 붙이고, 변경될 수 있는 절차는 확인 날짜를 기록합니다.",
+          "conceptIds": [
+            "concept-validator-manager"
+          ],
+          "resourceIds": [
+            "resource-l1-registration"
+          ]
+        }
+      ],
+      "skillIds": [
+        "skill-primary-network-map"
+      ],
+      "projectIds": [],
+      "checks": [
+        "Primary Network와 Avalanche L1을 같은 검증자 집합으로 설명하지 않았습니다.",
+        "P/C/X 역할을 각각 구분했습니다.",
+        "변경될 수 있는 절차와 수치에 확인 가능한 공식 출처를 연결했습니다."
       ]
     }
   ],

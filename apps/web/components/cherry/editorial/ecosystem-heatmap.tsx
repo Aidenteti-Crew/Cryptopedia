@@ -58,6 +58,8 @@ function HeatmapTileContent({
   const showPercent = !compactLabels && width > 135 && height > 85
   const gradientId = `ecosystem-heatmap-${index}`
   const displayName = compactLabels ? name : width < 145 ? (SHORT_LABELS[name] ?? name) : name
+  // 영문 분야명만 모노 대문자 라벨로 — 한글(그 외 N개 분야 등)은 모노로 쓰면 자간이 벌어진다
+  const monoLabel = /^[\x20-\x7E]+$/.test(displayName)
   const padX = compactLabels ? 8 : 12
   const padY = compactLabels ? 7 : 10
 
@@ -83,11 +85,10 @@ function HeatmapTileContent({
         </linearGradient>
       </defs>
       <rect
-        x={x + 2}
-        y={y + 2}
-        width={Math.max(0, width - 4)}
-        height={Math.max(0, height - 4)}
-        rx={8}
+        x={x + 1}
+        y={y + 1}
+        width={Math.max(0, width - 2)}
+        height={Math.max(0, height - 2)}
         fill={`url(#${gradientId})`}
         stroke="transparent"
         strokeWidth={2}
@@ -104,7 +105,7 @@ function HeatmapTileContent({
           <div className="flex h-full min-w-0 flex-col justify-between overflow-hidden text-white">
             {showTitle && (
               <span
-                className={`break-words font-semibold leading-[1.15] ${compactLabels ? 'text-[10px]' : width < 145 ? 'text-[12px]' : 'text-[12px] sm:text-[15px]'}`}
+                className={`break-words leading-[1.25] ${monoLabel ? 'font-mono font-medium uppercase tracking-[0.06em]' : 'font-semibold'} ${compactLabels ? 'text-[9px]' : width < 145 ? 'text-[10px]' : 'text-[10px] sm:text-[12px]'}`}
                 style={compactLabels && width < 75 ? { fontSize: 9 } : undefined}
               >
                 {displayName}
@@ -143,7 +144,7 @@ export function EcosystemHeatmap({
   const tiles: HeatmapTile[] = items.map((item, index) => ({ ...item, index }))
 
   return (
-    <div className="rounded-[20px] lg:border border-[var(--editorial-line)] bg-[#18151F] lg:p-3">
+    <div className="border-[rgba(185,154,203,0.35)] bg-[#18151F] lg:border-[0.5px] lg:p-3">
       <div className="h-[760px] lg:h-[430px]">
         <ResponsiveContainer width="100%" height="100%">
           <Treemap

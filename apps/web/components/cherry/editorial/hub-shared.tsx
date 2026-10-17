@@ -40,6 +40,13 @@ const ORIGIN_LABEL = {
   COMMUNITY: '커뮤니티',
   CURATED: '큐레이션',
 }
+const MATERIAL_LABEL = {
+  DOCS: '공식 문서',
+  ACADEMY: '공식 강의',
+  ACP: '공식 제안',
+  TOOL: '공식 도구',
+  STANDARD: '표준 문서',
+}
 export function SourceList({ ids, data }: { ids: string[]; data: HubData }) {
   const sources = data.sources.filter((source) => ids.includes(source.id))
   return (
@@ -61,9 +68,29 @@ export function SourceList({ ids, data }: { ids: string[]; data: HubData }) {
               {ORIGIN_LABEL[source.origin]}
             </span>
             {source.name} ↗
+            {source.materialType && (
+              <span className="text-[10px] text-[var(--editorial-muted)]">
+                {MATERIAL_LABEL[source.materialType]}
+              </span>
+            )}
+            {source.checkedAt && (
+              <span className="text-[10px] text-[var(--editorial-muted)]">
+                확인 {source.checkedAt}
+              </span>
+            )}
+            {source.reviewStatus === 'COMPARE_REQUIRED' && (
+              <span className="text-[10px] font-semibold text-amber-300">내용 대조 필요</span>
+            )}
           </a>
         ))}
       </div>
+      {sources.some((source) => source.reviewNote) && (
+        <ul className="mt-3 space-y-1 text-xs leading-6 text-amber-200/80">
+          {sources.flatMap((source) =>
+            source.reviewNote ? [<li key={source.id}>{source.reviewNote}</li>] : []
+          )}
+        </ul>
+      )}
     </section>
   )
 }
@@ -104,6 +131,37 @@ export function RelatedLinks({
         ))}
       </div>
     </section>
+  )
+}
+
+/* 스킬이 담고 있는 개념을 칩으로 보여주고, 누르면 같은 핵심 개념 페이지로 간다 */
+export function ConceptChips({
+  ids,
+  data,
+  onOpen,
+  className = '',
+}: {
+  ids: string[]
+  data: HubData
+  onOpen: (id: string) => void
+  className?: string
+}) {
+  const concepts = data.concepts.filter((concept) => ids.includes(concept.id))
+  if (!concepts.length) return null
+  return (
+    <div className={`flex flex-wrap items-center gap-2 ${className}`}>
+      <span className="text-[11px] text-[var(--editorial-muted)]">포함 개념</span>
+      {concepts.map((concept) => (
+        <button
+          key={concept.id}
+          type="button"
+          onClick={() => onOpen(concept.id)}
+          className="rounded-full border border-[var(--editorial-line)] px-2.5 py-1 text-[11px] text-[var(--editorial-ink)] hover:border-[var(--editorial-accent)] hover:text-[var(--editorial-accent)]"
+        >
+          {concept.title}
+        </button>
+      ))}
+    </div>
   )
 }
 

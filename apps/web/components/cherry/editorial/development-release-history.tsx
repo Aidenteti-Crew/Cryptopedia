@@ -63,7 +63,7 @@ export function ReleaseHistory({
                 {index < entries.length - 1 && (
                   <span
                     aria-hidden="true"
-                    className="absolute -bottom-1.5 left-[5px] top-2 w-px bg-[#cebd91]/25"
+                    className="absolute -bottom-1.5 left-[5px] top-2 w-px bg-[var(--discovery-line)]"
                   />
                 )}
                 <span

@@ -53,7 +53,7 @@ export function DevelopmentPatchNotes({
               page: update.category,
               area: CATEGORIES[update.category],
               categoryName: update.category,
-              dotColor: '#cebd91',
+              dotColor: '#b99acb',
               entityName: 'Avalanche',
               title: update.title,
               oneLiner: `${update.summary} · ${update.impacts.length}개 연결 자료`,

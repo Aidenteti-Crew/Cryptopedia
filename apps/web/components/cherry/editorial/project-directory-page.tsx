@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { ExternalLink, Layers3, LayoutGrid, List, X } from 'lucide-react'
+import { ExternalLink, LayoutGrid, List, X } from 'lucide-react'
 import type { EcosystemProject, EcosystemProjectsResponse } from '@/lib/cryptopedia-types'
 import { filterProjects } from '@/lib/editorial-discovery'
 import { EditorialEmpty } from './editorial-states'
@@ -76,8 +76,7 @@ function ProjectItem({ project, list }: { project: EcosystemProject; list: boole
         style={projectCategoryStyle(project.category)}
         className="editorial-content-card grid gap-x-4 sm:grid-cols-[minmax(0,1fr)_180px]"
       >
-        <div className="editorial-card-meta flex items-center gap-2 sm:col-span-2">
-          <Layers3 size={16} aria-hidden="true" />
+        <div className="editorial-card-meta flex items-center gap-2.5 sm:col-span-2">
           <span>{project.category ?? '기타'}</span>
         </div>
         <div className="min-w-0">
@@ -97,11 +96,8 @@ function ProjectItem({ project, list }: { project: EcosystemProject; list: boole
       style={projectCategoryStyle(project.category)}
       className="editorial-content-card flex min-h-[240px] flex-col"
     >
-      <div className="editorial-card-meta flex items-center justify-between gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white/10">
-          <Layers3 size={21} strokeWidth={1.5} />
-        </span>
-        <span className="min-w-0 break-words text-right text-xs" title={project.category ?? '기타'}>
+      <div className="editorial-card-meta flex items-center gap-2.5">
+        <span className="min-w-0 break-words text-xs" title={project.category ?? '기타'}>
           {project.category ?? '기타'}
         </span>
       </div>
@@ -177,7 +173,6 @@ export function ProjectDirectoryPage({
   return (
     <article className={HUB_PAGE_CLASS}>
       <DiscoveryHeader
-        theme="projects"
         count={data.total}
         title="체인·프로젝트"
         description="관심 있는 분야의 프로젝트와 도구를 찾아보세요."
@@ -232,7 +227,7 @@ export function ProjectDirectoryPage({
               key={name}
               type="button"
               onClick={() => choose(selected.filter((value) => value !== name))}
-              className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-[#baa4df]/25 bg-[#baa4df]/10 px-3 text-xs text-[#cdbce7]"
+              className="inline-flex min-h-8 items-center gap-1.5 border border-[#baa4df]/25 bg-[#baa4df]/10 px-3 text-xs text-[#cdbce7]"
             >
               {name}
               <X size={11} />

@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { ExternalLink, MapPin, Clock3, Users } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import type { EventEntry, EventStatus } from '@/lib/cryptopedia-types'
 import { calendarDay, filterEvents } from '@/lib/editorial-discovery'
 import { SyncedEventTimeline } from './synced-event-timeline'
@@ -61,7 +61,6 @@ function EventRow({ event }: { event: EventEntry }) {
           dateTime={event.startsAt}
           className="inline-flex flex-wrap items-center gap-1.5 tabular-nums"
         >
-          <Clock3 size={12} />
           {date.format(new Date(event.startsAt))}
           {event.endsAt && ` — ${date.format(new Date(event.endsAt))}`}
           {event.allDay ? ' · 종일' : ' KST'}
@@ -90,15 +89,9 @@ function EventRow({ event }: { event: EventEntry }) {
         )}
       </div>
       {organizer && (
-        <p className="mt-3 flex items-start gap-2 text-xs leading-5 text-[var(--editorial-muted)]">
-          <Users size={13} className="mt-0.5 shrink-0" />
-          {organizer} 주최
-        </p>
+        <p className="mt-3 text-xs leading-5 text-[var(--editorial-muted)]">{organizer} 주최</p>
       )}
-      <p className="mt-1 flex items-start gap-2 text-xs leading-5 text-[var(--editorial-muted)]">
-        <MapPin size={13} className="mt-0.5 shrink-0" />
-        {location}
-      </p>
+      <p className="mt-1 text-xs leading-5 text-[var(--editorial-muted)]">{location}</p>
       {event.summary && !hostSummary && (
         <p className="mt-3 whitespace-pre-line break-words text-sm leading-6 text-[var(--editorial-muted)] [overflow-wrap:anywhere]">
           {event.summary}
@@ -197,7 +190,6 @@ export function EventsPage({
   return (
     <article className="px-4 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
       <DiscoveryHeader
-        theme="events"
         count={events.length}
         title={archiveMode ? '지난 이벤트' : '행사 및 이벤트'}
         description={

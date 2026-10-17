@@ -27,18 +27,24 @@ const relations = z.object({
   id,
   type: z.enum(['SUBTOPIC', 'PREREQUISITE', 'EXTENDS', 'RELATED', 'CONTRADICTS']),
 })
+const sourceSchema = z.object({
+  id,
+  name: z.string().min(1),
+  url: z.string().url(),
+  origin: z.enum(['OFFICIAL', 'STANDARD', 'COMMUNITY', 'CURATED']),
+  materialType: z.enum(['DOCS', 'ACADEMY', 'ACP', 'TOOL', 'STANDARD']).optional(),
+  reviewStatus: z.enum(['CHECKED', 'COMPARE_REQUIRED']).optional(),
+  checkedAt: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
+  reviewNote: z.string().min(1).optional(),
+})
 export const hubSchema = z
   .object({
     version: z.literal(1),
     demo: z.literal(true),
-    sources: z.array(
-      z.object({
-        id,
-        name: z.string().min(1),
-        url: z.string().url(),
-        origin: z.enum(['OFFICIAL', 'STANDARD', 'COMMUNITY', 'CURATED']),
-      })
-    ),
+    sources: z.array(sourceSchema),
     categories: z.array(z.object({ id, title: z.string().min(1), summary: z.string() })),
     projects: z.array(
       z.object({
@@ -55,7 +61,7 @@ export const hubSchema = z
     resources: z.array(
       z.object({
         ...base,
-        kind: z.enum(['DOCS', 'CODE', 'ARTICLE', 'TOOL']),
+        kind: z.enum(['DOCS', 'COURSE', 'CODE', 'ARTICLE', 'TOOL']),
         body: z.string(),
         conceptIds: ids,
         caseIds: ids,
@@ -327,6 +333,12 @@ export function asConceptPage(concept: HubData['concepts'][number], data: HubDat
   }
 }
 
+/* 모든 스킬에 공통으로 붙는 작업 원칙 — 예전 '출처·적용 범위' 개념을 에이전트용 수칙으로 옮긴 것 */
+export const SKILL_PRINCIPLES = [
+  '공식 출처라는 사실과 지금 작업에 적용할 수 있다는 사실은 별개입니다. 적용 체인·네트워크·버전을 따로 확인합니다.',
+  '결과에는 근거로 쓴 출처 주소, 확인한 날짜, 지원 환경을 함께 남깁니다.',
+]
+
 export function buildSkillMarkdown(skill: HubSkill, data: HubData): string {
   const sources = skill.sourceIds.map((id) => data.sources.find((source) => source.id === id)!)
   return [
@@ -353,6 +365,9 @@ export function buildSkillMarkdown(skill: HubSkill, data: HubData): string {
     '',
     '## 완료 확인',
     ...skill.checks.map((check) => `- [ ] ${check}`),
+    '',
+    '## 작업 원칙',
+    ...SKILL_PRINCIPLES.map((principle) => `- ${principle}`),
     '',
     '## 출처',
     ...sources.map((source) => `- [${source.name}](${source.url})`),

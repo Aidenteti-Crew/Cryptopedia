@@ -116,8 +116,8 @@ export const AVALANCHE_HOME: ChainHomeContent = {
       index: '01',
       title: 'EVM 앱 개발',
       learn:
-        'Solidity·Foundry·viem 같은 EVM 공통 도구의 참고 자료를 빌더 라이브러리에서 둘러볼 수 있습니다.',
-      links: [{ label: '빌더 라이브러리', target: { kind: 'screen', id: 'builders' } }],
+        'Solidity·Foundry·viem 같은 EVM 공통 도구의 참고 자료를 코드·도구 레퍼런스에서 둘러볼 수 있습니다.',
+      links: [{ label: '코드·도구 레퍼런스', target: { kind: 'entry', id: 'code-reference' } }],
     },
     {
       id: 'l1',
@@ -139,20 +139,20 @@ export const AVALANCHE_HOME: ChainHomeContent = {
     {
       id: 'fundamentals',
       number: '01',
-      title: '체인 기초',
-      description: '네트워크 구조와 합의, 밸리데이터, 핵심 용어를 먼저 익힙니다.',
+      title: '핵심 개념',
+      description: '네트워크 구조와 합의, 밸리데이터, 핵심 용어를 공식 문서와 함께 익힙니다.',
     },
     {
       id: 'builders',
       number: '02',
-      title: '빌더 라이브러리',
-      description: '공식 문서, 코드·도구 레퍼런스, MCP·에이전트 도구와 스킬을 찾아봅니다.',
+      title: '에이전트 스킬',
+      description: '검토된 지식을 스킬로 받아 MCP·에이전트 도구로 내 에이전트에 연결합니다.',
     },
     {
       id: 'academy',
       number: '03',
       title: '아카데미',
-      description: '입문부터 케이스별 실습까지, 순서를 따라 배웁니다.',
+      description: '학습 지도에서 내 위치를 보고, 입문부터 케이스별 실습까지 따라 배웁니다.',
     },
   ],
 
@@ -174,9 +174,9 @@ export const AVALANCHE_HOME: ChainHomeContent = {
         '먼저 사용 가능한 개발 도구를 살펴보세요. 이후 에이전트 관련 자료와 스킬 라이브러리를 탐색하며 관심 있는 개발 방향을 구체화할 수 있습니다.',
       path: [
         {
-          title: '빌더 라이브러리',
-          description: '공식 문서와 코드·도구 레퍼런스에서 바로 쓸 재료를 둘러봅니다.',
-          target: { kind: 'screen', id: 'builders' },
+          title: '코드·도구 레퍼런스',
+          description: 'Foundry·viem 같은 개발 도구 레퍼런스에서 바로 쓸 재료를 둘러봅니다.',
+          target: { kind: 'entry', id: 'code-reference' },
         },
         {
           title: 'MCP·에이전트 도구',
@@ -202,10 +202,10 @@ export const AVALANCHE_HOME: ChainHomeContent = {
         { term: '구조', note: '전체 구성을 먼저 훑어보기' },
       ],
       rationale:
-        '먼저 체인 기초에서 Avalanche의 전체 구조를 살펴보세요. 이후 밸리데이터 자료로 네트워크에 참여하고 검증하는 주체를 알아보며 원리에 대한 이해를 더할 수 있습니다.',
+        '먼저 핵심 개념에서 Avalanche의 전체 구조를 살펴보세요. 이후 밸리데이터 자료로 네트워크에 참여하고 검증하는 주체를 알아보며 원리에 대한 이해를 더할 수 있습니다.',
       path: [
         {
-          title: '체인 기초',
+          title: '핵심 개념',
           description: '네트워크 구조와 핵심 용어로 Avalanche의 전체 그림을 살펴봅니다.',
           target: { kind: 'screen', id: 'fundamentals' },
         },
@@ -231,9 +231,9 @@ export const AVALANCHE_HOME: ChainHomeContent = {
         '먼저 구조 이해 자료로 체인이 어떻게 구성되는지 살펴보세요. 이어서 공식 Docs에서 세부 내용을 확인하세요. Avalanche L1 전용 자료는 아직 없어서, L1 공식 문서(영문)를 함께 참고할 수 있습니다.',
       path: [
         {
-          title: '아카데미 · 구조 이해',
+          title: '네트워크·체인 구조',
           description: '각 체인이 맡은 역할로 Avalanche 네트워크의 구성을 살펴봅니다.',
-          target: { kind: 'entry', id: 'structure' },
+          target: { kind: 'entry', id: 'pcx-chains' },
         },
         {
           title: '공식 Docs',

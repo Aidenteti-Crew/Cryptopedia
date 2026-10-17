@@ -76,7 +76,7 @@ test("architect and connector use only existing content, plus a secondary extern
   const byId = Object.fromEntries(AVALANCHE_HOME.builderTypes.map((type) => [type.id, type]))
   const ids = (id: string) => byId[id].path.map((step) => step.target.id)
   // no new documents: every step is a pre-existing screen/document (existence is asserted above)
-  assert.deepEqual(ids("architect"), ["structure", "official-docs"])
+  assert.deepEqual(ids("architect"), ["pcx-chains", "official-docs"])
   assert.deepEqual(ids("connector"), ["official-docs"])
   assert.equal(new Set(AVALANCHE_HOME.builderTypes.map((type) => type.path.map((step) => step.target.id).join(">"))).size, 4)
   for (const id of ["l1-intro", "icm-intro"]) assert.ok(!entryIds.has(id), `${id} must not exist`)
@@ -138,7 +138,7 @@ test("home cards only claim what the site really has", () => {
   // EVM card: the hub has Solidity / Foundry / viem reference items and no C-Chain content, so it must not claim any
   assert.match(card("evm").learn, /Solidity·Foundry·viem/)
   assert.doesNotMatch(card("evm").learn, /C-Chain|과정을 다룹니다/)
-  assert.deepEqual(card("evm").links.map((link) => link.target.id), ["builders"])
+  assert.deepEqual(card("evm").links.map((link) => link.target.id), ["code-reference"])
   // L1 / Interchain: no dedicated material exists → say so and point to the existing official docs library
   for (const id of ["l1", "interchain"]) {
     assert.match(card(id).learn, /전용 학습 자료는 준비 중/)

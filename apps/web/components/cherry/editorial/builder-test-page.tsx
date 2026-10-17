@@ -532,7 +532,7 @@ export function BuilderTestPage({
     return (
       <section
         aria-labelledby="inline-builder-test-title"
-        className="builder-test-light min-w-0 rounded-[20px] border px-5 py-6 sm:px-7 sm:py-7 lg:h-[600px] lg:overflow-y-auto"
+        className="builder-test-card min-w-0 rounded-[20px] border px-5 py-6 sm:px-7 sm:py-7 lg:h-[600px] lg:overflow-y-auto"
       >
         <h2 id="inline-builder-test-title" className="text-[22px] font-medium leading-snug text-[var(--editorial-strong)]">
           {content.builderTest.title}

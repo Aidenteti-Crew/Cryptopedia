@@ -39,7 +39,7 @@ test("marks the active page and keeps primary navigation first", () => {
 
   assert.match(html, /aria-current="page"/)
   assert.match(html, /생태계 홈/)
-  assert.ok(html.indexOf("체인·프로젝트") < html.indexOf("01    체인 기초"))
+  assert.ok(html.indexOf("체인·프로젝트") < html.indexOf("핵심 개념"))
 })
 
 test("keeps chapter groups collapsed until one is active", () => {
@@ -52,7 +52,7 @@ test("keeps chapter groups collapsed until one is active", () => {
     <EditorialIndex activeScreen="fundamentals" activeEntryId="pcx-chains" onSelect={noop} />,
   )
   /* 첫 렌더(SSR)는 기본 접힘 상태 — 자동 펼침은 마운트 후 effect 에서 일어난다 */
-  assert.match(reading, /01    체인 기초/)
+  assert.match(reading, /핵심 개념/)
 })
 
 test("uses the Cherry layout: desktop sidebar, mobile header with hamburger", () => {

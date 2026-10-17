@@ -1,18 +1,20 @@
 import type { EditorialView } from '@/components/cherry/editorial/editorial-app'
 import type { ScreenId } from './cryptopedia-taxonomy'
 
+/* 생태계 화면은 app/(chainery)/(ecosystem) 라우트 그룹이라 주소에 /ecosystem 이 붙지 않는다 */
 const SCREEN_PATHS: Partial<Record<ScreenId, string>> = {
   ecosystem: '/',
   chains: '/chains',
-  projects: '/ecosystem/projects',
-  macro: '/ecosystem/macro',
-  events: '/ecosystem/events',
-  'event-archive': '/ecosystem/events/archive',
-  updates: '/ecosystem/updates',
-  'builder-test': '/ecosystem/builder-test',
-  fundamentals: '/chapters/fundamentals',
-  builders: '/chapters/builders',
-  academy: '/chapters/academy',
+  projects: '/projects',
+  macro: '/macro',
+  events: '/events',
+  'event-archive': '/events/archive',
+  updates: '/updates',
+  'builder-test': '/builder-test',
+  // LEARN 화면은 app/(chainery)/(learn) 라우트 그룹 — 주소는 메뉴 이름(핵심 개념·에이전트 스킬)을 따른다
+  fundamentals: '/concepts',
+  builders: '/skills',
+  academy: '/academy',
 }
 
 const PATH_SCREENS = new Map(
@@ -36,14 +38,14 @@ export function pathForEditorialView(view: EditorialView): string {
     if (!path) throw new Error(`Unknown editorial screen: ${view.id}`)
     return path
   }
-  if (view.kind === 'book') return `/ecosystem/projects/books/${encodeURIComponent(view.id)}`
+  if (view.kind === 'book') return `/projects/books/${encodeURIComponent(view.id)}`
   if (CHAPTERS.has(view.parent)) {
-    return `/chapters/${view.parent}/${encodeURIComponent(view.id)}`
+    return `${SCREEN_PATHS[view.parent]}/${encodeURIComponent(view.id)}`
   }
   if (ECOSYSTEM_DETAILS.has(view.parent)) {
-    return `/ecosystem/${view.parent}/${encodeURIComponent(view.id)}`
+    return `/${view.parent}/${encodeURIComponent(view.id)}`
   }
-  return `/ecosystem/articles/${encodeURIComponent(view.id)}`
+  return `/articles/${encodeURIComponent(view.id)}`
 }
 
 export function editorialViewFromPath(pathname: string): EditorialView | null {
@@ -53,27 +55,25 @@ export function editorialViewFromPath(pathname: string): EditorialView | null {
   if (screen) return { kind: 'screen', id: screen }
 
   const parts = cleanPath.split('/').filter(Boolean)
-  if (
-    parts.length === 4 &&
-    parts[0] === 'ecosystem' &&
-    parts[1] === 'projects' &&
-    parts[2] === 'books'
-  ) {
-    const id = decodeEntryId(parts[3])
+  // /projects/books/:id
+  if (parts.length === 3 && parts[0] === 'projects' && parts[1] === 'books') {
+    const id = decodeEntryId(parts[2])
     return id ? { kind: 'book', id, parent: 'projects' } : null
   }
-  if (parts.length !== 3) return null
-  const [, parent, rawId] = parts
+  if (parts.length !== 2) return null
+  // /academy/:id · /concepts/:id · /skills/:id
+  const chapter = PATH_SCREENS.get(`/${parts[0]}`)
+  if (chapter && CHAPTERS.has(chapter)) {
+    const id = decodeEntryId(parts[1])
+    return id ? { kind: 'article', id, parent: chapter } : null
+  }
+  // /:section/:id (projects·macro·events·updates) 와 /articles/:id
+  const [parent, rawId] = parts
   const id = decodeEntryId(rawId)
   if (!id) return null
-  if (parts[0] === 'chapters' && CHAPTERS.has(parent as ScreenId)) {
+  if (ECOSYSTEM_DETAILS.has(parent as ScreenId)) {
     return { kind: 'article', id, parent: parent as ScreenId }
   }
-  if (parts[0] === 'ecosystem' && ECOSYSTEM_DETAILS.has(parent as ScreenId)) {
-    return { kind: 'article', id, parent: parent as ScreenId }
-  }
-  if (parts[0] === 'ecosystem' && parent === 'articles') {
-    return { kind: 'article', id, parent: 'ecosystem' }
-  }
+  if (parent === 'articles') return { kind: 'article', id, parent: 'ecosystem' }
   return null
 }

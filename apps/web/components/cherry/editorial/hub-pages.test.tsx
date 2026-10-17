@@ -9,6 +9,7 @@ import { DevelopmentPatchNotes } from './development-patch-notes'
 import { EcosystemLandscape } from './ecosystem-landscape'
 import { HubDetailPage } from './hub-detail-page'
 import { HubLibraryPage } from './hub-library-page'
+import { INTRO_ROUTE, layoutLearningMap, neighborhood } from './learning-map'
 import { InventoryCard } from '../kaas-workshop-panel'
 import { asWorkshopItem } from '@/lib/cryptopedia-hub'
 
@@ -59,9 +60,54 @@ test('skills expose complete instructions and graph reuses navigable concept rel
   assert.match(html, /스킬 파일 받기/)
   assert.match(html, /다운로드 파일 미리보기/)
   const graph = renderToStaticMarkup(<HubLibraryPage id="skill-graph" data={data} onOpen={noop} />)
-  assert.match(graph, /개념 관계 지도/)
-  assert.match(graph, /role="button"/)
+  assert.match(graph, /개념 학습 지도/)
+  assert.match(graph, /지금 여기/)
+  assert.match(graph, /입문 경로/)
+  assert.match(graph, /먼저 알아야 할 개념/)
   assert.match(graph, /이 개념을 활용하는 실습/)
+})
+
+test('a concept page leads both to the learning map and to the skills that use it', () => {
+  const html = renderToStaticMarkup(
+    <HubDetailPage id="concept-primary-network" data={data} onOpen={noop} onOpenInGraph={noop} />
+  )
+  assert.match(html, /학습 지도에서 위치 보기/)
+  assert.match(html, /이 개념이 들어간 스킬 받기/)
+  assert.match(html, /id="concept-skills"/)
+})
+
+test('skills point back to the concepts they contain', () => {
+  const skill = data.skills.find((item) => item.conceptIds.length > 0)!
+  const concept = data.concepts.find((item) => item.id === skill.conceptIds[0])!
+  const detail = renderToStaticMarkup(<HubDetailPage id={skill.id} data={data} onOpen={noop} />)
+  assert.match(detail, /포함 개념/)
+  assert.ok(detail.includes(concept.title))
+  const library = renderToStaticMarkup(
+    <HubLibraryPage id="skill-library" data={data} onOpen={noop} />
+  )
+  assert.match(library, /포함 개념/)
+  assert.doesNotMatch(library, /<button[^>]*>(?:(?!<\/button>).)*<button/)
+})
+
+test('the learning map lays concepts out by prerequisite depth and scope band', () => {
+  const layout = layoutLearningMap(data.concepts)
+  const x = (id: string) => layout.nodes.get(id)!.x
+  // 선행 개념은 항상 더 왼쪽 열에 놓인다
+  for (const [id, parents] of layout.prereqs)
+    for (const parent of parents) assert.ok(x(parent) < x(id), `${parent} → ${id}`)
+  assert.deepEqual(
+    layout.bands.map((band) => band.label),
+    ['체인 전용', 'EVM 공통', '블록체인 공통']
+  )
+  const { before, after } = neighborhood(layout, 'concept-l1-validator')
+  assert.deepEqual([...before].sort(), [
+    'concept-avalanche-l1',
+    'concept-consensus',
+    'concept-primary-network',
+    'concept-validator',
+  ])
+  assert.deepEqual([...after], ['concept-validator-manager'])
+  for (const id of INTRO_ROUTE) assert.ok(layout.nodes.has(id), id)
 })
 
 test('the shared Workshop card keeps legacy drag behavior and supports editorial selection', () => {
@@ -70,7 +116,9 @@ test('the shared Workshop card keeps legacy drag behavior and supports editorial
   assert.match(legacy, /draggable="true"/)
   assert.match(legacy, /cursor-grab/)
   assert.match(legacy, /View source/)
-  const editorial = renderToStaticMarkup(<InventoryCard item={item} appearance="editorial" selected onToggle={noop} onInspect={noop} />)
+  const editorial = renderToStaticMarkup(
+    <InventoryCard item={item} appearance="editorial" selected onToggle={noop} onInspect={noop} />
+  )
   assert.match(editorial, /draggable="false"/)
   assert.match(editorial, /type="checkbox"[^>]*checked=""/)
   assert.match(editorial, /지침 보기/)

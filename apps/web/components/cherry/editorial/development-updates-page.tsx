@@ -1,14 +1,7 @@
 'use client'
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
-import {
-  ArrowRight,
-  LayoutGrid,
-  Rocket,
-  FileText,
-  GitPullRequest,
-  MoreHorizontal,
-} from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import type { ContentEntry } from '@/lib/cryptopedia-types'
 import {
   CHANGE_LABELS,
@@ -142,7 +135,6 @@ export function DevelopmentUpdatesPage({
   return (
     <article className="px-4 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
       <DiscoveryHeader
-        theme="updates"
         count={all.length}
         title="개발 업데이트"
         description="Avalanche 개발 소식과 제품별 릴리스 이력을 확인하세요."
@@ -213,29 +205,11 @@ export function DevelopmentUpdatesPage({
                 ...releaseProducts.map((p) => ({ value: p.id, label: p.name })),
               ]
             : [
-                { value: 'all', label: '전체', Icon: LayoutGrid },
-                {
-                  value: 'RELEASE',
-                  label: '릴리스',
-                  Icon: Rocket,
-                  color: 'text-[#8bcab4]',
-                  background: 'bg-[#8bcab4]/10',
-                },
-                {
-                  value: 'BLOG',
-                  label: '기술 아티클',
-                  Icon: FileText,
-                  color: 'text-[#baa4df]',
-                  background: 'bg-[#baa4df]/10',
-                },
-                {
-                  value: 'ACP',
-                  label: 'ACP 제안',
-                  Icon: GitPullRequest,
-                  color: 'text-[#a9bde9]',
-                  background: 'bg-[#a9bde9]/10',
-                },
-                { value: 'OTHER', label: '기타', Icon: MoreHorizontal },
+                { value: 'all', label: '전체' },
+                { value: 'RELEASE', label: '릴리스' },
+                { value: 'BLOG', label: '기술 아티클' },
+                { value: 'ACP', label: 'ACP 제안' },
+                { value: 'OTHER', label: '기타' },
               ].filter(
                 (item) =>
                   item.value === 'all' ||
@@ -343,7 +317,7 @@ export function DevelopmentUpdatesPage({
           {highlights.length > 0 && (
             <section
               aria-label="주요 업데이트"
-              className="mb-6 rounded-[20px] border border-[#cebd91]/20 bg-[#cebd91]/[.045] p-5 sm:p-6"
+              className="mb-6 rounded-[20px] border border-[var(--discovery-line)] bg-[var(--discovery-selection)] p-5 sm:p-6"
             >
               <h2 className="mb-4 text-sm font-semibold text-[var(--editorial-accent)]">
                 주요 업데이트

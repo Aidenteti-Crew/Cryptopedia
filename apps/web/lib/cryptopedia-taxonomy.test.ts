@@ -21,11 +21,14 @@ test("includes dedicated chain selection and ecosystem screens", () => {
   assert.equal(resolveParentScreen("chain-overview"), "fundamentals")
 })
 
-test("keeps the Figma chapter order", () => {
+test("puts the academy learning path above the chapters it ties together", () => {
   assert.deepEqual(
     CHAPTER_NAV.map((item) => item.id),
-    ["fundamentals", "builders", "academy"],
+    ["academy", "fundamentals", "builders"],
   )
+  for (const chapter of CHAPTER_NAV) {
+    assert.doesNotMatch(chapter.label, /^\d/)
+  }
 })
 
 test("resolves article ids to their parent screens", () => {

@@ -15,6 +15,15 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // LEARN 주소에서 /chapters 를 뺐다 — 이미 공유된 옛 링크를 새 주소로 보낸다.
+  // 메뉴를 옮긴 자료(예: 공식 문서)는 새 주소에서 한 번 더 제 메뉴로 넘겨준다 (learn-entry-page.tsx).
+  async redirects() {
+    return [
+      { source: '/chapters/fundamentals/:path*', destination: '/concepts/:path*', permanent: true },
+      { source: '/chapters/builders/:path*', destination: '/skills/:path*', permanent: true },
+      { source: '/chapters/academy/:path*', destination: '/academy/:path*', permanent: true },
+    ]
+  },
   async headers() {
     // Turbopack이 매 배포마다 청크 파일명을 새로 뽑는데, 브라우저가 옛 HTML을
     // 휴리스틱 캐싱으로 오래 들고 있으면 사라진 옛 청크(_next/static/chunks/<oldhash>)를

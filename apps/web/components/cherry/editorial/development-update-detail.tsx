@@ -67,10 +67,10 @@ export function DevelopmentUpdateDetail({
           <div className="mt-4 space-y-5">
             {evidenceGroups.map((flag) => (
               <div key={`${flag.sourceUrl}:${flag.evidence}`}>
-                <h4 className="text-xs font-medium text-[#ddcca5]">{flag.labels}</h4>
+                <h4 className="text-xs font-medium text-[var(--editorial-accent)]">{flag.labels}</h4>
                 <blockquote
                   lang="en"
-                  className="mt-2 break-words border-l border-[#cebd91]/40 pl-3 text-sm leading-7 text-[var(--editorial-muted)]"
+                  className="mt-2 break-words border-l border-[var(--discovery-line)] pl-3 text-sm leading-7 text-[var(--editorial-muted)]"
                 >
                   {flag.evidence}
                 </blockquote>

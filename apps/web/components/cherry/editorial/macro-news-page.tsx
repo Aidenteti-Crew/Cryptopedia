@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useRef, useState } from 'react'
-import { LayoutGrid, Handshake, BarChart3, MoreHorizontal, ExternalLink } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import type { ContentEntry } from '@/lib/cryptopedia-types'
 import { calendarDay, filterFeed } from '@/lib/editorial-discovery'
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet'
@@ -25,22 +25,10 @@ import { EditorialEmpty } from './editorial-states'
 import { useDiscoveryState, DiscoveryScrollRestore, useDiscoveryView } from './discovery-state'
 
 const TYPES = [
-  { value: 'all', label: '전체', Icon: LayoutGrid },
-  {
-    value: 'COLLAB',
-    label: '협업·도입',
-    Icon: Handshake,
-    color: 'text-[#a9bde9]',
-    background: 'bg-[#a9bde9]/10',
-  },
-  {
-    value: 'VOLUME',
-    label: '거래·시장 지표',
-    Icon: BarChart3,
-    color: 'text-[#8bcab4]',
-    background: 'bg-[#8bcab4]/10',
-  },
-  { value: 'OTHER', label: '기타', Icon: MoreHorizontal },
+  { value: 'all', label: '전체' },
+  { value: 'COLLAB', label: '협업·도입' },
+  { value: 'VOLUME', label: '거래·시장 지표' },
+  { value: 'OTHER', label: '기타' },
 ]
 const clock = (date: string) =>
   new Intl.DateTimeFormat('ko-KR', {
@@ -198,7 +186,7 @@ export function MacroNewsPage({
   const row = (entry: ContentEntry) => <MacroRow entry={entry} onOpen={open} />
   return (
     <article className="px-4 pb-6 pt-4 sm:px-8 sm:pb-8 lg:px-[52px] lg:pb-[52px]">
-      <DiscoveryHeader title={title} description={introduction} theme="macro" count={all.length} />
+      <DiscoveryHeader title={title} description={introduction} count={all.length} />
       <DiscoveryToolbar>
         <DiscoverySearch value={query} onChange={setQuery} placeholder="제목·내용·출처 검색" />
       </DiscoveryToolbar>

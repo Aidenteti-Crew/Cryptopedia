@@ -1,12 +1,19 @@
 'use client'
 
 import { useState } from 'react'
-import { Download } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Download } from 'lucide-react'
 
-import { asConceptPage, buildSkillMarkdown, findHubItem, type HubData } from '@/lib/cryptopedia-hub'
+import {
+  SKILL_PRINCIPLES,
+  asConceptPage,
+  buildSkillMarkdown,
+  findHubItem,
+  type HubData,
+} from '@/lib/cryptopedia-hub'
 import { ConceptRoadmap } from '../concept-reader-page'
 import { CaseStudyPage } from './case-study-page'
 import {
+  ConceptChips,
   HUB_BUTTON_CLASS,
   HUB_PAGE_CLASS,
   HubHeader,
@@ -16,16 +23,19 @@ import {
   downloadMarkdown,
 } from './hub-shared'
 
+const CONCEPT_SKILLS_ID = 'concept-skills'
+
 export function HubDetailPage({
   id,
   data,
-
   onOpen,
+  onOpenInGraph,
 }: {
   id: string
   data: HubData
-
   onOpen: (id: string) => void
+  /* 학습 지도를 이 개념이 선택된 상태로 연다 */
+  onOpenInGraph?: (conceptId: string) => void
 }) {
   const [notice, setNotice] = useState('')
   const study = data.cases.find((item) => item.id === id)
@@ -53,10 +63,7 @@ export function HubDetailPage({
 
   return (
     <article className={HUB_PAGE_CLASS}>
-      <HubHeader
-        title={item.title}
-        description={item.summary}
-      >
+      <HubHeader title={item.title} description={item.summary}>
         <div className="mt-5">
           <ScopeBadge scope={item.scope} />
         </div>
@@ -113,6 +120,43 @@ export function HubDetailPage({
       )}
       {concept && (
         <>
+          {/* 같은 개념이 사람의 학습 경로와 에이전트 스킬 양쪽에서 쓰인다는 걸 보여주는 두 출구 */}
+          <nav aria-label="이 개념으로 이어지는 길" className="mt-6 grid gap-3 sm:grid-cols-2">
+            {onOpenInGraph && (
+              <button
+                type="button"
+                onClick={() => onOpenInGraph(concept.id)}
+                className="group rounded-xl border border-[var(--editorial-line)] bg-[var(--editorial-surface)] p-4 text-left hover:border-[var(--editorial-accent)]"
+              >
+                <span className="flex items-center gap-2 text-sm group-hover:text-[var(--editorial-accent)]">
+                  <ArrowLeft size={15} />
+                  학습 지도에서 위치 보기
+                </span>
+                <span className="mt-2 block text-xs leading-6 text-[var(--editorial-muted)]">
+                  사람 · 먼저 알아야 할 개념과 다음 개념
+                </span>
+              </button>
+            )}
+            {concept.skillIds.length > 0 && (
+              <button
+                type="button"
+                onClick={() =>
+                  document
+                    .getElementById(CONCEPT_SKILLS_ID)
+                    ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                }
+                className="group rounded-xl border border-[var(--editorial-line)] bg-[var(--editorial-surface)] p-4 text-left hover:border-[var(--editorial-accent)] sm:text-right"
+              >
+                <span className="flex items-center gap-2 text-sm group-hover:text-[var(--editorial-accent)] sm:justify-end">
+                  이 개념이 들어간 스킬 받기
+                  <ArrowRight size={15} />
+                </span>
+                <span className="mt-2 block text-xs leading-6 text-[var(--editorial-muted)]">
+                  에이전트 · 스킬 {concept.skillIds.length}개
+                </span>
+              </button>
+            )}
+          </nav>
           <div className="mt-7 grid gap-7 lg:grid-cols-[1fr_240px]">
             <div>
               <h2 className="text-lg">개념 이해</h2>
@@ -139,16 +183,19 @@ export function HubDetailPage({
             data={data}
             onOpen={onOpen}
           />
-          <RelatedLinks
-            title="활용할 에이전트 스킬"
-            ids={concept.skillIds}
-            data={data}
-            onOpen={onOpen}
-          />
+          <div id={CONCEPT_SKILLS_ID} className="scroll-mt-24">
+            <RelatedLinks
+              title="이 개념이 들어간 에이전트 스킬"
+              ids={concept.skillIds}
+              data={data}
+              onOpen={onOpen}
+            />
+          </div>
         </>
       )}
       {skill && (
         <>
+          <ConceptChips ids={skill.conceptIds} data={data} onOpen={onOpen} className="mt-6" />
           <section className="mt-7 rounded-xl border border-[var(--editorial-line)] bg-[var(--editorial-surface)] p-5">
             <p className="text-[11px] text-[var(--editorial-accent)]">
               {skill.type.toUpperCase()} / 적용 환경
@@ -184,6 +231,17 @@ export function HubDetailPage({
             <ul className="mt-3 list-inside list-disc text-sm leading-7 text-[var(--editorial-muted)]">
               {skill.checks.map((check) => (
                 <li key={check}>{check}</li>
+              ))}
+            </ul>
+          </section>
+          <section className="mt-7">
+            <h2 className="text-base">작업 원칙</h2>
+            <p className="mt-2 text-xs text-[var(--editorial-muted)]">
+              모든 스킬에 공통으로 적용됩니다.
+            </p>
+            <ul className="mt-3 list-inside list-disc text-sm leading-7 text-[var(--editorial-muted)]">
+              {SKILL_PRINCIPLES.map((principle) => (
+                <li key={principle}>{principle}</li>
               ))}
             </ul>
           </section>

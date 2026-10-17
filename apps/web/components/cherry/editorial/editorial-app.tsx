@@ -39,7 +39,7 @@ import { FeedPage } from './feed-page'
 import { ProjectDirectoryPage } from './project-directory-page'
 import { HubLibraryPage } from './hub-library-page'
 import { HubDetailPage } from './hub-detail-page'
-import { getEditorialBreadcrumbs } from './editorial-breadcrumb'
+import { getEditorialBreadcrumbs, menuEntryFor } from './editorial-breadcrumb'
 import { useEditorialChain } from './editorial-chain-provider'
 import { getChainTheme } from '@/lib/chain-theme'
 import { pathForEditorialView } from '@/lib/cryptopedia-routes'
@@ -305,7 +305,7 @@ export function EditorialApp({
               chainLogoUrl={activeChain.logoUrl}
               onOpenProjectCategory={(category) =>
                 router.push(
-                  `/ecosystem/projects${category ? `?category=${encodeURIComponent(category)}` : ''}`
+                  `${pathForEditorialView({ kind: 'screen', id: 'projects' })}${category ? `?category=${encodeURIComponent(category)}` : ''}`
                 )
               }
             />
@@ -336,6 +336,11 @@ export function EditorialApp({
             id={loaded.id}
             data={loaded.data}
             onOpen={(id) => openArticle(id)}
+            onOpenInGraph={(conceptId) =>
+              router.push(
+                `${pathForEditorialView({ kind: 'article', id: 'skill-graph', parent: 'academy' })}?concept=${encodeURIComponent(conceptId)}`
+              )
+            }
           />
         )
         break
@@ -417,7 +422,11 @@ export function EditorialApp({
         else openArticle(target.id)
       }}
       activeScreen={activeScreen}
-      activeEntryId={view.kind === 'article' ? view.id : undefined}
+      activeEntryId={
+        view.kind === 'article'
+          ? (menuEntryFor(view.id, breadcrumbContext?.hub) ?? view.id)
+          : undefined
+      }
       activeChainName={activeChain.name}
       activeChainLogoUrl={activeChain.logoUrl}
       chainTheme={chainTheme}

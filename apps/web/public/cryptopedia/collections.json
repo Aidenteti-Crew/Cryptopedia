@@ -12,30 +12,77 @@
     ],
     "sectionTitle": "이 권의 목차",
     "entries": [
-      {"id": "chain-overview", "order": 1, "title": "체인 개요", "summary": "Avalanche의 시작과 네트워크의 핵심 개념", "kind": "OVERVIEW"},
-      {"id": "pcx-chains", "order": 2, "title": "네트워크·체인 구조", "summary": "Avalanche의 P · C · X 체인과 네트워크 역할을 이해합니다.", "kind": "ARCHITECTURE"},
-      {"id": "validator-structure", "order": 3, "title": "합의·밸리데이터", "summary": "합의 원리와 네트워크 운영의 역할을 연결합니다.", "kind": "NETWORK"},
-      {"id": "glossary", "order": 4, "title": "핵심 용어 사전", "summary": "낯선 개념을 다시 찾아볼 수 있는 블록체인 레퍼런스", "kind": "GLOSSARY"}
+      {
+        "id": "chain-overview",
+        "order": 1,
+        "title": "체인 개요",
+        "summary": "Avalanche의 시작과 네트워크의 핵심 개념",
+        "kind": "OVERVIEW"
+      },
+      {
+        "id": "pcx-chains",
+        "order": 2,
+        "title": "네트워크·체인 구조",
+        "summary": "Avalanche의 P · C · X 체인과 네트워크 역할을 이해합니다.",
+        "kind": "ARCHITECTURE"
+      },
+      {
+        "id": "validator-structure",
+        "order": 3,
+        "title": "합의·밸리데이터",
+        "summary": "합의 원리와 네트워크 운영의 역할을 연결합니다.",
+        "kind": "NETWORK"
+      },
+      {
+        "id": "glossary",
+        "order": 4,
+        "title": "핵심 용어 사전",
+        "summary": "낯선 개념을 다시 찾아볼 수 있는 블록체인 레퍼런스",
+        "kind": "GLOSSARY"
+      },
+      {
+        "id": "official-docs",
+        "order": 5,
+        "title": "공식 문서",
+        "summary": "핵심 개념의 근거가 되는 체인 공식 자료와 공통 기술 문서를 함께 읽습니다.",
+        "kind": "DOCS"
+      }
     ]
   },
   {
     "id": "builders",
     "breadcrumb": ["COLLECTION", "AVALANCHE", "BUILDERS"],
     "volume": 1,
-    "eyebrow": "BUILDERS",
-    "title": "Builders",
-    "tagline": "아이디어를 구현하는 자료실.",
+    "eyebrow": "AGENT SKILLS",
+    "title": "Agent Skills",
+    "tagline": "검토된 지식을 내 에이전트에.",
     "introduction": [
-      "공식 문서, 코드와 아티클을 한곳에서.",
-      "첫 프로젝트를 위한 레퍼런스를 차분히 탐색하세요."
+      "핵심 개념을 작업 지침으로 묶은 스킬과, 그 스킬을 받는 방법.",
+      "필요한 스킬을 골라 내 에이전트에 연결하세요."
     ],
-    "sectionTitle": "빌더 라이브러리",
+    "sectionTitle": "에이전트 스킬",
     "entries": [
-      {"id": "official-docs", "order": 1, "title": "공식 문서", "summary": "체인 공식 자료와 적용 가능한 공통 기술 문서를 함께 읽습니다.", "kind": "DOCS"},
-      {"id": "code-reference", "order": 2, "title": "코드·도구 레퍼런스", "summary": "체인별 예제와 EVM 공통 개발 도구를 실습에 연결합니다.", "kind": "CODE"},
-      {"id": "builder-articles", "order": 3, "title": "빌더 아티클", "summary": "설계와 개발의 맥락을 이해하는 글", "kind": "ARTICLE"},
-      {"id": "mcp-tools", "order": 4, "title": "MCP·에이전트 도구", "summary": "공식 조회 도구의 지원 범위와 연결 방법을 확인합니다.", "kind": "PROTOCOL"},
-      {"id": "skill-library", "order": 5, "title": "스킬 라이브러리", "summary": "작업별 지침과 입력·결과물·완료 조건을 확인하고 다운로드합니다.", "kind": "PROTOCOL"}
+      {
+        "id": "skill-library",
+        "order": 1,
+        "title": "스킬 라이브러리",
+        "summary": "작업별 지침과 입력·결과물·완료 조건을 확인하고 다운로드합니다.",
+        "kind": "PROTOCOL"
+      },
+      {
+        "id": "mcp-tools",
+        "order": 2,
+        "title": "MCP·에이전트 도구",
+        "summary": "공식 조회 도구의 지원 범위와 연결 방법을 확인합니다.",
+        "kind": "PROTOCOL"
+      },
+      {
+        "id": "code-reference",
+        "order": 3,
+        "title": "코드·도구 레퍼런스",
+        "summary": "체인별 예제와 EVM 공통 개발 도구를 실습에 연결합니다.",
+        "kind": "CODE"
+      }
     ]
   },
   {
@@ -51,10 +98,20 @@
     ],
     "sectionTitle": "학습 커리큘럼",
     "entries": [
-      {"id": "foundation", "order": 1, "title": "입문", "summary": "개념을 배우는 순서와 공식 참고 자료를 확인합니다.", "kind": "FOUNDATION"},
-      {"id": "structure", "order": 2, "title": "구조 이해", "summary": "공통 개념과 체인별 구조를 연결해서 읽습니다.", "kind": "STRUCTURE"},
-      {"id": "practice", "order": 3, "title": "케이스별 실습", "summary": "목표별 학습 단계와 에이전트용 스킬 묶음을 함께 제공합니다.", "kind": "PRACTICE"},
-      {"id": "skill-graph", "order": 4, "title": "학습·스킬 그래프", "summary": "선행 개념 → 실습 → 에이전트 스킬을 탐색합니다.", "kind": "LEARNING_MAP"}
+      {
+        "id": "skill-graph",
+        "order": 1,
+        "title": "학습 지도",
+        "summary": "개념 사이의 선행·다음 관계와 입문 경로를 지도 위에서 보고, 지금 내 위치에서 이어서 배웁니다.",
+        "kind": "LEARNING_MAP"
+      },
+      {
+        "id": "practice",
+        "order": 2,
+        "title": "케이스별 실습",
+        "summary": "목표별 학습 단계와 에이전트용 스킬 묶음을 함께 제공합니다.",
+        "kind": "PRACTICE"
+      }
     ]
   }
 ]

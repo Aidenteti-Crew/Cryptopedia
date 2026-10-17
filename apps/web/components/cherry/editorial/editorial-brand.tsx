@@ -20,7 +20,7 @@ export type SelectedChain = Pick<
 
 /* 서비스 이름·부제는 여기 한 곳에서만 바꾼다. */
 export const EDITORIAL_BRAND = {
-  name: 'Chainery',
+  name: 'chainery',
   byline: 'by Aidenteti Crew',
 } as const
 
@@ -51,7 +51,7 @@ export function EditorialBrand({
         className="h-[34px] w-[34px] shrink-0 rounded-md p-1 bg-violet-soft"
       />
       <span className="min-w-0 leading-tight">
-        <span className="editorial-display block truncate text-[21px] leading-[1.1] text-[var(--editorial-ink)]">
+        <span className="editorial-display block truncate text-[21px] leading-[1.1] text-[var(--editorial-ink)] font-bold">
           {EDITORIAL_BRAND.name}
         </span>
         <span className="mt-0.5 block truncate text-[11px] font-medium text-[var(--editorial-muted)]">
@@ -103,7 +103,9 @@ export function EditorialCollectionButton({
               className="h-[22px] w-[22px] shrink-0 rounded-full ring-1 ring-white/15 lg:h-[18px] lg:w-[18px]"
             />
           ) : (
-            <span aria-hidden="true" className="text-sm font-semibold lg:hidden">{activeChainName.slice(0, 1)}</span>
+            <span aria-hidden="true" className="text-sm font-semibold lg:hidden">
+              {activeChainName.slice(0, 1)}
+            </span>
           )}
           <span className="hidden lg:inline-flex">
             <SelectValue>

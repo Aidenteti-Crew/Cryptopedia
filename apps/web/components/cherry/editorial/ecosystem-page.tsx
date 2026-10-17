@@ -3,7 +3,7 @@
 import { ArrowRight, BookOpen, Bot, CalendarDays, Code2, Globe2, Layers3 } from 'lucide-react'
 import type { EcosystemPageData, EcosystemProjectsResponse } from '@/lib/cryptopedia-types'
 import type { HubData } from '@/lib/cryptopedia-hub'
-import { HeroCarousel, HERO_GRADIENTS, type OverviewHeroItem } from '../nd-overview-page'
+import { HeroCarousel, type OverviewHeroItem } from '../nd-overview-page'
 import { getProjectHeatmapItems, sortHomeNews } from '@/lib/cryptopedia-home'
 import { getChainHomeContent } from '@/lib/avalanche-home'
 import { BuilderTestPage } from './builder-test-page'
@@ -95,13 +95,19 @@ export function EcosystemPage({
                     }
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="relative flex h-[520px] w-full min-w-0 flex-col overflow-hidden rounded-[20px] text-left text-white lg:h-[600px]"
-                    style={{ background: HERO_GRADIENTS[index % HERO_GRADIENTS.length][0] }}
+                    className="editorial-news-card relative flex h-[520px] w-full min-w-0 flex-col overflow-hidden text-left text-white lg:h-[600px]"
                   >
                     <span className="flex min-h-0 min-w-0 flex-1 flex-col px-7 py-8 sm:px-10">
                       <span className="flex shrink-0 flex-wrap items-center gap-3 pr-12 text-[10px] font-semibold uppercase tracking-[1.2px] text-white/75">
-                        <span>{category.label}</span>
-                        <span className="rounded-full border border-white/25 px-2 py-0.5 tracking-normal">
+                        {/* 체인 포인트 색은 이 점 하나에만 — 보라 일색을 깨는 작은 악센트 */}
+                        <span className="inline-flex items-center gap-2">
+                          <span
+                            aria-hidden="true"
+                            className="h-1.5 w-1.5 rounded-full bg-[var(--chain-accent)]"
+                          />
+                          {category.label}
+                        </span>
+                        <span className="border border-white/25 px-2 py-0.5 tracking-normal">
                           {entry.sourceName ?? '수집 소식'}
                         </span>
                       </span>
@@ -127,7 +133,7 @@ export function EcosystemPage({
                     </span>
                     <span
                       aria-hidden="true"
-                      className="absolute right-6 top-6 flex h-10 w-10 items-center justify-center rounded-xl border border-white/25 bg-white/15 sm:right-8 sm:top-8"
+                      className="absolute right-6 top-6 flex h-10 w-10 items-center justify-center border border-white/25 bg-white/15 sm:right-8 sm:top-8"
                     >
                       <Icon size={21} strokeWidth={1.6} />
                     </span>
@@ -136,7 +142,7 @@ export function EcosystemPage({
               }}
             />
           ) : (
-            <p className="rounded-xl border border-[var(--editorial-line)] p-6 text-sm text-[var(--editorial-muted)]">
+            <p className="border border-[var(--editorial-line)] p-6 text-sm text-[var(--editorial-muted)]">
               새 소식이 등록되면 이곳에 표시됩니다.
             </p>
           )}
@@ -144,7 +150,7 @@ export function EcosystemPage({
         {builderContent ? (
           <BuilderTestPage content={builderContent} onOpen={onOpenLatest} compact />
         ) : (
-          <section className="rounded-[20px] border border-[var(--editorial-line)] p-6 text-sm text-[var(--editorial-muted)]">
+          <section className="border border-[var(--editorial-line)] p-6 text-sm text-[var(--editorial-muted)]">
             이 컬렉션의 빌더 유형 설문은 준비 중입니다.
           </section>
         )}
@@ -157,37 +163,30 @@ export function EcosystemPage({
         <p className="mt-2 text-sm leading-6 text-[var(--editorial-muted)]">
           같은 지식을, 사람의 학습과 에이전트의 작업에 맞게.
         </p>
-        <div className="mt-5 grid gap-4 lg:grid-cols-2">
-          {AUDIENCES.map(({ id, title, label, summary, action, Icon }) => (
+        {/* 각진 격자 칸 — 번호·모노 라벨로 색인처럼, hover 한 칸만 반전 (globals.css .editorial-index-grid) */}
+        <div className="editorial-index-grid mt-5 grid lg:grid-cols-2">
+          {AUDIENCES.map(({ id, title, label, summary, action, Icon }, index) => (
             <button
               key={id}
               type="button"
               onClick={() => onOpenLatest(id)}
               data-audience={id}
-              data-tone={id === 'practice' ? 'projects' : 'updates'}
-              className="editorial-audience-card group flex min-h-[230px] items-center gap-5 rounded-[18px] border p-6 text-left hover:border-white/60 sm:p-7"
+              className="editorial-audience-card group flex min-h-[230px] flex-col p-6 text-left sm:p-7"
             >
-              <span className="min-w-0 flex-1">
-                <span
-                  className="block text-[10px] font-semibold tracking-[1.2px]"
-                  style={{ color: 'var(--editorial-accent)' }}
-                >
+              <span className="flex items-start justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--editorial-muted)]">
+                <span className="inline-flex items-center gap-2.5">
+                  <Icon size={15} strokeWidth={1.6} aria-hidden="true" />
                   {label}
                 </span>
-                <span className="mt-3 block text-[22px] font-semibold leading-snug">{title}</span>
-                <span className="mt-3 block text-xs leading-6 text-[var(--editorial-muted)]">
-                  {summary}
-                </span>
-                <span className="mt-5 inline-flex items-center gap-2 text-xs font-semibold text-[var(--editorial-accent)]">
-                  {action} <ArrowRight size={14} />
-                </span>
+                <span className="tabular-nums">{String(index + 1).padStart(2, '0')}</span>
               </span>
-              <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/10 sm:h-24 sm:w-24">
-                <Icon
-                  className="h-8 w-8 sm:h-11 sm:w-11"
-                  strokeWidth={1.3}
-                  style={{ color: 'var(--editorial-accent)' }}
-                />
+              <span className="mt-6 block text-[22px] font-semibold leading-snug">{title}</span>
+              <span className="mt-3 block max-w-[46ch] text-xs leading-6 text-[var(--editorial-muted)]">
+                {summary}
+              </span>
+              <span className="mt-auto inline-flex items-center gap-2 pt-6 text-xs font-semibold text-[var(--editorial-accent)]">
+                <ArrowRight size={16} className="editorial-audience-arrow" aria-hidden="true" />
+                {action}
               </span>
             </button>
           ))}
@@ -215,7 +214,7 @@ export function EcosystemPage({
               타일 크기는 분야별 프로젝트 수를 나타냅니다. 분야를 선택해 프로젝트를 살펴보세요.
             </p>
           </div>
-          <span className="rounded-full border border-[var(--editorial-line)] px-3 py-1.5 text-[10px] text-[var(--editorial-muted)]">
+          <span className="border border-[var(--editorial-line)] px-3 py-1.5 text-[10px] text-[var(--editorial-muted)]">
             {projects?.total ?? 0}개 프로젝트 · {projects?.categories.length ?? 0}개 분야
           </span>
         </div>
@@ -227,7 +226,7 @@ export function EcosystemPage({
             }
           />
         ) : (
-          <p className="rounded-xl border border-[var(--editorial-line)] p-6 text-sm text-[var(--editorial-muted)]">
+          <p className="border border-[var(--editorial-line)] p-6 text-sm text-[var(--editorial-muted)]">
             {projects ? '등록된 프로젝트가 없습니다.' : '프로젝트 데이터를 불러오지 못했습니다.'}
           </p>
         )}

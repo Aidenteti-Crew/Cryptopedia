@@ -1,6 +1,12 @@
 import { ChevronRight } from 'lucide-react'
 
-import { CHAPTER_NAV, PRIMARY_NAV, type ScreenId } from '@/lib/cryptopedia-taxonomy'
+import {
+  CHAPTER_NAV,
+  ECOSYSTEM_HOME_NAV,
+  NAV_SECTION_LABELS,
+  PRIMARY_NAV,
+  type ScreenId,
+} from '@/lib/cryptopedia-taxonomy'
 import { findHubItem, type HubData } from '@/lib/cryptopedia-hub'
 import type { EditorialView } from './editorial-app'
 
@@ -12,17 +18,36 @@ export interface EditorialBreadcrumbItem {
 }
 
 const SCREEN_LABELS: Record<string, string> = {
-  ecosystem: '생태계 홈',
+  ecosystem: ECOSYSTEM_HOME_NAV.label,
   chains: '컬렉션 선택',
   'event-archive': '행사 아카이브',
   'builder-test': '빌더 유형 테스트',
-  ...Object.fromEntries(
-    [...PRIMARY_NAV, ...CHAPTER_NAV].map((item) => [item.id, item.label.replace(/^\d+\s+/, '')])
-  ),
+  ...Object.fromEntries([...PRIMARY_NAV, ...CHAPTER_NAV].map((item) => [item.id, item.label])),
 }
 const CHILD_LABELS = Object.fromEntries(
   CHAPTER_NAV.flatMap((chapter) => chapter.children ?? []).map((child) => [child.id, child.label])
 )
+/* 자료 종류 → 그 자료를 모아 보여주는 목록. 아티클은 메뉴에서 빠져 목록 단계를 건너뛴다 */
+const RESOURCE_COLLECTION: Partial<Record<HubData['resources'][number]['kind'], string>> = {
+  DOCS: 'official-docs',
+  COURSE: 'official-docs',
+  CODE: 'code-reference',
+  TOOL: 'mcp-tools',
+}
+
+/* 글이 속한 LEARN 하위 메뉴 항목 — breadcrumb 의 중간 단계와 사이드바의 현재 위치가 같은 규칙을 쓴다.
+   메뉴 항목 자체면 그 id, 목록에 속한 글이면 그 목록 id (예: concept-… → 핵심 용어 사전) */
+export function menuEntryFor(id: string, hub?: HubData): string | undefined {
+  if (id in CHILD_LABELS) return id
+  if (id.startsWith('case-')) return 'practice'
+  if (id.startsWith('concept-')) return 'glossary'
+  if (id.startsWith('skill-')) return 'skill-library'
+  if (id.startsWith('resource-')) {
+    const resource = hub?.resources.find((item) => item.id === id)
+    return resource ? RESOURCE_COLLECTION[resource.kind] : undefined
+  }
+  return undefined
+}
 
 export function getEditorialBreadcrumbs(
   view: EditorialView,
@@ -32,12 +57,12 @@ export function getEditorialBreadcrumbs(
     label: CHAPTER_NAV.some(
       (chapter) => chapter.id === (view.kind === 'screen' ? view.id : view.parent)
     )
-      ? 'CHAPTERS'
-      : 'ECOSYSTEM',
+      ? NAV_SECTION_LABELS.learn
+      : NAV_SECTION_LABELS.live,
   }
   const screen = view.kind === 'screen' ? view.id : view.parent
   const ancestors: EditorialBreadcrumbItem[] = [section]
-  if (section.label === 'ECOSYSTEM' && screen !== 'ecosystem') {
+  if (section.label === NAV_SECTION_LABELS.live && screen !== 'ecosystem') {
     ancestors.push({ label: '생태계 홈', target: { kind: 'screen', id: 'ecosystem' } })
   }
   if (view.kind === 'screen') {
@@ -58,22 +83,8 @@ export function getEditorialBreadcrumbs(
     (context.hub ? findHubItem(context.hub, view.id)?.title : undefined) ??
     '자료 불러오는 중…'
   if (view.kind === 'article') {
-    let collection: string | undefined
-    if (view.id.startsWith('case-')) collection = 'practice'
-    else if (view.id.startsWith('concept-')) collection = 'glossary'
-    else if (view.id.startsWith('skill-') && !(view.id in CHILD_LABELS))
-      collection = 'skill-library'
-    else if (view.id.startsWith('resource-')) {
-      const resource = context.hub?.resources.find((item) => item.id === view.id)
-      if (resource)
-        collection = {
-          DOCS: 'official-docs',
-          CODE: 'code-reference',
-          ARTICLE: 'builder-articles',
-          TOOL: 'mcp-tools',
-        }[resource.kind]
-    }
-    if (collection)
+    const collection = menuEntryFor(view.id, context.hub)
+    if (collection && collection !== view.id)
       items.push({ label: CHILD_LABELS[collection], target: { kind: 'article', id: collection } })
   }
   return [...items, { label: currentLabel }]
