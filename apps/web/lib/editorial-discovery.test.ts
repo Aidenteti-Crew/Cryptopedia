@@ -21,7 +21,9 @@ const event = (id: string, overrides: Partial<EventEntry> = {}): EventEntry => (
   venueName: 'Seoul', venueAddress: null, city: 'Seoul', country: 'KR', isOnline: false,
   sourceUrl: null, registrationUrl: null, imageUrl: null, category: 'Meetup', tags: [],
   chain: 'avalanche', project: null, publishedAt: null, fetchedAt: '2026-10-14T00:00:00Z',
-  confidence: null, ...overrides,
+  confidence: null, registrationDeadline: null, registrationStatus: 'UNKNOWN',
+  daysUntilDeadline: null, audience: [], level: null, fee: null, relatedChains: [], scope: null,
+  ...overrides,
 })
 
 test('publication range includes both selected Korean calendar dates', () => {

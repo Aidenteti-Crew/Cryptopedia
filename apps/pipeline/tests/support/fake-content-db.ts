@@ -55,7 +55,7 @@ export class FakeContentDb {
     const normalized = sql.replace(/\s+/g, ' ').trim()
 
     if (normalized.startsWith('INSERT INTO content.source')) {
-      const [id, type, name, urlHandle] = params as [string, string, string, string]
+      const [id, type, name, urlHandle, collector] = params as [string, string, string, string, string]
       const hash = md5Hex(urlHandle)
       const conflict = this.sources.some(
         (row) => row.revoked_at === null && md5Hex(row.url_handle) === hash
@@ -67,7 +67,7 @@ export class FakeContentDb {
         name,
         url_handle: urlHandle,
         revoked_at: null,
-        source_meta_json: {},
+        source_meta_json: { collector },
         consecutive_failures: 0,
         total_fetches: 0,
         total_failures: 0,
@@ -78,11 +78,13 @@ export class FakeContentDb {
       return { rows: [{ id }], rowCount: 1 }
     }
 
-    if (normalized.startsWith('SELECT id FROM content.source')) {
-      const [urlHandle] = params as [string]
+    if (normalized.includes("'{collector}'") && normalized.startsWith('UPDATE content.source')) {
+      const [urlHandle, collector] = params as [string, string]
       const hash = md5Hex(urlHandle)
       const row = this.sources.find((r) => r.revoked_at === null && md5Hex(r.url_handle) === hash)
-      return row ? { rows: [{ id: row.id }], rowCount: 1 } : { rows: [], rowCount: 0 }
+      if (!row) return { rows: [], rowCount: 0 }
+      row.source_meta_json = { collector, ...row.source_meta_json }
+      return { rows: [{ id: row.id }], rowCount: 1 }
     }
 
     if (normalized.startsWith("SELECT source_meta_json -> 'cursor'")) {

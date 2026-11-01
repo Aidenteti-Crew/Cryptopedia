@@ -89,7 +89,9 @@ export class ChainFeedService {
     now: Date = new Date(),
   ): Promise<EventFeedResponse> {
     const descending = query.status === 'PAST';
-    const bindings: Knex.RawBinding[] = [query.chain, now, now];
+    const bindings: Knex.RawBinding[] = query.chain
+      ? [query.chain, now, now]
+      : [now, now];
     const where: string[] = [];
 
     if (query.status) {
@@ -119,7 +121,8 @@ export class ChainFeedService {
                 ((date_trunc('day', c.starts_at AT TIME ZONE c.timezone) + interval '1 day')
                   AT TIME ZONE c.timezone) AS day_end
            FROM content.chain_event c
-          WHERE c.revoked_at IS NULL AND c.chain = ?
+          WHERE c.revoked_at IS NULL AND c.review_state = 'PUBLISHED'
+                ${query.chain ? 'AND c.chain = ?' : ''}
        ), s AS (
          SELECT e.*,
                 CASE
@@ -141,7 +144,7 @@ export class ChainFeedService {
     const page = rows.slice(0, query.limit);
     const last = page[page.length - 1];
     return {
-      items: page.map(toEventEntry).filter((entry) => {
+      items: page.map((row) => toEventEntry(row, now)).filter((entry) => {
         const valid = eventEntryContract.safeParse(entry).success;
         // Only the id is logged: event text is crawled content and stays out of the logs.
         if (!valid)

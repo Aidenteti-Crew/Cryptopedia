@@ -30,4 +30,16 @@ export const eventEntryContract = z.object({
   publishedAt: isoDateTime.nullable(),
   fetchedAt: isoDateTime,
   confidence: z.number().min(0).max(1).nullable(),
+  registrationDeadline: isoDateTime.nullable(),
+  registrationStatus: z.enum(['OPEN', 'CLOSING_SOON', 'CLOSED', 'UNKNOWN']),
+  daysUntilDeadline: z.number().int().positive().nullable(),
+  audience: z.array(
+    z.enum(['STUDENT', 'DEVELOPER', 'STARTUP', 'RESEARCHER', 'ANYONE']),
+  ),
+  level: z
+    .enum(['BEGINNER_OK', 'EXPERIENCE_RECOMMENDED', 'ADVANCED'])
+    .nullable(),
+  fee: z.enum(['FREE', 'PAID']).nullable(),
+  relatedChains: z.array(z.string().min(1)),
+  scope: z.string().min(1),
 });

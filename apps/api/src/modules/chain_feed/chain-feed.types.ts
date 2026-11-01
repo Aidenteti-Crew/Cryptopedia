@@ -1,4 +1,5 @@
 import type { EventStatus } from './event-query';
+import type { RegistrationStatus } from './registration-status';
 import type { UpdateEvidence } from './update-evidence';
 
 // Response shapes. EventEntry/EventFeedResponse mirror apps/web/lib/cryptopedia-types.ts;
@@ -28,6 +29,16 @@ export interface EventEntry {
   publishedAt: string | null;
   fetchedAt: string;
   confidence: number | null;
+  registrationDeadline: string | null;
+  registrationStatus: RegistrationStatus;
+  daysUntilDeadline: number | null;
+  // Values below are set only when the source text says so (see *_evidence in the table).
+  audience: string[];
+  level: string | null;
+  fee: string | null;
+  relatedChains: string[];
+  // The feed the event belongs to (avalanche, web3-kr); `chain` above is its display name.
+  scope: string;
   // Extras beyond the frontend contract (its schema ignores unknown keys).
   importance: number | null;
   importanceReason: string | null;

@@ -25,6 +25,27 @@ describe('source-repository', () => {
     expect(db.sources).toHaveLength(1)
   })
 
+  it('marks new and existing sources as collected by chainery', async () => {
+    const db = new FakeContentDb()
+    const input = { urlHandle: 'https://example.com/feed.atom', name: 'Example', type: 'RSS' as const }
+
+    await getOrCreateSource(db.query, input)
+    expect(db.sources[0]?.source_meta_json).toEqual({ collector: 'chainery' })
+
+    // A source created before the mark existed gets it on next use, keeping its cursor.
+    db.sources[0]!.source_meta_json = { cursor: { value: 'guid-1' } }
+    await getOrCreateSource(db.query, input)
+    expect(db.sources[0]?.source_meta_json).toEqual({
+      cursor: { value: 'guid-1' },
+      collector: 'chainery',
+    })
+
+    // Another collector's mark is left alone.
+    db.sources[0]!.source_meta_json = { collector: 'cherry' }
+    await getOrCreateSource(db.query, input)
+    expect(db.sources[0]?.source_meta_json).toEqual({ collector: 'cherry' })
+  })
+
   it('round-trips the adapter cursor through source_meta_json', async () => {
     const db = new FakeContentDb()
     const { id } = await getOrCreateSource(db.query, {
