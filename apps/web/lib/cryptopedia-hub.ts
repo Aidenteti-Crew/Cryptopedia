@@ -26,6 +26,18 @@ const base = {
 const relations = z.object({
   id,
   type: z.enum(['SUBTOPIC', 'PREREQUISITE', 'EXTENDS', 'RELATED', 'CONTRADICTS']),
+  /** 왜 이어지는지 한 문장 — 개념 화면의 '먼저 읽으면 좋아요' 카드에 쓴다 */
+  reason: z.string().min(1).optional(),
+})
+
+/* 개념 화면(핵심 개념 > 개념 상세)의 구조화 필드 — 모두 선택. 없으면 body 문단을 그대로 보여 준다.
+   points 의 sourceIds 는 그 개념의 sourceIds 안에서만 고른다 (cryptopedia-hub.test 가 확인). */
+const conceptPoint = z.object({ text: z.string().min(1), sourceIds: ids })
+const conceptAudience = z.object({
+  /** 맞춤 경로의 역할 id (lib/learner/tracks.ts ROLES) — 내 역할 줄을 강조할 때 맞춘다 */
+  role: z.enum(['newbie', 'junior', 'middle', 'senior', 'pm', 'bd', 'research']),
+  level: z.enum(['HIGH', 'MEDIUM', 'LOW']),
+  note: z.string().min(1),
 })
 const sourceSchema = z.object({
   id,
@@ -77,6 +89,14 @@ export const hubSchema = z
         resourceIds: ids,
         caseIds: ids,
         skillIds: ids,
+        /** 제목 아래 두세 문장 리드 — 없으면 summary */
+        lede: z.string().min(1).optional(),
+        /** 핵심 포인트 — 문장마다 근거(출처) 번호를 단다 */
+        points: z.array(conceptPoint).optional(),
+        /** 누구에게 해당하나요 — 체이너리 해석 */
+        audience: z.array(conceptAudience).optional(),
+        /** DRAFT = 체이너리 초안(사람 검토 전) · REVIEWED = 검토 끝 */
+        contentStatus: z.enum(['DRAFT', 'REVIEWED']).optional(),
       })
     ),
     skills: z.array(
