@@ -28,6 +28,8 @@ interface EditorialShellProps {
   onOpenEntry?: (id: string) => void
   /** 사이드바 맨 아래(모바일은 메뉴 패널 맨 아래)에 붙는 칸 — 내 학습 경로 카드 */
   sidebarFooter?: ReactNode
+  /** 모바일(lg 미만)에서 화면 아래에 고정되는 띠 — 내 학습 경로 */
+  mobileBar?: ReactNode
   breadcrumbs?: EditorialBreadcrumbItem[]
   onBreadcrumbNavigate?: (target: BreadcrumbTarget) => void
   children: ReactNode
@@ -49,6 +51,7 @@ export function EditorialShell({
   onSelectChain,
   onOpenEntry,
   sidebarFooter,
+  mobileBar,
   breadcrumbs,
   onBreadcrumbNavigate,
   children,
@@ -80,11 +83,7 @@ export function EditorialShell({
           onSelect={onSelect}
           onOpenEntry={onOpenEntry}
         />
-        {sidebarFooter && (
-          <div className="mt-auto shrink-0 border-t border-[var(--editorial-line)] p-4">
-            {sidebarFooter}
-          </div>
-        )}
+        {sidebarFooter && <div className="mt-auto shrink-0 p-4">{sidebarFooter}</div>}
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -98,7 +97,6 @@ export function EditorialShell({
               activeEntryId={activeEntryId}
               onSelect={onSelect}
               onOpenEntry={onOpenEntry}
-              footer={sidebarFooter}
             />
           </div>
         </header>
@@ -115,6 +113,7 @@ export function EditorialShell({
           {children}
         </main>
         <EditorialFooter onHome={goHome} />
+        {mobileBar && <div className="lg:hidden">{mobileBar}</div>}
       </div>
     </div>
   )

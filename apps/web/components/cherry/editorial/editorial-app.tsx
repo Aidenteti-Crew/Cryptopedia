@@ -41,7 +41,7 @@ import { ProjectDirectoryPage } from './project-directory-page'
 import { HubLibraryPage } from './hub-library-page'
 import { HubDetailPage } from './hub-detail-page'
 import { MyPathPage } from './my-path-page'
-import { MyPathSidebarCard } from './my-path-sidebar'
+import { MyPathMobileBar, MyPathSidebarCard } from './my-path-sidebar'
 import { KnowledgeOnboarding } from './my-path-onboarding'
 import { getEditorialBreadcrumbs, menuEntryFor } from './editorial-breadcrumb'
 import { useEditorialChain } from './editorial-chain-provider'
@@ -466,6 +466,18 @@ export function EditorialApp({
         <MyPathSidebarCard
           loadHub={loadChainHub}
           active={view.kind === 'screen' && view.id === 'my-path'}
+          onOpenPath={() => selectScreen('my-path')}
+          onOpenStep={(step) =>
+            step.kind === 'screen'
+              ? selectScreen(step.id as ScreenId)
+              : openArticle(step.id, 'fundamentals')
+          }
+        />
+      }
+      mobileBar={
+        <MyPathMobileBar
+          loadHub={loadChainHub}
+          hidden={view.kind === 'screen' && view.id === 'my-path'}
           onOpenPath={() => selectScreen('my-path')}
           onOpenStep={(step) =>
             step.kind === 'screen'

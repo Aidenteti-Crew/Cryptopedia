@@ -116,3 +116,60 @@ export function MyPathSidebarCard({
     </div>
   )
 }
+
+/* 모바일(lg 미만) — 사이드바가 없으니 진행 중인 경로를 화면 아래 고정 띠로 보여 준다.
+   경로가 없거나 모두 마쳤으면, 또는 내 학습 경로 화면에서는 숨긴다.
+   띠 높이만큼 문서 끝에 빈칸을 두어 푸터 마지막 줄을 가리지 않는다. */
+export function MyPathMobileBar({
+  loadHub,
+  hidden = false,
+  onOpenPath,
+  onOpenStep,
+}: {
+  loadHub: (chainId: string) => Promise<HubData>
+  hidden?: boolean
+  onOpenPath: () => void
+  onOpenStep: (step: RouteStep) => void
+}) {
+  const { state } = useLearner()
+  const path = state ? activePathOf(state) : null
+  const hub = useChainHub(path?.chainId ?? null, loadHub)
+  const route = useMemo(
+    () => (hub && state && path ? computeRoute(hub, path, state, readCompletedCases(hub)) : null),
+    [hub, path, state]
+  )
+  const next = route?.start ?? null
+  if (hidden || !path || !route || !next) return null
+  const total = route.steps.length
+  const percent = total ? Math.round((route.doneCount / total) * 100) : 0
+  return (
+    <>
+      <div aria-hidden="true" className="h-16" />
+      <aside
+        aria-label="진행 중인 내 학습 경로"
+        className="fixed inset-x-0 bottom-0 z-40 h-16 border-t border-[rgba(107,74,140,0.28)] bg-[var(--editorial-surface)]/95 shadow-[0_-8px_24px_-14px_rgba(107,74,140,0.5)] backdrop-blur"
+      >
+        <div className="absolute inset-x-0 top-0 h-[2px] bg-[var(--editorial-line)]">
+          <div className="h-full bg-[var(--editorial-accent)]" style={{ width: `${percent}%` }} />
+        </div>
+        <div className="flex h-full items-center gap-3 px-4">
+          <button type="button" onClick={onOpenPath} className="min-w-0 flex-1 text-left">
+            <span className="block truncate text-[10px] font-semibold uppercase tracking-[1.2px] text-[var(--editorial-accent)]">
+              내 학습 경로 · {route.doneCount}/{total}
+            </span>
+            <span className="block truncate text-sm font-semibold text-[var(--editorial-strong)]">
+              {next.title}
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => onOpenStep(next)}
+            className="inline-flex shrink-0 items-center gap-1.5 bg-[var(--editorial-accent)] px-4 py-2 text-sm font-semibold text-[var(--editorial-on-accent)] hover:brightness-110"
+          >
+            이어서 <ArrowRight size={15} />
+          </button>
+        </div>
+      </aside>
+    </>
+  )
+}
