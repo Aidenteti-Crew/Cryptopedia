@@ -59,7 +59,8 @@ export function MyPathSidebarCard({
 
   if (!state) return null
   // 이 섹션은 선과 면으로만 구분하지만, 이 카드만 포도빛 그림자로 띄워 사이드바에서 가장 먼저 눈에 들어오게 한다
-  const frame = `block w-full border px-4 py-3.5 text-left shadow-[0_10px_28px_-14px_rgba(107,74,140,0.55),0_2px_6px_-2px_rgba(30,26,34,0.08)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_32px_-14px_rgba(107,74,140,0.65),0_3px_8px_-2px_rgba(30,26,34,0.1)] ${active ? 'border-[var(--editorial-accent)] bg-[var(--editorial-hover)]' : 'border-[rgba(107,74,140,0.28)] bg-[var(--editorial-surface)] hover:border-[var(--editorial-accent)]'}`
+  // 위쪽 3px 포도색 띠 + 진한 포도빛 그림자
+  const frame = `block w-full border border-t-[3px] px-4 py-3.5 text-left shadow-[0_16px_36px_-12px_rgba(107,74,140,0.75),0_4px_10px_-3px_rgba(30,26,34,0.14)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_20px_42px_-12px_rgba(107,74,140,0.85),0_6px_14px_-4px_rgba(30,26,34,0.16)] ${active ? 'border-[var(--editorial-accent)] bg-[var(--editorial-hover)]' : 'border-[rgba(107,74,140,0.28)] bg-[var(--editorial-surface)] hover:border-[var(--editorial-accent)]'} border-t-[var(--editorial-accent)]`
 
   if (!path) {
     return (
