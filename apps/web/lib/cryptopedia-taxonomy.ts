@@ -22,6 +22,8 @@ export interface NavChild {
 export interface NavItem {
   id: ScreenId
   label: string
+  /** 누구를 위한 메뉴인지 — 사이드바 뱃지 (people = 사람이 직접 공부, agents = 에이전트용) */
+  audience?: 'people' | 'agents'
   children?: NavChild[]
 }
 
@@ -47,16 +49,9 @@ export const PRIMARY_NAV: NavItem[] = [
 ]
 
 /* 순서가 아니라 목적별 입구라 번호를 붙이지 않는다.
-   아카데미는 나머지 둘을 아우르는 학습 경로라 맨 위에 둔다. */
+   핵심 개념(사람·에이전트가 함께 쓰는 지식) → 아카데미(사람이 직접 공부) → 에이전트 스킬(에이전트용) 순.
+   audience 는 사이드바에 뱃지로 보여 준다 — 핵심 개념은 양쪽 공통이라 뱃지가 없다. */
 export const CHAPTER_NAV: NavItem[] = [
-  {
-    id: 'academy',
-    label: '아카데미',
-    children: [
-      { id: 'skill-graph', label: '학습 지도' },
-      { id: 'practice', label: '케이스별 실습' },
-    ],
-  },
   {
     id: 'fundamentals',
     label: '핵심 개념',
@@ -69,8 +64,18 @@ export const CHAPTER_NAV: NavItem[] = [
     ],
   },
   {
+    id: 'academy',
+    label: '아카데미',
+    audience: 'people',
+    children: [
+      { id: 'skill-graph', label: '학습 지도' },
+      { id: 'practice', label: '케이스별 실습' },
+    ],
+  },
+  {
     id: 'builders',
     label: '에이전트 스킬',
+    audience: 'agents',
     children: [
       { id: 'skill-library', label: '스킬 라이브러리' },
       { id: 'mcp-tools', label: 'MCP·에이전트 도구' },
@@ -78,6 +83,12 @@ export const CHAPTER_NAV: NavItem[] = [
     ],
   },
 ]
+
+/* 사이드바 뱃지 — 아이콘으로 보이고, 마우스를 올리면 설명이 말풍선으로 뜬다 */
+export const AUDIENCE_BADGE = {
+  people: { label: '사람용', description: '사람용 · 직접 읽고 실습하며 공부하는 메뉴예요' },
+  agents: { label: '에이전트용', description: '에이전트용 · 에이전트에게 맡길 스킬과 도구예요' },
+} as const
 
 const ARTICLE_PARENT: Record<string, ScreenId> = {
   'chain-overview': 'fundamentals',

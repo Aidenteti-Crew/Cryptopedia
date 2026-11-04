@@ -1,15 +1,18 @@
-"use client"
+'use client'
 
-import { useEffect, useState, type ReactNode } from "react"
-import { BookOpen, ChevronDown, Code2, Globe, GraduationCap } from "lucide-react"
+import { useEffect, useState, type ReactNode } from 'react'
+import { Bot, BookOpen, ChevronDown, Code2, Globe, GraduationCap, User } from 'lucide-react'
+
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 import {
   CHAPTER_NAV,
   ECOSYSTEM_HOME_NAV,
+  AUDIENCE_BADGE,
   NAV_SECTION_LABELS,
   PRIMARY_NAV,
   type ScreenId,
-} from "@/lib/cryptopedia-taxonomy"
+} from '@/lib/cryptopedia-taxonomy'
 
 /* ─────────────────────────────────────────────
    목차 — 기존 Cherry 사이드바 nav 구조를 그대로 따른다.
@@ -28,12 +31,13 @@ export interface EditorialIndexProps {
   className?: string
 }
 
-type ChildKind = "screen" | "entry"
+type ChildKind = 'screen' | 'entry'
 
 interface GroupDef {
   id: ScreenId
   label: string
   icon: ReactNode
+  badge?: 'people' | 'agents'
   childKind: ChildKind
   children: { id: string; label: string }[]
 }
@@ -54,26 +58,27 @@ const CHAPTER_ICON: Partial<Record<ScreenId, ReactNode>> = {
 
 const SECTIONS: SectionDef[] = [
   {
-    id: "ecosystem",
+    id: 'ecosystem',
     label: NAV_SECTION_LABELS.live,
     groups: [
       {
-        id: "ecosystem",
+        id: 'ecosystem',
         label: ECOSYSTEM_HOME_NAV.label,
         icon: <Globe size={ICON_SIZE} strokeWidth={1.6} />,
-        childKind: "screen",
+        childKind: 'screen',
         children: PRIMARY_NAV.map((item) => ({ id: item.id, label: item.label })),
       },
     ],
   },
   {
-    id: "chapters",
+    id: 'chapters',
     label: NAV_SECTION_LABELS.learn,
     groups: CHAPTER_NAV.map((item) => ({
       id: item.id,
       label: item.label,
       icon: CHAPTER_ICON[item.id],
-      childKind: "entry" as const,
+      badge: item.audience,
+      childKind: 'entry' as const,
       children: item.children ?? [],
     })),
   },
@@ -92,7 +97,7 @@ function groupOf(screen: ScreenId | undefined, entryId?: string): ScreenId | nul
   for (const section of SECTIONS) {
     for (const group of section.groups) {
       if (group.id === screen) return group.id
-      if (group.childKind === "screen" && group.children.some((c) => c.id === screen)) {
+      if (group.childKind === 'screen' && group.children.some((c) => c.id === screen)) {
         return group.id
       }
       if (entryId && group.children.some((c) => c.id === entryId)) return group.id
@@ -104,6 +109,7 @@ function groupOf(screen: ScreenId | undefined, entryId?: string): ScreenId | nul
 function NavButton({
   label,
   icon,
+  badge,
   active,
   isChild = false,
   hasActiveChild = false,
@@ -113,6 +119,8 @@ function NavButton({
 }: {
   label: string
   icon?: ReactNode
+  /** 누구를 위한 메뉴인지 — 사람용은 포도(primary), 에이전트용은 초록(secondary) */
+  badge?: 'people' | 'agents'
   active: boolean
   isChild?: boolean
   /** 펼쳐진 그룹 안에 실제 선택된 하위 항목이 있을 때 — 배경 없이 글자만 살짝 진하게 */
@@ -127,32 +135,31 @@ function NavButton({
     <button
       type="button"
       onClick={onClick}
-      aria-current={active ? "page" : undefined}
+      aria-current={active ? 'page' : undefined}
       aria-expanded={hasToggle ? !collapsed : undefined}
       className={`relative flex w-full items-center gap-3 rounded-[12px] text-left leading-[1.25] ${
-        isChild ? "min-h-[40px] px-3 py-2 text-[14px]" : "min-h-[48px] px-3.5 py-2.5 text-[15px]"
+        isChild ? 'min-h-[40px] px-3 py-2 text-[14px]' : 'min-h-[48px] px-3.5 py-2.5 text-[15px]'
       } ${
         active
-          ? "font-medium text-[var(--editorial-accent)]"
-          : `${hasActiveChild ? "font-medium" : "font-normal"} text-[var(--editorial-ink)] hover:bg-[var(--editorial-sidebar-hover)]`
+          ? 'font-medium text-[var(--editorial-accent)]'
+          : `${hasActiveChild ? 'font-medium' : 'font-normal'} text-[var(--editorial-ink)] hover:bg-[var(--editorial-sidebar-hover)]`
       }`}
     >
       {active && (
         <span
           aria-hidden="true"
           className={`absolute w-[2px] rounded-full bg-[var(--editorial-accent)] ${
-            isChild ? "-left-[15px] bottom-2 top-2" : "bottom-3 left-0 top-3"
+            isChild ? '-left-[15px] bottom-2 top-2' : 'bottom-3 left-0 top-3'
           }`}
         />
       )}
-      {icon && (
-        <span className="flex h-4 w-4 shrink-0 items-center justify-center">{icon}</span>
-      )}
-      <span className="min-w-0 flex-1">{label}</span>
+      {icon && <span className="flex h-4 w-4 shrink-0 items-center justify-center">{icon}</span>}
+      <span className="min-w-0 flex-1 truncate">{label}</span>
+      {badge && <AudienceBadge audience={badge} />}
       {hasToggle && (
         <span
           role="button"
-          aria-label={collapsed ? "펼치기" : "접기"}
+          aria-label={collapsed ? '펼치기' : '접기'}
           onClick={(event) => {
             event.stopPropagation()
             onToggle()
@@ -161,7 +168,7 @@ function NavButton({
         >
           <ChevronDown
             size={13}
-            className={`opacity-70 transition-transform duration-150 ${collapsed ? "-rotate-90" : ""}`}
+            className={`opacity-70 transition-transform duration-150 ${collapsed ? '-rotate-90' : ''}`}
           />
         </span>
       )}
@@ -174,7 +181,7 @@ export function EditorialIndex({
   activeEntryId,
   onSelect,
   onOpenEntry,
-  className = "",
+  className = '',
 }: EditorialIndexProps) {
   // 주소로 바로 들어와도 첫 화면부터 현재 그룹이 펼쳐져 있게 (접혔다 펼쳐지는 깜빡임 없이)
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() => {
@@ -190,8 +197,7 @@ export function EditorialIndex({
   }, [activeScreen, activeEntryId])
 
   const toggle = (id: string) => setCollapsed((c) => ({ ...c, [id]: !c[id] }))
-  const open = (id: string) =>
-    setCollapsed((c) => (c[id] === false ? c : { ...c, [id]: false }))
+  const open = (id: string) => setCollapsed((c) => (c[id] === false ? c : { ...c, [id]: false }))
 
   return (
     <nav
@@ -199,7 +205,7 @@ export function EditorialIndex({
       className={`flex-1 overflow-y-auto px-3 pb-7 pt-3.5 ${className}`}
     >
       {SECTIONS.map((section, si) => (
-        <div key={section.id} className={si === 0 ? "mt-0.5" : "mt-6"}>
+        <div key={section.id} className={si === 0 ? 'mt-0.5' : 'mt-6'}>
           <div className="mb-3 px-2 text-[10px] font-semibold uppercase tracking-[1.1px] text-[var(--editorial-muted)]">
             {section.label}
           </div>
@@ -207,9 +213,7 @@ export function EditorialIndex({
           {section.groups.map((group) => {
             const isCollapsed = !!collapsed[group.id]
             const childActive = group.children.some((child) =>
-              group.childKind === "screen"
-                ? child.id === activeScreen
-                : child.id === activeEntryId,
+              group.childKind === 'screen' ? child.id === activeScreen : child.id === activeEntryId
             )
             const groupActive = activeScreen === group.id && !childActive && !activeEntryId
 
@@ -218,6 +222,7 @@ export function EditorialIndex({
                 <NavButton
                   label={group.label}
                   icon={group.icon}
+                  badge={group.badge}
                   active={groupActive}
                   hasActiveChild={childActive}
                   collapsed={isCollapsed}
@@ -231,7 +236,7 @@ export function EditorialIndex({
                   <div className="ml-[18px] mt-1 mb-1 space-y-1 border-l border-[var(--editorial-line)]/60 pl-3.5">
                     {group.children.map((child) => {
                       const active =
-                        group.childKind === "screen"
+                        group.childKind === 'screen'
                           ? child.id === activeScreen
                           : child.id === activeEntryId
                       return (
@@ -241,7 +246,7 @@ export function EditorialIndex({
                           active={active}
                           isChild
                           onClick={() =>
-                            group.childKind === "screen"
+                            group.childKind === 'screen'
                               ? onSelect(child.id as ScreenId)
                               : onOpenEntry?.(child.id)
                           }
@@ -256,5 +261,32 @@ export function EditorialIndex({
         </div>
       ))}
     </nav>
+  )
+}
+
+/* 누구를 위한 메뉴인지 — 사람용은 포도(primary), 에이전트용은 초록(secondary) 아이콘.
+   글자 뱃지는 사이드바 폭에서 메뉴 이름을 두 줄로 밀어내서, 아이콘 + 말풍선 설명으로 보여 준다.
+   메뉴 버튼 안이라 따로 포커스를 받지 않고, 화면 낭독기에는 설명 문장을 그대로 읽힌다. */
+function AudienceBadge({ audience }: { audience: 'people' | 'agents' }) {
+  const Icon = audience === 'people' ? User : Bot
+  const { description } = AUDIENCE_BADGE[audience]
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          className={`flex h-5 w-5 shrink-0 items-center justify-center border ${
+            audience === 'people'
+              ? 'border-[var(--editorial-accent)] text-[var(--editorial-accent)]'
+              : 'border-[var(--editorial-secondary)] text-[var(--editorial-secondary)]'
+          }`}
+        >
+          <Icon size={12} strokeWidth={2} aria-hidden="true" />
+          <span className="sr-only">{description}</span>
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="right" sideOffset={8} className="max-w-[220px] break-keep text-xs">
+        {description}
+      </TooltipContent>
+    </Tooltip>
   )
 }
