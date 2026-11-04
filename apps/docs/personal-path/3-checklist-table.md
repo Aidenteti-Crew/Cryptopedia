@@ -51,13 +51,23 @@
 ## Phase 5 — 개념 상세 · 여러 경로
 | 항목 | 상태 | 메모 |
 |---|---|---|
-| 5-1 경로 안 개념: 위 띠(n/전체·다음) + 완료 박스, 경로 밖 개념: 기존 그대로 | - | AI · 브라우저 |
-| 5-2 다 읽었어요/이미 알아요 → ✓, 다음 단계로, 새로고침 후 유지, 완료 취소 | - | AI · 브라우저 |
-| 5-3 경로 추가(하는 일·해본 것 불러옴) · 전환 · 삭제, 완료 기록 공유 | - | AI · 브라우저 |
+| 5-1 경로 안 개념: 위 띠(n/전체·다음) + 완료 박스, 경로 밖 개념: 기존 그대로 | T | AI · 브라우저 · concept-article.tsx · CDP c-validator.png (경로 안: 태그·완료 박스 / 경로 밖: 기존처럼) |
+| 5-2 다 읽었어요/이미 알아요 → ✓, 다음 단계로, 새로고침 후 유지, 완료 취소 | T | AI · 브라우저 · CDP: 다 읽었어요 → done 저장 · 배너·다음 버튼이 다음 개념으로 |
+| 5-3 경로 추가(하는 일·해본 것 불러옴) · 전환 · 삭제, 완료 기록 공유 | T | AI · 브라우저 · my-path-page 전환·추가·삭제 · 완료 기록 공유 |
 
 > Phase 1 증빙: `/private/tmp/claude-501/-Users-damin-Documents-Aidenteti-Cryptopedia/0fa3459c-4c28-4577-b505-dc49c5e550f5/scratchpad/p1/` (root·careers·knowledge·mobile 캡처)
 
 > Phase 2~4 증빙: `/private/tmp/claude-501/-Users-damin-Documents-Aidenteti-Cryptopedia/0fa3459c-4c28-4577-b505-dc49c5e550f5/scratchpad/p3b/` (CDP 흐름 캡처), 흐름 스크립트 `/private/tmp/claude-501/-Users-damin-Documents-Aidenteti-Cryptopedia/0fa3459c-4c28-4577-b505-dc49c5e550f5/scratchpad/cdp/flow.mjs` · 테스트 205/205
+
+## Phase 6 — 2026-11-04 추가 요청
+| 항목 | 상태 | 메모 |
+|---|---|---|
+| 6-1 설문 첫 단계 체인 선택 (준비 중 체인 비활성, Ethereum 포함) · 경로에 chainId | T | AI · learner.test · CDP |
+| 6-2 미들 빌더(3~5년차) 역할·트랙, "에이전트로 스킬 바로 써보기" 목표 | T | AI · learner.test |
+| 6-3 하단 고정 '내 학습 경로' 띠 (지식 섹션 전체 · 내 경로 페이지에서는 숨김 · 이번 방문 닫기) | T | AI · CDP b-*.png |
+| 6-4 지식 섹션 밝은 테마 (라벤더·포도 포인트) · 입구/채용/행사는 어두운 포도색 유지 | T | AI · CDP l-*.png |
+| 6-5 개념 상세 구조 개편 (리드 · 먼저 읽으면 좋아요 · 핵심 포인트+근거 · 지금 상태 · 누구에게) | T | AI · hub-pages.test · CDP c-*.png |
+| 6-6 개념 16개 초안 내용 사람 검토 → contentStatus REVIEWED | - | **사용자/팀** · hub.json concepts[].points·audience·relations[].reason |
 
 ## 성과 목표 (완료 기준)
 - 위 전 항목 `T` 이상, 사용자 브라우저 확인 후 `✅`.
