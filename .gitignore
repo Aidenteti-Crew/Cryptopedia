@@ -65,3 +65,6 @@ apps/api/.uploads/
 
 # symlink for import resolution
 python_services/packages/ontology
+
+# Claude Code 개인 설정 (권한 허용 목록은 사람마다 다르다)
+.claude/settings.local.json
