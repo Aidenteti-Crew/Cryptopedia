@@ -69,6 +69,14 @@
 | 6-5 개념 상세 구조 개편 (리드 · 먼저 읽으면 좋아요 · 핵심 포인트+근거 · 지금 상태 · 누구에게) | T | AI · hub-pages.test · CDP c-*.png |
 | 6-6 개념 16개 초안 내용 사람 검토 → contentStatus REVIEWED | - | **사용자/팀** · hub.json concepts[].points·audience·relations[].reason |
 
+## Phase 7 — 2026-11-04 추가 요청 (2)
+| 항목 | 상태 | 메모 |
+|---|---|---|
+| 7-1 지식 홈에서 '어떻게 시작할까요?' 제거 · Ecosystem Heatmap → 체인·프로젝트 (타일 = 목록 필터) | T | AI · 테스트 갱신 · CDP: Assets 타일 → 검색 결과 21개 |
+| 7-2 내 학습 경로 = 컬렉션 밖 독립 화면 `/my-path` (옛 `/academy/my-path` 308) | T | AI · curl · CDP |
+| 7-3 하단 배너 → 사이드바 맨 아래 카드 (모바일은 메뉴 패널 맨 아래) | T | AI · CDP h-sidebar · h-mobile-menu |
+| 7-4 경로 카드 캐러셀 — 넘기기/화살표/클릭으로 경로 전환, 지도·목록이 따라 바뀜 | T | AI · CDP: 넘기기 → p2, 화살표 → p3, 다음 할 것 바뀜 |
+
 ## 성과 목표 (완료 기준)
 - 위 전 항목 `T` 이상, 사용자 브라우저 확인 후 `✅`.
 - 테스트: 기준선 198개 + 새 테스트 전부 통과, `tsc --noEmit` 에 이번 작업으로 생긴 에러 0.
