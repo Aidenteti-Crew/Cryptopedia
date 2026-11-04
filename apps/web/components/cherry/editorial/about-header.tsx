@@ -31,10 +31,20 @@ const KNOWLEDGE_LINKS = [
   ...CHAPTER_NAV.map((chapter) => ({ label: chapter.label, href: screenPath(chapter.id) })),
 ]
 
-export const PLATFORM_MENUS: { id: string; label: string; href: string; children: { label: string; href: string }[] }[] = [
+export const PLATFORM_MENUS: {
+  id: string
+  label: string
+  href: string
+  children: { label: string; href: string }[]
+}[] = [
   { id: 'careers', label: '채용', href: '/careers', children: [] },
   { id: 'events', label: '행사/이벤트', href: '/events', children: [] },
-  { id: 'knowledge', label: '블록체인 지식', href: screenPath('ecosystem'), children: KNOWLEDGE_LINKS },
+  {
+    id: 'knowledge',
+    label: '블록체인 지식',
+    href: screenPath('ecosystem'),
+    children: KNOWLEDGE_LINKS,
+  },
 ]
 
 export function AboutHeader() {

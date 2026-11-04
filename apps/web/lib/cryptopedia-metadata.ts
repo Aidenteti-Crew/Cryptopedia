@@ -16,6 +16,7 @@ const hubEntries: { id: string; title: string; summary: string }[] = [
 /* LEARN 하위 메뉴 페이지의 탭 제목 — 페이지 제목(metadata.title)은 영어로 통일한다.
    CHAPTER_NAV 에 하위 항목을 추가하면 여기에도 넣는다 (cryptopedia-metadata.test.ts 가 확인) */
 export const MENU_PAGE_TITLES: Record<string, string> = {
+  'my-path': 'My Learning Path',
   'skill-graph': 'Learning Map',
   practice: 'Case Studies',
   'chain-overview': 'Chain Overview',

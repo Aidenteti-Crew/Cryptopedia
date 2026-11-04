@@ -52,6 +52,7 @@ export const CHAPTER_NAV: NavItem[] = [
     id: "academy",
     label: "아카데미",
     children: [
+      { id: "my-path", label: "내 학습 경로" },
       { id: "skill-graph", label: "학습 지도" },
       { id: "practice", label: "케이스별 실습" },
     ],
@@ -88,6 +89,7 @@ const ARTICLE_PARENT: Record<string, ScreenId> = {
   "mcp-x402": "builders",
   "mcp-tools": "builders",
   "skill-library": "builders",
+  "my-path": "academy",
   foundation: "academy",
   structure: "academy",
   practice: "academy",

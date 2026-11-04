@@ -187,12 +187,15 @@ export function LearningMap({
   layout,
   selected,
   route,
+  progress,
   onSelect,
 }: {
   layout: MapLayout
   selected: string
   /* 켜져 있으면 경로 순서대로 번호와 경로선을 그린다 */
   route: string[] | null
+  /* 내 경로(개인화) — 이미 알거나 마친 개념은 ✓ 로 흐리게. 없으면 지금과 똑같이 그린다 */
+  progress?: ReadonlyMap<string, 'known' | 'done'>
   onSelect: (id: string) => void
 }) {
   const { before, after } = neighborhood(layout, selected)
@@ -200,21 +203,27 @@ export function LearningMap({
   const stateOf = (id: string) =>
     id === selected
       ? 'here'
-      : route
-        ? routeIndex.has(id)
-          ? 'route'
-          : 'dim'
-        : before.has(id)
-          ? 'before'
-          : after.has(id)
-            ? 'after'
+      : progress?.has(id)
+        ? 'done'
+        : route
+          ? routeIndex.has(id)
+            ? 'route'
             : 'dim'
+          : before.has(id)
+            ? 'before'
+            : after.has(id)
+              ? 'after'
+              : 'dim'
+  // 내 경로(progress)에서는 순서선 대신 경로 안의 선행 화살표만 진하게 — 순서선은 노드를 가로질러 엉킨다
+  const personal = !!progress
   const edgeOn = (from: string, to: string) =>
-    route
-      ? false
-      : (to === selected && before.has(from)) ||
-        (before.has(to) && before.has(from)) ||
-        (from === selected && after.has(to))
+    personal
+      ? routeIndex.has(from) && routeIndex.has(to)
+      : route
+        ? false
+        : (to === selected && before.has(from)) ||
+          (before.has(to) && before.has(from)) ||
+          (from === selected && after.has(to))
 
   return (
     <div className="mt-6 overflow-x-auto border border-[var(--editorial-line)] bg-[var(--editorial-surface)]">
@@ -291,6 +300,7 @@ export function LearningMap({
             )
           })}
           {route &&
+            !personal &&
             route.slice(1).map((id, index) => {
               const a = layout.nodes.get(route[index])
               const b = layout.nodes.get(id)
@@ -337,15 +347,26 @@ export function LearningMap({
                         ? 'border-dashed border-[var(--editorial-accent)] bg-[var(--editorial-surface)] text-[var(--editorial-accent)]'
                         : state === 'route'
                           ? 'border-[var(--editorial-accent)] bg-[var(--editorial-surface)] text-[var(--editorial-ink)]'
-                          : 'border-[var(--editorial-line)] bg-[var(--editorial-surface)] text-[var(--editorial-muted)] opacity-60 hover:opacity-100',
+                          : state === 'done'
+                            ? 'border-[var(--editorial-line)] bg-[var(--editorial-hover)] text-[var(--editorial-muted)]'
+                            : 'border-[var(--editorial-line)] bg-[var(--editorial-surface)] text-[var(--editorial-muted)] opacity-60 hover:opacity-100',
                   'hover:border-[var(--editorial-accent)]',
                 ].join(' ')}
                 style={{ left: node.x, top: node.y, width: NODE_W, height: NODE_H }}
               >
-                {step !== undefined && (
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center bg-[var(--editorial-accent)] text-[11px] text-[var(--editorial-paper)]">
-                    {step + 1}
+                {state === 'done' ? (
+                  <span
+                    aria-label={progress?.get(id) === 'known' ? '이미 아는 개념' : '마친 개념'}
+                    className="flex h-5 w-5 shrink-0 items-center justify-center border border-[var(--editorial-line)] text-[11px]"
+                  >
+                    ✓
                   </span>
+                ) : (
+                  step !== undefined && (
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center bg-[var(--editorial-accent)] text-[11px] text-[var(--editorial-paper)]">
+                      {step + 1}
+                    </span>
+                  )
                 )}
                 <span className="truncate">{node.concept.title}</span>
               </button>
@@ -357,7 +378,13 @@ export function LearningMap({
   )
 }
 
-export function LearningMapLegend({ route }: { route: boolean }) {
+export function LearningMapLegend({
+  route,
+  personal = false,
+}: {
+  route: boolean
+  personal?: boolean
+}) {
   const item = 'inline-flex items-center gap-2'
   const swatch = 'inline-block h-3 w-5 border'
   return (
@@ -366,8 +393,16 @@ export function LearningMapLegend({ route }: { route: boolean }) {
         <span
           className={`${swatch} border-[var(--editorial-accent)] bg-[var(--editorial-accent)]`}
         />
-        지금 여기
+        {personal ? '여기서 시작' : '지금 여기'}
       </span>
+      {personal && (
+        <span className={item}>
+          <span
+            className={`${swatch} border-[var(--editorial-line)] bg-[var(--editorial-hover)]`}
+          />
+          ✓ 마쳤거나 이미 아는 개념
+        </span>
+      )}
       {route ? (
         <span className={item}>
           <span className={`${swatch} border-[var(--editorial-accent)]`} />

@@ -22,30 +22,31 @@
 ## Phase 2 — 경로 계산 로직
 | 항목 | 상태 | 메모 |
 |---|---|---|
-| 2-1 트랙·해본 것·목표의 모든 id 가 hub.json 에 실재 | - | AI · 테스트 |
-| 2-2 선행 개념 자동 포함(예: C-Chain → Primary Network), 선행이 항상 먼저 | - | AI · 테스트 |
-| 2-3 해본 것 → known, known/done 은 시작점에서 건너뜀, 시작점 = 처음 남은 단계 | - | AI · 테스트 |
-| 2-4 hub 에 없는 id 는 빠지고 에러 없음 | - | AI · 테스트 |
-| 2-5 저장소: 빈 저장소·깨진 JSON·버전 불일치 → 빈 상태, 저장 실패해도 메모리로 동작 | - | AI · 테스트 |
-| 2-6 케이스 완료 = 기존 `cryptopedia-study:<케이스>` 체크 전부 완료 | - | AI · 테스트 |
+| 2-1 트랙·해본 것·목표의 모든 id 가 hub.json 에 실재 | T | AI · 테스트 · learner.test.ts |
+| 2-2 선행 개념 자동 포함(예: C-Chain → Primary Network), 선행이 항상 먼저 | T | AI · 테스트 · learner.test.ts |
+| 2-3 해본 것 → known, known/done 은 시작점에서 건너뜀, 시작점 = 처음 남은 단계 | T | AI · 테스트 · learner.test.ts |
+| 2-4 hub 에 없는 id 는 빠지고 에러 없음 | T | AI · 테스트 · learner.test.ts |
+| 2-5 저장소: 빈 저장소·깨진 JSON·버전 불일치 → 빈 상태, 저장 실패해도 메모리로 동작 | T | AI · 테스트 · learner.test.ts |
+| 2-6 케이스 완료 = 기존 `cryptopedia-study:<케이스>` 체크 전부 완료 | T | AI · 테스트 · learner.test.ts |
 
 ## Phase 3 — 설문 · 전체 화면 시작
 | 항목 | 상태 | 메모 |
 |---|---|---|
-| 3-1 경로 없음 + 나가기 안 함 → `/knowledge` 진입 시 전체 화면 설문 | - | AI · 브라우저 |
-| 3-2 나가기 → 지식 홈, 새로고침·재방문 시 안 뜸 | - | AI · 브라우저 |
-| 3-3 하위 주소 직접 진입 시 안 뜸 | - | AI · 브라우저 |
-| 3-4 처음부터 쌓기 4단계 / 목표 5단계, 이전·수정으로 돌아가기 | - | AI · 브라우저 |
-| 3-5 경로 만들기 → 저장값(localStorage) 이 스키마대로 | - | AI · 브라우저 콘솔 |
-| 3-6 모바일 폭(390px)에서 가로 스크롤 없음, 하단 버튼 고정 | - | AI · 브라우저 |
+| 3-1 경로 없음 + 나가기 안 함 → `/knowledge` 진입 시 전체 화면 설문 | T | AI · 브라우저 · CDP 흐름 · d1-onboarding-mode.png |
+| 3-2 나가기 → 지식 홈, 새로고침·재방문 시 안 뜸 | T | AI · 브라우저 · CDP: 나가기 후 / 새로고침 후 안 뜸 |
+| 3-3 하위 주소 직접 진입 시 안 뜸 | T | AI · 브라우저 · CDP: /concepts/concept-evm 직접 진입 시 안 뜸 |
+| 3-4 처음부터 쌓기 4단계 / 목표 5단계, 이전·수정으로 돌아가기 | W | AI · 브라우저 · 목표 5단계·쌓기 4단계 진행 확인 / 이전·수정 버튼은 사용자 확인 |
+| 3-5 경로 만들기 → 저장값(localStorage) 이 스키마대로 | T | AI · 브라우저 콘솔 · CDP: 저장값 스키마대로 (profile·paths·activePathId·onboardingDismissed) |
+| 3-6 모바일 폭(390px)에서 가로 스크롤 없음, 하단 버튼 고정 | T | AI · 브라우저 · CDP 390px: 가로 스크롤 없음 · m1·m3 캡처 |
 
 ## Phase 4 — 내 경로 · 지도 개인화
 | 항목 | 상태 | 메모 |
 |---|---|---|
-| 4-1 `/academy/my-path`: 다음 할 것 · 진행률 · 지도 · 순서 목록 | - | AI · 브라우저 |
-| 4-2 지도 ✓·▶·번호가 계산 결과와 일치 (입문자·주니어·시니어 3조건) | - | AI · 브라우저 |
-| 4-3 기존 학습 지도 페이지(`/academy/skill-graph`) 모양·동작 그대로 | - | AI · 브라우저 + 기존 테스트 |
-| 4-4 사이드바 아카데미 첫 메뉴 "내 학습 경로" | - | AI · 브라우저 |
+| 4-1 `/academy/my-path`: 다음 할 것 · 진행률 · 지도 · 순서 목록 | T | AI · 브라우저 · d5-my-path.png |
+| 4-2 지도 ✓·▶·번호가 계산 결과와 일치 (입문자·주니어·시니어 3조건) | T | AI · 브라우저 · 주니어(목표)·입문자(쌓기) 확인 · 시니어는 테스트로만 |
+| 4-3 기존 학습 지도 페이지(`/academy/skill-graph`) 모양·동작 그대로 | T | AI · 브라우저 + 기존 테스트 · d7-skill-graph.png · 기존 테스트 통과 |
+| 4-5 지식 홈 캐러셀 반 폭 + "내 경로" 카드(없으면 만들기 · 있으면 이어서 하기 → 첫 단계 열기) | T | AI · d6-home-card.png · 시작하기 → /concepts/concept-evm |
+| 4-4 사이드바 아카데미 첫 메뉴 "내 학습 경로" | T | AI · 브라우저 · d5 사이드바 |
 
 ## Phase 5 — 개념 상세 · 여러 경로
 | 항목 | 상태 | 메모 |
@@ -55,6 +56,8 @@
 | 5-3 경로 추가(하는 일·해본 것 불러옴) · 전환 · 삭제, 완료 기록 공유 | - | AI · 브라우저 |
 
 > Phase 1 증빙: `/private/tmp/claude-501/-Users-damin-Documents-Aidenteti-Cryptopedia/0fa3459c-4c28-4577-b505-dc49c5e550f5/scratchpad/p1/` (root·careers·knowledge·mobile 캡처)
+
+> Phase 2~4 증빙: `/private/tmp/claude-501/-Users-damin-Documents-Aidenteti-Cryptopedia/0fa3459c-4c28-4577-b505-dc49c5e550f5/scratchpad/p3b/` (CDP 흐름 캡처), 흐름 스크립트 `/private/tmp/claude-501/-Users-damin-Documents-Aidenteti-Cryptopedia/0fa3459c-4c28-4577-b505-dc49c5e550f5/scratchpad/cdp/flow.mjs` · 테스트 205/205
 
 ## 성과 목표 (완료 기준)
 - 위 전 항목 `T` 이상, 사용자 브라우저 확인 후 `✅`.

@@ -40,6 +40,8 @@ import { FeedPage } from './feed-page'
 import { ProjectDirectoryPage } from './project-directory-page'
 import { HubLibraryPage } from './hub-library-page'
 import { HubDetailPage } from './hub-detail-page'
+import { MyPathPage } from './my-path-page'
+import { KnowledgeOnboarding } from './my-path-onboarding'
 import { getEditorialBreadcrumbs, menuEntryFor } from './editorial-breadcrumb'
 import { useEditorialChain } from './editorial-chain-provider'
 import { getChainTheme } from '@/lib/chain-theme'
@@ -314,6 +316,13 @@ export function EditorialApp({
               }
             />
           )
+          // 블록체인 지식에 처음 들어오면(경로 없음 · 나가기 안 함) 전체 화면 '내 경로 만들기'
+          content = (
+            <>
+              {content}
+              <KnowledgeOnboarding hub={loaded.hub} onCreated={() => openArticle('my-path')} />
+            </>
+          )
         }
         break
       case 'projects':
@@ -327,7 +336,13 @@ export function EditorialApp({
         )
         break
       case 'hub':
-        content = HUB_ENTRY_IDS.has(loaded.id) ? (
+        content = loaded.id === 'my-path' ? (
+          <MyPathPage
+            data={loaded.data}
+            onOpen={(id) => openArticle(id)}
+            onOpenScreen={selectScreen}
+          />
+        ) : HUB_ENTRY_IDS.has(loaded.id) ? (
           <HubLibraryPage
             key={loaded.id}
             id={loaded.id}

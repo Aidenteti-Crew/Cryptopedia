@@ -398,6 +398,7 @@ export function buildCaseBundle(study: HubCase, selectedIds: string[], data: Hub
 }
 
 export const HUB_ENTRY_IDS = new Set([
+  'my-path',
   'practice',
   'skill-graph',
   'skill-library',
