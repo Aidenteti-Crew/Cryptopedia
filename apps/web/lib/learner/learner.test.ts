@@ -14,7 +14,15 @@ import {
   readCompletedCases,
   type LearnerState,
 } from './store'
-import { EXPERIENCES, GOAL_FIT, ROLE_IDS, TRACKS } from './tracks'
+import {
+  EXPERIENCES,
+  GOAL_FIT,
+  ROLE_IDS,
+  SPECIAL_GOALS,
+  TRACKS,
+  experienceLabel,
+  knownFromExperience,
+} from './tracks'
 
 const hub = hubSchema.parse(
   JSON.parse(readFileSync(new URL('../../public/cryptopedia/hub.json', import.meta.url), 'utf8'))
@@ -50,10 +58,38 @@ test('every track, experience and goal points at ids that exist in hub.json', ()
   for (const [key, experience] of Object.entries(EXPERIENCES))
     for (const id of experience.known) assert.ok(ids.has(id), `${key}: ${id}`)
   for (const id of Object.keys(GOAL_FIT)) assert.ok(ids.has(id), id)
+  for (const [key, goal] of Object.entries(SPECIAL_GOALS))
+    for (const id of [...goal.concepts, ...goal.extras.map((extra) => extra.id)])
+      assert.ok(ids.has(id), `${key}: ${id}`)
+})
+
+test('the agent goal goes through one concept and then the ecosystem skills', () => {
+  const route = computeRoute(
+    hub,
+    { mode: 'goal', role: 'pm', goal: 'agent-skills', chainId: 'avalanche' },
+    learner()
+  )
+  const kinds = route.steps.map((step) => step.kind)
+  assert.deepEqual([...new Set(kinds)], ['concept', 'skill'])
+  assert.equal(route.steps.filter((step) => step.kind === 'skill').length, hub.skills.length)
+  assert.equal(route.name, SPECIAL_GOALS['agent-skills'].title)
+})
+
+test("having used the chosen chain marks that chain's concepts only", () => {
+  assert.equal(experienceLabel('used-chain', 'Avalanche'), 'Avalanche 체인을 직접 써봤어요')
+  assert.deepEqual(
+    [...knownFromExperience(['used-chain'], 'avalanche')],
+    ['concept-primary-network', 'concept-c-chain']
+  )
+  assert.equal(knownFromExperience(['used-chain'], 'injective').size, 0)
 })
 
 test('prerequisites are pulled in and always come before the concept that needs them', () => {
-  const route = computeRoute(hub, { mode: 'track', role: 'newbie', goal: null }, learner())
+  const route = computeRoute(
+    hub,
+    { mode: 'track', role: 'newbie', goal: null, chainId: 'avalanche' },
+    learner()
+  )
   const order = route.steps.filter((step) => step.kind === 'concept').map((step) => step.id)
   // C-Chain 은 트랙에 있지만 Primary Network 는 없다 → 선행이라 자동으로 들어간다
   assert.ok(order.includes('concept-primary-network'))
@@ -69,7 +105,7 @@ test('prerequisites are pulled in and always come before the concept that needs 
 test('a goal route takes its concepts from the case steps and ends with the case and its skills', () => {
   const route = computeRoute(
     hub,
-    { mode: 'goal', role: 'junior', goal: 'case-first-contract' },
+    { mode: 'goal', role: 'junior', goal: 'case-first-contract', chainId: 'avalanche' },
     learner()
   )
   const study = hub.cases.find((item) => item.id === 'case-first-contract')!
@@ -86,7 +122,7 @@ test('a goal route takes its concepts from the case steps and ends with the case
 test('experience marks concepts as known and the start skips them', () => {
   const route = computeRoute(
     hub,
-    { mode: 'goal', role: 'junior', goal: 'case-first-contract' },
+    { mode: 'goal', role: 'junior', goal: 'case-first-contract', chainId: 'avalanche' },
     learner({ profile: { role: 'junior', experience: ['defi'] } })
   )
   const status = new Map(route.steps.map((step) => [step.id, step.status]))
@@ -100,7 +136,7 @@ test('own progress wins over experience, including undoing a known concept', () 
   const at = '2026-11-04T00:00:00Z'
   const route = computeRoute(
     hub,
-    { mode: 'goal', role: 'junior', goal: 'case-first-contract' },
+    { mode: 'goal', role: 'junior', goal: 'case-first-contract', chainId: 'avalanche' },
     learner({
       profile: { role: 'junior', experience: ['defi'] },
       progress: {
@@ -121,10 +157,18 @@ test('ids missing from the hub are dropped without errors', () => {
     concepts: hub.concepts.filter((concept) => concept.scope.kind !== 'CHAIN'),
     cases: [],
   }
-  const route = computeRoute(smallHub, { mode: 'track', role: 'senior', goal: null }, learner())
+  const route = computeRoute(
+    smallHub,
+    { mode: 'track', role: 'senior', goal: null, chainId: 'avalanche' },
+    learner()
+  )
   assert.ok(route.steps.every((step) => step.kind !== 'case'))
   assert.ok(route.steps.every((step) => !step.id.startsWith('concept-p-chain')))
-  const missingGoal = computeRoute(hub, { mode: 'goal', role: 'bd', goal: 'case-nope' }, learner())
+  const missingGoal = computeRoute(
+    hub,
+    { mode: 'goal', role: 'bd', goal: 'case-nope', chainId: 'avalanche' },
+    learner()
+  )
   assert.equal(missingGoal.steps.length, 0)
   assert.equal(missingGoal.start, null)
 })
@@ -138,7 +182,12 @@ test('a finished case comes from the existing case study record', () => {
   })
   const done = readCompletedCases(hub, storage)
   assert.deepEqual([...done], [study.id])
-  const route = computeRoute(hub, { mode: 'goal', role: 'junior', goal: study.id }, learner(), done)
+  const route = computeRoute(
+    hub,
+    { mode: 'goal', role: 'junior', goal: study.id, chainId: 'avalanche' },
+    learner(),
+    done
+  )
   assert.equal(route.steps.find((step) => step.id === study.id)?.status, 'done')
 })
 
@@ -159,6 +208,7 @@ test('the local store survives empty, broken and foreign records', async () => {
         name: '생태계 지형 파악',
         mode: 'track',
         role: 'bd',
+        chainId: 'avalanche',
         goal: null,
         createdAt: '2026-11-04T00:00:00Z',
       },

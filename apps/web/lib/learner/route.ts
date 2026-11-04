@@ -2,7 +2,7 @@ import type { HubData } from '@/lib/cryptopedia-hub'
 import { PRIMARY_NAV } from '@/lib/cryptopedia-taxonomy'
 
 import type { LearnerPath, LearnerState } from './store'
-import { TRACKS, knownFromExperience, type ExtraStep } from './tracks'
+import { SPECIAL_GOALS, TRACKS, knownFromExperience, type ExtraStep } from './tracks'
 
 /* 경로 계산 — 저장하지 않고 매번 계산하는 순수 함수.
    1) 목표 개념: 처음부터 쌓기면 역할 트랙, 목표 이루기면 고른 케이스의 단계에 걸린 개념
@@ -44,12 +44,16 @@ export function prerequisitesOf(concept: HubData['concepts'][number]): string[] 
   return concept.relations.filter((r) => r.type === 'PREREQUISITE').map((r) => r.id)
 }
 
-/* 경로의 목표 — 트랙이면 표에서, 케이스면 hub 의 케이스 단계에서 */
+export type RoutePath = Pick<LearnerPath, 'mode' | 'role' | 'goal' | 'chainId'>
+
+/* 경로의 목표 — 트랙이면 표에서, 케이스면 hub 의 케이스 단계에서, 특별 목표(에이전트 등)면 표에서 */
 export function pathTargets(
   hub: HubData,
   path: Pick<LearnerPath, 'mode' | 'role' | 'goal'>
 ): { name: string; concepts: string[]; extras: ExtraStep[] } {
   if (path.mode === 'track') return TRACKS[path.role]
+  const special = path.goal ? SPECIAL_GOALS[path.goal] : undefined
+  if (special) return { name: special.title, concepts: special.concepts, extras: special.extras }
   const study = hub.cases.find((item) => item.id === path.goal)
   if (!study) return { name: '목표 없음', concepts: [], extras: [] }
   return {
@@ -66,7 +70,7 @@ export function pathTargets(
 export function conceptStatus(
   id: string,
   state: Pick<LearnerState, 'profile' | 'progress'>,
-  known = knownFromExperience(state.profile.experience)
+  known: ReadonlySet<string>
 ): StepStatus {
   const entry = state.progress[id]
   if (entry?.status === 'done') return 'done'
@@ -77,13 +81,13 @@ export function conceptStatus(
 
 export function computeRoute(
   hub: HubData,
-  path: Pick<LearnerPath, 'mode' | 'role' | 'goal'>,
+  path: RoutePath,
   state: Pick<LearnerState, 'profile' | 'progress'>,
   completedCases: ReadonlySet<string> = new Set()
 ): ComputedRoute {
   const { name, concepts: targets, extras } = pathTargets(hub, path)
   const byId = new Map(hub.concepts.map((concept) => [concept.id, concept]))
-  const known = knownFromExperience(state.profile.experience)
+  const known = knownFromExperience(state.profile.experience, path.chainId)
 
   const order: string[] = []
   const seen = new Set<string>()

@@ -7,6 +7,7 @@ import type { ExperienceId, LearnerRole } from './tracks'
 export interface PathDraft {
   mode: LearnerPath['mode']
   role: LearnerRole
+  chainId: string
   goal: string | null
   name: string
 }
@@ -31,6 +32,7 @@ export function addPath(
     name: draft.name,
     mode: draft.mode,
     role: draft.role,
+    chainId: draft.chainId,
     goal: draft.mode === 'goal' ? draft.goal : null,
     createdAt: now,
   }

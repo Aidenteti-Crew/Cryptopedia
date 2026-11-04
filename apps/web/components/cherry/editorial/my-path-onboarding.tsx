@@ -2,28 +2,32 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ArrowLeft, ArrowRight, Check, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 
+import chainCatalog from '@/public/cryptopedia/chains.json'
 import type { HubData } from '@/lib/cryptopedia-hub'
 import { addPath, dismissOnboarding, setProfile } from '@/lib/learner/actions'
 import { computeRoute, pathTargets } from '@/lib/learner/route'
 import {
   EXPERIENCE_IDS,
-  EXPERIENCES,
   GOAL_FIT,
   ROLE_IDS,
   ROLES,
+  SPECIAL_GOALS,
+  experienceLabel,
   knownFromExperience,
   type ExperienceId,
   type LearnerRole,
 } from '@/lib/learner/tracks'
 import { newPathId, updateLearner, useLearner } from '@/lib/learner/use-learner'
 
-/* 내 경로 만들기 설문 — 방식 → 하는 일 → 해본 것 → (목표) → 확인.
+import { useEditorialChain } from './editorial-chain-provider'
+
+/* 내 경로 만들기 설문 — 체인 → 방식 → 하는 일 → 해본 것 → (목표) → 확인.
    지식 홈에 처음 들어올 때는 전체 화면(fullscreen), 내 학습 경로 페이지에서는 본문(inline)으로 같은 설문을 쓴다.
    답은 '경로 만들기'를 누를 때 처음 저장한다 — 중간에 나가면 아무것도 남기지 않는다. */
 
-type Step = 'mode' | 'role' | 'experience' | 'goal' | 'confirm'
+type Step = 'chain' | 'mode' | 'role' | 'experience' | 'goal' | 'confirm'
 type Mode = 'track' | 'goal'
 
 const OPTION_CLASS =
@@ -48,7 +52,9 @@ export function MyPathOnboarding({
   onCreated: (pathId: string) => void
 }) {
   const { state, persisted } = useLearner()
-  const [step, setStep] = useState<Step>('mode')
+  const { activeChain, setActiveChain } = useEditorialChain()
+  const [step, setStep] = useState<Step>('chain')
+  const [chainId, setChainId] = useState(activeChain.id)
   const [mode, setMode] = useState<Mode | null>(null)
   const [role, setRole] = useState<LearnerRole | null>(null)
   const [experience, setExperience] = useState<ExperienceId[]>([])
@@ -79,12 +85,12 @@ export function MyPathOnboarding({
 
   const steps: Step[] =
     mode === 'goal'
-      ? ['mode', 'role', 'experience', 'goal', 'confirm']
-      : ['mode', 'role', 'experience', 'confirm']
+      ? ['chain', 'mode', 'role', 'experience', 'goal', 'confirm']
+      : ['chain', 'mode', 'role', 'experience', 'confirm']
   const index = steps.indexOf(step)
   const draft =
     mode && role && (mode === 'track' || goal)
-      ? { mode, role, goal: mode === 'goal' ? goal : null }
+      ? { mode, role, chainId, goal: mode === 'goal' ? goal : null }
       : null
   const preview = useMemo(
     () =>
@@ -94,15 +100,26 @@ export function MyPathOnboarding({
             progress: state?.progress ?? {},
           })
         : null,
-    [hub, draft?.mode, draft?.role, draft?.goal, experience, state?.progress]
+    [hub, draft?.mode, draft?.role, draft?.goal, chainId, experience, state?.progress]
   )
   const suggestedName = draft ? pathTargets(hub, draft).name : ''
-  const known = knownFromExperience(experience)
+  const chain = chainCatalog.items.find((item) => item.id === chainId) ?? activeChain
+  const known = knownFromExperience(experience, chainId)
+  const goalTitle = (id: string | null) =>
+    (id && (SPECIAL_GOALS[id]?.title ?? hub.cases.find((item) => item.id === id)?.title)) || '-'
   const conceptTitle = (id: string) =>
     hub.concepts.find((concept) => concept.id === id)?.title ?? id
 
   const canNext =
-    step === 'mode' ? !!mode : step === 'role' ? !!role : step === 'goal' ? !!goal : true
+    step === 'chain'
+      ? !!chainId
+      : step === 'mode'
+        ? !!mode
+        : step === 'role'
+          ? !!role
+          : step === 'goal'
+            ? !!goal
+            : true
   const go = (to: Step) => setStep(to)
   const next = () => canNext && index < steps.length - 1 && go(steps[index + 1])
   const back = () => (index > 0 ? go(steps[index - 1]) : onExit?.())
@@ -119,6 +136,9 @@ export function MyPathOnboarding({
         now
       )
     )
+    // 고른 체인으로 지식 섹션을 맞춘다 (사이드바 컬렉션과 같은 상태)
+    const picked = chainCatalog.items.find((item) => item.id === chainId)
+    if (picked && picked.id !== activeChain.id) setActiveChain(picked)
     onCreated(id)
   }
 
@@ -131,6 +151,37 @@ export function MyPathOnboarding({
   let lede = ''
   let body: React.ReactNode = null
   switch (step) {
+    case 'chain':
+      title = '어떤 체인을 공부할까요?'
+      lede = '고른 체인의 개념 · 실습 · 스킬로 경로를 만들어요. 다른 체인은 준비되는 대로 열려요.'
+      body = (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {chainCatalog.items.map((item) => {
+            const available = item.status === 'AVAILABLE'
+            return (
+              <button
+                key={item.id}
+                type="button"
+                aria-pressed={chainId === item.id}
+                disabled={!available}
+                onClick={() => setChainId(item.id)}
+                className={`${OPTION_CLASS} items-center ${optionState(chainId === item.id)} disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:border-[var(--editorial-line)]`}
+              >
+                <img src={item.logoUrl} alt="" className="h-8 w-8 shrink-0" />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[15px] font-semibold text-[var(--editorial-strong)]">
+                    {item.name}
+                  </span>
+                  <span className="mt-0.5 block text-xs text-[var(--editorial-muted)]">
+                    {available ? item.summary : '준비 중'}
+                  </span>
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      )
+      break
     case 'mode':
       title = '어떻게 배우고 싶으세요?'
       lede = '나중에 다른 방식으로 경로를 하나 더 만들 수 있어요.'
@@ -224,7 +275,7 @@ export function MyPathOnboarding({
                 >
                   <CheckBox on={on} />
                   <span className="text-sm text-[var(--editorial-ink)]">
-                    {EXPERIENCES[id].label}
+                    {experienceLabel(id, chain.name)}
                   </span>
                 </button>
               )
@@ -294,6 +345,30 @@ export function MyPathOnboarding({
                 </span>
               </button>
             ))}
+          <p className="mt-4 text-xs tracking-[0.14em] text-[var(--editorial-muted)]">
+            공부보다 바로 써보고 싶다면
+          </p>
+          {Object.entries(SPECIAL_GOALS).map(([id, special]) => (
+            <button
+              key={id}
+              type="button"
+              aria-pressed={goal === id}
+              onClick={() => setGoal(id)}
+              className={`${OPTION_CLASS} ${optionState(goal === id)}`}
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block text-[15px] font-semibold text-[var(--editorial-strong)]">
+                  {special.title.replace('이 생태계', `${chain.name}`)}
+                </span>
+                <span className="mt-1 block text-sm leading-6 text-[var(--editorial-muted)]">
+                  {special.summary}
+                </span>
+              </span>
+              <span className="shrink-0 border border-[var(--editorial-line)] px-1.5 py-0.5 text-[11px] text-[var(--editorial-muted)]">
+                에이전트
+              </span>
+            </button>
+          ))}
         </div>
       )
       break
@@ -318,17 +393,17 @@ export function MyPathOnboarding({
       body = (
         <>
           <div className="border border-[var(--editorial-line)]">
+            {row('체인', chain.name, 'chain')}
             {row('방식', mode === 'goal' ? '목표 하나 이루기' : '처음부터 차근차근 쌓기', 'mode')}
             {row('하는 일', role ? ROLES[role].label : '-', 'role')}
             {row(
               '해본 것',
               experience.length
-                ? experience.map((id) => EXPERIENCES[id].label).join(', ')
+                ? experience.map((id) => experienceLabel(id, chain.name)).join(', ')
                 : '아직 없어요',
               'experience'
             )}
-            {mode === 'goal' &&
-              row('목표', hub.cases.find((item) => item.id === goal)?.title ?? '-', 'goal')}
+            {mode === 'goal' && row('목표', goalTitle(goal), 'goal')}
             <label className="flex items-center gap-4 px-4 py-3">
               <span className="w-20 shrink-0 text-xs text-[var(--editorial-muted)]">경로 이름</span>
               <input
@@ -474,18 +549,8 @@ export function MyPathOnboarding({
         <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--editorial-accent)]">
           내 경로 만들기
         </span>
-        <div className="flex items-center gap-4">
-          {progress}
-          {onExit && (
-            <button
-              type="button"
-              onClick={onExit}
-              className="inline-flex items-center gap-1 text-xs text-[var(--editorial-muted)] hover:text-[var(--editorial-ink)]"
-            >
-              나가기 <X size={14} />
-            </button>
-          )}
-        </div>
+        {/* 나가기는 첫 단계 아래쪽 '나가기' 하나만 — 위에 두면 설문을 시작하기 전에 닫아 버리기 쉽다 */}
+        {progress}
       </header>
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-8 sm:px-8 sm:py-12">{panel}</div>
       <footer className="shrink-0 border-t border-[var(--editorial-line)] bg-[var(--editorial-sidebar)] px-4 py-3 sm:px-8">

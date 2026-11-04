@@ -1,8 +1,9 @@
 /* 맞춤 학습 경로의 정본 표 — 하는 일(역할) · 해본 것 · 목표.
    id 는 public/cryptopedia/hub.json 의 실제 id 를 쓴다 (tracks.test.ts 가 실재를 확인).
-   목표(케이스)가 요구하는 개념은 여기 적지 않고 hub.json 의 케이스 단계에서 읽는다 — route.ts 참고. */
+   목표(케이스)가 요구하는 개념은 여기 적지 않고 hub.json 의 케이스 단계에서 읽는다 — route.ts 참고.
+   개념 id 는 지금 Avalanche hub 기준이다 — 체인이 늘면 체인별로 나눈다. */
 
-export type LearnerRole = 'newbie' | 'junior' | 'senior' | 'pm' | 'bd' | 'research'
+export type LearnerRole = 'newbie' | 'junior' | 'middle' | 'senior' | 'pm' | 'bd' | 'research'
 export type ExperienceId =
   | 'wallet'
   | 'defi'
@@ -10,7 +11,7 @@ export type ExperienceId =
   | 'deploy'
   | 'rpc'
   | 'node'
-  | 'avalanche'
+  | 'used-chain'
 
 /* 개념 뒤에 붙는 단계 — 케이스 실습 · 에이전트 스킬 · LIVE 화면 */
 export type ExtraStep =
@@ -25,8 +26,9 @@ export interface RoleInfo {
 
 export const ROLES: Record<LearnerRole, RoleInfo> = {
   newbie: { label: '블록체인 입문자', summary: '지갑도 아직 낯설어요' },
-  junior: { label: '주니어 빌더', summary: '개발은 하지만 블록체인은 1~2년 이내' },
-  senior: { label: '시니어 빌더', summary: '컨트랙트·인프라를 실무로 다뤄요' },
+  junior: { label: '주니어 빌더', summary: '블록체인 개발 1~2년차' },
+  middle: { label: '미들 빌더', summary: '블록체인 개발 3~5년차' },
+  senior: { label: '시니어 빌더', summary: '블록체인 개발 5년 이상 · 아키텍처를 다뤄요' },
   pm: { label: '기획·PM', summary: '서비스와 기능을 설계해요' },
   bd: { label: 'BD·마케팅', summary: '파트너와 생태계를 연결해요' },
   research: { label: '리서치·투자', summary: '프로젝트를 분석하고 평가해요' },
@@ -72,6 +74,22 @@ export const TRACKS: Record<LearnerRole, Track> = {
     extras: [
       { kind: 'case', id: 'case-first-contract' },
       { kind: 'skill', id: 'skill-contract-review' },
+    ],
+  },
+  middle: {
+    name: 'Avalanche 실전 개발',
+    concepts: [
+      'concept-contract',
+      'concept-testing',
+      'concept-rpc',
+      'concept-network',
+      'concept-c-chain',
+      'concept-avalanche-l1',
+    ],
+    extras: [
+      { kind: 'case', id: 'case-chain-reader' },
+      { kind: 'skill', id: 'skill-chain-reader' },
+      { kind: 'skill', id: 'skill-network-check' },
     ],
   },
   senior: {
@@ -154,21 +172,54 @@ export const EXPERIENCES: Record<ExperienceId, { label: string; known: string[] 
     label: '노드나 검증자를 운영해봤어요',
     known: ['concept-consensus', 'concept-validator'],
   },
-  avalanche: {
-    label: 'Avalanche를 써봤어요',
-    known: ['concept-primary-network', 'concept-c-chain'],
-  },
+  // 고른 체인을 써본 경험 — 라벨의 {chain} 은 설문에서 고른 체인 이름, 아는 개념은 체인마다 다르다
+  'used-chain': { label: '{chain} 체인을 직접 써봤어요', known: [] },
+}
+
+const USED_CHAIN_KNOWN: Record<string, string[]> = {
+  avalanche: ['concept-primary-network', 'concept-c-chain'],
+}
+
+export function experienceLabel(id: ExperienceId, chainName: string) {
+  return EXPERIENCES[id].label.replace('{chain}', chainName)
 }
 export const EXPERIENCE_IDS = Object.keys(EXPERIENCES) as ExperienceId[]
 
 /* 목표 이루기 — 고를 수 있는 케이스와, 목록에서 '추천'을 붙일 역할 */
 export const GOAL_FIT: Record<string, LearnerRole[]> = {
   'case-first-contract': ['junior', 'newbie'],
-  'case-chain-reader': ['junior', 'senior'],
+  'case-chain-reader': ['junior', 'middle', 'senior'],
   'case-ecosystem-research': ['bd', 'pm', 'research'],
-  'case-primary-network-map': ['research', 'senior', 'bd'],
+  'case-primary-network-map': ['research', 'middle', 'senior', 'bd'],
 }
 
-export function knownFromExperience(experience: readonly ExperienceId[]): Set<string> {
-  return new Set(experience.flatMap((id) => EXPERIENCES[id]?.known ?? []))
+/* 케이스가 아닌 목표 — 학습보다 바로 쓰기가 먼저인 사람. 꼭 필요한 개념 하나만 거치고 스킬로 간다 */
+export const SPECIAL_GOALS: Record<
+  string,
+  { title: string; summary: string; concepts: string[]; extras: ExtraStep[] }
+> = {
+  'agent-skills': {
+    title: '에이전트로 이 생태계 스킬 바로 써보기',
+    summary: '공부는 최소로 — 이 생태계의 스킬을 받아 에이전트에게 맡겨요',
+    concepts: ['concept-network'],
+    extras: [
+      { kind: 'skill', id: 'skill-avalanche-mcp' },
+      { kind: 'skill', id: 'skill-network-check' },
+      { kind: 'skill', id: 'skill-chain-reader' },
+      { kind: 'skill', id: 'skill-ecosystem-research' },
+      { kind: 'skill', id: 'skill-primary-network-map' },
+      { kind: 'skill', id: 'skill-contract-review' },
+    ],
+  },
+}
+
+export function knownFromExperience(
+  experience: readonly ExperienceId[],
+  chainId = 'avalanche'
+): Set<string> {
+  return new Set(
+    experience.flatMap((id) =>
+      id === 'used-chain' ? (USED_CHAIN_KNOWN[chainId] ?? []) : (EXPERIENCES[id]?.known ?? [])
+    )
+  )
 }

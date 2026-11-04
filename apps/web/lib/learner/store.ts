@@ -23,7 +23,9 @@ const pathSchema = z.object({
   name: z.string().min(1),
   mode: z.enum(['track', 'goal']),
   role: roleSchema,
-  /** 목표 이루기일 때 고른 케이스 id */
+  /** 설문 첫 단계에서 고른 체인 (chains.json id) — 예전 기록은 Avalanche */
+  chainId: z.string().min(1).default('avalanche'),
+  /** 목표 이루기일 때 고른 목표 — 케이스 id 또는 SPECIAL_GOALS 의 id */
   goal: z.string().nullable(),
   createdAt: z.string(),
 })

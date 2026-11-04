@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import { ArrowRight } from 'lucide-react'
 
+import chainCatalog from '@/public/cryptopedia/chains.json'
 import type { HubData } from '@/lib/cryptopedia-hub'
 import { activePathOf, removePath, selectPath, setProgress } from '@/lib/learner/actions'
 import { computeRoute, type RouteStep } from '@/lib/learner/route'
@@ -97,6 +98,9 @@ export function MyPathPage({
             </span>
             <span className="border border-[var(--editorial-line)] px-2 py-0.5 text-[var(--editorial-muted)]">
               {ROLES[path.role].label}
+            </span>
+            <span className="border border-[var(--editorial-line)] px-2 py-0.5 text-[var(--editorial-muted)]">
+              {chainCatalog.items.find((item) => item.id === path.chainId)?.name ?? path.chainId}
             </span>
           </p>
         </div>
