@@ -348,7 +348,7 @@ export function LearningMap({
                         : state === 'route'
                           ? 'border-[var(--editorial-accent)] bg-[var(--editorial-surface)] text-[var(--editorial-ink)]'
                           : state === 'done'
-                            ? 'border-[var(--editorial-line)] bg-[var(--editorial-hover)] text-[var(--editorial-muted)]'
+                            ? 'border-[var(--editorial-line)] bg-[var(--editorial-secondary-soft)] text-[var(--editorial-muted)]'
                             : 'border-[var(--editorial-line)] bg-[var(--editorial-surface)] text-[var(--editorial-muted)] opacity-60 hover:opacity-100',
                   'hover:border-[var(--editorial-accent)]',
                 ].join(' ')}
@@ -357,7 +357,7 @@ export function LearningMap({
                 {state === 'done' ? (
                   <span
                     aria-label={progress?.get(id) === 'known' ? '이미 아는 개념' : '마친 개념'}
-                    className="flex h-5 w-5 shrink-0 items-center justify-center border border-[var(--editorial-line)] text-[11px]"
+                    className="flex h-5 w-5 shrink-0 items-center justify-center text-[11px] text-[var(--editorial-secondary)]"
                   >
                     ✓
                   </span>
@@ -398,7 +398,7 @@ export function LearningMapLegend({
       {personal && (
         <span className={item}>
           <span
-            className={`${swatch} border-[var(--editorial-line)] bg-[var(--editorial-hover)]`}
+            className={`${swatch} border-[var(--editorial-line)] bg-[var(--editorial-secondary-soft)]`}
           />
           ✓ 마쳤거나 이미 아는 개념
         </span>

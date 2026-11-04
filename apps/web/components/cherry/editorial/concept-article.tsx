@@ -120,7 +120,7 @@ export function ConceptArticle({
               className="mt-10 border-t border-[var(--editorial-line)] pt-8"
             >
               <span
-                className={`${PILL} border-[var(--editorial-accent)] text-[var(--editorial-accent)]`}
+                className={`${PILL} border-[var(--editorial-secondary)] text-[var(--editorial-secondary)]`}
               >
                 먼저 읽으면 좋아요
               </span>
@@ -139,7 +139,7 @@ export function ConceptArticle({
                         <span className="block text-lg font-semibold text-[var(--editorial-strong)] group-hover:text-[var(--editorial-accent)]">
                           {pre.title}: {pre.summary.replace(/\.$/, '')}
                           {(known === 'done' || known === 'known') && (
-                            <span className="ml-2 align-middle text-xs font-normal text-[var(--editorial-muted)]">
+                            <span className="ml-2 align-middle text-xs font-normal text-[var(--editorial-secondary)]">
                               ✓ 이미 봤어요
                             </span>
                           )}
@@ -151,7 +151,7 @@ export function ConceptArticle({
                       </span>
                       <ArrowRight
                         size={20}
-                        className="mt-1 shrink-0 text-[var(--editorial-accent)] transition-transform group-hover:translate-x-1"
+                        className="mt-1 shrink-0 text-[var(--editorial-secondary)] transition-transform group-hover:translate-x-1"
                       />
                     </button>
                   )
@@ -173,14 +173,14 @@ export function ConceptArticle({
                   >
                     <span
                       aria-hidden="true"
-                      className="mt-[13px] h-1.5 w-1.5 shrink-0 bg-[var(--editorial-accent)]"
+                      className="mt-[13px] h-1.5 w-1.5 shrink-0 bg-[var(--editorial-secondary)]"
                     />
                     <span className="min-w-0">
                       {point.text}
                       {point.sourceIds.map((id) => (
                         <sup
                           key={id}
-                          className="ml-0.5 text-[11px] font-semibold text-[var(--editorial-accent)]"
+                          className="ml-0.5 text-[11px] font-semibold text-[var(--editorial-secondary)]"
                         >
                           <a
                             href={`#concept-source-${footnote(id)}`}
@@ -291,7 +291,7 @@ export function ConceptArticle({
             >
               {step.status ? (
                 <p className="flex items-center gap-2 text-[15px] font-semibold text-[var(--editorial-strong)]">
-                  <Check size={18} className="text-[var(--editorial-accent)]" />
+                  <Check size={18} className="text-[var(--editorial-secondary)]" />
                   {step.status === 'known' ? '이미 아는 개념으로 표시했어요' : '이 개념을 마쳤어요'}
                 </p>
               ) : (
@@ -394,7 +394,7 @@ export function ConceptArticle({
                   rel="noopener noreferrer"
                   className="mt-1.5 block text-[15px] font-semibold text-[var(--editorial-strong)] hover:text-[var(--editorial-accent)]"
                 >
-                  <span className="mr-1 text-[var(--editorial-accent)]">{index + 1}</span>
+                  <span className="mr-1 text-[var(--editorial-secondary)]">{index + 1}</span>
                   {source.name} ↗
                 </a>
                 <p className="mt-1.5 text-[13px] leading-6 text-[var(--editorial-muted)]">

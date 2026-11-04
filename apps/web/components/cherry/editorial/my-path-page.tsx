@@ -207,7 +207,7 @@ export function MyPathPage({
                   className={`flex items-start gap-3 border-b border-[var(--editorial-line)] px-4 py-3 last:border-b-0 ${isNext ? 'bg-[var(--editorial-hover)] shadow-[inset_3px_0_0_var(--editorial-accent)]' : ''}`}
                 >
                   <span
-                    className={`mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center border text-[11px] tabular-nums ${isNext ? 'border-[var(--editorial-accent)] bg-[var(--editorial-accent)] text-[var(--editorial-paper)]' : 'border-[var(--editorial-line)] text-[var(--editorial-muted)]'}`}
+                    className={`mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center border text-[11px] tabular-nums ${isNext ? 'border-[var(--editorial-accent)] bg-[var(--editorial-accent)] text-[var(--editorial-paper)]' : step.status ? 'border-transparent bg-[var(--editorial-secondary-soft)] text-[var(--editorial-secondary)]' : 'border-[var(--editorial-line)] text-[var(--editorial-muted)]'}`}
                   >
                     {step.status ? '✓' : index + 1}
                   </span>

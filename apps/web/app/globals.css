@@ -241,23 +241,27 @@
 ───────────────────────────────────────────── */
 .editorial-root {
   /* Chainery 밝은 에디토리얼 토큰 (블록체인 지식 섹션 기본) — 색은 여기서만 정의하고 컴포넌트는 변수만 참조한다.
-     따뜻한 미색 바탕 + 거의 검은 글자 + 포도색 포인트(CTA·링크·활성 상태에만).
-     영역 구분은 그림자가 아니라 배경 명도 차이(sidebar < paper < surface)와 얇은 선으로 한다.
+     흰 바탕 + 거의 검은 글자. 포인트는 두 가지:
+     · primary(포도) = 누르는 것과 현재 위치 — CTA·링크·선택·진행률
+     · secondary(초록) = 근거와 확인 — 각주·근거 번호·'먼저 읽으면 좋아요'·완료 ✓
+     영역 구분은 그림자가 아니라 얇은 선과 아주 옅은 회색 면으로 한다.
      플랫폼 입구(/ · 채용 · 행사)는 .editorial-dark 로 어두운 포도색 토큰을 쓴다 (아래). */
-  --editorial-paper: #F8F6F2;   /* 전체 기본 배경 */
-  --editorial-sidebar: #F1EDE7; /* 사이드바·모바일 헤더 */
-  --editorial-surface: #FFFFFF; /* 강조 영역(배너·카드·팝오버) */
-  --editorial-ink: #221C27;     /* 기본 텍스트 */
-  --editorial-strong: #120D16;  /* 활성 메뉴 등 강한 텍스트 */
-  --editorial-muted: #6A6270;   /* 보조 텍스트 (미색 바탕에서 대비 5:1 이상) */
-  --editorial-faint: #A59DAB;   /* 구분 기호 등 아주 흐린 글자 */
-  --editorial-accent: #6B4A8C;  /* 포도색 포인트: CTA·링크·활성 상태에만 */
+  --editorial-paper: #FFFFFF;   /* 전체 기본 배경 */
+  --editorial-sidebar: #FAFAFB; /* 사이드바·모바일 헤더·하단 띠 */
+  --editorial-surface: #FFFFFF; /* 카드·팝오버 — 선으로 구분 */
+  --editorial-ink: #1E1A22;     /* 기본 텍스트 */
+  --editorial-strong: #111014;  /* 활성 메뉴 등 강한 텍스트 */
+  --editorial-muted: #6B6670;   /* 보조 텍스트 (흰 바탕 대비 5:1 이상) */
+  --editorial-faint: #A8A3AD;   /* 구분 기호 등 아주 흐린 글자 */
+  --editorial-accent: #6B4A8C;  /* primary 포도 */
   --editorial-on-accent: #FFFFFF; /* 포인트 색 면 위의 글자 */
-  --editorial-hover: #EEE8F2;   /* hover 배경 */
-  --editorial-wash: rgba(70, 50, 85, 0.05); /* 입력칸·토글 묶음 같은 아주 옅은 면 */
+  --editorial-secondary: #2E6B57; /* secondary 초록 */
+  --editorial-secondary-soft: #EAF3EF; /* 초록 옅은 면 (완료 ✓ 바탕 등) */
+  --editorial-hover: #F4F0F7;   /* hover·선택 배경 (포도 아주 옅게) */
+  --editorial-wash: rgba(30, 26, 34, 0.04); /* 입력칸·토글 묶음 같은 아주 옅은 면 */
   --editorial-mark: #8467A3;    /* 본문 인용 표시선 */
-  --editorial-sidebar-hover: rgba(60, 35, 80, 0.06); /* 사이드바 메뉴 hover — 아주 은은하게 */
-  --editorial-line: rgba(70, 50, 85, 0.16); /* 테두리 */
+  --editorial-sidebar-hover: rgba(30, 26, 34, 0.05); /* 사이드바 메뉴 hover — 아주 은은하게 */
+  --editorial-line: rgba(30, 26, 34, 0.12); /* 테두리 */
   --chain-accent: var(--editorial-accent); /* 체인 포인트 색 — 셸이 활성 체인 값으로 덮어쓴다 (lib/chain-theme.ts) */
   --editorial-radius: 0px; /* 모서리 — 각진 격자 스타일. 둥글게 되돌리려면 이 값만 바꾼다 */
 
@@ -280,6 +284,8 @@
   --editorial-faint: rgba(255, 255, 255, 0.2);
   --editorial-accent: #B99ACB;
   --editorial-on-accent: #17151A;
+  --editorial-secondary: #8FCBB3;
+  --editorial-secondary-soft: rgba(143, 203, 179, 0.12);
   --editorial-hover: #322D37;
   --editorial-wash: rgba(255, 255, 255, 0.04);
   --editorial-sidebar-hover: rgba(255, 255, 255, 0.045);
@@ -473,9 +479,9 @@
    분류 색은 '작은 사각 점' 하나로만 보여 준다 (배지 앞 점, 프로젝트 카드 머리 점). */
 .editorial-root {
   --discovery-surface: #FFFFFF;
-  --discovery-elevated: #FBFAFC;
+  --discovery-elevated: #FAFAFB;
   --discovery-line: rgba(107, 74, 140, 0.18);
-  --discovery-muted: #6A6270;
+  --discovery-muted: #6B6670;
   --discovery-selection: color-mix(in srgb, var(--editorial-accent) 16%, transparent);
 }
 .editorial-root .editorial-content-card {
@@ -536,7 +542,7 @@
 .editorial-root .editorial-color-calendar {
   --calendar-accent: var(--card-label);
   --calendar-badge: var(--editorial-accent);
-  --editorial-muted: #6A6270;
+  --editorial-muted: #6B6670;
   border-color: var(--discovery-line);
   background: var(--discovery-surface);
 }
@@ -548,7 +554,7 @@
   border-bottom: 0.5px solid var(--discovery-line);
   color: var(--editorial-strong);
 }
-.editorial-root .editorial-calendar-weekdays { background: #F3EFF6; color: #6A6270; }
+.editorial-root .editorial-calendar-weekdays { background: #FAFAFB; color: #6B6670; }
 .editorial-root .editorial-calendar-days { background: var(--discovery-line); }
 .editorial-root .editorial-calendar-blank { background: #FAF8FB; }
 .editorial-root .editorial-calendar-cell { background: var(--discovery-surface); color: var(--editorial-ink); }
