@@ -58,7 +58,8 @@ export function MyPathSidebarCard({
   )
 
   if (!state) return null
-  const frame = `block w-full border px-4 py-3.5 text-left ${active ? 'border-[var(--editorial-accent)] bg-[var(--editorial-hover)]' : 'border-[var(--editorial-line)] bg-[var(--editorial-surface)] hover:border-[var(--editorial-accent)]'}`
+  // 이 섹션은 선과 면으로만 구분하지만, 이 카드만 포도빛 그림자로 띄워 사이드바에서 가장 먼저 눈에 들어오게 한다
+  const frame = `block w-full border px-4 py-3.5 text-left shadow-[0_10px_28px_-14px_rgba(107,74,140,0.55),0_2px_6px_-2px_rgba(30,26,34,0.08)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_32px_-14px_rgba(107,74,140,0.65),0_3px_8px_-2px_rgba(30,26,34,0.1)] ${active ? 'border-[var(--editorial-accent)] bg-[var(--editorial-hover)]' : 'border-[rgba(107,74,140,0.28)] bg-[var(--editorial-surface)] hover:border-[var(--editorial-accent)]'}`
 
   if (!path) {
     return (
