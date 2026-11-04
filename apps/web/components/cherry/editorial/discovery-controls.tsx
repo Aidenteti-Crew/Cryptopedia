@@ -53,7 +53,7 @@ export function DiscoverySearch({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="min-w-0 w-full bg-transparent py-2 text-sm text-[var(--editorial-ink)] outline-none placeholder:text-[#858e9b] focus-visible:underline focus-visible:decoration-[var(--editorial-accent)] focus-visible:underline-offset-8"
+        className="min-w-0 w-full bg-transparent py-2 text-sm text-[var(--editorial-ink)] outline-none placeholder:text-[var(--editorial-faint)] focus-visible:underline focus-visible:decoration-[var(--editorial-accent)] focus-visible:underline-offset-8"
       />
     </label>
   )
@@ -79,7 +79,7 @@ export function DiscoveryFilter({
       >
         <span className="truncate">{value === 'all' ? label : (current?.label ?? value)}</span>
       </SelectTrigger>
-      <SelectContent className="editorial-root !min-h-0 rounded-xl border-[var(--discovery-line)] !bg-[var(--discovery-elevated)] p-1 text-[var(--editorial-ink)] shadow-[0_18px_50px_rgba(0,0,0,.45)]">
+      <SelectContent className="editorial-root !min-h-0 rounded-xl border-[var(--discovery-line)] !bg-[var(--discovery-elevated)] p-1 text-[var(--editorial-ink)] shadow-[0_18px_50px_rgba(40,20,60,.14)]">
         {options.map((option) => (
           <SelectItem
             key={option.value}
@@ -118,7 +118,7 @@ export function DiscoveryChips({
       <button
         type="button"
         onClick={onReset}
-        className="px-2 py-1.5 text-xs text-[var(--editorial-muted)] hover:text-white"
+        className="px-2 py-1.5 text-xs text-[var(--editorial-muted)] hover:text-[var(--editorial-strong)]"
       >
         필터 초기화
       </button>

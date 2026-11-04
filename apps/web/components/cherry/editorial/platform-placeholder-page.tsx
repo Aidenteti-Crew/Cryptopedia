@@ -14,7 +14,7 @@ export function PlatformPlaceholderPage({
   description: string
 }) {
   return (
-    <div className={`editorial-root ${styles.landing}`}>
+    <div className={`editorial-root editorial-dark ${styles.landing}`}>
       <AboutHeader />
       <main className="flex min-h-[100dvh] flex-col items-start justify-center px-6 pb-24 pt-32 sm:px-[196px]">
         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--editorial-accent)]">

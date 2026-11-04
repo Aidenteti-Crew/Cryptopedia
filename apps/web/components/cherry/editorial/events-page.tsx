@@ -84,7 +84,7 @@ function EventRow({ event }: { event: EventEntry }) {
             loading="lazy"
             referrerPolicy="no-referrer"
             onError={() => setImageFailed(true)}
-            className="h-16 w-16 shrink-0 rounded-xl border border-white/10 object-cover sm:h-20 sm:w-20"
+            className="h-16 w-16 shrink-0 rounded-xl border border-[var(--editorial-line)] object-cover sm:h-20 sm:w-20"
           />
         )}
       </div>
@@ -110,7 +110,7 @@ function EventRow({ event }: { event: EventEntry }) {
             rel="noopener noreferrer"
             className={
               register
-                ? 'inline-flex min-h-9 items-center gap-1.5 rounded-xl bg-[var(--editorial-accent)] px-3 text-xs font-medium text-[#15191e]'
+                ? 'inline-flex min-h-9 items-center gap-1.5 rounded-xl bg-[var(--editorial-accent)] px-3 text-xs font-medium text-[var(--editorial-on-accent)]'
                 : 'inline-flex min-h-9 items-center gap-1 text-xs text-[var(--editorial-accent)]'
             }
           >
@@ -201,7 +201,7 @@ export function EventsPage({
       <DiscoveryToolbar>
         <DiscoverySearch value={query} onChange={setQuery} placeholder="행사명·주최자·장소 검색" />
       </DiscoveryToolbar>
-      <div className="mt-4 flex min-h-14 items-center justify-between border-b border-white/10">
+      <div className="mt-4 flex min-h-14 items-center justify-between border-b border-[var(--editorial-line)]">
         <span className="text-sm text-[var(--editorial-muted)]">커뮤니티의 만남과 개발 일정</span>
         {(methods.size > 1 || kinds.length > 1) && (
           <DiscoveryFilterPanel

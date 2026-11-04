@@ -25,14 +25,14 @@ export function UpdateBadges({
       <span className="font-medium text-[var(--card-label,var(--editorial-accent))]">
         {products.map((p) => p.name).join(' · ') || 'Avalanche 생태계'}
       </span>
-      <span aria-hidden="true" className="text-white/20">
+      <span aria-hidden="true" className="text-[var(--editorial-faint)]">
         /
       </span>
       <span data-color={updateContentColor(entry)} className="editorial-color-badge">
         {updateKindLabel(entry)}
       </span>
       {showVersion && entry.version && (
-        <span className="rounded border border-white/10 bg-white/[.025] px-1.5 font-mono text-[11px] text-[#d9e1e9]">
+        <span className="rounded border border-[var(--editorial-line)] bg-[var(--editorial-wash)] px-1.5 font-mono text-[11px] text-[var(--editorial-ink)]">
           {entry.version}
         </span>
       )}
@@ -93,7 +93,7 @@ export function DevelopmentUpdateRow({
         />
       </button>
       {versionFirst && entry.version && (
-        <p className="mt-1.5 text-sm leading-6 text-[#cbd3dc]">{entry.title}</p>
+        <p className="mt-1.5 text-sm leading-6 text-[var(--editorial-ink)]">{entry.title}</p>
       )}
       {!compact && entry.summary && (
         <p className="mt-2 line-clamp-2 break-words text-sm leading-[1.8] text-[var(--editorial-muted)]">
@@ -107,7 +107,7 @@ export function DevelopmentUpdateRow({
           </span>
         ))}
         {entry.activations?.map((activation) => (
-          <span key={`${activation.network}-${activation.at}`} className="text-xs text-[#b9c9d3]">
+          <span key={`${activation.network}-${activation.at}`} className="text-xs text-[var(--editorial-muted)]">
             {NETWORK_LABELS[activation.network]} 적용 일정 · {updateDateTime(activation.at)} KST
           </span>
         ))}

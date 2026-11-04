@@ -51,7 +51,7 @@ export function EditorialCalendar({
           type="button"
           onClick={() => move(-1)}
           aria-label="이전 달"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg hover:bg-white/5"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg hover:bg-[var(--editorial-hover)]"
         >
           <ChevronLeft size={18} />
         </button>
@@ -71,14 +71,14 @@ export function EditorialCalendar({
           type="button"
           onClick={() => move(1)}
           aria-label="다음 달"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg hover:bg-white/5"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg hover:bg-[var(--editorial-hover)]"
         >
           <ChevronRight size={18} />
         </button>
       </div>
       <div className="editorial-calendar-weekdays grid grid-cols-7 text-center text-xs">
         {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
-          <span key={day} className="py-2 first:text-[#ffc0cb] last:text-[#b5d4ff]">
+          <span key={day} className="py-2 first:text-[#B04A62] last:text-[#3F6FB5]">
             {day}
           </span>
         ))}

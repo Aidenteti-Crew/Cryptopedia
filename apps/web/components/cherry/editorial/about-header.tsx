@@ -139,7 +139,7 @@ function PlatformMobileNav() {
       {/* 패널은 body 로 포털되므로 editorial-root 를 다시 붙여 색 변수를 쓴다 */}
       <SheetContent
         side="right"
-        className="editorial-root w-[260px] gap-0 border-l border-[var(--editorial-line)] bg-[var(--editorial-sidebar)] p-0 pt-10 sm:max-w-[260px]"
+        className="editorial-root editorial-dark w-[260px] gap-0 border-l border-[var(--editorial-line)] bg-[var(--editorial-sidebar)] p-0 pt-10 sm:max-w-[260px]"
       >
         <SheetTitle className="sr-only">chainery 메뉴</SheetTitle>
         <nav aria-label="플랫폼 메뉴" className="flex flex-col px-3 pb-6">

@@ -240,20 +240,24 @@
    existing Cherry and /start screens keep their theme.
 ───────────────────────────────────────────── */
 .editorial-root {
-  /* Chainery charcoal + plum editorial tokens — 색은 여기서만 정의하고 컴포넌트는 변수만 참조한다.
-     비중 목표: 차콜 70% (배경·사이드바·강조 영역) / 플럼 20% (구분선·구체 그래픽·보조 틴트) / 라벤더 10% (CTA·링크·활성 상태).
-     영역 구분은 그림자가 아니라 배경 명도 차이(paper < sidebar < surface)로 한다. */
-  --editorial-paper: #17151A;   /* 전체 기본 배경 */
-  --editorial-sidebar: #201D23; /* 사이드바·모바일 헤더 */
-  --editorial-surface: #29242E; /* 강조 영역(배너·카드·팝오버) — 아주 약한 플럼 틴트의 차콜 */
-  --editorial-ink: #F4EEF6;     /* 기본 텍스트 */
-  --editorial-strong: #FAF6FB;  /* 활성 메뉴 등 강한 텍스트 */
-  --editorial-muted: #CBC4CF;   /* 보조 텍스트 (차콜 배경에서 대비 9:1 이상, 보라 기운은 최소화) */
-  --editorial-accent: #B99ACB;  /* 라벤더 포인트: CTA·링크·활성 상태에만 */
-  --editorial-hover: #322D37;   /* hover 배경 */
+  /* Chainery 밝은 에디토리얼 토큰 (블록체인 지식 섹션 기본) — 색은 여기서만 정의하고 컴포넌트는 변수만 참조한다.
+     따뜻한 미색 바탕 + 거의 검은 글자 + 포도색 포인트(CTA·링크·활성 상태에만).
+     영역 구분은 그림자가 아니라 배경 명도 차이(sidebar < paper < surface)와 얇은 선으로 한다.
+     플랫폼 입구(/ · 채용 · 행사)는 .editorial-dark 로 어두운 포도색 토큰을 쓴다 (아래). */
+  --editorial-paper: #F8F6F2;   /* 전체 기본 배경 */
+  --editorial-sidebar: #F1EDE7; /* 사이드바·모바일 헤더 */
+  --editorial-surface: #FFFFFF; /* 강조 영역(배너·카드·팝오버) */
+  --editorial-ink: #221C27;     /* 기본 텍스트 */
+  --editorial-strong: #120D16;  /* 활성 메뉴 등 강한 텍스트 */
+  --editorial-muted: #6A6270;   /* 보조 텍스트 (미색 바탕에서 대비 5:1 이상) */
+  --editorial-faint: #A59DAB;   /* 구분 기호 등 아주 흐린 글자 */
+  --editorial-accent: #6B4A8C;  /* 포도색 포인트: CTA·링크·활성 상태에만 */
+  --editorial-on-accent: #FFFFFF; /* 포인트 색 면 위의 글자 */
+  --editorial-hover: #EEE8F2;   /* hover 배경 */
+  --editorial-wash: rgba(70, 50, 85, 0.05); /* 입력칸·토글 묶음 같은 아주 옅은 면 */
   --editorial-mark: #8467A3;    /* 본문 인용 표시선 */
-  --editorial-sidebar-hover: rgba(255, 255, 255, 0.045); /* 사이드바 메뉴 hover — 아주 은은하게 */
-  --editorial-line: rgba(73, 56, 79, 0.75); /* 테두리 — #49384F 를 낮은 투명도로 */
+  --editorial-sidebar-hover: rgba(60, 35, 80, 0.06); /* 사이드바 메뉴 hover — 아주 은은하게 */
+  --editorial-line: rgba(70, 50, 85, 0.16); /* 테두리 */
   --chain-accent: var(--editorial-accent); /* 체인 포인트 색 — 셸이 활성 체인 값으로 덮어쓴다 (lib/chain-theme.ts) */
   --editorial-radius: 0px; /* 모서리 — 각진 격자 스타일. 둥글게 되돌리려면 이 값만 바꾼다 */
 
@@ -263,6 +267,25 @@
   font-family: var(--font-editorial-body), sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* 플랫폼 입구(/ · 채용 · 행사/이벤트) — 어두운 포도색 토큰 (예전 차콜 + 플럼 + 라벤더 그대로) */
+.editorial-root.editorial-dark {
+  --editorial-paper: #17151A;
+  --editorial-sidebar: #201D23;
+  --editorial-surface: #29242E;
+  --editorial-ink: #F4EEF6;
+  --editorial-strong: #FAF6FB;
+  --editorial-muted: #CBC4CF;
+  --editorial-faint: rgba(255, 255, 255, 0.2);
+  --editorial-accent: #B99ACB;
+  --editorial-on-accent: #17151A;
+  --editorial-hover: #322D37;
+  --editorial-wash: rgba(255, 255, 255, 0.04);
+  --editorial-sidebar-hover: rgba(255, 255, 255, 0.045);
+  --editorial-line: rgba(73, 56, 79, 0.75);
+  --editorial-scroll-thumb: #65516F;
+  --editorial-scroll-thumb-hover: #8B719A;
 }
 
 /* 에디토리얼 전체의 둥근 모서리를 --editorial-radius 로 통일한다 (Tailwind rounded-* 유틸리티 덮어쓰기).
@@ -280,28 +303,28 @@
    색 종류를 늘리지 않고, 테두리 빛과 선택지 반응(라벤더로 차오름)으로 눈길을 끈다.
    카드 안에서만 선/hover/선택 색을 라벤더 틴트로 바꾼다. */
 .editorial-root .builder-test-card {
-  --editorial-line: rgba(185, 154, 203, 0.24);
-  --editorial-hover: rgba(185, 154, 203, 0.1);
-  --editorial-surface: rgba(185, 154, 203, 0.16);
+  --editorial-line: rgba(107, 74, 140, 0.2);
+  --editorial-hover: rgba(107, 74, 140, 0.07);
+  --editorial-surface: rgba(107, 74, 140, 0.06);
 
-  border-color: rgba(185, 154, 203, 0.4);
+  border-color: rgba(107, 74, 140, 0.3);
   background:
-    radial-gradient(80% 45% at 100% 0%, rgba(155, 122, 216, 0.18) 0%, transparent 70%),
-    #29242e;
-  box-shadow: 0 0 48px -16px rgba(155, 122, 216, 0.45);
+    radial-gradient(80% 45% at 100% 0%, rgba(155, 122, 216, 0.14) 0%, transparent 70%),
+    var(--editorial-surface);
+  box-shadow: 0 0 48px -20px rgba(107, 74, 140, 0.35);
   color: var(--editorial-ink);
 }
 
-/* 고른 선택지는 연라벤더 면으로 반전 */
+/* 고른 선택지는 포도색 면으로 반전 */
 .editorial-root .builder-test-card button[aria-pressed='true'] {
-  border-color: #ede6f3;
-  background: #ede6f3;
-  color: #231b2a;
+  border-color: var(--editorial-accent);
+  background: var(--editorial-accent);
+  color: var(--editorial-on-accent);
 }
 
 .editorial-root .builder-test-card button[aria-pressed='true'] > span:first-child {
-  border-color: #231b2a;
-  background: #231b2a;
+  border-color: var(--editorial-on-accent);
+  background: var(--editorial-on-accent);
 }
 
 /* 생태계 홈 소식 캐러셀 — 첫 화면의 주인공.
@@ -396,8 +419,8 @@
 ───────────────────────────────────────────── */
 :root:has(.editorial-root),
 .editorial-root {
-  --editorial-scroll-thumb: #65516F;
-  --editorial-scroll-thumb-hover: #8B719A;
+  --editorial-scroll-thumb: #CFC6D7;
+  --editorial-scroll-thumb-hover: #B3A5C0;
 }
 
 @supports selector(::-webkit-scrollbar) {
@@ -449,15 +472,15 @@
    페이지마다 다른 색 덩어리를 쓰지 않고 차콜 면 + 0.5px 연보라 선으로 통일한다.
    분류 색은 '작은 사각 점' 하나로만 보여 준다 (배지 앞 점, 프로젝트 카드 머리 점). */
 .editorial-root {
-  --discovery-surface: #1d1924;
-  --discovery-elevated: #252030;
-  --discovery-line: rgba(185, 154, 203, 0.22);
-  --discovery-muted: #c4c0cb;
+  --discovery-surface: #FFFFFF;
+  --discovery-elevated: #FBFAFC;
+  --discovery-line: rgba(107, 74, 140, 0.18);
+  --discovery-muted: #6A6270;
   --discovery-selection: color-mix(in srgb, var(--editorial-accent) 16%, transparent);
 }
 .editorial-root .editorial-content-card {
   --card-tint: 185 154 203;
-  --card-label: #e3d3ef;
+  --card-label: #5B3F86;
   --tone-gradient: linear-gradient(105deg, #3a2b4f, #4a3766);
   --editorial-muted: var(--discovery-muted);
   min-width: 0;
@@ -476,17 +499,17 @@
 .editorial-root [data-calendar-tone='events'],
 .editorial-root [data-tone='updates'] {
   --card-tint: 185 154 203;
-  --card-label: #e3d3ef;
+  --card-label: #5B3F86;
   --tone-gradient: linear-gradient(105deg, #3a2b4f, #4a3766);
 }
 
 /* 분류 색 — 배지 앞 작은 점에만 쓴다. 히트맵 팔레트와 같은 차분한 톤 */
-.editorial-root [data-color='violet'] { --card-tint: 151 123 199; --card-label: #e3d3ef; }
-.editorial-root [data-color='blue'] { --card-tint: 90 142 209; --card-label: #d3def0; }
-.editorial-root [data-color='mint'] { --card-tint: 92 158 95; --card-label: #d5e6d6; }
-.editorial-root [data-color='orange'] { --card-tint: 192 138 62; --card-label: #ecdcc5; }
-.editorial-root [data-color='rose'] { --card-tint: 192 104 122; --card-label: #efd3d9; }
-.editorial-root [data-color='neutral'] { --card-tint: 138 132 148; --card-label: #e3dfe8; }
+.editorial-root [data-color='violet'] { --card-tint: 151 123 199; --card-label: #5B3F86; }
+.editorial-root [data-color='blue'] { --card-tint: 90 142 209; --card-label: #2E5F9E; }
+.editorial-root [data-color='mint'] { --card-tint: 92 158 95; --card-label: #3D7A43; }
+.editorial-root [data-color='orange'] { --card-tint: 192 138 62; --card-label: #8A5A1A; }
+.editorial-root [data-color='rose'] { --card-tint: 192 104 122; --card-label: #9A3F55; }
+.editorial-root [data-color='neutral'] { --card-tint: 138 132 148; --card-label: #5F5868; }
 
 /* 카드 머리 — 색 띠 대신 얇은 선으로 나눈 메타 줄 */
 .editorial-root .editorial-card-meta {
@@ -512,23 +535,23 @@
 
 .editorial-root .editorial-color-calendar {
   --calendar-accent: var(--card-label);
-  --calendar-badge: #d6c4ff;
-  --editorial-muted: #c4c0cb;
+  --calendar-badge: var(--editorial-accent);
+  --editorial-muted: #6A6270;
   border-color: var(--discovery-line);
-  background: #17141c;
+  background: var(--discovery-surface);
 }
 .editorial-root .editorial-color-calendar[data-calendar-tone='macro'] {
-  --calendar-badge: #d6c4ff;
+  --calendar-badge: var(--editorial-accent);
 }
 .editorial-root .editorial-calendar-heading {
   background: var(--discovery-surface);
   border-bottom: 0.5px solid var(--discovery-line);
-  color: #fff;
+  color: var(--editorial-strong);
 }
-.editorial-root .editorial-calendar-weekdays { background: #221d2a; color: #bdb7c6; }
+.editorial-root .editorial-calendar-weekdays { background: #F3EFF6; color: #6A6270; }
 .editorial-root .editorial-calendar-days { background: var(--discovery-line); }
-.editorial-root .editorial-calendar-blank { background: #17141c; }
-.editorial-root .editorial-calendar-cell { background: var(--discovery-surface); color: #f1edf4; }
+.editorial-root .editorial-calendar-blank { background: #FAF8FB; }
+.editorial-root .editorial-calendar-cell { background: var(--discovery-surface); color: var(--editorial-ink); }
 .editorial-root .editorial-calendar-cell[data-occupied='true'] {
   background: linear-gradient(rgb(var(--card-tint) / 0.1), rgb(var(--card-tint) / 0.1)), var(--discovery-surface);
 }
@@ -536,11 +559,11 @@
   background: linear-gradient(rgb(var(--card-tint) / 0.18), rgb(var(--card-tint) / 0.18)), var(--discovery-surface);
   box-shadow: inset 0 0 0 1px var(--calendar-accent);
 }
-.editorial-root .editorial-calendar-cell:hover { filter: brightness(1.14); }
+.editorial-root .editorial-calendar-cell:hover { filter: brightness(0.97); }
 .editorial-root .editorial-calendar-date { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border: 1px solid transparent; border-radius: 50%; }
 /* 주말 — 원색 빨강·파랑 대신 낮은 채도 */
-.editorial-root .editorial-calendar-cell[data-weekday='0'] .editorial-calendar-date { color: #d4a3ad; }
-.editorial-root .editorial-calendar-cell[data-weekday='6'] .editorial-calendar-date { color: #a8b6d3; }
+.editorial-root .editorial-calendar-cell[data-weekday='0'] .editorial-calendar-date { color: #B04A62; }
+.editorial-root .editorial-calendar-cell[data-weekday='6'] .editorial-calendar-date { color: #3F6FB5; }
 .editorial-root .editorial-calendar-date[data-today='true'] { color: var(--calendar-badge); border-color: currentColor; font-weight: 700; }
 .editorial-root .editorial-calendar-count { display: inline-flex; align-items: center; gap: 4px; background: transparent; color: var(--calendar-badge); }
 .editorial-root .editorial-calendar-count::before {
@@ -552,7 +575,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border: 0.5px solid rgba(185, 154, 203, 0.3);
+  border: 0.5px solid rgba(107, 74, 140, 0.25);
   border-radius: var(--editorial-radius);
   padding: 2px 8px;
   background: transparent;
@@ -571,14 +594,12 @@
 /* '어떻게 시작할까요?' — 각진 격자 칸. 칸끼리 0.5px 연보라 선을 공유하고(바깥 틀 + 칸 사이 선),
    번호·모노 대문자 라벨로 색인처럼 읽힌다. hover·포커스한 칸만 연라벤더로 반전되며 → 가 밀려 나온다. */
 .editorial-root .editorial-index-grid {
-  --grid-line: rgba(185, 154, 203, 0.35);
+  --grid-line: rgba(107, 74, 140, 0.25);
   border: 0.5px solid var(--grid-line);
 }
 
 .editorial-root .editorial-audience-card {
-  --editorial-muted: #cbc4cf;
-  --editorial-accent: #c9addb;
-  background: #1d1924;
+  background: var(--editorial-surface);
   color: var(--editorial-ink);
   transition-property: background-color, color;
   transition-duration: 180ms;
@@ -622,12 +643,12 @@
 }
 
 .editorial-root .editorial-content-card:focus-within {
-  border-color: rgba(214, 196, 255, 0.7);
+  border-color: rgba(107, 74, 140, 0.55);
 }
 
 @media (hover: hover) {
   .editorial-root .editorial-content-card:hover {
-    border-color: rgba(214, 196, 255, 0.6);
+    border-color: rgba(107, 74, 140, 0.45);
     background-color: var(--discovery-elevated);
   }
 }

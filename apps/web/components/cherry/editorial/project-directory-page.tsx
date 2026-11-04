@@ -187,7 +187,7 @@ export function ProjectDirectoryPage({
           placeholder="프로젝트명·설명·개발사 검색"
         />
       </DiscoveryToolbar>
-      <div className="mt-4 flex items-center justify-between border-b border-white/10 pb-3">
+      <div className="mt-4 flex items-center justify-between border-b border-[var(--editorial-line)] pb-3">
         <p className="text-sm text-[var(--editorial-muted)]">분야별 프로젝트 탐색</p>
         <DiscoveryFilterPanel
           label="분야 선택"
@@ -205,7 +205,7 @@ export function ProjectDirectoryPage({
             value={categorySearch}
             onChange={(e) => setCategorySearch(e.target.value)}
             placeholder="분야 검색"
-            className="mb-4 min-h-10 w-full rounded-xl border border-white/10 bg-white/[.025] px-3 text-sm outline-offset-2"
+            className="mb-4 min-h-10 w-full rounded-xl border border-[var(--editorial-line)] bg-[var(--editorial-wash)] px-3 text-sm outline-offset-2"
           />
           <DiscoveryCheckboxGroup
             columns
@@ -227,7 +227,7 @@ export function ProjectDirectoryPage({
               key={name}
               type="button"
               onClick={() => choose(selected.filter((value) => value !== name))}
-              className="inline-flex min-h-8 items-center gap-1.5 border border-[#baa4df]/25 bg-[#baa4df]/10 px-3 text-xs text-[#cdbce7]"
+              className="inline-flex min-h-8 items-center gap-1.5 border border-[var(--editorial-line)] bg-[var(--editorial-hover)] px-3 text-xs text-[var(--editorial-accent)]"
             >
               {name}
               <X size={11} />
@@ -256,7 +256,7 @@ export function ProjectDirectoryPage({
         <div
           role="group"
           aria-label="프로젝트 보기 방식"
-          className="inline-flex gap-1 rounded-xl bg-black/15 p-1"
+          className="inline-flex gap-1 rounded-xl bg-[var(--editorial-wash)] p-1"
         >
           {(
             [
@@ -271,7 +271,7 @@ export function ProjectDirectoryPage({
               title={label}
               aria-pressed={view === value}
               onClick={() => setView(value)}
-              className={`flex h-9 w-9 items-center justify-center rounded-lg ${view === value ? 'bg-[var(--editorial-accent)] text-[#15191e]' : 'text-[var(--editorial-muted)] hover:bg-white/5'}`}
+              className={`flex h-9 w-9 items-center justify-center rounded-lg ${view === value ? 'bg-[var(--editorial-accent)] text-[var(--editorial-on-accent)]' : 'text-[var(--editorial-muted)] hover:bg-[var(--editorial-hover)]'}`}
             >
               <Icon size={17} />
             </button>
