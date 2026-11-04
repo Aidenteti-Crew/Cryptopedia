@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { rememberDiscoveryScroll } from './discovery-state'
 import { HUB_ENTRY_IDS, isHubEntry, type HubData } from '@/lib/cryptopedia-hub'
 
@@ -41,6 +41,7 @@ import { ProjectDirectoryPage } from './project-directory-page'
 import { HubLibraryPage } from './hub-library-page'
 import { HubDetailPage } from './hub-detail-page'
 import { MyPathPage } from './my-path-page'
+import { MyPathBanner } from './my-path-banner'
 import { KnowledgeOnboarding } from './my-path-onboarding'
 import { getEditorialBreadcrumbs, menuEntryFor } from './editorial-breadcrumb'
 import { useEditorialChain } from './editorial-chain-provider'
@@ -215,6 +216,8 @@ export function EditorialApp({
   const [loadState, setLoadState] = useState<LoadState>({ status: 'loading' })
   const [retryVersion, setRetryVersion] = useState(0)
   const { activeChain, setActiveChain } = useEditorialChain()
+  // 하단 '내 경로' 띠가 쓰는 hub — 화면마다 hub 를 불러오지 않으므로 띠가 따로 불러 둔다
+  const loadBannerHub = useCallback(() => repository.getHub(activeChain.id), [activeChain.id])
 
   const chainTheme = getChainTheme(activeChain)
   const activeScreen = view.kind === 'screen' ? view.id : view.parent
@@ -336,32 +339,33 @@ export function EditorialApp({
         )
         break
       case 'hub':
-        content = loaded.id === 'my-path' ? (
-          <MyPathPage
-            data={loaded.data}
-            onOpen={(id) => openArticle(id)}
-            onOpenScreen={selectScreen}
-          />
-        ) : HUB_ENTRY_IDS.has(loaded.id) ? (
-          <HubLibraryPage
-            key={loaded.id}
-            id={loaded.id}
-            data={loaded.data}
-            onOpen={(id) => openArticle(id)}
-          />
-        ) : (
-          <HubDetailPage
-            key={loaded.id}
-            id={loaded.id}
-            data={loaded.data}
-            onOpen={(id) => openArticle(id)}
-            onOpenInGraph={(conceptId) =>
-              router.push(
-                `${pathForEditorialView({ kind: 'article', id: 'skill-graph', parent: 'academy' })}?concept=${encodeURIComponent(conceptId)}`
-              )
-            }
-          />
-        )
+        content =
+          loaded.id === 'my-path' ? (
+            <MyPathPage
+              data={loaded.data}
+              onOpen={(id) => openArticle(id)}
+              onOpenScreen={selectScreen}
+            />
+          ) : HUB_ENTRY_IDS.has(loaded.id) ? (
+            <HubLibraryPage
+              key={loaded.id}
+              id={loaded.id}
+              data={loaded.data}
+              onOpen={(id) => openArticle(id)}
+            />
+          ) : (
+            <HubDetailPage
+              key={loaded.id}
+              id={loaded.id}
+              data={loaded.data}
+              onOpen={(id) => openArticle(id)}
+              onOpenInGraph={(conceptId) =>
+                router.push(
+                  `${pathForEditorialView({ kind: 'article', id: 'skill-graph', parent: 'academy' })}?concept=${encodeURIComponent(conceptId)}`
+                )
+              }
+            />
+          )
         break
       case 'macro':
         content = (
@@ -458,6 +462,15 @@ export function EditorialApp({
       onOpenEntry={(id) => openArticle(id)}
     >
       <EditorialPageTransition transitionKey={transitionKey}>{content}</EditorialPageTransition>
+      <MyPathBanner
+        chainId={activeChain.id}
+        loadHub={loadBannerHub}
+        hidden={view.kind === 'article' && view.id === 'my-path'}
+        onOpen={(id) => openArticle(id)}
+        onOpenStep={(step) =>
+          step.kind === 'screen' ? selectScreen(step.id as ScreenId) : openArticle(step.id)
+        }
+      />
     </EditorialShell>
   )
 }
