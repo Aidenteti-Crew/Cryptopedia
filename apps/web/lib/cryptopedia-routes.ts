@@ -13,6 +13,8 @@ const SCREEN_PATHS: Partial<Record<ScreenId, string>> = {
   'event-archive': '/knowledge/events/archive',
   updates: '/updates',
   'builder-test': '/builder-test',
+  // 내 학습 경로는 컬렉션(체인)과 상관없이 하나 — 모든 체인의 경로를 한곳에서 본다
+  'my-path': '/my-path',
   // LEARN 화면은 app/(chainery)/(learn) 라우트 그룹 — 주소는 메뉴 이름(핵심 개념·에이전트 스킬)을 따른다
   fundamentals: '/concepts',
   builders: '/skills',
@@ -77,7 +79,10 @@ export function editorialViewFromPath(pathname: string): EditorialView | null {
   const [parent, rawId] = parts
   const id = decodeEntryId(rawId)
   if (!id) return null
-  if (ECOSYSTEM_DETAILS.has(parent as ScreenId) && SCREEN_PATHS[parent as ScreenId] === `/${parent}`) {
+  if (
+    ECOSYSTEM_DETAILS.has(parent as ScreenId) &&
+    SCREEN_PATHS[parent as ScreenId] === `/${parent}`
+  ) {
     return { kind: 'article', id, parent: parent as ScreenId }
   }
   if (parent === 'articles') return { kind: 'article', id, parent: 'ecosystem' }

@@ -176,6 +176,10 @@ test('project directory shows API categories and official project links', () => 
   assert.match(html, /aria-label="리스트 보기"/)
   assert.match(html, /검색 결과/)
   assert.doesNotMatch(html, /큐레이션 데모/)
+  // 예전 생태계 홈의 분야 지도가 이 페이지 목록 위로 왔다
+  assert.match(html, /Ecosystem Heatmap/)
+  assert.match(html, /1개 프로젝트 · 1개 분야/)
+  assert.ok(html.indexOf('Ecosystem Heatmap') < html.indexOf('id="project-results"'))
 })
 
 test('unnamed project category remains selectable as 기타', () => {

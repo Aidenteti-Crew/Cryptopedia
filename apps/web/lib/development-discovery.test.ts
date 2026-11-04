@@ -118,11 +118,35 @@ test('empty calendar dates resolve to a real publication date', () => {
 })
 
 test('checkbox filters match any option within a group and combine groups together', () => {
-  const a=make('a',{prerelease:false,network:'MAINNET'})
-  const b=make('b',{prerelease:true,network:'FUJI',sourceUrl:'https://github.com/ava-labs/subnet-evm/releases/tag/b'})
-  const c=make('c',{prerelease:false,network:'OTHER'})
-  const selected={...defaults,product:['coreth','subnet-evm'],stage:['stable','prerelease'],network:['MAINNET','FUJI']}
-  assert.deepEqual(selectDevelopmentUpdates([a,b,c],selected).map((e)=>e.id),['a','b'])
-  assert.deepEqual(selectDevelopmentUpdates([a,b,c],{...selected,stage:['stable']}).map((e)=>e.id),['a'])
-  assert.equal(selectDevelopmentUpdates([a,b,c],{...defaults,product:[],network:[],stage:[],change:[]}).length,3)
+  const a = make('a', { prerelease: false, network: 'MAINNET' })
+  const b = make('b', {
+    prerelease: true,
+    network: 'FUJI',
+    sourceUrl: 'https://github.com/ava-labs/subnet-evm/releases/tag/b',
+  })
+  const c = make('c', { prerelease: false, network: 'OTHER' })
+  const selected = {
+    ...defaults,
+    product: ['coreth', 'subnet-evm'],
+    stage: ['stable', 'prerelease'],
+    network: ['MAINNET', 'FUJI'],
+  }
+  assert.deepEqual(
+    selectDevelopmentUpdates([a, b, c], selected).map((e) => e.id),
+    ['a', 'b']
+  )
+  assert.deepEqual(
+    selectDevelopmentUpdates([a, b, c], { ...selected, stage: ['stable'] }).map((e) => e.id),
+    ['a']
+  )
+  assert.equal(
+    selectDevelopmentUpdates([a, b, c], {
+      ...defaults,
+      product: [],
+      network: [],
+      stage: [],
+      change: [],
+    }).length,
+    3
+  )
 })

@@ -44,7 +44,10 @@ test('chapter and ecosystem details keep their parent in the URL', () => {
   assert.equal(editorialViewFromPath('/unknown/something'), null)
   // LEARN 주소에 /chapters 를 붙이지 않는다 (옛 주소는 next.config 의 redirects 가 넘겨준다)
   assert.equal(editorialViewFromPath('/chapters/fundamentals/chain-overview'), null)
-  assert.equal(pathForEditorialView({ kind: 'article', id: 'chain-overview', parent: 'fundamentals' }), '/concepts/chain-overview')
+  assert.equal(
+    pathForEditorialView({ kind: 'article', id: 'chain-overview', parent: 'fundamentals' }),
+    '/concepts/chain-overview'
+  )
   // 예전 /ecosystem/... 주소는 더 이상 쓰지 않는다
   assert.equal(editorialViewFromPath('/ecosystem/projects'), null)
 })
@@ -55,10 +58,16 @@ test('/ is the platform entrance and the knowledge home lives at /knowledge', ()
   assert.equal(editorialViewFromPath('/about'), null)
   assert.equal(pathForEditorialView({ kind: 'screen', id: 'ecosystem' }), '/knowledge')
   // 체인별 행사는 /knowledge/events 아래 — /events 는 플랫폼 행사 페이지
-  assert.equal(pathForEditorialView({ kind: 'article', id: 'summit', parent: 'events' }), '/knowledge/events/summit')
+  assert.equal(
+    pathForEditorialView({ kind: 'article', id: 'summit', parent: 'events' }),
+    '/knowledge/events/summit'
+  )
   assert.equal(editorialViewFromPath('/events'), null)
   assert.equal(editorialViewFromPath('/events/summit'), null)
-  assert.deepEqual(editorialViewFromPath('/knowledge/events/archive'), { kind: 'screen', id: 'event-archive' })
+  assert.deepEqual(editorialViewFromPath('/knowledge/events/archive'), {
+    kind: 'screen',
+    id: 'event-archive',
+  })
 })
 
 test('editorial URLs have individual Next.js route entry points', () => {

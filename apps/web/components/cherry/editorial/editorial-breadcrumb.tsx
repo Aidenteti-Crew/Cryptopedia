@@ -22,6 +22,7 @@ const SCREEN_LABELS: Record<string, string> = {
   chains: '컬렉션 선택',
   'event-archive': '행사 아카이브',
   'builder-test': '빌더 유형 테스트',
+  'my-path': '내 학습 경로',
   ...Object.fromEntries([...PRIMARY_NAV, ...CHAPTER_NAV].map((item) => [item.id, item.label])),
 }
 const CHILD_LABELS = Object.fromEntries(
@@ -53,6 +54,8 @@ export function getEditorialBreadcrumbs(
   view: EditorialView,
   context: { title?: string; hub?: HubData } = {}
 ): EditorialBreadcrumbItem[] {
+  // 내 학습 경로는 LIVE·LEARN 어디에도 속하지 않는다 (모든 컬렉션 공통)
+  if (view.kind === 'screen' && view.id === 'my-path') return [{ label: SCREEN_LABELS['my-path'] }]
   const section: EditorialBreadcrumbItem = {
     label: CHAPTER_NAV.some(
       (chapter) => chapter.id === (view.kind === 'screen' ? view.id : view.parent)

@@ -1,13 +1,12 @@
 'use client'
 
-import { ArrowRight, BookOpen, Bot, CalendarDays, Code2, Globe2, Layers3 } from 'lucide-react'
+import { ArrowRight, CalendarDays, Code2, Globe2, Layers3 } from 'lucide-react'
 import type { EcosystemPageData, EcosystemProjectsResponse } from '@/lib/cryptopedia-types'
 import type { HubData } from '@/lib/cryptopedia-hub'
 import { HeroCarousel, type OverviewHeroItem } from '../nd-overview-page'
-import { getProjectHeatmapItems, sortHomeNews } from '@/lib/cryptopedia-home'
+import { sortHomeNews } from '@/lib/cryptopedia-home'
 import { MyPathCard } from './my-path-card'
 import { EcosystemHomeIntro } from './ecosystem-home-intro'
-import { EcosystemHeatmap } from './ecosystem-heatmap'
 
 interface EcosystemPageProps {
   data: EcosystemPageData
@@ -16,7 +15,6 @@ interface EcosystemPageProps {
   chainLogoUrl?: string
   projects?: EcosystemProjectsResponse | null
   onOpenScreen: (id: 'projects' | 'macro' | 'events' | 'updates') => void
-  onOpenProjectCategory?: (category: string | null) => void
   onOpenLatest: (id: string) => void
 }
 
@@ -27,37 +25,15 @@ const NEWS_CATEGORIES = {
   DEV: { label: '개발 업데이트', Icon: Code2 },
   UPDATE: { label: '개발 업데이트', Icon: Code2 },
 }
-const AUDIENCES = [
-  {
-    id: 'practice',
-    title: '사람이 공부하기',
-    label: 'FOR PEOPLE',
-    summary: '목표에 맞는 개념을 배우고, 공식 자료와 예제를 따라 케이스별로 실습하세요.',
-    action: '케이스별 실습으로',
-    Icon: BookOpen,
-  },
-  {
-    id: 'skill-library',
-    title: '에이전트에게 전달하기',
-    label: 'FOR AGENTS',
-    summary: '필요한 지식과 스킬을 찾아 지침·출처·완료 조건이 담긴 파일로 전달하세요.',
-    action: '스킬 라이브러리로',
-    Icon: Bot,
-  },
-]
-
 export function EcosystemPage({
   data,
   hub,
   chainId = 'avalanche',
   chainLogoUrl,
-  projects,
   onOpenScreen,
-  onOpenProjectCategory,
   onOpenLatest,
 }: EcosystemPageProps) {
   const latest = sortHomeNews(data.latest)
-  const projectTiles = projects ? getProjectHeatmapItems(projects) : []
   const slides: OverviewHeroItem[] = latest.map((entry) => ({
     n: entry.title,
     d: entry.summary,
@@ -161,85 +137,6 @@ export function EcosystemPage({
           />
         )}
       </div>
-
-      <section className="mt-8 lg:mt-12" aria-labelledby="home-audience-title">
-        <h2 id="home-audience-title" className="text-lg font-semibold">
-          어떻게 시작할까요?
-        </h2>
-        <p className="mt-2 text-sm leading-6 text-[var(--editorial-muted)]">
-          같은 지식을, 사람의 학습과 에이전트의 작업에 맞게.
-        </p>
-        {/* 각진 격자 칸 — 번호·모노 라벨로 색인처럼, hover 한 칸만 반전 (globals.css .editorial-index-grid) */}
-        <div className="editorial-index-grid mt-5 grid lg:grid-cols-2">
-          {AUDIENCES.map(({ id, title, label, summary, action, Icon }, index) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => onOpenLatest(id)}
-              data-audience={id}
-              className="editorial-audience-card group flex min-h-[230px] flex-col p-6 text-left sm:p-7"
-            >
-              <span className="flex items-start justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--editorial-muted)]">
-                <span className="inline-flex items-center gap-2.5">
-                  <Icon size={15} strokeWidth={1.6} aria-hidden="true" />
-                  {label}
-                </span>
-                <span className="tabular-nums">{String(index + 1).padStart(2, '0')}</span>
-              </span>
-              <span className="mt-6 block text-[22px] font-semibold leading-snug">{title}</span>
-              <span className="mt-3 block max-w-[46ch] text-xs leading-6 text-[var(--editorial-muted)]">
-                {summary}
-              </span>
-              <span className="mt-auto inline-flex items-center gap-2 pt-6 text-xs font-semibold text-[var(--editorial-accent)]">
-                <ArrowRight size={16} className="editorial-audience-arrow" aria-hidden="true" />
-                {action}
-              </span>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {/* {hub && (
-        <section className="mt-10 border-t border-[var(--editorial-line)] pt-5">
-          <RelatedLinks
-            title="시작하기 좋은 케이스"
-            ids={hub.cases.map((study) => study.id)}
-            data={hub}
-            onOpen={onOpenLatest}
-          />
-        </section>
-      )} */}
-
-      <section className="mt-8 lg:mt-12" aria-labelledby="ecosystem-heatmap-title">
-        <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h2 id="ecosystem-heatmap-title" className="text-lg font-semibold">
-              Ecosystem Heatmap
-            </h2>
-            <p className="mt-2 text-xs leading-6 text-[var(--editorial-muted)]">
-              타일 크기는 분야별 프로젝트 수를 나타냅니다. 분야를 선택해 프로젝트를 살펴보세요.
-            </p>
-          </div>
-          <span className="border border-[var(--editorial-line)] px-3 py-1.5 text-[10px] text-[var(--editorial-muted)]">
-            {projects?.total ?? 0}개 프로젝트 · {projects?.categories.length ?? 0}개 분야
-          </span>
-        </div>
-        {projectTiles.length ? (
-          <EcosystemHeatmap
-            items={projectTiles}
-            onSelect={(category) =>
-              onOpenProjectCategory ? onOpenProjectCategory(category) : onOpenScreen('projects')
-            }
-          />
-        ) : (
-          <p className="border border-[var(--editorial-line)] p-6 text-sm text-[var(--editorial-muted)]">
-            {projects ? '등록된 프로젝트가 없습니다.' : '프로젝트 데이터를 불러오지 못했습니다.'}
-          </p>
-        )}
-        <p className="mt-3 text-xs leading-6 text-[var(--editorial-muted)]">
-          색상은 분야 구분용이며, 타일은 현재 등록된 프로젝트 기준입니다.
-        </p>
-      </section>
 
       {/* <section
         className="mt-12 border-t border-[var(--editorial-line)] pt-7"

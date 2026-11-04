@@ -15,6 +15,8 @@ import {
 import { DiscoveryFilterPanel, DiscoveryCheckboxGroup, DiscoveryResults } from './discovery-filters'
 import { useDiscoveryState, DiscoveryScrollRestore, useDiscoveryView } from './discovery-state'
 import { projectCategoryStyle } from '@/lib/project-category-colors'
+import { getProjectHeatmapItems } from '@/lib/cryptopedia-home'
+import { EcosystemHeatmap } from './ecosystem-heatmap'
 
 function ProjectLinks({ project }: { project: EcosystemProject }) {
   const links = [
@@ -154,6 +156,11 @@ export function ProjectDirectoryPage({
       ),
     [data.items, search, selected, sort]
   )
+  // 'Uncategorized' 는 목록 필터와 같이 '기타'로 — 타일을 누르면 같은 값으로 거른다
+  const heatmap = useMemo(
+    () => getProjectHeatmapItems({ total: data.total, categories }),
+    [data.total, categories]
+  )
   const choose = (values: string[]) => {
     setSelected(values)
     setVisible(24)
@@ -187,7 +194,37 @@ export function ProjectDirectoryPage({
           placeholder="프로젝트명·설명·개발사 검색"
         />
       </DiscoveryToolbar>
-      <div className="mt-4 flex items-center justify-between border-b border-[var(--editorial-line)] pb-3">
+      {/* 분야 지도 — 예전 생태계 홈에 있던 Ecosystem Heatmap. 타일을 누르면 아래 목록을 그 분야로 거른다 */}
+      {heatmap.length > 0 && (
+        <section className="mt-6" aria-labelledby="ecosystem-heatmap-title">
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 id="ecosystem-heatmap-title" className="text-lg font-semibold">
+                Ecosystem Heatmap
+              </h2>
+              <p className="mt-2 text-xs leading-6 text-[var(--editorial-muted)]">
+                타일 크기는 분야별 프로젝트 수예요. 분야를 누르면 아래 목록이 그 분야로 걸러져요.
+              </p>
+            </div>
+            <span className="border border-[var(--editorial-line)] px-3 py-1.5 text-[10px] text-[var(--editorial-muted)]">
+              {data.total}개 프로젝트 · {data.categories.length}개 분야
+            </span>
+          </div>
+          <EcosystemHeatmap
+            items={heatmap}
+            onSelect={(category) => {
+              choose(category ? [category] : [])
+              document
+                .getElementById('project-results')
+                ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }}
+          />
+        </section>
+      )}
+      <div
+        id="project-results"
+        className="mt-6 flex scroll-mt-6 items-center justify-between border-b border-[var(--editorial-line)] pb-3"
+      >
         <p className="text-sm text-[var(--editorial-muted)]">분야별 프로젝트 탐색</p>
         <DiscoveryFilterPanel
           label="분야 선택"

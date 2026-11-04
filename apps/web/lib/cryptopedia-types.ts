@@ -1,25 +1,25 @@
-import { z } from "zod"
+import { z } from 'zod'
 
 const isoDateTimeSchema = z.string().datetime({ offset: true })
 
 export const contentKindSchema = z.enum([
-  "OVERVIEW",
-  "ARCHITECTURE",
-  "NETWORK",
-  "GLOSSARY",
-  "DOCS",
-  "CODE",
-  "ARTICLE",
-  "PROTOCOL",
-  "FOUNDATION",
-  "STRUCTURE",
-  "PRACTICE",
-  "LEARNING_MAP",
-  "MACRO",
-  "UPDATE",
-  "PROJECT",
-  "EVENT",
-  "DEV",
+  'OVERVIEW',
+  'ARCHITECTURE',
+  'NETWORK',
+  'GLOSSARY',
+  'DOCS',
+  'CODE',
+  'ARTICLE',
+  'PROTOCOL',
+  'FOUNDATION',
+  'STRUCTURE',
+  'PRACTICE',
+  'LEARNING_MAP',
+  'MACRO',
+  'UPDATE',
+  'PROJECT',
+  'EVENT',
+  'DEV',
 ])
 
 export const contentEntrySchema = z.object({
@@ -40,14 +40,25 @@ export const contentEntrySchema = z.object({
   importanceReason: z.string().nullable().optional(),
   prerelease: z.boolean().nullable().optional(),
   compareUrl: z.string().url().nullable().optional(),
-  changeFlags: z.array(z.object({
-    kind: z.enum(['mandatory', 'breaking', 'security', 'protocol']),
-    evidence: z.string().min(1), sourceUrl: z.string().url(),
-  })).optional(),
-  activations: z.array(z.object({
-    network: z.enum(['MAINNET', 'FUJI']), at: isoDateTimeSchema,
-    evidence: z.string().min(1), sourceUrl: z.string().url(),
-  })).optional(),
+  changeFlags: z
+    .array(
+      z.object({
+        kind: z.enum(['mandatory', 'breaking', 'security', 'protocol']),
+        evidence: z.string().min(1),
+        sourceUrl: z.string().url(),
+      })
+    )
+    .optional(),
+  activations: z
+    .array(
+      z.object({
+        network: z.enum(['MAINNET', 'FUJI']),
+        at: isoDateTimeSchema,
+        evidence: z.string().min(1),
+        sourceUrl: z.string().url(),
+      })
+    )
+    .optional(),
   publishedAt: isoDateTimeSchema.optional(),
   collectedAt: isoDateTimeSchema.optional(),
   startsAt: isoDateTimeSchema.optional(),
@@ -70,12 +81,15 @@ export const chainCollectionItemSchema = z.object({
   order: z.number().int().positive(),
   name: z.string().min(1),
   summary: z.string().min(1),
-  status: z.enum(["AVAILABLE", "COMING_SOON"]),
+  status: z.enum(['AVAILABLE', 'COMING_SOON']),
   /** 체인 공식 로고 아바타 (public 경로) */
   logoUrl: z.string().min(1).optional(),
   tagline: z.string().min(1).optional(),
   taglineSourceUrl: z.string().url().optional(),
-  taglineCheckedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  taglineCheckedAt: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
 })
 
 export const chainCollectionPageSchema = z.object({
@@ -87,7 +101,7 @@ export const chainCollectionPageSchema = z.object({
 })
 
 export const ecosystemEntrySchema = z.object({
-  id: z.enum(["projects", "macro", "events", "updates"]),
+  id: z.enum(['projects', 'macro', 'events', 'updates']),
   label: z.string().min(1),
   title: z.string().min(1),
   summary: z.string().min(1),
@@ -104,13 +118,7 @@ export const ecosystemPageSchema = z.object({
   latest: z.array(contentEntrySchema),
 })
 
-export const eventStatusSchema = z.enum([
-  "UPCOMING",
-  "ONGOING",
-  "PAST",
-  "CANCELLED",
-  "POSTPONED",
-])
+export const eventStatusSchema = z.enum(['UPCOMING', 'ONGOING', 'PAST', 'CANCELLED', 'POSTPONED'])
 
 export const eventEntrySchema = z.object({
   id: z.string().min(1),
@@ -171,7 +179,7 @@ export const ecosystemProjectsResponseSchema = z.object({
 export const collectionVolumeSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
-  type: z.enum(["CHAIN", "PROJECT"]),
+  type: z.enum(['CHAIN', 'PROJECT']),
   volume: z.number().int().positive(),
   networkType: z.string().min(1).optional(),
   description: z.string(),
@@ -186,18 +194,18 @@ export const articleSectionSchema = z.object({
 })
 
 export const articleVariantSchema = z.enum([
-  "reader",
-  "architecture",
-  "validator",
-  "glossary",
-  "docs",
-  "code",
-  "protocol",
-  "course",
-  "lesson",
-  "graph",
-  "article",
-  "macro",
+  'reader',
+  'architecture',
+  'validator',
+  'glossary',
+  'docs',
+  'code',
+  'protocol',
+  'course',
+  'lesson',
+  'graph',
+  'article',
+  'macro',
 ])
 
 export const codeSampleSchema = z.object({
@@ -207,7 +215,7 @@ export const codeSampleSchema = z.object({
 
 export const articleDetailSchema = z.object({
   id: z.string().min(1),
-  variant: articleVariantSchema.default("reader"),
+  variant: articleVariantSchema.default('reader'),
   breadcrumb: z.array(z.string().min(1)).min(1),
   eyebrow: z.string().min(1),
   title: z.string().min(1),
@@ -227,7 +235,7 @@ export const articleDetailSchema = z.object({
 export const bookDetailSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
-  type: z.enum(["CHAIN", "PROJECT"]),
+  type: z.enum(['CHAIN', 'PROJECT']),
   volume: z.number().int().positive(),
   networkType: z.string().min(1).optional(),
   description: z.string(),

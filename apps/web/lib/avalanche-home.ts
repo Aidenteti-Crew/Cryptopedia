@@ -52,7 +52,8 @@ export const BUILDER_RESULT_COPY = {
   pathHeading: '추천 탐색 경로',
   pathCaption: '순서대로 이수하는 과정이 아니라, 관심 가는 곳부터 둘러볼 수 있는 경로입니다.',
   startCta: '나의 탐색 경로 시작하기',
-  disclaimer: '선택한 답변을 바탕으로 탐색 경로를 골라 본 것이며, 성향이나 능력을 진단하는 결과가 아닙니다.',
+  disclaimer:
+    '선택한 답변을 바탕으로 탐색 경로를 골라 본 것이며, 성향이나 능력을 진단하는 결과가 아닙니다.',
   referenceHeading: '보조 참고 자료',
   referenceNote: '공식 문서 원문(영문)이며 새 탭에서 열립니다.',
 } as const
@@ -123,14 +124,16 @@ export const AVALANCHE_HOME: ChainHomeContent = {
       id: 'l1',
       index: '02',
       title: '나만의 Avalanche L1',
-      learn: '목적에 맞게 직접 구성하는 독립 블록체인입니다. 전용 학습 자료는 준비 중이며, 공식 문서에서 먼저 확인할 수 있습니다.',
+      learn:
+        '목적에 맞게 직접 구성하는 독립 블록체인입니다. 전용 학습 자료는 준비 중이며, 공식 문서에서 먼저 확인할 수 있습니다.',
       links: [{ label: '공식 문서', target: { kind: 'entry', id: 'official-docs' } }],
     },
     {
       id: 'interchain',
       index: '03',
       title: 'Interchain',
-      learn: 'Avalanche L1 사이에서 메시지를 주고받는 상호운용 기능입니다. 전용 학습 자료는 준비 중이며, 공식 문서에서 먼저 확인할 수 있습니다.',
+      learn:
+        'Avalanche L1 사이에서 메시지를 주고받는 상호운용 기능입니다. 전용 학습 자료는 준비 중이며, 공식 문서에서 먼저 확인할 수 있습니다.',
       links: [{ label: '공식 문서', target: { kind: 'entry', id: 'official-docs' } }],
     },
   ],
@@ -180,12 +183,14 @@ export const AVALANCHE_HOME: ChainHomeContent = {
         },
         {
           title: 'MCP·에이전트 도구',
-          description: '공식 조회 도구의 지원 범위를 보고, 에이전트와 체인을 연결하는 방법을 살펴봅니다.',
+          description:
+            '공식 조회 도구의 지원 범위를 보고, 에이전트와 체인을 연결하는 방법을 살펴봅니다.',
           target: { kind: 'entry', id: 'mcp-tools' },
         },
         {
           title: '스킬 라이브러리',
-          description: '작업별 지침과 완료 조건이 담긴 스킬 중에서 반복 작업에 쓸 만한 것을 찾아봅니다.',
+          description:
+            '작업별 지침과 완료 조건이 담긴 스킬 중에서 반복 작업에 쓸 만한 것을 찾아봅니다.',
           target: { kind: 'entry', id: 'skill-library' },
         },
       ],
@@ -242,7 +247,10 @@ export const AVALANCHE_HOME: ChainHomeContent = {
         },
       ],
       // 확인한 정식 주소(HTTP 200, 리다이렉트 없음)
-      reference: { label: 'Avalanche L1 공식 문서', url: 'https://build.avax.network/docs/avalanche-l1s' },
+      reference: {
+        label: 'Avalanche L1 공식 문서',
+        url: 'https://build.avax.network/docs/avalanche-l1s',
+      },
     },
     {
       id: 'connector',

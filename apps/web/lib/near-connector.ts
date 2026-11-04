@@ -4,17 +4,17 @@
  * 프론트엔드에서 NEAR 지갑 연결 / 직접 서명을 지원.
  * 기존 MetaMask 흐름(Status Network)과 병행 — 체인 토글로 구분.
  */
-"use client"
+'use client'
 
-import { NearConnector, type NearWalletBase } from "@hot-labs/near-connect"
+import { NearConnector, type NearWalletBase } from '@hot-labs/near-connect'
 
-const NETWORK = "testnet" as const
-const CONTRACT_ID = process.env.NEXT_PUBLIC_NEAR_CONTRACT_ID ?? "tomatojams.testnet"
+const NETWORK = 'testnet' as const
+const CONTRACT_ID = process.env.NEXT_PUBLIC_NEAR_CONTRACT_ID ?? 'tomatojams.testnet'
 
 // 기본 manifest (hot-dao) — MyNearWallet이 포함돼 있지만 features.testnet 플래그가 빠져 있어
 // testnet 모드에서 필터링되므로 런타임에 패치한다.
 const DEFAULT_MANIFEST_URL =
-  "https://raw.githubusercontent.com/hot-dao/near-selector/refs/heads/main/repository/manifest.json"
+  'https://raw.githubusercontent.com/hot-dao/near-selector/refs/heads/main/repository/manifest.json'
 
 let _connector: NearConnector | null = null
 let _connectorPromise: Promise<NearConnector> | null = null
@@ -26,16 +26,16 @@ let _windowOpenPatched = false
  */
 function patchWindowOpenForWallets() {
   if (_windowOpenPatched) return
-  if (typeof window === "undefined") return
+  if (typeof window === 'undefined') return
   _windowOpenPatched = true
 
   const original = window.open.bind(window)
   const WALLET_DOMAINS = [
-    "mynearwallet.com",
-    "meteorwallet.app",
-    "wallet.intear.tech",
-    "okx.com",
-    "hot-labs.org",
+    'mynearwallet.com',
+    'meteorwallet.app',
+    'wallet.intear.tech',
+    'okx.com',
+    'hot-labs.org',
   ]
   const TARGET_W = 540
   const TARGET_H = 820
@@ -43,12 +43,12 @@ function patchWindowOpenForWallets() {
   window.open = function patchedOpen(
     url?: string | URL,
     target?: string,
-    features?: string,
+    features?: string
   ): Window | null {
     try {
-      const urlStr = typeof url === "string" ? url : url?.toString() ?? ""
+      const urlStr = typeof url === 'string' ? url : (url?.toString() ?? '')
       const isWallet = WALLET_DOMAINS.some((d) => urlStr.includes(d))
-      if (isWallet && typeof features === "string") {
+      if (isWallet && typeof features === 'string') {
         // 화면 중앙에 맞춘 top/left
         const left = Math.max(0, Math.round((window.screen.availWidth - TARGET_W) / 2))
         const top = Math.max(0, Math.round((window.screen.availHeight - TARGET_H) / 2))
@@ -71,7 +71,7 @@ async function loadPatchedManifest(): Promise<{ wallets: any[]; version: string 
   const res = await fetch(DEFAULT_MANIFEST_URL)
   if (!res.ok) throw new Error(`Failed to load NEAR manifest: ${res.status}`)
   const m = await res.json()
-  const mnw = m.wallets?.find((w: any) => w.id === "mynearwallet")
+  const mnw = m.wallets?.find((w: any) => w.id === 'mynearwallet')
   if (mnw) {
     mnw.features = { ...mnw.features, testnet: true, mainnet: true }
     // testnet MNW URL + 추가 도메인을 허용해야 sandbox executor가 "Permission denied" 안 냄
@@ -81,10 +81,10 @@ async function loadPatchedManifest(): Promise<{ wallets: any[]; version: string 
       allowsOpen: Array.from(
         new Set([
           ...existingAllowsOpen,
-          "https://app.mynearwallet.com",
-          "https://testnet.mynearwallet.com",
-          "https://mynearwallet.com",
-        ]),
+          'https://app.mynearwallet.com',
+          'https://testnet.mynearwallet.com',
+          'https://mynearwallet.com',
+        ])
       ),
     }
   }
@@ -93,7 +93,7 @@ async function loadPatchedManifest(): Promise<{ wallets: any[]; version: string 
 
 /** 싱글톤 커넥터 반환. SSR 환경에서는 null. */
 export async function getNearConnector(): Promise<NearConnector | null> {
-  if (typeof window === "undefined") return null
+  if (typeof window === 'undefined') return null
   patchWindowOpenForWallets()
   if (_connector) return _connector
   if (!_connectorPromise) {
@@ -102,7 +102,7 @@ export async function getNearConnector(): Promise<NearConnector | null> {
       try {
         manifest = await loadPatchedManifest()
       } catch (e) {
-        console.warn("[near-connector] manifest patch failed, falling back to default", e)
+        console.warn('[near-connector] manifest patch failed, falling back to default', e)
       }
       _connector = new NearConnector({
         network: NETWORK,
@@ -117,29 +117,25 @@ export async function getNearConnector(): Promise<NearConnector | null> {
 /** 지갑 팝업 띄우기 → 유저가 지갑 선택 + 로그인 → accountId 반환 */
 export async function connectNearWallet(): Promise<string> {
   const c = await getNearConnector()
-  if (!c) throw new Error("NEAR connector unavailable (SSR)")
+  if (!c) throw new Error('NEAR connector unavailable (SSR)')
   let wallet: NearWalletBase
   try {
     // walletId 지정 → 지갑 선택 셀렉터 팝업 스킵, 바로 MyNearWallet 로그인 페이지로 리다이렉트
     // (검증된 지갑만 노출해서 데모 안정성 확보)
-    wallet = await c.connect({ walletId: "mynearwallet" })
+    wallet = await c.connect({ walletId: 'mynearwallet' })
   } catch (e: any) {
-    console.error("[near-connector] c.connect() failed:", e)
-    throw new Error(
-      `connect() failed: ${e?.message ?? e?.name ?? JSON.stringify(e)}`,
-    )
+    console.error('[near-connector] c.connect() failed:', e)
+    throw new Error(`connect() failed: ${e?.message ?? e?.name ?? JSON.stringify(e)}`)
   }
   let accounts: Array<{ accountId: string }> = []
   try {
     accounts = await wallet.getAccounts()
   } catch (e: any) {
-    console.error("[near-connector] wallet.getAccounts() failed:", e)
-    throw new Error(
-      `getAccounts() failed: ${e?.message ?? e?.name ?? JSON.stringify(e)}`,
-    )
+    console.error('[near-connector] wallet.getAccounts() failed:', e)
+    throw new Error(`getAccounts() failed: ${e?.message ?? e?.name ?? JSON.stringify(e)}`)
   }
   const accountId = accounts?.[0]?.accountId
-  if (!accountId) throw new Error("No NEAR account returned from wallet")
+  if (!accountId) throw new Error('No NEAR account returned from wallet')
   return accountId
 }
 
@@ -158,7 +154,7 @@ export async function getConnectedNearAccount(): Promise<string | null> {
 /** 현재 연결된 지갑 인스턴스 반환 */
 async function getWallet(): Promise<NearWalletBase> {
   const c = await getNearConnector()
-  if (!c) throw new Error("NEAR connector unavailable")
+  if (!c) throw new Error('NEAR connector unavailable')
   return c.wallet()
 }
 
@@ -190,14 +186,14 @@ export async function signAndSendNearFunctionCall(params: {
   const wallet = await getWallet()
   const receiverId = params.receiverId ?? CONTRACT_ID
   const gas = String(BigInt(params.gasTgas ?? 30) * BigInt(1e12)) // 30 TGas default
-  const deposit = params.depositYocto ?? "0"
+  const deposit = params.depositYocto ?? '0'
 
   const outcome: any = await wallet.signAndSendTransaction({
     network: NETWORK,
     receiverId,
     actions: [
       {
-        type: "FunctionCall",
+        type: 'FunctionCall',
         params: {
           methodName: params.methodName,
           args: params.args,
@@ -212,8 +208,8 @@ export async function signAndSendNearFunctionCall(params: {
     outcome?.transaction?.hash ??
     outcome?.transaction_outcome?.id ??
     outcome?.final_execution_status ??
-    ""
-  const explorerUrl = txHash ? `https://testnet.nearblocks.io/txns/${txHash}` : ""
+    ''
+  const explorerUrl = txHash ? `https://testnet.nearblocks.io/txns/${txHash}` : ''
   return { txHash, explorerUrl }
 }
 
@@ -235,12 +231,12 @@ export async function signAndSendNearProvenance(memo?: string): Promise<{
   const wallet = await getWallet()
   const accounts = await wallet.getAccounts({ network: NETWORK })
   const signerId = accounts?.[0]?.accountId
-  if (!signerId) throw new Error("NEAR wallet not connected")
+  if (!signerId) throw new Error('NEAR wallet not connected')
 
   if (memo) console.log(`[NEAR provenance] memo=${memo}`)
 
   let outcome: any
-  let txHash = ""
+  let txHash = ''
   try {
     outcome = await wallet.signAndSendTransaction({
       network: NETWORK,
@@ -248,12 +244,12 @@ export async function signAndSendNearProvenance(memo?: string): Promise<{
       receiverId: signerId, // self-transfer
       actions: [
         {
-          type: "Transfer",
-          params: { deposit: "1" }, // 1 yoctoNEAR — 실질 0원
+          type: 'Transfer',
+          params: { deposit: '1' }, // 1 yoctoNEAR — 실질 0원
         } as any,
       ],
     })
-    console.log("[NEAR provenance] outcome:", outcome)
+    console.log('[NEAR provenance] outcome:', outcome)
 
     const firstArr = Array.isArray(outcome) ? outcome[0] : null
     txHash =
@@ -264,7 +260,7 @@ export async function signAndSendNearProvenance(memo?: string): Promise<{
       outcome?.id ??
       firstArr?.transaction?.hash ??
       firstArr?.transaction_outcome?.id ??
-      ""
+      ''
   } catch (e: any) {
     // @hot-labs/near-connect는 tx 제출 직후 RPC로 status를 polling하는데,
     // NEAR 노드 인덱싱 지연으로 "Transaction <hash> doesn't exist" 에러를 던질 때가 있다.
@@ -274,18 +270,18 @@ export async function signAndSendNearProvenance(memo?: string): Promise<{
     if (match) {
       txHash = match[1]
       console.warn(
-        `[NEAR provenance] RPC polling race — tx submitted but not yet indexed. Recovered hash from error: ${txHash}`,
+        `[NEAR provenance] RPC polling race — tx submitted but not yet indexed. Recovered hash from error: ${txHash}`
       )
     } else {
-      console.error("[NEAR provenance] signAndSendTransaction failed:", e)
+      console.error('[NEAR provenance] signAndSendTransaction failed:', e)
       throw e
     }
   }
 
   if (!txHash) {
-    console.error("[NEAR provenance] Could not extract tx hash from outcome:", outcome)
+    console.error('[NEAR provenance] Could not extract tx hash from outcome:', outcome)
     throw new Error(
-      "NEAR tx signed but hash not found in outcome. Check console for outcome shape.",
+      'NEAR tx signed but hash not found in outcome. Check console for outcome shape.'
     )
   }
 

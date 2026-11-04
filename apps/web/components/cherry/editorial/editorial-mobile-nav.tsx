@@ -1,12 +1,12 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { Menu } from "lucide-react"
+import { useState, type ReactNode } from 'react'
+import { Menu } from 'lucide-react'
 
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import type { ScreenId } from "@/lib/cryptopedia-taxonomy"
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import type { ScreenId } from '@/lib/cryptopedia-taxonomy'
 
-import { EditorialIndex, type EditorialIndexProps } from "./editorial-index"
+import { EditorialIndex, type EditorialIndexProps } from './editorial-index'
 
 /* ─────────────────────────────────────────────
    햄버거 메뉴 — 기존 Cherry MobileSidebar와 같은 동작:
@@ -17,7 +17,8 @@ export function EditorialMobileNav({
   activeEntryId,
   onSelect,
   onOpenEntry,
-}: EditorialIndexProps) {
+  footer,
+}: EditorialIndexProps & { footer?: ReactNode }) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -49,6 +50,15 @@ export function EditorialMobileNav({
             setOpen(false)
           }}
         />
+        {/* 내 학습 경로 카드 — 누르면 이동하면서 패널을 닫는다 */}
+        {footer && (
+          <div
+            className="mt-auto border-t border-[var(--editorial-line)] p-4"
+            onClickCapture={() => setOpen(false)}
+          >
+            {footer}
+          </div>
+        )}
       </SheetContent>
     </Sheet>
   )
