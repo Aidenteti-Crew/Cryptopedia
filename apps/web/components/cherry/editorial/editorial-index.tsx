@@ -274,13 +274,13 @@ function AudienceBadge({ audience }: { audience: 'people' | 'agents' }) {
     <Tooltip>
       <TooltipTrigger asChild>
         <span
-          className={`flex h-5 w-5 shrink-0 items-center justify-center border ${
+          className={`flex h-5 w-5 shrink-0 items-center justify-center ${
             audience === 'people'
-              ? 'border-[var(--editorial-accent)] text-[var(--editorial-accent)]'
-              : 'border-[var(--editorial-secondary)] text-[var(--editorial-secondary)]'
+              ? 'text-[var(--editorial-accent)]'
+              : 'text-[var(--editorial-secondary)]'
           }`}
         >
-          <Icon size={12} strokeWidth={2} aria-hidden="true" />
+          <Icon size={16} strokeWidth={2} aria-hidden="true" />
           <span className="sr-only">{description}</span>
         </span>
       </TooltipTrigger>
