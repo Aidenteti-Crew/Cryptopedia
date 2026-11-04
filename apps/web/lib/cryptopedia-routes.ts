@@ -1,14 +1,16 @@
 import type { EditorialView } from '@/components/cherry/editorial/editorial-app'
 import type { ScreenId } from './cryptopedia-taxonomy'
 
-/* 생태계 화면은 app/(chainery)/(ecosystem) 라우트 그룹이라 주소에 /ecosystem 이 붙지 않는다 */
+/* / 는 플랫폼 입구(랜딩)이고, 블록체인 지식 홈은 /knowledge 다.
+   생태계 화면은 app/(chainery)/(ecosystem) 라우트 그룹이라 주소에 /ecosystem 이 붙지 않는다.
+   체인별 행사만 /knowledge/events 아래 — /events 는 플랫폼 전체 행사 페이지가 쓴다 */
 const SCREEN_PATHS: Partial<Record<ScreenId, string>> = {
-  ecosystem: '/',
+  ecosystem: '/knowledge',
   chains: '/chains',
   projects: '/projects',
   macro: '/macro',
-  events: '/events',
-  'event-archive': '/events/archive',
+  events: '/knowledge/events',
+  'event-archive': '/knowledge/events/archive',
   updates: '/updates',
   'builder-test': '/builder-test',
   // LEARN 화면은 app/(chainery)/(learn) 라우트 그룹 — 주소는 메뉴 이름(핵심 개념·에이전트 스킬)을 따른다
@@ -43,14 +45,13 @@ export function pathForEditorialView(view: EditorialView): string {
     return `${SCREEN_PATHS[view.parent]}/${encodeURIComponent(view.id)}`
   }
   if (ECOSYSTEM_DETAILS.has(view.parent)) {
-    return `/${view.parent}/${encodeURIComponent(view.id)}`
+    return `${SCREEN_PATHS[view.parent]}/${encodeURIComponent(view.id)}`
   }
   return `/articles/${encodeURIComponent(view.id)}`
 }
 
 export function editorialViewFromPath(pathname: string): EditorialView | null {
   const cleanPath = pathname !== '/' ? pathname.replace(/\/$/, '') : pathname
-  if (cleanPath === '/about') return { kind: 'screen', id: 'ecosystem' }
   const screen = PATH_SCREENS.get(cleanPath)
   if (screen) return { kind: 'screen', id: screen }
 
@@ -60,6 +61,11 @@ export function editorialViewFromPath(pathname: string): EditorialView | null {
     const id = decodeEntryId(parts[2])
     return id ? { kind: 'book', id, parent: 'projects' } : null
   }
+  // /knowledge/events/:id
+  if (parts.length === 3 && `/${parts[0]}/${parts[1]}` === SCREEN_PATHS.events) {
+    const id = decodeEntryId(parts[2])
+    return id ? { kind: 'article', id, parent: 'events' } : null
+  }
   if (parts.length !== 2) return null
   // /academy/:id · /concepts/:id · /skills/:id
   const chapter = PATH_SCREENS.get(`/${parts[0]}`)
@@ -67,11 +73,11 @@ export function editorialViewFromPath(pathname: string): EditorialView | null {
     const id = decodeEntryId(parts[1])
     return id ? { kind: 'article', id, parent: chapter } : null
   }
-  // /:section/:id (projects·macro·events·updates) 와 /articles/:id
+  // /:section/:id (projects·macro·updates) 와 /articles/:id — 섹션 주소가 /:section 인 것만
   const [parent, rawId] = parts
   const id = decodeEntryId(rawId)
   if (!id) return null
-  if (ECOSYSTEM_DETAILS.has(parent as ScreenId)) {
+  if (ECOSYSTEM_DETAILS.has(parent as ScreenId) && SCREEN_PATHS[parent as ScreenId] === `/${parent}`) {
     return { kind: 'article', id, parent: parent as ScreenId }
   }
   if (parent === 'articles') return { kind: 'article', id, parent: 'ecosystem' }

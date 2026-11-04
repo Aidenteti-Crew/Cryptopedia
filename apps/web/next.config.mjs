@@ -22,6 +22,10 @@ const nextConfig = {
       { source: '/chapters/fundamentals/:path*', destination: '/concepts/:path*', permanent: true },
       { source: '/chapters/builders/:path*', destination: '/skills/:path*', permanent: true },
       { source: '/chapters/academy/:path*', destination: '/academy/:path*', permanent: true },
+      // / 가 플랫폼 입구가 되며 예전 /about 랜딩은 / 로, 체인별 행사는 /knowledge/events 로 옮겼다
+      // (/events 자체는 플랫폼 행사 페이지라 넘기지 않는다)
+      { source: '/about', destination: '/', permanent: true },
+      { source: '/events/:path+', destination: '/knowledge/events/:path+', permanent: true },
     ]
   },
   async headers() {

@@ -8,12 +8,12 @@ import type { EditorialView } from '@/components/cherry/editorial/editorial-app'
 
 test('every editorial screen has a stable direct URL', () => {
   const paths = [
-    '/',
+    '/knowledge',
     '/chains',
     '/projects',
     '/macro',
-    '/events',
-    '/events/archive',
+    '/knowledge/events',
+    '/knowledge/events/archive',
     '/updates',
     '/builder-test',
     '/concepts',
@@ -33,6 +33,7 @@ test('chapter and ecosystem details keep their parent in the URL', () => {
     { kind: 'article', id: 'practice', parent: 'academy' },
     { kind: 'article', id: 'skill-library', parent: 'builders' },
     { kind: 'article', id: 'institutional-collaboration', parent: 'macro' },
+    { kind: 'article', id: 'avalanche-summit', parent: 'events' },
     { kind: 'article', id: 'overview', parent: 'ecosystem' },
     { kind: 'book', id: 'book-avalanche', parent: 'projects' },
   ]
@@ -48,21 +49,31 @@ test('chapter and ecosystem details keep their parent in the URL', () => {
   assert.equal(editorialViewFromPath('/ecosystem/projects'), null)
 })
 
-test('about has its own URL while the ecosystem menu resolves to the home', () => {
-  assert.deepEqual(editorialViewFromPath('/about'), { kind: 'screen', id: 'ecosystem' })
-  assert.equal(pathForEditorialView({ kind: 'screen', id: 'ecosystem' }), '/')
+test('/ is the platform entrance and the knowledge home lives at /knowledge', () => {
+  // / 와 예전 /about(→ / redirect) 은 플랫폼 입구라 지식 화면이 아니다
+  assert.equal(editorialViewFromPath('/'), null)
+  assert.equal(editorialViewFromPath('/about'), null)
+  assert.equal(pathForEditorialView({ kind: 'screen', id: 'ecosystem' }), '/knowledge')
+  // 체인별 행사는 /knowledge/events 아래 — /events 는 플랫폼 행사 페이지
+  assert.equal(pathForEditorialView({ kind: 'article', id: 'summit', parent: 'events' }), '/knowledge/events/summit')
+  assert.equal(editorialViewFromPath('/events'), null)
+  assert.equal(editorialViewFromPath('/events/summit'), null)
+  assert.deepEqual(editorialViewFromPath('/knowledge/events/archive'), { kind: 'screen', id: 'event-archive' })
 })
 
 test('editorial URLs have individual Next.js route entry points', () => {
   // 생태계·LEARN 화면은 (ecosystem)·(learn) 라우트 그룹 폴더 안에 있다 — 폴더명은 주소에 나타나지 않는다
   const paths = [
     '/',
-    '/about',
+    '/knowledge',
+    '/careers',
+    '/events',
     '/chains',
     '/(ecosystem)/projects',
     '/(ecosystem)/macro',
-    '/(ecosystem)/events',
-    '/(ecosystem)/events/archive',
+    '/knowledge/events',
+    '/knowledge/events/archive',
+    '/knowledge/events/[id]',
     '/(ecosystem)/updates',
     '/(ecosystem)/builder-test',
     '/(learn)/concepts',

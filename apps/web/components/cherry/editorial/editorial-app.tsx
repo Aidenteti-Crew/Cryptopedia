@@ -434,7 +434,7 @@ export function EditorialApp({
       activeChainName={activeChain.name}
       activeChainLogoUrl={activeChain.logoUrl}
       chainTheme={chainTheme}
-      onLogoClick={() => router.push('/about')}
+      onLogoClick={() => router.push('/')}
       onSelectChain={(chain) => {
         setActiveChain(chain)
         selectScreen('ecosystem')

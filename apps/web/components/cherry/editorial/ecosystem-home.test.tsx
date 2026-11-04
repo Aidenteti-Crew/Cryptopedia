@@ -20,7 +20,7 @@ const projects: EcosystemProjectsResponse = {
   generatedAt: '2026-10-14T00:00:00Z',
 }
 
-test('home pairs the original carousel with the inline builder survey', () => {
+test('home shows the original carousel without the builder survey', () => {
   const html = renderToStaticMarkup(
     <EcosystemPage
       data={data}
@@ -33,13 +33,13 @@ test('home pairs the original carousel with the inline builder survey', () => {
   const title = html.slice(html.indexOf('<h1'), html.indexOf('</h1>'))
   assert.match(title, /Avalanche/)
   assert.ok(html.indexOf('<h1') < html.indexOf('생태계 최신 소식'))
-  assert.ok(html.indexOf('생태계 최신 소식') < html.indexOf('inline-builder-test-title'))
+  // 빌더 유형 설문은 홈에서 내렸다 (지식 섹션 첫 진입의 '내 경로 만들기'가 대신한다)
+  assert.doesNotMatch(html, /inline-builder-test-title/)
+  assert.doesNotMatch(html, /나는 어떤 Avalanche 빌더일까\?/)
   assert.match(html, /lg:grid-cols-2/)
   assert.equal((html.match(/<h1\b/g) ?? []).length, 1)
   assert.match(html, /하나의 생태계, 다양한 블록체인의 가능성\./)
   assert.match(html, /EVM Compatible/)
-  assert.match(html, /나는 어떤 Avalanche 빌더일까\?/)
-  assert.match(html, /새로운 기술을 발견했을 때, 가장 먼저 하고 싶은 일은 무엇인가요\?/)
   assert.match(html, /이전 소식/)
   assert.match(html, /4번째 소식 보기/)
   assert.doesNotMatch(html, /예시 소식/)
@@ -54,16 +54,6 @@ test('home pairs the original carousel with the inline builder survey', () => {
   assert.match(html, /3개 프로젝트 · 2개 분야/)
   assert.doesNotMatch(html, /\bDEMO\b/)
   assert.doesNotMatch(html, /Model Updates|PAPER_BENCHMARK/)
-})
-
-test('the home survey begins at question one with four answer buttons', () => {
-  const html = renderToStaticMarkup(
-    <EcosystemPage data={data} onOpenScreen={noop} onOpenLatest={noop} />
-  )
-  const survey = html.slice(html.indexOf('inline-builder-test-title'))
-  assert.match(survey, /1 \/ 4/)
-  assert.equal((survey.match(/data-option-type=/g) ?? []).length, 4)
-  assert.doesNotMatch(survey, /나의 빌더 유형 찾기 ↗/)
 })
 
 test('empty news shows an empty state without falling back to unrelated AI data', () => {

@@ -9,7 +9,9 @@ const page = readFileSync(
 )
 
 test("makes the root page a thin chainery entry", () => {
-  assert.match(page, /EditorialApp/)
+  // / 는 플랫폼 입구(랜딩) — 블록체인 지식 홈(EditorialApp)은 /knowledge 로 옮겼다
+  assert.match(page, /AboutPage/)
+  assert.doesNotMatch(page, /EditorialApp/)
   // 제목은 루트 레이아웃의 chainery 기본값을 쓴다 — 예전 브랜드명이 남지 않게
   assert.doesNotMatch(page, /Cryptopedia/)
   assert.match(page, /모든 체인의 이야기가 모이는 곳, 체이너리\./)

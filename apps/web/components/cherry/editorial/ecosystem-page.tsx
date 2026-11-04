@@ -5,8 +5,6 @@ import type { EcosystemPageData, EcosystemProjectsResponse } from '@/lib/cryptop
 import type { HubData } from '@/lib/cryptopedia-hub'
 import { HeroCarousel, type OverviewHeroItem } from '../nd-overview-page'
 import { getProjectHeatmapItems, sortHomeNews } from '@/lib/cryptopedia-home'
-import { getChainHomeContent } from '@/lib/avalanche-home'
-import { BuilderTestPage } from './builder-test-page'
 import { EcosystemHomeIntro } from './ecosystem-home-intro'
 import { EcosystemHeatmap } from './ecosystem-heatmap'
 
@@ -58,7 +56,6 @@ export function EcosystemPage({
 }: EcosystemPageProps) {
   const latest = sortHomeNews(data.latest)
   const projectTiles = projects ? getProjectHeatmapItems(projects) : []
-  const builderContent = getChainHomeContent(chainId)
   const slides: OverviewHeroItem[] = latest.map((entry) => ({
     n: entry.title,
     d: entry.summary,
@@ -74,7 +71,8 @@ export function EcosystemPage({
     <article className="min-w-0 px-5 pb-8 pt-4 sm:px-8 lg:px-[52px] lg:pb-[52px]">
       <EcosystemHomeIntro data={data} chainId={chainId} chainLogoUrl={chainLogoUrl} />
 
-      <div className="mt-8 grid min-w-0 items-start gap-8 lg:grid-cols-2 lg:gap-6">
+      {/* 빌더 유형 설문은 홈에서 내렸다 — 지식 섹션에 처음 들어오면 '내 경로 만들기'가 같은 역할을 한다 (/builder-test 페이지는 유지) */}
+      <div className="mt-8 min-w-0">
         <section className="min-w-0" aria-label="생태계 최신 소식">
           {slides.length ? (
             <HeroCarousel
@@ -147,13 +145,6 @@ export function EcosystemPage({
             </p>
           )}
         </section>
-        {builderContent ? (
-          <BuilderTestPage content={builderContent} onOpen={onOpenLatest} compact />
-        ) : (
-          <section className="border border-[var(--editorial-line)] p-6 text-sm text-[var(--editorial-muted)]">
-            이 컬렉션의 빌더 유형 설문은 준비 중입니다.
-          </section>
-        )}
       </div>
 
       <section className="mt-8 lg:mt-12" aria-labelledby="home-audience-title">
