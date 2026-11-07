@@ -28,6 +28,13 @@ async function main(): Promise<void> {
       console.log(
         `[pipeline] ${summary.sourceName} (${summary.adapter}): ${summary.status}${suffix}`
       )
+      if (summary.detail && 'rejected' in summary.detail) {
+        const { noKeyword, excluded, sampleTitles } = summary.detail.rejected
+        console.log(
+          `[pipeline]   keyword filter dropped ${noKeyword} (no keyword) + ${excluded} (excluded)` +
+            (sampleTitles.length ? `: ${sampleTitles.join(' | ')}` : '')
+        )
+      }
     }
     if (summaries.some((summary) => summary.status === 'FAILED')) {
       process.exitCode = 1

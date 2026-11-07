@@ -258,7 +258,9 @@ CANCELLED/POSTPONED 우선 → 시작 전 UPCOMING → 진행 중 ONGOING → �
 
 ---
 
-## 7. S1 구현 기록 (2026-10-31, 미커밋)
+## 7. 구현 기록
+
+### 7-1. S1 (2026-10-31, 커밋 18b4d03)
 
 | 항목 | 파일 |
 |---|---|
@@ -272,6 +274,36 @@ CANCELLED/POSTPONED 우선 → 시작 전 UPCOMING → 진행 중 ONGOING → �
 **적용 순서(중요):** ① 공유 DB에 마이그레이션 적용 → ② API 배포. API가 `review_state` 컬럼을 읽으므로 역순이면 `/api/events`가 실패한다. 마이그레이션은 기존 코드와 호환(추가 전용·기본값 PUBLISHED)이라 먼저 적용해도 안전하다.
 
 **아직 DB로 검증 못 한 것:** `chain-feed.service.spec.ts`의 실제 DB 테스트(초안 숨김·모집 상태)는 로컬 Postgres가 없어 건너뜀. 로컬 Docker DB에 두 마이그레이션 적용 후 `TEST_DATABASE_URL=… npx jest chain-feed` 로 확인.
+
+### 7-2. S2 (2026-11-02) — KISA 게시판 어댑터 · 키워드 필터 · 같은 날짜 병합
+
+| 항목 | 파일 |
+|---|---|
+| `HTML_BOARD` 설정 스키마(`board`, `include_keywords`, `exclude_keywords`), `content_kind: NOTICE` | `apps/pipeline/src/config/source-config.ts` |
+| 게시판 어댑터 (목록 → 상세 본문 → 키워드 필터) | `apps/pipeline/src/adapters/html-board-adapter.ts` |
+| 키워드 필터 | `apps/pipeline/src/ingestion/keyword-filter.ts` |
+| 실행기 + 파이프라인 연결 + 탈락 로그 | `apps/pipeline/src/jobs/run-html-board-source.ts`, `run-pipeline.ts`, `bin/pipeline.ts` |
+| 같은 날짜 병합 (`startsMatch`) | `apps/pipeline/src/events/dedup.ts`, `db/chain-event-repository.ts`, `db/classification-repository.ts` |
+| KISA 소스 (`enabled: false`) | `apps/pipeline/config/sources.yaml` |
+| HTML 파서 의존성 | `node-html-parser@6.1.13` |
+
+**동작:**
+- 목록 `max_pages`(2)쪽 → 커서 날짜(지난번 본 가장 최근 등록일) **이후·같은 날** 글만 상세 요청. 상단 고정글(옛 날짜)은 커서보다 이전이라 건너뜀. 같은 날 재요청분은 article 삽입에서 중복 제거.
+- 링크에서 `page`·`lang_type` 제거 → 글이 다음 쪽으로 밀려도 URL이 같아 중복 저장 안 됨.
+- 키워드: 제목+본문에 include 하나 이상. exclude는 **제목만** 본다(진흥주간 본문의 "채용 상담" 같은 오탈락 방지). NFKC·대소문자·공백 무시.
+- 탈락 건수(키워드 없음 / 제외어)와 제목 5개를 실행 결과·로그에 남김. DB `run_log` 테이블은 아직 없어 콘솔 로그(Dokploy 로그)로 남는다.
+- 첫 쪽에서 글이 0건이면 실패 처리(셀렉터가 깨진 걸 "새 글 없음"으로 오인하지 않게).
+- 요청 간격 2초 이상(설정에서 2000ms 미만 거부). User-Agent `ChaineryBot/0.1`, 연락처는 env `CRAWLER_CONTACT`(없으면 생략).
+- 같은 행사 판별: ±2h 또는 **한쪽이 all_day면 그 쪽 시간대의 같은 날짜** + 제목 유사. 후보 조회 범위 ±26h.
+
+**품질 측정 (KISA 공지 100건, 2026-06-11 ~ 10-29, 제목만):** 통과 35건. 내 판단으로 Web3 관련 글 놓친 것 0건, 무관 통과 1건("양자내성암호 해커톤" — LLM 단계에서 걸러야 함). 정답 표시는 사용자 재확인 필요. 본문까지 보면 통과가 늘 수 있음(본문 속 "토큰" 등).
+- 주의: KISA 공지의 "Avalanche"는 네트워크 성능시험 장비 이름. 키워드에 넣지 않는다.
+
+**⚠️ 막힌 것 — KISA TLS 인증서 체인:** `www.kisa.or.kr`이 중간 인증서("GeoTrust TLS RSA CA G1")를 보내지 않아 Node `fetch`가 `UNABLE_TO_VERIFY_LEAF_SIGNATURE`로 실패한다(curl·브라우저는 macOS가 보완해 성공). `--use-system-ca`로도 실패. 그래서 소스는 `enabled: false`.
+- 해결안(권장): DigiCert 공개 중간 인증서 PEM을 저장소에 두고 pipeline 실행 시 `NODE_EXTRA_CA_CERTS`로 지정. 신뢰 추가라 사용자 승인 후 진행.
+- 쓰지 않는 안: `NODE_TLS_REJECT_UNAUTHORIZED=0`(전체 검증 끔 — 금지).
+
+**아직 안 한 것:** KISA 실데이터로 끝까지(수집 → classify → chain_event) 확인(위 인증서 해결 후), `min_interval_hours`(§1-2), robots/이용약관 — robots.txt 403(미게시), 게시물에 공공누리 표시 있음(유형별 조건은 글마다 확인 필요; 우리는 요약+원문 링크만 노출).
 
 ## 8. 결정 기록
 

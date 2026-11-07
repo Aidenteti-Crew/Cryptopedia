@@ -3,6 +3,34 @@
 // so titles are compared loosely, but only among events that start at nearly the same time.
 
 export const SAME_EVENT_WINDOW_MS = 2 * 60 * 60 * 1000
+// How far apart candidates are fetched: an all-day row sits at local midnight, so a timed row of
+// the same day can start up to a day later (plus the window, plus offset differences).
+export const SAME_EVENT_SEARCH_MS = 26 * 60 * 60 * 1000
+
+export interface EventTiming {
+  startsAt: Date | string
+  allDay: boolean
+  timezone: string | null
+}
+
+function localDate(at: Date, timezone: string): string {
+  try {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: timezone }).format(at)
+  } catch {
+    return at.toISOString().slice(0, 10)
+  }
+}
+
+// Same start: within the window, or — when either side only knows the date (a notice saying
+// "11.25." vs. the calendar's 10:00) — the same calendar day in the all-day side's timezone.
+export function startsMatch(a: EventTiming, b: EventTiming): boolean {
+  const ta = new Date(a.startsAt)
+  const tb = new Date(b.startsAt)
+  if (Math.abs(ta.getTime() - tb.getTime()) <= SAME_EVENT_WINDOW_MS) return true
+  if (!a.allDay && !b.allDay) return false
+  const timezone = (a.allDay ? a.timezone : b.timezone) ?? a.timezone ?? b.timezone ?? 'UTC'
+  return localDate(ta, timezone) === localDate(tb, timezone)
+}
 
 export function normalizeTitle(title: string): string {
   return title

@@ -163,11 +163,17 @@ async function insertTech(query: QueryFn, articleId: string, r: TechRecord): Pro
 }
 
 // The same event is often announced several times, and also listed in a calendar. If an active
-// event on the same chain starts at nearly the same time under a matching title, this post is
+// event on the same chain starts at nearly the same time (or the same day, for a date-only
+// notice) under a matching title, this post is
 // recorded as one more source of that event instead of a new row. Otherwise the stable
 // (chain, event_key) keeps the first row.
 async function insertEvent(query: QueryFn, articleId: string, r: EventRecord): Promise<boolean> {
-  const existing = await findMatchingEvent(query, r.chain, r.startsAt, r.title)
+  const existing = await findMatchingEvent(query, r.chain, {
+    startsAt: r.startsAt,
+    allDay: r.allDay,
+    timezone: r.timezone,
+    title: r.title,
+  })
   if (existing) {
     await linkEventSource(query, existing.id, articleId, r.sourceUrl)
     return false
