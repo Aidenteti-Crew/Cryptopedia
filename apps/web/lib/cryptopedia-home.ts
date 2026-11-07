@@ -15,7 +15,10 @@ export function getProjectHeatmapItems(
   const categories = data.categories
     .filter((category) => category.count > 0)
     .toSorted((left, right) => right.count - left.count || left.name.localeCompare(right.name))
-  const missingCount = Math.max(0, data.total - categories.reduce((sum, category) => sum + category.count, 0))
+  const missingCount = Math.max(
+    0,
+    data.total - categories.reduce((sum, category) => sum + category.count, 0)
+  )
   if (missingCount) categories.push({ name: '미분류', count: missingCount })
   const total = categories.reduce((sum, category) => sum + category.count, 0)
   if (!total) return []

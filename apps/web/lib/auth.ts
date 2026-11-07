@@ -16,30 +16,30 @@
  * getAccessToken() on each render. The hook above just forces re-render.
  */
 
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react'
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"
+export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000'
 
-const TOKEN_KEY = "accessToken"
-const AUTH_EVENT = "auth:changed"
+const TOKEN_KEY = 'accessToken'
+const AUTH_EVENT = 'auth:changed'
 
 /* ══════════════════════════════════════════════════════
    Token storage
    ══════════════════════════════════════════════════════ */
 
 export function getAccessToken(): string | null {
-  if (typeof window === "undefined") return null
+  if (typeof window === 'undefined') return null
   return localStorage.getItem(TOKEN_KEY)
 }
 
 export function setAccessToken(token: string): void {
-  if (typeof window === "undefined") return
+  if (typeof window === 'undefined') return
   localStorage.setItem(TOKEN_KEY, token)
   window.dispatchEvent(new Event(AUTH_EVENT))
 }
 
 export function clearAccessToken(): void {
-  if (typeof window === "undefined") return
+  if (typeof window === 'undefined') return
   localStorage.removeItem(TOKEN_KEY)
   window.dispatchEvent(new Event(AUTH_EVENT))
 }
@@ -65,7 +65,7 @@ export interface JwtPayload {
 export function decodeToken(token: string | null = getAccessToken()): JwtPayload | null {
   if (!token) return null
   try {
-    return JSON.parse(atob(token.split(".")[1])) as JwtPayload
+    return JSON.parse(atob(token.split('.')[1])) as JwtPayload
   } catch {
     return null
   }
@@ -87,8 +87,8 @@ export async function tryRefresh(): Promise<string | null> {
   refreshInFlight = (async () => {
     try {
       const res = await fetch(`${API_URL}/api/app-user/refresh`, {
-        method: "POST",
-        credentials: "include", // refresh token is in httpOnly cookie
+        method: 'POST',
+        credentials: 'include', // refresh token is in httpOnly cookie
       })
       if (!res.ok) return null
       const data = (await res.json()) as { accessToken?: string }
@@ -106,10 +106,10 @@ export async function tryRefresh(): Promise<string | null> {
 
 /** Clear token and hard-redirect to /login (forces full state reset). */
 export function redirectToLogin(): void {
-  if (typeof window === "undefined") return
+  if (typeof window === 'undefined') return
   clearAccessToken()
   // Use location.href to drop SPA state on purpose.
-  window.location.href = "/login"
+  window.location.href = '/login'
 }
 
 /* ══════════════════════════════════════════════════════
@@ -122,12 +122,15 @@ export function redirectToLogin(): void {
  *   2. If refresh succeeds → retry original request with new token.
  *   3. If refresh fails → clear token + redirect to /login, throw AuthError.
  */
-export async function fetchWithAuth(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> {
+export async function fetchWithAuth(
+  input: RequestInfo | URL,
+  init: RequestInit = {}
+): Promise<Response> {
   const doFetch = (): Promise<Response> =>
     fetch(input, {
       ...init,
       headers: { ...(init.headers as Record<string, string>), ...authHeaders() },
-      credentials: init.credentials ?? "include",
+      credentials: init.credentials ?? 'include',
     })
 
   let res = await doFetch()
@@ -136,7 +139,7 @@ export async function fetchWithAuth(input: RequestInfo | URL, init: RequestInit 
   const newToken = await tryRefresh()
   if (!newToken) {
     redirectToLogin()
-    throw new AuthError("Session expired")
+    throw new AuthError('Session expired')
   }
 
   res = await doFetch()
@@ -146,7 +149,7 @@ export async function fetchWithAuth(input: RequestInfo | URL, init: RequestInit 
 export class AuthError extends Error {
   constructor(message: string) {
     super(message)
-    this.name = "AuthError"
+    this.name = 'AuthError'
   }
 }
 
@@ -171,10 +174,10 @@ export function useAuthTick(): void {
   useEffect(() => {
     const h = () => force((t) => t + 1)
     window.addEventListener(AUTH_EVENT, h)
-    window.addEventListener("storage", h) // cross-tab sync
+    window.addEventListener('storage', h) // cross-tab sync
     return () => {
       window.removeEventListener(AUTH_EVENT, h)
-      window.removeEventListener("storage", h)
+      window.removeEventListener('storage', h)
     }
   }, [])
 }

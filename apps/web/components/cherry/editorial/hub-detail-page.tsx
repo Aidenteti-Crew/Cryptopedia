@@ -1,17 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, ArrowRight, Download } from 'lucide-react'
+import { Download } from 'lucide-react'
 
 import {
   SKILL_PRINCIPLES,
-  asConceptPage,
   buildSkillMarkdown,
   findHubItem,
   type HubData,
 } from '@/lib/cryptopedia-hub'
-import { ConceptRoadmap } from '../concept-reader-page'
 import { CaseStudyPage } from './case-study-page'
+import { ConceptArticle } from './concept-article'
 import {
   ConceptChips,
   HUB_BUTTON_CLASS,
@@ -22,8 +21,6 @@ import {
   SourceList,
   downloadMarkdown,
 } from './hub-shared'
-
-const CONCEPT_SKILLS_ID = 'concept-skills'
 
 export function HubDetailPage({
   id,
@@ -40,6 +37,17 @@ export function HubDetailPage({
   const [notice, setNotice] = useState('')
   const study = data.cases.find((item) => item.id === id)
   if (study) return <CaseStudyPage key={study.id} study={study} data={data} onOpen={onOpen} />
+  const concept = data.concepts.find((entry) => entry.id === id)
+  if (concept)
+    return (
+      <ConceptArticle
+        key={concept.id}
+        concept={concept}
+        data={data}
+        onOpen={onOpen}
+        onOpenInGraph={onOpenInGraph}
+      />
+    )
 
   const item = findHubItem(data, id)
   if (!item)
@@ -50,7 +58,6 @@ export function HubDetailPage({
     )
   const project = data.projects.find((entry) => entry.id === id)
   const resource = data.resources.find((entry) => entry.id === id)
-  const concept = data.concepts.find((entry) => entry.id === id)
   const skill = data.skills.find((entry) => entry.id === id)
   const update = data.updates.find((entry) => entry.id === id)
   const cases = skill
@@ -116,81 +123,6 @@ export function HubDetailPage({
             data={data}
             onOpen={onOpen}
           />
-        </>
-      )}
-      {concept && (
-        <>
-          {/* 같은 개념이 사람의 학습 경로와 에이전트 스킬 양쪽에서 쓰인다는 걸 보여주는 두 출구 */}
-          <nav aria-label="이 개념으로 이어지는 길" className="mt-6 grid gap-3 sm:grid-cols-2">
-            {onOpenInGraph && (
-              <button
-                type="button"
-                onClick={() => onOpenInGraph(concept.id)}
-                className="group rounded-xl border border-[var(--editorial-line)] bg-[var(--editorial-surface)] p-4 text-left hover:border-[var(--editorial-accent)]"
-              >
-                <span className="flex items-center gap-2 text-sm group-hover:text-[var(--editorial-accent)]">
-                  <ArrowLeft size={15} />
-                  학습 지도에서 위치 보기
-                </span>
-                <span className="mt-2 block text-xs leading-6 text-[var(--editorial-muted)]">
-                  사람 · 먼저 알아야 할 개념과 다음 개념
-                </span>
-              </button>
-            )}
-            {concept.skillIds.length > 0 && (
-              <button
-                type="button"
-                onClick={() =>
-                  document
-                    .getElementById(CONCEPT_SKILLS_ID)
-                    ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                }
-                className="group rounded-xl border border-[var(--editorial-line)] bg-[var(--editorial-surface)] p-4 text-left hover:border-[var(--editorial-accent)] sm:text-right"
-              >
-                <span className="flex items-center gap-2 text-sm group-hover:text-[var(--editorial-accent)] sm:justify-end">
-                  이 개념이 들어간 스킬 받기
-                  <ArrowRight size={15} />
-                </span>
-                <span className="mt-2 block text-xs leading-6 text-[var(--editorial-muted)]">
-                  에이전트 · 스킬 {concept.skillIds.length}개
-                </span>
-              </button>
-            )}
-          </nav>
-          <div className="mt-7 grid gap-7 lg:grid-cols-[1fr_240px]">
-            <div>
-              <h2 className="text-lg">개념 이해</h2>
-              <p className="mt-4 text-sm leading-7 text-[var(--editorial-muted)]">{concept.body}</p>
-              <RelatedLinks
-                title="연결된 개념"
-                ids={concept.relations.map((relation) => relation.id)}
-                data={data}
-                onOpen={onOpen}
-              />
-            </div>
-            <aside className="rounded-xl border border-[var(--editorial-line)] bg-[var(--editorial-surface)] p-4">
-              <ConceptRoadmap
-                doc={asConceptPage(concept, data)}
-                appearance="editorial"
-                onOpenConcept={onOpen}
-              />
-            </aside>
-          </div>
-          <RelatedLinks title="참고 자료" ids={concept.resourceIds} data={data} onOpen={onOpen} />
-          <RelatedLinks
-            title="이 개념을 사용하는 실습"
-            ids={concept.caseIds}
-            data={data}
-            onOpen={onOpen}
-          />
-          <div id={CONCEPT_SKILLS_ID} className="scroll-mt-24">
-            <RelatedLinks
-              title="이 개념이 들어간 에이전트 스킬"
-              ids={concept.skillIds}
-              data={data}
-              onOpen={onOpen}
-            />
-          </div>
         </>
       )}
       {skill && (

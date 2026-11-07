@@ -51,7 +51,7 @@ export function DiscoveryDateRange({
   return (
     <Popover open={open} onOpenChange={changeOpen}>
       <PopoverTrigger
-        className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-white/[.045] px-3 text-sm text-[#c4cbd4]"
+        className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-[var(--editorial-wash)] px-3 text-sm text-[var(--editorial-ink)]"
         aria-label={label}
       >
         <CalendarDays size={15} />
@@ -59,9 +59,9 @@ export function DiscoveryDateRange({
       </PopoverTrigger>
       <PopoverContent
         align="end"
-        className="editorial-root !min-h-0 dark w-auto max-w-[calc(100vw-24px)] rounded-2xl border-[var(--discovery-line)] !bg-[var(--discovery-elevated)] [--primary:var(--editorial-accent)] [--primary-foreground:#18181b] p-3 text-[#e5e9ee]"
+        className="editorial-root !min-h-0 w-auto max-w-[calc(100vw-24px)] rounded-2xl border-[var(--discovery-line)] !bg-[var(--discovery-elevated)] [--primary:var(--editorial-accent)] [--primary-foreground:#18181b] p-3 text-[#e5e9ee]"
       >
-        <p aria-live="polite" className="px-3 pb-2 text-xs text-[#b9c2ce]">
+        <p aria-live="polite" className="px-3 pb-2 text-xs text-[var(--editorial-muted)]">
           {incomplete
             ? '종료일을 선택하세요'
             : draftFrom
@@ -77,7 +77,7 @@ export function DiscoveryDateRange({
           onDayClick={chooseDay}
           className="rounded-xl bg-transparent"
         />
-        <div className="flex items-center justify-between gap-4 border-t border-white/10 px-3 pt-3 text-xs">
+        <div className="flex items-center justify-between gap-4 border-t border-[var(--editorial-line)] px-3 pt-3 text-xs">
           <button
             type="button"
             onClick={() => {
@@ -99,7 +99,7 @@ export function DiscoveryDateRange({
                 onChange(draftFrom, draftTo)
                 setOpen(false)
               }}
-              className="rounded-lg bg-[var(--editorial-accent)] px-4 py-2 text-[#15191e] disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-lg bg-[var(--editorial-accent)] px-4 py-2 text-[var(--editorial-on-accent)] disabled:cursor-not-allowed disabled:opacity-40"
             >
               적용
             </button>

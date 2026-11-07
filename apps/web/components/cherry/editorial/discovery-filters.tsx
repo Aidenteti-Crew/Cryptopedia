@@ -32,7 +32,7 @@ export function DiscoveryFilterPanel({
     >
       <PopoverTrigger
         aria-label={count ? `${label} · ${count}개 적용` : label}
-        className={`inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl px-3 text-sm ${open || count ? 'bg-[var(--discovery-selection)] text-[var(--editorial-accent)]' : 'text-[var(--editorial-ink)] hover:bg-white/[.04]'}`}
+        className={`inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl px-3 text-sm ${open || count ? 'bg-[var(--discovery-selection)] text-[var(--editorial-accent)]' : 'text-[var(--editorial-ink)] hover:bg-[var(--editorial-hover)]'}`}
       >
         <SlidersHorizontal size={16} />
         {label}
@@ -46,9 +46,9 @@ export function DiscoveryFilterPanel({
         aria-label={`${label} 옵션`}
         align="end"
         sideOffset={10}
-        className="editorial-root !min-h-0 flex max-h-[min(80dvh,var(--radix-popover-content-available-height))] w-[min(720px,calc(100vw-32px))] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-[20px] border-[var(--discovery-line)] !bg-[var(--discovery-elevated)] p-0 text-[#e9edf2] shadow-[0_20px_70px_rgba(0,0,0,.45)] [color-scheme:dark]"
+        className="editorial-root !min-h-0 flex max-h-[min(80dvh,var(--radix-popover-content-available-height))] w-[min(720px,calc(100vw-32px))] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-[20px] border-[var(--discovery-line)] !bg-[var(--discovery-elevated)] p-0 text-[#e9edf2] shadow-[0_20px_70px_rgba(0,0,0,.45)]"
       >
-        <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-5 py-4">
+        <div className="flex shrink-0 items-center justify-between border-b border-[var(--editorial-line)] px-5 py-4">
           <h2 className="text-sm font-semibold">
             {label}
             {count > 0 && (
@@ -57,7 +57,7 @@ export function DiscoveryFilterPanel({
               </span>
             )}
           </h2>
-          <PopoverClose aria-label="필터 닫기" className="rounded-lg p-1.5 hover:bg-white/10">
+          <PopoverClose aria-label="필터 닫기" className="rounded-lg p-1.5 hover:bg-[var(--editorial-hover)]">
             <X size={16} />
           </PopoverClose>
         </div>
@@ -65,16 +65,16 @@ export function DiscoveryFilterPanel({
           <p className="mb-4 text-xs leading-5 text-[var(--editorial-muted)]">{description}</p>
           {children}
         </div>
-        <div className="flex shrink-0 items-center justify-between gap-3 border-t border-white/10 px-5 py-3">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-t border-[var(--editorial-line)] px-5 py-3">
           <button
             type="button"
             onClick={onReset}
             disabled={!count}
-            className="min-h-10 text-xs text-[var(--editorial-muted)] hover:text-white disabled:opacity-40"
+            className="min-h-10 text-xs text-[var(--editorial-muted)] hover:text-[var(--editorial-strong)] disabled:opacity-40"
           >
             조건 초기화
           </button>
-          <PopoverClose className="min-h-10 rounded-xl bg-[var(--editorial-accent)] px-4 text-xs font-medium text-[#15191e]">
+          <PopoverClose className="min-h-10 rounded-xl bg-[var(--editorial-accent)] px-4 text-xs font-medium text-[var(--editorial-on-accent)]">
             {resultCount}개 결과 보기
           </PopoverClose>
         </div>
@@ -103,7 +103,7 @@ export function DiscoveryCheckboxGroup({
         {options.map((option) => (
           <label
             key={option.value}
-            className="flex min-h-9 cursor-pointer items-center gap-2.5 rounded-lg px-2 text-sm text-[var(--editorial-muted)] hover:bg-white/[.04] hover:text-[var(--editorial-ink)]"
+            className="flex min-h-9 cursor-pointer items-center gap-2.5 rounded-lg px-2 text-sm text-[var(--editorial-muted)] hover:bg-[var(--editorial-hover)] hover:text-[var(--editorial-ink)]"
           >
             <input
               type="checkbox"
@@ -115,7 +115,7 @@ export function DiscoveryCheckboxGroup({
                     : [...value, option.value]
                 )
               }
-              className="h-4 w-4 shrink-0 accent-[var(--editorial-accent)] [color-scheme:dark]"
+              className="h-4 w-4 shrink-0 accent-[var(--editorial-accent)]"
             />
             <span className="min-w-0 flex-1">{option.label}</span>
             {option.count !== undefined && (
@@ -195,7 +195,7 @@ export function DiscoveryTypeBar({
             type="button"
             aria-pressed={value === option}
             onClick={() => onChange(option)}
-            className={`relative flex min-h-11 shrink-0 items-center gap-2 px-2 py-2 text-xs transition-colors sm:text-sm ${value === option ? 'font-semibold text-[var(--editorial-ink)] after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-[var(--editorial-accent)]' : 'text-[var(--editorial-muted)] hover:text-white'}`}
+            className={`relative flex min-h-11 shrink-0 items-center gap-2 px-2 py-2 text-xs transition-colors sm:text-sm ${value === option ? 'font-semibold text-[var(--editorial-ink)] after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-[var(--editorial-accent)]' : 'text-[var(--editorial-muted)] hover:text-[var(--editorial-strong)]'}`}
           >
             <span className="whitespace-nowrap">{caption}</span>
           </button>

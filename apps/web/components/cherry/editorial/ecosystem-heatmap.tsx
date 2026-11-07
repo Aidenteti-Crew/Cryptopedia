@@ -144,7 +144,7 @@ export function EcosystemHeatmap({
   const tiles: HeatmapTile[] = items.map((item, index) => ({ ...item, index }))
 
   return (
-    <div className="border-[rgba(185,154,203,0.35)] bg-[#18151F] lg:border-[0.5px] lg:p-3">
+    <div className="border-[rgba(185,154,203,0.35)] bg-[var(--editorial-surface)] lg:border-[0.5px] lg:p-3">
       <div className="h-[760px] lg:h-[430px]">
         <ResponsiveContainer width="100%" height="100%">
           <Treemap

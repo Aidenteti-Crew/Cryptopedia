@@ -871,7 +871,40 @@
       ],
       "skillIds": [
         "skill-chain-reader"
-      ]
+      ],
+      "lede": "여러 체인에서 같은 방식으로 컨트랙트를 실행하는 환경이에요. 실행 모델은 공통이지만, 네트워크 설정과 체인별 지원 환경은 따로 확인해야 해요.",
+      "points": [
+        {
+          "text": "컨트랙트 실행 모델은 EVM을 쓰는 체인끼리 공통이에요.",
+          "sourceIds": [
+            "source-ethereum"
+          ]
+        },
+        {
+          "text": "네트워크 설정과 체인별 지원 환경은 공통이 아니라서 체인마다 따로 확인해요.",
+          "sourceIds": [
+            "source-ethereum"
+          ]
+        }
+      ],
+      "audience": [
+        {
+          "role": "junior",
+          "level": "HIGH",
+          "note": "컨트랙트 개발의 바탕이 되는 실행 환경이에요."
+        },
+        {
+          "role": "pm",
+          "level": "MEDIUM",
+          "note": "같은 코드가 어느 체인에서 돌아갈지 판단할 때 필요해요."
+        },
+        {
+          "role": "bd",
+          "level": "LOW",
+          "note": "파트너 체인이 EVM 호환인지 정도만 알면 돼요."
+        }
+      ],
+      "contentStatus": "DRAFT"
     },
     {
       "id": "concept-network",
@@ -890,7 +923,8 @@
       "relations": [
         {
           "id": "concept-evm",
-          "type": "PREREQUISITE"
+          "type": "PREREQUISITE",
+          "reason": "네트워크마다 EVM 실행 환경을 어떻게 지원하는지가 달라서, EVM 공통 모델을 먼저 알면 좋아요."
         },
         {
           "id": "concept-wallet",
@@ -910,7 +944,40 @@
       ],
       "skillIds": [
         "skill-network-check"
-      ]
+      ],
+      "lede": "작업 전에 어떤 체인·어떤 환경에서 할지 정하는 첫 단계예요. 같은 주소 형식이라도 네트워크가 다르면 다른 상태를 보게 돼요.",
+      "points": [
+        {
+          "text": "같은 주소 형식이라도 네트워크가 다르면 다른 체인 상태를 조회해요.",
+          "sourceIds": [
+            "source-avalanche"
+          ]
+        },
+        {
+          "text": "작업 전에 대상 네트워크를 기록해 둬요.",
+          "sourceIds": [
+            "source-avalanche"
+          ]
+        }
+      ],
+      "audience": [
+        {
+          "role": "junior",
+          "level": "HIGH",
+          "note": "테스트 환경과 실제 네트워크를 헷갈리면 엉뚱한 결과를 보게 돼요."
+        },
+        {
+          "role": "pm",
+          "level": "MEDIUM",
+          "note": "기획서에 대상 네트워크를 적을 때 필요해요."
+        },
+        {
+          "role": "research",
+          "level": "MEDIUM",
+          "note": "데이터를 인용할 때 어느 네트워크 기준인지 함께 적어요."
+        }
+      ],
+      "contentStatus": "DRAFT"
     },
     {
       "id": "concept-wallet",
@@ -928,7 +995,8 @@
       "relations": [
         {
           "id": "concept-evm",
-          "type": "PREREQUISITE"
+          "type": "PREREQUISITE",
+          "reason": "계정은 EVM 위에서 거래를 보내는 주체라서, 실행 환경을 먼저 알면 좋아요."
         },
         {
           "id": "concept-network",
@@ -943,7 +1011,39 @@
       ],
       "skillIds": [
         "skill-network-check"
-      ]
+      ],
+      "lede": "사용자와 네트워크를 연결하는 계정이에요. 조회만 하는 작업과 서명이 필요한 작업을 구분하는 게 출발점이에요.",
+      "points": [
+        {
+          "text": "공개 조회와 서명이 필요한 작업을 구분해요.",
+          "sourceIds": [
+            "source-ethereum",
+            "source-core"
+          ]
+        },
+        {
+          "text": "chainery의 자료 다운로드는 지갑 연결을 요구하지 않아요.",
+          "sourceIds": []
+        }
+      ],
+      "audience": [
+        {
+          "role": "newbie",
+          "level": "HIGH",
+          "note": "블록체인을 직접 써 보는 첫 관문이에요."
+        },
+        {
+          "role": "pm",
+          "level": "HIGH",
+          "note": "서명을 요청하는 순간이 사용자 경험의 핵심 지점이에요."
+        },
+        {
+          "role": "bd",
+          "level": "MEDIUM",
+          "note": "파트너 서비스의 지갑 연결 흐름을 이해할 때 필요해요."
+        }
+      ],
+      "contentStatus": "DRAFT"
     },
     {
       "id": "concept-contract",
@@ -960,7 +1060,8 @@
       "relations": [
         {
           "id": "concept-evm",
-          "type": "PREREQUISITE"
+          "type": "PREREQUISITE",
+          "reason": "컨트랙트는 EVM이 실행하는 프로그램이라서, 실행 환경을 먼저 알면 좋아요."
         },
         {
           "id": "concept-testing",
@@ -980,7 +1081,40 @@
       ],
       "skillIds": [
         "skill-contract-review"
-      ]
+      ],
+      "lede": "상태와 규칙을 코드로 표현하는 프로그램이에요. 최소 예제로 동작을 이해하고, 로컬 테스트로 기대 결과를 확인한 뒤 배포로 넘어가요.",
+      "points": [
+        {
+          "text": "최소 예제로 동작을 먼저 이해해요.",
+          "sourceIds": [
+            "source-solidity"
+          ]
+        },
+        {
+          "text": "로컬 테스트로 기대 결과를 확인해요. 배포는 별도 단계예요.",
+          "sourceIds": [
+            "source-solidity"
+          ]
+        }
+      ],
+      "audience": [
+        {
+          "role": "junior",
+          "level": "HIGH",
+          "note": "블록체인 개발의 중심이 되는 코드예요."
+        },
+        {
+          "role": "middle",
+          "level": "MEDIUM",
+          "note": "테스트·배포 절차를 정할 때 기준이 돼요."
+        },
+        {
+          "role": "pm",
+          "level": "MEDIUM",
+          "note": "어떤 규칙이 코드로 고정되는지 이해해야 기능을 설계할 수 있어요."
+        }
+      ],
+      "contentStatus": "DRAFT"
     },
     {
       "id": "concept-testing",
@@ -997,7 +1131,8 @@
       "relations": [
         {
           "id": "concept-contract",
-          "type": "PREREQUISITE"
+          "type": "PREREQUISITE",
+          "reason": "테스트하는 대상이 컨트랙트라서, 컨트랙트가 무엇을 하는지 먼저 알아야 해요."
         }
       ],
       "resourceIds": [
@@ -1008,7 +1143,40 @@
       ],
       "skillIds": [
         "skill-contract-review"
-      ]
+      ],
+      "lede": "네트워크에 배포하기 전에 동작과 실패 조건을 확인하는 과정이에요. 잘 되는 경우뿐 아니라 거절되어야 하는 경우까지 확인해요.",
+      "points": [
+        {
+          "text": "정상 입력이 기대한 결과를 내는지 확인해요.",
+          "sourceIds": [
+            "source-foundry"
+          ]
+        },
+        {
+          "text": "거절되어야 하는 입력과 경계 조건도 테스트해요.",
+          "sourceIds": [
+            "source-foundry"
+          ]
+        }
+      ],
+      "audience": [
+        {
+          "role": "junior",
+          "level": "HIGH",
+          "note": "배포 전에 실수를 잡는 가장 싼 방법이에요."
+        },
+        {
+          "role": "middle",
+          "level": "HIGH",
+          "note": "팀의 배포 전 검증 기준을 정할 때 필요해요."
+        },
+        {
+          "role": "pm",
+          "level": "LOW",
+          "note": "테스트 범위를 요구사항에 적을 때 참고해요."
+        }
+      ],
+      "contentStatus": "DRAFT"
     },
     {
       "id": "concept-rpc",
@@ -1030,7 +1198,8 @@
         },
         {
           "id": "concept-evm",
-          "type": "PREREQUISITE"
+          "type": "PREREQUISITE",
+          "reason": "RPC로 읽는 상태는 EVM이 관리하는 상태라서, 실행 모델을 먼저 알면 좋아요."
         }
       ],
       "resourceIds": [
@@ -1042,7 +1211,41 @@
       ],
       "skillIds": [
         "skill-chain-reader"
-      ]
+      ],
+      "lede": "공개 인터페이스로 네트워크 상태를 읽는 방법이에요. 어느 체인을 언제 기준으로 읽었는지 함께 남겨야 결과를 믿을 수 있어요.",
+      "points": [
+        {
+          "text": "조회 전에 대상 체인과 조회 시점을 확인해요.",
+          "sourceIds": [
+            "source-viem"
+          ]
+        },
+        {
+          "text": "받은 응답과 그 해석을 구분해 기록해요.",
+          "sourceIds": [
+            "source-viem",
+            "source-ethereum"
+          ]
+        }
+      ],
+      "audience": [
+        {
+          "role": "junior",
+          "level": "HIGH",
+          "note": "앱에서 체인 데이터를 보여 주려면 꼭 거쳐요."
+        },
+        {
+          "role": "middle",
+          "level": "HIGH",
+          "note": "조회 흐름을 설계할 때 근거가 남게 만들어요."
+        },
+        {
+          "role": "research",
+          "level": "MEDIUM",
+          "note": "온체인 데이터를 근거로 쓸 때 조회 시점을 함께 남겨요."
+        }
+      ],
+      "contentStatus": "DRAFT"
     },
     {
       "id": "concept-gas",
@@ -1059,7 +1262,8 @@
       "relations": [
         {
           "id": "concept-evm",
-          "type": "PREREQUISITE"
+          "type": "PREREQUISITE",
+          "reason": "가스는 EVM이 실행한 만큼 내는 비용이라서, 실행 환경을 먼저 알면 좋아요."
         },
         {
           "id": "concept-contract",
@@ -1074,7 +1278,38 @@
       ],
       "skillIds": [
         "skill-contract-review"
-      ]
+      ],
+      "lede": "트랜잭션을 실행하는 데 드는 비용과 처리 과정이에요. 미리 추정한 비용과 실제로 처리된 결과는 구분해서 봐요.",
+      "points": [
+        {
+          "text": "추정 비용과 실제 결과를 구분해요.",
+          "sourceIds": [
+            "source-ethereum"
+          ]
+        },
+        {
+          "text": "chainery는 자금 이동이나 결제를 하지 않아요.",
+          "sourceIds": []
+        }
+      ],
+      "audience": [
+        {
+          "role": "newbie",
+          "level": "MEDIUM",
+          "note": "거래할 때 왜 수수료가 붙는지 이해하게 돼요."
+        },
+        {
+          "role": "junior",
+          "level": "HIGH",
+          "note": "컨트랙트 비용을 예상하고 줄이는 출발점이에요."
+        },
+        {
+          "role": "pm",
+          "level": "HIGH",
+          "note": "수수료가 사용자 경험과 비용 구조에 바로 영향을 줘요."
+        }
+      ],
+      "contentStatus": "DRAFT"
     },
     {
       "id": "concept-primary-network",
@@ -1123,7 +1358,41 @@
       ],
       "skillIds": [
         "skill-primary-network-map"
-      ]
+      ],
+      "lede": "P-Chain, C-Chain, X-Chain을 함께 운영하는 Avalanche의 기본 네트워크예요. Avalanche L1과 비교할 때는 세 체인의 역할과 Primary Network의 검증자 집합을 나눠서 봐요.",
+      "points": [
+        {
+          "text": "Primary Network는 P-Chain, C-Chain, X-Chain으로 이루어져 있어요.",
+          "sourceIds": [
+            "source-primary-network-docs"
+          ]
+        },
+        {
+          "text": "Avalanche L1과의 관계를 볼 때는 세 체인 각각의 역할과 Primary Network의 검증자 집합을 구분해요.",
+          "sourceIds": [
+            "source-primary-network-docs",
+            "source-avalanche-l1-docs"
+          ]
+        }
+      ],
+      "audience": [
+        {
+          "role": "bd",
+          "level": "HIGH",
+          "note": "Avalanche 생태계를 설명할 때 가장 먼저 나오는 구조예요."
+        },
+        {
+          "role": "research",
+          "level": "HIGH",
+          "note": "Avalanche를 분석할 때 기본 단위가 돼요."
+        },
+        {
+          "role": "senior",
+          "level": "MEDIUM",
+          "note": "L1을 설계하기 전에 비교 기준으로 봐요."
+        }
+      ],
+      "contentStatus": "DRAFT"
     },
     {
       "id": "concept-p-chain",
@@ -1144,7 +1413,8 @@
       "relations": [
         {
           "id": "concept-primary-network",
-          "type": "PREREQUISITE"
+          "type": "PREREQUISITE",
+          "reason": "P-Chain은 Primary Network를 이루는 세 체인 중 하나라서, 전체 구조를 먼저 알면 좋아요."
         },
         {
           "id": "concept-avalanche-l1",
@@ -1161,7 +1431,47 @@
       ],
       "skillIds": [
         "skill-primary-network-map"
-      ]
+      ],
+      "lede": "검증자와 네트워크 수준의 작업을 관리하는 Platform Chain이에요. L1의 검증자 정보와 네트워크 작업이 연결되는 지점이에요.",
+      "points": [
+        {
+          "text": "P-Chain은 Primary Network의 플랫폼 작업을 담당해요.",
+          "sourceIds": [
+            "source-primary-network-docs"
+          ]
+        },
+        {
+          "text": "L1 관련 검증자 정보와 네트워크 작업이 P-Chain에서 연결돼요.",
+          "sourceIds": [
+            "source-avalanche-l1-docs",
+            "source-network-architecture-course"
+          ]
+        },
+        {
+          "text": "P-Chain 자체는 C-Chain의 EVM과 다른 실행 환경을 써요.",
+          "sourceIds": [
+            "source-primary-network-docs"
+          ]
+        }
+      ],
+      "audience": [
+        {
+          "role": "senior",
+          "level": "HIGH",
+          "note": "L1을 운영하거나 설계할 때 반드시 다뤄요."
+        },
+        {
+          "role": "research",
+          "level": "HIGH",
+          "note": "검증자와 L1의 관계를 분석할 때 봐요."
+        },
+        {
+          "role": "junior",
+          "level": "LOW",
+          "note": "앱만 만든다면 C-Chain과 구분하는 정도면 충분해요."
+        }
+      ],
+      "contentStatus": "DRAFT"
     },
     {
       "id": "concept-c-chain",
@@ -1180,7 +1490,8 @@
       "relations": [
         {
           "id": "concept-primary-network",
-          "type": "PREREQUISITE"
+          "type": "PREREQUISITE",
+          "reason": "C-Chain은 Primary Network를 이루는 세 체인 중 하나라서, 전체 구조를 먼저 알면 좋아요."
         },
         {
           "id": "concept-evm",
@@ -1191,7 +1502,46 @@
         "resource-primary-network-docs"
       ],
       "caseIds": [],
-      "skillIds": []
+      "skillIds": [],
+      "lede": "EVM 기반 스마트 컨트랙트를 실행하는 Contract Chain이에요. 익숙한 EVM 도구를 쓸 수 있지만, Avalanche 전용 기능은 적용 범위를 따로 확인해요.",
+      "points": [
+        {
+          "text": "C-Chain은 EVM 호환 환경에서 스마트 컨트랙트를 실행해요.",
+          "sourceIds": [
+            "source-primary-network-docs"
+          ]
+        },
+        {
+          "text": "P-Chain의 네트워크 관리 역할과 구별해요.",
+          "sourceIds": [
+            "source-primary-network-docs"
+          ]
+        },
+        {
+          "text": "EVM 공통 개발 도구와 Avalanche 전용 기능은 적용 범위를 나눠서 확인해요.",
+          "sourceIds": [
+            "source-primary-network-docs"
+          ]
+        }
+      ],
+      "audience": [
+        {
+          "role": "junior",
+          "level": "HIGH",
+          "note": "Avalanche에서 앱을 만든다면 여기서 시작해요."
+        },
+        {
+          "role": "middle",
+          "level": "HIGH",
+          "note": "EVM 도구와 Avalanche 전용 기능의 경계를 정할 때 필요해요."
+        },
+        {
+          "role": "bd",
+          "level": "MEDIUM",
+          "note": "프로젝트가 어느 체인 위에 있는지 구분할 때 필요해요."
+        }
+      ],
+      "contentStatus": "DRAFT"
     },
     {
       "id": "concept-x-chain",
@@ -1210,14 +1560,54 @@
       "relations": [
         {
           "id": "concept-primary-network",
-          "type": "PREREQUISITE"
+          "type": "PREREQUISITE",
+          "reason": "X-Chain은 Primary Network를 이루는 세 체인 중 하나라서, 전체 구조를 먼저 알면 좋아요."
         }
       ],
       "resourceIds": [
         "resource-primary-network-docs"
       ],
       "caseIds": [],
-      "skillIds": []
+      "skillIds": [],
+      "lede": "Primary Network에서 자산 기능을 담당하는 Exchange Chain이에요. 세부 기능과 현재 상태는 공식 체인 문서를 기준으로 확인해요.",
+      "points": [
+        {
+          "text": "X-Chain은 Primary Network의 한 체인이에요.",
+          "sourceIds": [
+            "source-primary-network-docs"
+          ]
+        },
+        {
+          "text": "C-Chain의 스마트 컨트랙트 실행, P-Chain의 플랫폼 관리와 나눠서 이해해요.",
+          "sourceIds": [
+            "source-primary-network-docs"
+          ]
+        },
+        {
+          "text": "세부 기능과 현재 상태는 공식 체인 문서를 기준으로 확인해요.",
+          "sourceIds": [
+            "source-primary-network-docs"
+          ]
+        }
+      ],
+      "audience": [
+        {
+          "role": "research",
+          "level": "MEDIUM",
+          "note": "세 체인의 역할 분담을 정리할 때 함께 봐요."
+        },
+        {
+          "role": "bd",
+          "level": "MEDIUM",
+          "note": "Avalanche 구조를 설명할 때 함께 나와요."
+        },
+        {
+          "role": "junior",
+          "level": "LOW",
+          "note": "컨트랙트 개발에서는 직접 다룰 일이 적어요."
+        }
+      ],
+      "contentStatus": "DRAFT"
     },
     {
       "id": "concept-avalanche-l1",
@@ -1238,7 +1628,8 @@
       "relations": [
         {
           "id": "concept-primary-network",
-          "type": "PREREQUISITE"
+          "type": "PREREQUISITE",
+          "reason": "L1은 Primary Network와 비교하며 이해하는 개념이라서, 기본 네트워크를 먼저 알면 좋아요."
         },
         {
           "id": "concept-p-chain",
@@ -1260,7 +1651,48 @@
       ],
       "skillIds": [
         "skill-primary-network-map"
-      ]
+      ],
+      "lede": "자체 규칙과 검증자 집합으로 운영되는 Avalanche 네트워크예요. 한 L1이 여러 블록체인을 검증할 수 있어요.",
+      "points": [
+        {
+          "text": "Avalanche L1은 자체 검증자 집합과 실행 규칙을 가질 수 있어요.",
+          "sourceIds": [
+            "source-avalanche-l1-docs",
+            "source-avalanche-l1s-course"
+          ]
+        },
+        {
+          "text": "한 L1은 여러 블록체인을 검증할 수 있어요.",
+          "sourceIds": [
+            "source-avalanche-l1-docs"
+          ]
+        },
+        {
+          "text": "L1 검증자는 Primary Network 검증자와 역할 및 요구 조건이 같지 않아요.",
+          "sourceIds": [
+            "source-avalanche-l1-docs",
+            "source-acp-77"
+          ]
+        }
+      ],
+      "audience": [
+        {
+          "role": "senior",
+          "level": "HIGH",
+          "note": "자체 체인을 설계할 때 출발점이에요."
+        },
+        {
+          "role": "bd",
+          "level": "HIGH",
+          "note": "L1을 운영하는 프로젝트와 협업할 때 구조를 알아야 해요."
+        },
+        {
+          "role": "pm",
+          "level": "MEDIUM",
+          "note": "서비스 전용 체인이 필요한지 판단할 때 참고해요."
+        }
+      ],
+      "contentStatus": "DRAFT"
     },
     {
       "id": "concept-l1-validator",
@@ -1281,11 +1713,13 @@
       "relations": [
         {
           "id": "concept-avalanche-l1",
-          "type": "PREREQUISITE"
+          "type": "PREREQUISITE",
+          "reason": "L1 검증자는 특정 L1을 검증하는 역할이라서, L1 구조를 먼저 알면 좋아요."
         },
         {
           "id": "concept-validator",
-          "type": "PREREQUISITE"
+          "type": "PREREQUISITE",
+          "reason": "검증자 공통 개념(예치·합의 참여) 위에서 L1만의 차이를 보는 개념이에요."
         },
         {
           "id": "concept-p-chain",
@@ -1306,7 +1740,49 @@
       ],
       "skillIds": [
         "skill-primary-network-map"
-      ]
+      ],
+      "lede": "특정 Avalanche L1의 블록체인을 검증하는 노드 운영자예요. 조건이 바뀔 수 있어서 실행 전에 최신 공식 문서와 ACP를 확인해요.",
+      "points": [
+        {
+          "text": "Etna 이후 L1 검증 방식은 Primary Network 검증과 구분돼요.",
+          "sourceIds": [
+            "source-acp-77",
+            "source-avalanche-l1-docs"
+          ]
+        },
+        {
+          "text": "검증자가 동기화해야 하는 체인, 등록 절차, 수수료와 보안 조건은 바뀔 수 있어요.",
+          "sourceIds": [
+            "source-avalanche-l1-docs",
+            "source-l1-registration-docs"
+          ]
+        },
+        {
+          "text": "실행 전에 최신 L1 공식 Docs와 해당 ACP를 확인해요.",
+          "sourceIds": [
+            "source-l1-registration-docs",
+            "source-acp-77"
+          ]
+        }
+      ],
+      "audience": [
+        {
+          "role": "senior",
+          "level": "HIGH",
+          "note": "L1 운영과 검증자 모집을 직접 다뤄요."
+        },
+        {
+          "role": "research",
+          "level": "MEDIUM",
+          "note": "L1의 검증자 구성을 평가할 때 봐요."
+        },
+        {
+          "role": "junior",
+          "level": "LOW",
+          "note": "앱 개발에서는 직접 다룰 일이 적어요."
+        }
+      ],
+      "contentStatus": "DRAFT"
     },
     {
       "id": "concept-validator-manager",
@@ -1327,7 +1803,8 @@
       "relations": [
         {
           "id": "concept-l1-validator",
-          "type": "PREREQUISITE"
+          "type": "PREREQUISITE",
+          "reason": "L1 검증자 집합을 바꾸는 구성 요소라서, L1 검증자가 무엇인지 먼저 알아야 해요."
         },
         {
           "id": "concept-p-chain",
@@ -1345,7 +1822,46 @@
       ],
       "skillIds": [
         "skill-primary-network-map"
-      ]
+      ],
+      "lede": "L1의 검증자 집합 변경을 관리하고 P-Chain과 연동하는 구성 요소예요. 프로토콜 기반은 ACP-77, 컨트랙트 공통 표준은 ACP-99가 설명해요.",
+      "points": [
+        {
+          "text": "Validator Manager는 L1 검증자 등록·가중치 변경 같은 작업을 관리할 수 있어요.",
+          "sourceIds": [
+            "source-validator-manager-docs"
+          ]
+        },
+        {
+          "text": "ACP-77은 P-Chain 연동의 프로토콜 기반을 설명해요.",
+          "sourceIds": [
+            "source-acp-77"
+          ]
+        },
+        {
+          "text": "ACP-99는 EVM 계약의 공통 표준을 설명해요.",
+          "sourceIds": [
+            "source-acp-99"
+          ]
+        }
+      ],
+      "audience": [
+        {
+          "role": "senior",
+          "level": "HIGH",
+          "note": "L1 검증자 관리를 직접 구현하거나 운영해요."
+        },
+        {
+          "role": "middle",
+          "level": "MEDIUM",
+          "note": "검증자 관리 컨트랙트를 다룰 때 표준을 확인해요."
+        },
+        {
+          "role": "research",
+          "level": "LOW",
+          "note": "L1 거버넌스를 깊이 분석할 때 참고해요."
+        }
+      ],
+      "contentStatus": "DRAFT"
     },
     {
       "id": "concept-consensus",
@@ -1375,7 +1891,47 @@
         "resource-avalanche-consensus"
       ],
       "caseIds": [],
-      "skillIds": []
+      "skillIds": [],
+      "lede": "여러 참여자가 공유 원장에 무엇을 반영할지 하나로 맞추는 방식이에요. 방식에 따라 확정까지 걸리는 시간과 되돌릴 수 있는지가 달라져요.",
+      "points": [
+        {
+          "text": "중앙 관리자 없이 여러 노드가 같은 원장을 유지하므로, 어떤 거래를 어떤 순서로 확정할지 합의해야 해요.",
+          "sourceIds": [
+            "source-ethereum-consensus"
+          ]
+        },
+        {
+          "text": "합의 방식에 따라 확정까지 걸리는 시간과 완결성(확정된 결과가 되돌려질 수 있는지)이 달라져요.",
+          "sourceIds": [
+            "source-ethereum-consensus"
+          ]
+        },
+        {
+          "text": "Avalanche는 무작위로 고른 일부 검증자에게 반복해서 묻는 Snowman 합의를 써요. 공식 문서는 수락·거부가 몇 초 안에 최종 확정되어 되돌릴 수 없다고 설명해요.",
+          "sourceIds": [
+            "source-avalanche-consensus-docs",
+            "source-avalanche-consensus-course"
+          ]
+        }
+      ],
+      "audience": [
+        {
+          "role": "newbie",
+          "level": "HIGH",
+          "note": "블록체인을 믿을 수 있는 이유의 출발점이에요."
+        },
+        {
+          "role": "research",
+          "level": "HIGH",
+          "note": "체인의 확정 속도와 안전성을 비교하는 기준이에요."
+        },
+        {
+          "role": "pm",
+          "level": "MEDIUM",
+          "note": "거래 확정까지 사용자가 기다리는 시간을 설명할 때 필요해요."
+        }
+      ],
+      "contentStatus": "DRAFT"
     },
     {
       "id": "concept-validator",
@@ -1393,7 +1949,8 @@
       "relations": [
         {
           "id": "concept-consensus",
-          "type": "PREREQUISITE"
+          "type": "PREREQUISITE",
+          "reason": "검증자는 합의에 참여하는 주체라서, 합의가 무엇인지 먼저 알면 좋아요."
         },
         {
           "id": "concept-l1-validator",
@@ -1404,7 +1961,46 @@
         "resource-avalanche-staking"
       ],
       "caseIds": [],
-      "skillIds": []
+      "skillIds": [],
+      "lede": "자산을 예치하고 합의에 참여해 거래를 검증하고 블록을 만드는 노드예요. 예치한 양이 합의에서의 영향력과 보상으로 이어져요.",
+      "points": [
+        {
+          "text": "지분증명 계열 체인에서 검증자는 자산을 예치(스테이킹)하고 합의에 참여해요.",
+          "sourceIds": [
+            "source-ethereum-pos"
+          ]
+        },
+        {
+          "text": "예치한 양이 합의에서의 영향력과 보상에 연결돼요.",
+          "sourceIds": [
+            "source-ethereum-pos"
+          ]
+        },
+        {
+          "text": "Avalanche Primary Network에서는 공식 문서 기준 최소 2,000 AVAX를 예치해야 검증자가 될 수 있고, 검증 기간 동안 90% 이상 응답해야 보상을 받아요.",
+          "sourceIds": [
+            "source-avalanche-staking-docs"
+          ]
+        }
+      ],
+      "audience": [
+        {
+          "role": "research",
+          "level": "HIGH",
+          "note": "스테이킹 보상과 네트워크 보안을 분석할 때 핵심이에요."
+        },
+        {
+          "role": "senior",
+          "level": "MEDIUM",
+          "note": "L1 검증자를 설계하기 전에 공통 개념으로 봐요."
+        },
+        {
+          "role": "newbie",
+          "level": "MEDIUM",
+          "note": "스테이킹이 무엇인지 이해하는 출발점이에요."
+        }
+      ],
+      "contentStatus": "DRAFT"
     }
   ],
   "skills": [

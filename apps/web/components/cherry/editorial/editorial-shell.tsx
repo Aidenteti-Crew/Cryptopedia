@@ -26,6 +26,10 @@ interface EditorialShellProps {
   onSelect: (screen: ScreenId) => void
   onSelectChain?: (chain: SelectedChain) => void
   onOpenEntry?: (id: string) => void
+  /** 사이드바 맨 아래(모바일은 메뉴 패널 맨 아래)에 붙는 칸 — 내 학습 경로 카드 */
+  sidebarFooter?: ReactNode
+  /** 모바일(lg 미만)에서 화면 아래에 고정되는 띠 — 내 학습 경로 */
+  mobileBar?: ReactNode
   breadcrumbs?: EditorialBreadcrumbItem[]
   onBreadcrumbNavigate?: (target: BreadcrumbTarget) => void
   children: ReactNode
@@ -46,6 +50,8 @@ export function EditorialShell({
   onSelect,
   onSelectChain,
   onOpenEntry,
+  sidebarFooter,
+  mobileBar,
   breadcrumbs,
   onBreadcrumbNavigate,
   children,
@@ -60,16 +66,16 @@ export function EditorialShell({
   )
 
   return (
-    <div className="editorial-root lg:flex" style={chainTheme ? chainThemeStyle(chainTheme) : undefined}>
+    <div
+      className="editorial-root lg:flex"
+      style={chainTheme ? chainThemeStyle(chainTheme) : undefined}
+    >
       {/* Desktop sidebar — hidden below lg */}
       <aside
         aria-label="Main navigation"
         className="sticky top-0 hidden h-[100dvh] w-[260px] shrink-0 flex-col border-r border-[var(--editorial-line)]/60 bg-[var(--editorial-sidebar)] lg:flex"
       >
-        <EditorialBrand
-          onHome={onLogoClick ?? goHome}
-          className="shrink-0 px-5 pb-5 pt-6"
-        />
+        <EditorialBrand onHome={onLogoClick ?? goHome} className="shrink-0 px-5 pb-5 pt-6" />
         <div className="shrink-0 px-5 pt-2">{collection}</div>
         <EditorialIndex
           activeScreen={activeScreen}
@@ -77,6 +83,7 @@ export function EditorialShell({
           onSelect={onSelect}
           onOpenEntry={onOpenEntry}
         />
+        {sidebarFooter && <div className="mt-auto shrink-0 p-4">{sidebarFooter}</div>}
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -106,6 +113,7 @@ export function EditorialShell({
           {children}
         </main>
         <EditorialFooter onHome={goHome} />
+        {mobileBar && <div className="lg:hidden">{mobileBar}</div>}
       </div>
     </div>
   )

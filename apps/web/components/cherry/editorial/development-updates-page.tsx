@@ -144,7 +144,7 @@ export function DevelopmentUpdatesPage({
         <div
           role="tablist"
           aria-label="개발 업데이트 보기"
-          className="inline-flex max-w-full flex-wrap gap-1 rounded-xl bg-white/[.04] p-1"
+          className="inline-flex max-w-full flex-wrap gap-1 rounded-xl bg-[var(--editorial-wash)] p-1"
         >
           {(
             [
@@ -175,14 +175,14 @@ export function DevelopmentUpdatesPage({
                 updateTabs(next)
                 document.getElementById(`${id}-${next}-tab`)?.focus()
               }}
-              className={`min-h-10 rounded-lg px-4 text-sm transition-colors ${tab === value ? 'bg-[var(--editorial-accent)] font-medium text-[#15191e]' : 'text-[var(--editorial-muted)] hover:text-white'}`}
+              className={`min-h-10 rounded-lg px-4 text-sm transition-colors ${tab === value ? 'bg-[var(--editorial-accent)] font-medium text-[var(--editorial-on-accent)]' : 'text-[var(--editorial-muted)] hover:text-[var(--editorial-strong)]'}`}
             >
               {label}
             </button>
           ))}
         </div>
 
-        <div className="w-full rounded-xl border border-white/10 sm:w-[300px]">
+        <div className="w-full rounded-xl border border-[var(--editorial-line)] sm:w-[300px]">
           <DiscoverySearch
             value={filters.query}
             onChange={(v) => set('query', v)}
@@ -273,7 +273,7 @@ export function DevelopmentUpdatesPage({
               onChange={(v) => set('change', v)}
               options={Object.entries(CHANGE_LABELS).map(([value, label]) => ({ value, label }))}
             />
-            <div className="space-y-2 border-t border-white/10 pt-4 sm:col-span-2 lg:col-span-3">
+            <div className="space-y-2 border-t border-[var(--editorial-line)] pt-4 sm:col-span-2 lg:col-span-3">
               <p className="text-xs font-medium text-[var(--editorial-muted)]">공개일</p>
               <DiscoveryDateRange
                 label="공개일 범위"

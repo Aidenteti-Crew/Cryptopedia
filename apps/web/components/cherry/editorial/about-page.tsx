@@ -62,7 +62,7 @@ function pointerRatio(event: ReactPointerEvent<HTMLElement>) {
 
 export function AboutPage() {
   return (
-    <div className={`editorial-root ${styles.landing}`}>
+    <div className={`editorial-root editorial-dark ${styles.landing}`}>
       <AboutHeader />
       <HeroSection />
       <SurfacesSection />

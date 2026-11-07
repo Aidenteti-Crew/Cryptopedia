@@ -1,4 +1,4 @@
-import { API_URL, fetchWithAuth } from "./auth"
+import { API_URL, fetchWithAuth } from './auth'
 
 export { API_URL }
 
@@ -31,14 +31,14 @@ export interface PatchNotesResponse {
 }
 
 export async function fetchPatchNotes(): Promise<PatchNotesResponse> {
-  const res = await fetch(`${API_URL}/api/patch-notes`, { cache: "no-store" })
-  if (!res.ok) throw new Error("Failed to fetch patch notes")
+  const res = await fetch(`${API_URL}/api/patch-notes`, { cache: 'no-store' })
+  if (!res.ok) throw new Error('Failed to fetch patch notes')
   return res.json()
 }
 
 export async function markArticleRead(articleStateId: string): Promise<void> {
   await fetch(`${API_URL}/api/patch-notes/${articleStateId}/read`, {
-    method: "PATCH",
+    method: 'PATCH',
   })
 }
 
@@ -69,8 +69,8 @@ export interface ModelUpdatesRankResponse {
 }
 
 export async function fetchModelUpdatesRank(): Promise<ModelUpdatesRankResponse> {
-  const res = await fetch(`${API_URL}/api/stats/model-updates-rank`, { cache: "no-store" })
-  if (!res.ok) throw new Error("Failed to fetch model updates rank")
+  const res = await fetch(`${API_URL}/api/stats/model-updates-rank`, { cache: 'no-store' })
+  if (!res.ok) throw new Error('Failed to fetch model updates rank')
   return res.json()
 }
 
@@ -116,8 +116,8 @@ export interface FrameworksResponse {
 }
 
 export async function fetchFrameworks(): Promise<FrameworksResponse> {
-  const res = await fetch(`${API_URL}/api/stats/frameworks`, { cache: "no-store" })
-  if (!res.ok) throw new Error("Failed to fetch frameworks")
+  const res = await fetch(`${API_URL}/api/stats/frameworks`, { cache: 'no-store' })
+  if (!res.ok) throw new Error('Failed to fetch frameworks')
   return res.json()
 }
 
@@ -149,8 +149,8 @@ export interface CaseStudiesResponse {
 }
 
 export async function fetchCaseStudies(): Promise<CaseStudiesResponse> {
-  const res = await fetch(`${API_URL}/api/patch-notes/case-studies`, { cache: "no-store" })
-  if (!res.ok) throw new Error("Failed to fetch case studies")
+  const res = await fetch(`${API_URL}/api/patch-notes/case-studies`, { cache: 'no-store' })
+  if (!res.ok) throw new Error('Failed to fetch case studies')
   return res.json()
 }
 
@@ -193,14 +193,14 @@ export interface LandingArticlesResponse {
 }
 
 export async function fetchLanding(): Promise<LandingResponse> {
-  const res = await fetch(`${API_URL}/api/stats/landing`, { cache: "no-store" })
-  if (!res.ok) throw new Error("Failed to fetch landing stats")
+  const res = await fetch(`${API_URL}/api/stats/landing`, { cache: 'no-store' })
+  if (!res.ok) throw new Error('Failed to fetch landing stats')
   return res.json()
 }
 
 export async function fetchLandingArticles(): Promise<LandingArticlesResponse> {
-  const res = await fetch(`${API_URL}/api/stats/landing/articles`, { cache: "no-store" })
-  if (!res.ok) throw new Error("Failed to fetch landing articles")
+  const res = await fetch(`${API_URL}/api/stats/landing/articles`, { cache: 'no-store' })
+  if (!res.ok) throw new Error('Failed to fetch landing articles')
   return res.json()
 }
 
@@ -238,8 +238,8 @@ export interface PromptTemplate {
 
 /** 전체 템플릿 목록 (버전 포함) */
 export async function fetchTemplates(): Promise<PromptTemplate[]> {
-  const res = await fetch(`${API_URL}/api/prompt-templates/list`, { cache: "no-store" })
-  if (!res.ok) throw new Error("Failed to fetch templates")
+  const res = await fetch(`${API_URL}/api/prompt-templates/list`, { cache: 'no-store' })
+  if (!res.ok) throw new Error('Failed to fetch templates')
   return res.json()
 }
 
@@ -256,34 +256,34 @@ export async function createTemplate(body: {
   change_note?: string
 }): Promise<PromptTemplate[]> {
   const res = await fetch(`${API_URL}/api/prompt-templates/create`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
-  if (!res.ok) throw new Error("Failed to create template")
+  if (!res.ok) throw new Error('Failed to create template')
   return res.json()
 }
 
 /** 템플릿 메타 수정 */
 export async function updateTemplate(
   id: string,
-  body: { name?: string; description?: string; tone_text?: string },
+  body: { name?: string; description?: string; tone_text?: string }
 ): Promise<PromptTemplate[]> {
   const res = await fetch(`${API_URL}/api/prompt-templates/${id}/patch`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
-  if (!res.ok) throw new Error("Failed to update template")
+  if (!res.ok) throw new Error('Failed to update template')
   return res.json()
 }
 
 /** 템플릿 소프트 삭제 */
 export async function deleteTemplate(id: string): Promise<void> {
   const res = await fetch(`${API_URL}/api/prompt-templates/${id}/delete`, {
-    method: "DELETE",
+    method: 'DELETE',
   })
-  if (!res.ok) throw new Error("Failed to delete template")
+  if (!res.ok) throw new Error('Failed to delete template')
 }
 
 /** 버전 추가 */
@@ -294,14 +294,14 @@ export async function addVersion(
     few_shot_examples?: string
     parameters_json?: Record<string, unknown>
     change_note?: string
-  },
+  }
 ): Promise<TemplateVersion> {
   const res = await fetch(`${API_URL}/api/prompt-templates/${templateId}/add-new-versions`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
-  if (!res.ok) throw new Error("Failed to add version")
+  if (!res.ok) throw new Error('Failed to add version')
   return res.json()
 }
 
@@ -314,30 +314,30 @@ export async function updateVersion(
     few_shot_examples?: string
     parameters_json?: Record<string, unknown>
     change_note?: string
-  },
+  }
 ): Promise<TemplateVersion> {
   const res = await fetch(
     `${API_URL}/api/prompt-templates/${templateId}/versions/${versionId}/patch`,
     {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
-    },
+    }
   )
-  if (!res.ok) throw new Error("Failed to update version")
+  if (!res.ok) throw new Error('Failed to update version')
   return res.json()
 }
 
 /** 활성 버전 지정 */
 export async function activateVersion(
   templateId: string,
-  versionId: string,
+  versionId: string
 ): Promise<TemplateVersion> {
   const res = await fetch(
     `${API_URL}/api/prompt-templates/${templateId}/versions/${versionId}/activate`,
-    { method: "PATCH" },
+    { method: 'PATCH' }
   )
-  if (!res.ok) throw new Error("Failed to activate version")
+  if (!res.ok) throw new Error('Failed to activate version')
   return res.json()
 }
 
@@ -345,9 +345,9 @@ export async function activateVersion(
 export async function deleteVersion(templateId: string, versionId: string): Promise<void> {
   const res = await fetch(
     `${API_URL}/api/prompt-templates/${templateId}/versions/${versionId}/delete`,
-    { method: "DELETE" },
+    { method: 'DELETE' }
   )
-  if (!res.ok) throw new Error("Failed to delete version")
+  if (!res.ok) throw new Error('Failed to delete version')
 }
 
 /* ═══════════════════════════════════════════════
@@ -359,49 +359,57 @@ const KAAS_BASE = `${API_URL}/api/v1/kaas`
 /** 카탈로그 — 전체 개념 목록 (Public) */
 export async function fetchCatalog(q?: string, category?: string) {
   const params = new URLSearchParams()
-  if (q) params.set("q", q)
-  if (category) params.set("category", category)
-  const url = `${KAAS_BASE}/catalog${params.toString() ? "?" + params : ""}`
+  if (q) params.set('q', q)
+  if (category) params.set('category', category)
+  const url = `${KAAS_BASE}/catalog${params.toString() ? '?' + params : ''}`
   const res = await fetch(url)
-  if (!res.ok) throw new Error("Failed to fetch catalog")
+  if (!res.ok) throw new Error('Failed to fetch catalog')
   return res.json()
 }
 
 /** 카탈로그 — 개념 상세 */
 export async function fetchConcept(conceptId: string) {
   const res = await fetch(`${KAAS_BASE}/catalog/${conceptId}`)
-  if (!res.ok) throw new Error("Failed to fetch concept")
+  if (!res.ok) throw new Error('Failed to fetch concept')
   return res.json()
 }
 
 /** 에이전트 등록 (JWT 인증 필요) */
-export async function registerAgent(data: { name: string; wallet_address?: string; wallet_type?: "evm" | "near"; llm_provider?: string; llm_model?: string; llm_api_key?: string; domain_interests: string[] }) {
+export async function registerAgent(data: {
+  name: string
+  wallet_address?: string
+  wallet_type?: 'evm' | 'near'
+  llm_provider?: string
+  llm_model?: string
+  llm_api_key?: string
+  domain_interests: string[]
+}) {
   const res = await fetchWithAuth(`${KAAS_BASE}/agents/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
-  if (!res.ok) throw new Error("Failed to register agent")
+  if (!res.ok) throw new Error('Failed to register agent')
   return res.json()
 }
 
 /** 에이전트 삭제 (JWT 인증 필요) */
 export async function deleteAgent(agentId: string) {
-  const res = await fetchWithAuth(`${KAAS_BASE}/agents/${agentId}`, { method: "DELETE" })
-  if (!res.ok) throw new Error("Failed to delete agent")
+  const res = await fetchWithAuth(`${KAAS_BASE}/agents/${agentId}`, { method: 'DELETE' })
+  if (!res.ok) throw new Error('Failed to delete agent')
 }
 
 /** 에이전트 목록 (JWT 인증 필요 — 로그인 유저의 에이전트만) */
 export async function fetchAgents() {
   const res = await fetchWithAuth(`${KAAS_BASE}/agents`)
-  if (!res.ok) throw new Error("Failed to fetch agents")
+  if (!res.ok) throw new Error('Failed to fetch agents')
   return res.json()
 }
 
 /** Live onchain Karma read from Status Network */
 export interface OnchainKarma {
   walletAddress: string | null
-  tier: "Bronze" | "Silver" | "Gold" | "Platinum"
+  tier: 'Bronze' | 'Silver' | 'Gold' | 'Platinum'
   balance: number
   onchainTierId?: number
   onchainTierName?: string
@@ -412,26 +420,26 @@ export interface OnchainKarma {
 }
 
 export async function fetchAgentKarma(agentId: string): Promise<OnchainKarma> {
-  const res = await fetchWithAuth(`${KAAS_BASE}/agents/${agentId}/karma`, { cache: "no-store" })
-  if (!res.ok) throw new Error("Failed to fetch onchain karma")
+  const res = await fetchWithAuth(`${KAAS_BASE}/agents/${agentId}/karma`, { cache: 'no-store' })
+  if (!res.ok) throw new Error('Failed to fetch onchain karma')
   return res.json()
 }
 
 /** 크레딧 잔액 */
 export async function fetchBalance(apiKey: string) {
   const res = await fetch(`${KAAS_BASE}/credits/balance?api_key=${apiKey}`)
-  if (!res.ok) throw new Error("Failed to fetch balance")
+  if (!res.ok) throw new Error('Failed to fetch balance')
   return res.json()
 }
 
 /** 크레딧 충전 */
 export async function depositCredits(apiKey: string, amount: number, chain?: string) {
   const res = await fetch(`${KAAS_BASE}/credits/deposit`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ amount, api_key: apiKey, chain }),
   })
-  if (!res.ok) throw new Error("Failed to deposit")
+  if (!res.ok) throw new Error('Failed to deposit')
   return res.json()
 }
 
@@ -442,12 +450,12 @@ export async function depositCredits(apiKey: string, amount: number, chain?: str
 export async function purchaseConcept(
   apiKey: string,
   conceptId: string,
-  chain?: "status" | "near" | "mock",
-  opts?: { preSignedTx?: string; privacyMode?: boolean },
+  chain?: 'status' | 'near' | 'mock',
+  opts?: { preSignedTx?: string; privacyMode?: boolean }
 ) {
   const res = await fetch(`${KAAS_BASE}/purchase`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       concept_id: conceptId,
       api_key: apiKey,
@@ -458,7 +466,10 @@ export async function purchaseConcept(
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw Object.assign(new Error(err.message || "Purchase failed"), { code: err.code, status: res.status })
+    throw Object.assign(new Error(err.message || 'Purchase failed'), {
+      code: err.code,
+      status: res.status,
+    })
   }
   return res.json()
 }
@@ -470,12 +481,12 @@ export async function purchaseConcept(
 export async function followConcept(
   apiKey: string,
   conceptId: string,
-  chain?: "status" | "near" | "mock",
-  opts?: { preSignedTx?: string; privacyMode?: boolean },
+  chain?: 'status' | 'near' | 'mock',
+  opts?: { preSignedTx?: string; privacyMode?: boolean }
 ) {
   const res = await fetch(`${KAAS_BASE}/follow`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       concept_id: conceptId,
       api_key: apiKey,
@@ -486,7 +497,10 @@ export async function followConcept(
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw Object.assign(new Error(err.message || "Follow failed"), { code: err.code, status: res.status })
+    throw Object.assign(new Error(err.message || 'Follow failed'), {
+      code: err.code,
+      status: res.status,
+    })
   }
   return res.json()
 }
@@ -532,7 +546,7 @@ export interface ShopSet {
    Mirrors `apps/api/src/modules/kaas/shop/agent-trade.controller.ts`.
    ════════════════════════════════════════════════════════════════ */
 
-export type AgentTradeSkillKind = "concept" | "card" | "meta" | "unknown"
+export type AgentTradeSkillKind = 'concept' | 'card' | 'meta' | 'unknown'
 
 export interface ClassifiedSkill {
   slug: string
@@ -549,21 +563,23 @@ export interface AgentTradeDiff {
 
 export const AGENT_TRADE_FLAT_PRICE = 5
 
-export async function fetchShopAgents(myApiKey?: string): Promise<{ id: string; name: string; connected: boolean }[]> {
+export async function fetchShopAgents(
+  myApiKey?: string
+): Promise<{ id: string; name: string; connected: boolean }[]> {
   const u = new URL(`${KAAS_BASE}/shop/agents`)
-  if (myApiKey) u.searchParams.set("exclude_self", myApiKey)
-  const res = await fetch(u, { cache: "no-store" })
+  if (myApiKey) u.searchParams.set('exclude_self', myApiKey)
+  const res = await fetch(u, { cache: 'no-store' })
   if (!res.ok) throw new Error(`fetchShopAgents ${res.status}`)
   return res.json()
 }
 
 export async function fetchAgentDiff(
   targetAgentId: string,
-  myApiKey: string,
+  myApiKey: string
 ): Promise<AgentTradeDiff> {
   const u = new URL(`${KAAS_BASE}/shop/agents/${encodeURIComponent(targetAgentId)}/diff`)
-  u.searchParams.set("vs_api_key", myApiKey)
-  const res = await fetch(u, { cache: "no-store" })
+  u.searchParams.set('vs_api_key', myApiKey)
+  const res = await fetch(u, { cache: 'no-store' })
   if (!res.ok) throw new Error(`fetchAgentDiff ${res.status}`)
   return res.json()
 }
@@ -579,11 +595,11 @@ export interface BuyAgentTradeSkillResponse {
 
 export async function buyAgentTradeSkill(
   apiKey: string,
-  slug: string,
+  slug: string
 ): Promise<BuyAgentTradeSkillResponse> {
   const res = await fetch(`${KAAS_BASE}/shop/agents/skills/buy`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ slug, api_key: apiKey }),
   })
   if (!res.ok) {
@@ -620,12 +636,21 @@ export interface FlockExportRequest {
 export interface FlockExportResponse {
   agent: { id: string; handle?: string; address?: string; raw: any }
   knowledge_graph?: { id: string; raw: any } | null
-  documents: Array<{ slot: string; card_id: string; document_id?: string; ok: boolean; error?: string }>
+  documents: Array<{
+    slot: string
+    card_id: string
+    document_id?: string
+    ok: boolean
+    error?: string
+  }>
   public_url_candidates: string[]
   warnings: string[]
 }
 
-export async function fetchFlockExportConfig(): Promise<{ server_key_configured: boolean; key_source: string | null }> {
+export async function fetchFlockExportConfig(): Promise<{
+  server_key_configured: boolean
+  key_source: string | null
+}> {
   const res = await fetch(`${KAAS_BASE}/flock/config`)
   if (!res.ok) return { server_key_configured: false, key_source: null }
   return res.json()
@@ -650,7 +675,7 @@ export async function fetchAgentverseConfig(): Promise<{ server_key_configured: 
 export interface FlockBundleFile {
   filename: string
   content: string
-  mime: "text/plain" | "text/markdown" | "application/json"
+  mime: 'text/plain' | 'text/markdown' | 'application/json'
 }
 
 export interface FlockBundleResponse {
@@ -659,10 +684,12 @@ export interface FlockBundleResponse {
   warnings: string[]
 }
 
-export async function buildFlockBundle(req: Omit<FlockExportRequest, "api_key" | "public">): Promise<FlockBundleResponse> {
+export async function buildFlockBundle(
+  req: Omit<FlockExportRequest, 'api_key' | 'public'>
+): Promise<FlockBundleResponse> {
   const res = await fetch(`${KAAS_BASE}/flock/flock-bundle`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(req),
   })
   if (!res.ok) {
@@ -675,10 +702,12 @@ export async function buildFlockBundle(req: Omit<FlockExportRequest, "api_key" |
   return res.json()
 }
 
-export async function exportToAgentverse(req: Omit<FlockExportRequest, "api_key"> & { api_key?: string }): Promise<AgentverseExportResponse> {
+export async function exportToAgentverse(
+  req: Omit<FlockExportRequest, 'api_key'> & { api_key?: string }
+): Promise<AgentverseExportResponse> {
   const res = await fetch(`${KAAS_BASE}/flock/export-agentverse`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(req),
   })
   if (!res.ok) {
@@ -694,8 +723,8 @@ export async function exportToAgentverse(req: Omit<FlockExportRequest, "api_key"
 
 export async function exportToFlockx(req: FlockExportRequest): Promise<FlockExportResponse> {
   const res = await fetch(`${KAAS_BASE}/flock/export-build`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(req),
   })
   if (!res.ok) {
@@ -711,35 +740,46 @@ export async function exportToFlockx(req: FlockExportRequest): Promise<FlockExpo
 
 export interface CardSource {
   id: string
-  type: "prompt" | "mcp" | "skill" | "orchestration" | "memory"
+  type: 'prompt' | 'mcp' | 'skill' | 'orchestration' | 'memory'
   body: string
-  language: "markdown" | "json"
+  language: 'markdown' | 'json'
 }
 
 /** Read-only source for a single Workshop card (systemPrompt / promptSuffix
  *  / tool schema / memory config). Used by the Workshop card inspector. */
 export async function fetchCardSource(cardId: string): Promise<CardSource> {
-  const res = await fetch(
-    `${KAAS_BASE}/shop/cards/${encodeURIComponent(cardId)}/source`,
-    { cache: "no-store" },
-  )
+  const res = await fetch(`${KAAS_BASE}/shop/cards/${encodeURIComponent(cardId)}/source`, {
+    cache: 'no-store',
+  })
   if (!res.ok) throw new Error(`fetchCardSource ${res.status}`)
   return res.json()
 }
 
 export async function fetchShopSets(): Promise<ShopSet[]> {
-  const res = await fetch(`${KAAS_BASE}/shop/sets`, { cache: "no-store" })
+  const res = await fetch(`${KAAS_BASE}/shop/sets`, { cache: 'no-store' })
   if (!res.ok) throw new Error(`fetchShopSets ${res.status}`)
   return res.json()
 }
 
 export interface BuySetResponse {
-  installed: Array<{ slot: string; card_id: string; dir: string; file: string; saved_path: string; size_bytes: number }>
+  installed: Array<{
+    slot: string
+    card_id: string
+    dir: string
+    file: string
+    saved_path: string
+    size_bytes: number
+  }>
   skipped: Array<{ slot: string; card_id: string | null; reason: string }>
   failed: Array<{ slot: string; card_id: string; error: string }>
   meta_written: boolean
   orphans_removed: string[]
-  local_skills_after: Array<{ dir: string; hasSkillMd: boolean; sizeBytes: number; mtime: string | null }>
+  local_skills_after: Array<{
+    dir: string
+    hasSkillMd: boolean
+    sizeBytes: number
+    mtime: string | null
+  }>
   warnings: string[]
   activation_prompt: string
   credits_consumed: number
@@ -756,11 +796,11 @@ export interface BuySetResponse {
 export async function buySet(
   apiKey: string,
   setId: string,
-  chain: "status" | "near" | "mock" = "status",
+  chain: 'status' | 'near' | 'mock' = 'status'
 ): Promise<BuySetResponse> {
   const res = await fetch(`${KAAS_BASE}/shop/buy-and-install`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ set_id: setId, api_key: apiKey, chain }),
   })
   // 207 Multi-Status 도 응답 파싱
@@ -777,93 +817,103 @@ export async function buySet(
 /** 구매/팔로우 이력 */
 export async function fetchHistory(apiKey: string) {
   const res = await fetch(`${KAAS_BASE}/credits/history?api_key=${apiKey}`)
-  if (!res.ok) throw new Error("Failed to fetch history")
+  if (!res.ok) throw new Error('Failed to fetch history')
   return res.json()
 }
 
 /** 크레딧 Ledger (deposit + consume 원장) */
 export async function fetchLedger(apiKey: string, limit = 50) {
   const res = await fetch(`${KAAS_BASE}/credits/ledger?api_key=${apiKey}&limit=${limit}`)
-  if (!res.ok) throw new Error("Failed to fetch ledger")
+  if (!res.ok) throw new Error('Failed to fetch ledger')
   return res.json()
 }
 
 /** 에이전트 Self-Report (대시보드 모달용) — 에이전트가 WebSocket으로 보낸 리포트 JSON 수신 */
 export async function fetchAgentSelfReport(agentId: string) {
   const res = await fetch(`${KAAS_BASE}/agents/${agentId}/self-report`)
-  if (!res.ok) throw new Error("Failed to request self-report")
+  if (!res.ok) throw new Error('Failed to request self-report')
   return res.json()
 }
 
 /** DB 기반 Knowledge Diff — 에이전트 연결 안 됐을 때 모달 fallback */
 export async function fetchKnowledgeDiff(agentId: string, limit = 5) {
   const res = await fetch(`${KAAS_BASE}/agents/${agentId}/knowledge-diff?limit=${limit}`)
-  if (!res.ok) throw new Error("Failed to fetch knowledge diff")
+  if (!res.ok) throw new Error('Failed to fetch knowledge diff')
   return res.json()
 }
 
 /** LLM 프록시 — 에이전트가 구매한 지식으로 대화 (privacy_mode 지원) */
-export async function chatWithAgent(apiKey: string, contentMd: string, question: string, privacyMode?: boolean) {
+export async function chatWithAgent(
+  apiKey: string,
+  contentMd: string,
+  question: string,
+  privacyMode?: boolean
+) {
   const res = await fetch(`${KAAS_BASE}/llm/chat`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ api_key: apiKey, content_md: contentMd, question, privacy_mode: privacyMode ?? false }),
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      api_key: apiKey,
+      content_md: contentMd,
+      question,
+      privacy_mode: privacyMode ?? false,
+    }),
   })
-  if (!res.ok) throw new Error("LLM chat failed")
+  if (!res.ok) throw new Error('LLM chat failed')
   return res.json()
 }
 
 /** WebSocket 채팅 — 에이전트에게 직접 메시지 전달 */
 export async function wsChat(agentId: string, message: string) {
   const res = await fetch(`${KAAS_BASE}/mcp/ws-chat`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ agent_id: agentId, message }),
   })
-  if (!res.ok) throw new Error("WS chat failed")
+  if (!res.ok) throw new Error('WS chat failed')
   return res.json()
 }
 
 /** MCP Sampling — 3자 대화 (유저 → Cherry → 에이전트 LLM) */
 export async function mcpChat(message: string, agentId?: string) {
   const res = await fetch(`${KAAS_BASE}/mcp/chat`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ message, agent_id: agentId }),
   })
-  if (!res.ok) throw new Error("MCP chat failed")
+  if (!res.ok) throw new Error('MCP chat failed')
   return res.json()
 }
 
 /** MCP Elicitation — 에이전트에게 지식 목록 요청 후 gap 분석 */
 export async function elicitKnowledge(agentId?: string) {
   const res = await fetchWithAuth(`${KAAS_BASE}/mcp/elicit`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ agent_id: agentId }),
   })
-  if (!res.ok) throw new Error("Elicitation failed")
+  if (!res.ok) throw new Error('Elicitation failed')
   return res.json()
 }
 
 /** MCP 세션 목록 */
 export async function fetchMcpSessions() {
   const res = await fetch(`${KAAS_BASE}/mcp/sessions`)
-  if (!res.ok) throw new Error("Failed to fetch sessions")
+  if (!res.ok) throw new Error('Failed to fetch sessions')
   return res.json()
 }
 
 /** 큐레이터 보상 잔액 조회 */
 export async function fetchCuratorRewards(curatorName: string) {
   const res = await fetch(`${KAAS_BASE}/rewards/balance?curator=${encodeURIComponent(curatorName)}`)
-  if (!res.ok) throw new Error("Failed to fetch rewards")
+  if (!res.ok) throw new Error('Failed to fetch rewards')
   return res.json()
 }
 
 /** 전체 큐레이터 보상 현황 */
 export async function fetchAllRewards() {
   const res = await fetch(`${KAAS_BASE}/rewards/all`)
-  if (!res.ok) throw new Error("Failed to fetch rewards")
+  if (!res.ok) throw new Error('Failed to fetch rewards')
   return res.json()
 }
 
@@ -872,13 +922,13 @@ export async function fetchAllRewards() {
  */
 export async function withdrawRewards(curatorName: string) {
   const res = await fetch(`${KAAS_BASE}/rewards/withdraw`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ curator: curatorName }),
   })
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ message: "Withdraw failed" }))
-    throw new Error(err.message ?? "Withdraw failed")
+    const err = await res.json().catch(() => ({ message: 'Withdraw failed' }))
+    throw new Error(err.message ?? 'Withdraw failed')
   }
   return res.json()
 }
@@ -917,14 +967,14 @@ export interface AdminEvidence {
 
 export async function fetchConceptsAdmin(createdBy?: string): Promise<AdminConcept[]> {
   const params = createdBy ? `?created_by=${encodeURIComponent(createdBy)}` : ''
-  const res = await fetch(`${KAAS_BASE}/admin/concepts${params}`, { cache: "no-store" })
-  if (!res.ok) throw new Error("Failed to fetch admin concepts")
+  const res = await fetch(`${KAAS_BASE}/admin/concepts${params}`, { cache: 'no-store' })
+  if (!res.ok) throw new Error('Failed to fetch admin concepts')
   return res.json()
 }
 
 export async function fetchConceptAdmin(id: string): Promise<AdminConcept> {
-  const res = await fetch(`${KAAS_BASE}/admin/concepts/${id}`, { cache: "no-store" })
-  if (!res.ok) throw new Error("Failed to fetch admin concept")
+  const res = await fetch(`${KAAS_BASE}/admin/concepts/${id}`, { cache: 'no-store' })
+  if (!res.ok) throw new Error('Failed to fetch admin concept')
   return res.json()
 }
 
@@ -940,78 +990,87 @@ export async function createConceptAdmin(body: {
   created_by?: string
 }) {
   const res = await fetch(`${KAAS_BASE}/admin/concepts`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
-  if (!res.ok) throw new Error("Failed to create concept")
+  if (!res.ok) throw new Error('Failed to create concept')
   return res.json()
 }
 
 export async function updateConceptAdmin(id: string, body: Record<string, unknown>) {
   const res = await fetch(`${KAAS_BASE}/admin/concepts/${id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
-  if (!res.ok) throw new Error("Failed to update concept")
+  if (!res.ok) throw new Error('Failed to update concept')
   return res.json()
 }
 
 export async function hideConceptAdmin(id: string) {
-  const res = await fetch(`${KAAS_BASE}/admin/concepts/${id}/hide`, { method: "DELETE" })
-  if (!res.ok) throw new Error("Failed to hide concept")
+  const res = await fetch(`${KAAS_BASE}/admin/concepts/${id}/hide`, { method: 'DELETE' })
+  if (!res.ok) throw new Error('Failed to hide concept')
 }
 
 export async function unhideConceptAdmin(id: string) {
-  const res = await fetch(`${KAAS_BASE}/admin/concepts/${id}/show`, { method: "POST" })
-  if (!res.ok) throw new Error("Failed to unhide concept")
+  const res = await fetch(`${KAAS_BASE}/admin/concepts/${id}/show`, { method: 'POST' })
+  if (!res.ok) throw new Error('Failed to unhide concept')
 }
 
 export async function deleteConceptAdmin(id: string) {
-  const res = await fetch(`${KAAS_BASE}/admin/concepts/${id}`, { method: "DELETE" })
-  if (!res.ok) throw new Error("Failed to delete concept")
+  const res = await fetch(`${KAAS_BASE}/admin/concepts/${id}`, { method: 'DELETE' })
+  if (!res.ok) throw new Error('Failed to delete concept')
 }
 
-export async function addEvidenceAdmin(conceptId: string, body: {
-  source: string
-  summary: string
-  curator: string
-  curator_tier?: string
-  comment?: string
-}) {
+export async function addEvidenceAdmin(
+  conceptId: string,
+  body: {
+    source: string
+    summary: string
+    curator: string
+    curator_tier?: string
+    comment?: string
+  }
+) {
   const res = await fetch(`${KAAS_BASE}/admin/concepts/${conceptId}/evidence`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
-  if (!res.ok) throw new Error("Failed to add evidence")
+  if (!res.ok) throw new Error('Failed to add evidence')
   return res.json()
 }
 
-export async function updateEvidenceAdmin(conceptId: string, evidenceId: string, body: Record<string, unknown>) {
+export async function updateEvidenceAdmin(
+  conceptId: string,
+  evidenceId: string,
+  body: Record<string, unknown>
+) {
   const res = await fetch(`${KAAS_BASE}/admin/concepts/${conceptId}/evidence/${evidenceId}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
-  if (!res.ok) throw new Error("Failed to update evidence")
+  if (!res.ok) throw new Error('Failed to update evidence')
   return res.json()
 }
 
 export async function deleteEvidenceAdmin(conceptId: string, evidenceId: string) {
-  const res = await fetch(`${KAAS_BASE}/admin/concepts/${conceptId}/evidence/${evidenceId}`, { method: "DELETE" })
-  if (!res.ok) throw new Error("Failed to delete evidence")
+  const res = await fetch(`${KAAS_BASE}/admin/concepts/${conceptId}/evidence/${evidenceId}`, {
+    method: 'DELETE',
+  })
+  if (!res.ok) throw new Error('Failed to delete evidence')
 }
 
 /** Knowledge Gap Analysis */
 export async function compareKnowledge(knownTopics: { topic: string; lastUpdated: string }[]) {
   const res = await fetch(`${KAAS_BASE}/catalog/compare`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ known_topics: knownTopics }),
   })
-  if (!res.ok) throw new Error("Failed to compare")
+  if (!res.ok) throw new Error('Failed to compare')
   return res.json()
 }
 
@@ -1021,7 +1080,11 @@ export async function compareKnowledge(knownTopics: { topic: string; lastUpdated
    기획: apps/docs/ontology-migration/2-implementation-guide.md §5
 ───────────────────────────────────────────── */
 export type ConceptRelationType =
-  | "SUBTOPIC" | "PREREQUISITE" | "EXTENDS" | "RELATED" | "CONTRADICTS"
+  | 'SUBTOPIC'
+  | 'PREREQUISITE'
+  | 'EXTENDS'
+  | 'RELATED'
+  | 'CONTRADICTS'
 
 export interface ConceptCherry {
   source: string
@@ -1060,7 +1123,7 @@ export interface ConceptReference {
 export interface ConceptPage {
   slug: string
   node: string
-  section: "BASICS" | "ADVANCED" | null
+  section: 'BASICS' | 'ADVANCED' | null
   title: string
   menuLabel: string
   aliases: string[]
@@ -1080,7 +1143,7 @@ export interface ConceptPage {
  *  ⚠️ 이름 주의: `fetchConcept`(위)는 KaaS 마켓용으로 이미 존재한다. */
 export async function fetchLearningConcept(key: string): Promise<ConceptPage> {
   const res = await fetch(`${API_URL}/api/learning/concepts/${encodeURIComponent(key)}`, {
-    cache: "no-store",
+    cache: 'no-store',
   })
   if (!res.ok) throw new Error(`Failed to fetch concept: ${key} (${res.status})`)
   return res.json()

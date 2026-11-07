@@ -1,4 +1,4 @@
-import { API_URL, authHeaders } from "./auth"
+import { API_URL, authHeaders } from './auth'
 
 /* ── 회원 벤치 키 (Settings) ─────────────────────────────── */
 export interface BenchKeyStatus {
@@ -31,7 +31,7 @@ export function isExpiringSoon(expiresAt: string | null): boolean {
 export async function fetchBenchKeyStatus(): Promise<BenchKeyStatus> {
   const res = await fetch(`${API_URL}/api/app-user/bench-key`, {
     headers: { ...authHeaders() },
-    cache: "no-store",
+    cache: 'no-store',
   })
   if (!res.ok) throw new Error(`fetchBenchKeyStatus ${res.status}`)
   return res.json()
@@ -39,13 +39,18 @@ export async function fetchBenchKeyStatus(): Promise<BenchKeyStatus> {
 
 export async function putBenchKey(apiKey: string): Promise<BenchKeyStatus> {
   const res = await fetch(`${API_URL}/api/app-user/bench-key`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json", ...authHeaders() },
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ apiKey }),
   })
   if (!res.ok) {
     let msg = `putBenchKey ${res.status}`
-    try { const b = await res.json(); msg = b?.message ?? b?.code ?? msg } catch { /* ignore */ }
+    try {
+      const b = await res.json()
+      msg = b?.message ?? b?.code ?? msg
+    } catch {
+      /* ignore */
+    }
     throw new Error(msg)
   }
   return res.json()
@@ -53,7 +58,7 @@ export async function putBenchKey(apiKey: string): Promise<BenchKeyStatus> {
 
 export async function deleteBenchKey(): Promise<void> {
   const res = await fetch(`${API_URL}/api/app-user/bench-key`, {
-    method: "DELETE",
+    method: 'DELETE',
     headers: { ...authHeaders() },
   })
   if (!res.ok) throw new Error(`deleteBenchKey ${res.status}`)
@@ -64,7 +69,7 @@ export async function deleteBenchKey(): Promise<void> {
    Keep in sync manually (small enough, avoids a build dep).
    ════════════════════════════════════════════════════════════════ */
 
-export type MemoryMode = "none" | "short" | "retrieval"
+export type MemoryMode = 'none' | 'short' | 'retrieval'
 
 export interface BenchSetSummary {
   id: string
@@ -77,15 +82,15 @@ export interface BenchSetSummary {
   task: string
 }
 
-export type MetricDirection = "higher-better" | "lower-better" | "neutral"
+export type MetricDirection = 'higher-better' | 'lower-better' | 'neutral'
 
 export type MetricCategory =
-  | "accuracy"
-  | "hallucination"
-  | "groundedness"
-  | "completion"
-  | "cost"
-  | "tool"
+  | 'accuracy'
+  | 'hallucination'
+  | 'groundedness'
+  | 'completion'
+  | 'cost'
+  | 'tool'
 
 export interface Metric {
   id: string
@@ -137,31 +142,27 @@ export interface BenchCompareResponse {
 
 export async function fetchBenchSets(): Promise<BenchSetSummary[]> {
   const res = await fetch(`${API_URL}/api/v1/kaas/bench/sets`, {
-    cache: "no-store",
+    cache: 'no-store',
   })
   if (!res.ok) throw new Error(`fetchBenchSets ${res.status}`)
   return res.json()
 }
 
-export async function runBenchCompare(
-  setId: string,
-): Promise<BenchCompareResponse> {
+export async function runBenchCompare(setId: string): Promise<BenchCompareResponse> {
   const res = await fetch(`${API_URL}/api/v1/kaas/bench/compare`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...authHeaders() },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ setId }),
   })
   if (!res.ok) {
-    let detail = ""
+    let detail = ''
     try {
       const body = await res.json()
-      detail = body?.message ?? body?.code ?? ""
+      detail = body?.message ?? body?.code ?? ''
     } catch {
       /* ignore */
     }
-    throw new Error(
-      `runBenchCompare ${res.status}${detail ? ` · ${detail}` : ""}`,
-    )
+    throw new Error(`runBenchCompare ${res.status}${detail ? ` · ${detail}` : ''}`)
   }
   return res.json()
 }
@@ -233,32 +234,27 @@ export interface InstallBuildResponse {
   activation_prompt: string
 }
 
-import { fetchWithAuth } from "./auth"
+import { fetchWithAuth } from './auth'
 
 export async function installBuild(
   agentId: string,
-  body: InstallBuildRequest,
+  body: InstallBuildRequest
 ): Promise<InstallBuildResponse> {
-  const res = await fetchWithAuth(
-    `${API_URL}/api/v1/kaas/agents/${agentId}/install-build`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    },
-  )
+  const res = await fetchWithAuth(`${API_URL}/api/v1/kaas/agents/${agentId}/install-build`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
   // 207 Multi-Status is treated as partial success — still return parsed JSON
   if (!res.ok && res.status !== 207) {
-    let detail = ""
+    let detail = ''
     try {
       const b = await res.json()
-      detail = b?.message ?? b?.code ?? ""
+      detail = b?.message ?? b?.code ?? ''
     } catch {
       /* ignore */
     }
-    throw new Error(
-      `installBuild ${res.status}${detail ? ` · ${detail}` : ""}`,
-    )
+    throw new Error(`installBuild ${res.status}${detail ? ` · ${detail}` : ''}`)
   }
   return res.json()
 }
@@ -285,24 +281,22 @@ export interface BenchRunResponse extends BenchCompareResponse {
 
 export async function runBenchWithBuild(
   taskId: string,
-  build: AgentBuildPayload,
+  build: AgentBuildPayload
 ): Promise<BenchRunResponse> {
   const res = await fetch(`${API_URL}/api/v1/kaas/bench/run`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...authHeaders() },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ taskId, build }),
   })
   if (!res.ok) {
-    let detail = ""
+    let detail = ''
     try {
       const body = await res.json()
-      detail = body?.message ?? body?.code ?? ""
+      detail = body?.message ?? body?.code ?? ''
     } catch {
       /* ignore */
     }
-    throw new Error(
-      `runBenchWithBuild ${res.status}${detail ? ` · ${detail}` : ""}`,
-    )
+    throw new Error(`runBenchWithBuild ${res.status}${detail ? ` · ${detail}` : ''}`)
   }
   return res.json()
 }
@@ -314,8 +308,8 @@ export async function runBenchWithBuild(
 
 /** Numeric coercion tolerant of "12.34%", "3 / 3", etc. */
 function coerce(v: string | number): number | null {
-  if (typeof v === "number") return v
-  if (typeof v !== "string") return null
+  if (typeof v === 'number') return v
+  if (typeof v !== 'string') return null
   // Pull first number token.
   const m = v.match(/-?\d+(?:\.\d+)?/)
   return m ? parseFloat(m[0]) : null
@@ -334,21 +328,16 @@ export interface MetricDelta {
   category: MetricCategory
 }
 
-export function computeMetricDeltas(
-  baseline: Metric[],
-  enhanced: Metric[],
-): MetricDelta[] {
+export function computeMetricDeltas(baseline: Metric[], enhanced: Metric[]): MetricDelta[] {
   const byId = new Map<string, Metric>()
   for (const m of baseline) byId.set(m.id, m)
 
   return enhanced.map((after) => {
     const before = byId.get(after.id)
-    const beforeDisplay = before
-      ? formatValue(before.value)
-      : "—"
+    const beforeDisplay = before ? formatValue(before.value) : '—'
     const afterDisplay = formatValue(after.value)
 
-    let delta = "—"
+    let delta = '—'
     let improved = false
 
     if (before) {
@@ -357,20 +346,16 @@ export function computeMetricDeltas(
       if (bn !== null && an !== null) {
         const diff = an - bn
         // "pp" for percent-valued metrics, plain diff for counts.
-        const isPct =
-          typeof before.value === "string" && before.value.includes("%")
-        const unit = isPct ? "pp" : ""
-        delta = `${diff >= 0 ? "+" : ""}${fmtNum(diff)}${unit}`
+        const isPct = typeof before.value === 'string' && before.value.includes('%')
+        const unit = isPct ? 'pp' : ''
+        delta = `${diff >= 0 ? '+' : ''}${fmtNum(diff)}${unit}`
 
-        if (after.direction === "higher-better") improved = diff > 0
-        else if (after.direction === "lower-better") improved = diff < 0
+        if (after.direction === 'higher-better') improved = diff > 0
+        else if (after.direction === 'lower-better') improved = diff < 0
         else improved = diff !== 0
-      } else if (
-        typeof before.passed === "boolean" &&
-        typeof after.passed === "boolean"
-      ) {
+      } else if (typeof before.passed === 'boolean' && typeof after.passed === 'boolean') {
         improved = !before.passed && after.passed
-        delta = improved ? "pass" : before.passed !== after.passed ? "flip" : "—"
+        delta = improved ? 'pass' : before.passed !== after.passed ? 'flip' : '—'
       }
     }
 
@@ -388,7 +373,7 @@ export function computeMetricDeltas(
 }
 
 function formatValue(v: string | number): string {
-  if (typeof v === "number") return fmtNum(v)
+  if (typeof v === 'number') return fmtNum(v)
   return v
 }
 

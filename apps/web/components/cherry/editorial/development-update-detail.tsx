@@ -45,24 +45,24 @@ export function DevelopmentUpdateDetail({
       <Title
         ref={heading}
         tabIndex={-1}
-          className="mt-5 break-keep text-[22px] font-semibold leading-[1.5] tracking-[-.03em] !text-[#e9edf2] outline-none [overflow-wrap:anywhere]"
+          className="mt-5 break-keep text-[22px] font-semibold leading-[1.5] tracking-[-.03em] !text-[var(--editorial-strong)] outline-none [overflow-wrap:anywhere]"
       >
         {entry.title}
       </Title>
-      <Description id={descriptionId} className="mt-4 text-xs !text-[#a5afbb]">
+      <Description id={descriptionId} className="mt-4 text-xs !text-[var(--editorial-muted)]">
         공개일 {entry.publishedAt ? calendarDay(entry.publishedAt).replaceAll('-', '.') : '미제공'}{' '}
         · 한국시간 기준{entry.sourceName && ` · ${entry.sourceName}`}
       </Description>
-      <section className="mt-8 border-t border-white/10 pt-6">
+      <section className="mt-8 border-t border-[var(--editorial-line)] pt-6">
         <h3 className="text-xs font-semibold tracking-wide text-[var(--editorial-accent)]">
           변경 내용
         </h3>
-        <p className="mt-3 whitespace-pre-line break-words text-[15px] leading-[1.95] text-[#cbd3dc]">
+        <p className="mt-3 whitespace-pre-line break-words text-[15px] leading-[1.95] text-[var(--editorial-ink)]">
           {entry.summary || '요약이 제공되지 않았습니다. 공식 원문에서 변경 내용을 확인하세요.'}
         </p>
       </section>
       {!!evidenceGroups.length && (
-        <section className="mt-8 border-t border-white/10 pt-6">
+        <section className="mt-8 border-t border-[var(--editorial-line)] pt-6">
           <h3 className="text-sm font-semibold">영향 및 공식 근거</h3>
           <div className="mt-4 space-y-5">
             {evidenceGroups.map((flag) => (
@@ -89,21 +89,21 @@ export function DevelopmentUpdateDetail({
         </section>
       )}
       {!!entry.activations?.length && (
-        <section className="mt-8 border-t border-white/10 pt-6">
+        <section className="mt-8 border-t border-[var(--editorial-line)] pt-6">
           <h3 className="text-sm font-semibold">네트워크 적용 일정</h3>
-          <p className="mt-2 text-xs leading-5 text-[#a5afbb]">공식 원문에 명시된 일정입니다.</p>
+          <p className="mt-2 text-xs leading-5 text-[var(--editorial-muted)]">공식 원문에 명시된 일정입니다.</p>
           <dl className="mt-4 space-y-4">
             {entry.activations.map((activation) => (
               <div
                 key={`${activation.network}-${activation.at}`}
-                className="rounded-[18px] border border-white/[.08] bg-white/[.025] p-4"
+                className="rounded-[18px] border border-[var(--editorial-line)] bg-[var(--editorial-wash)] p-4"
               >
                 <dt className="text-xs text-[var(--editorial-accent)]">
                   {NETWORK_LABELS[activation.network]}
                 </dt>
                 <dd className="mt-2 text-sm tabular-nums">
                   {updateDateTime(activation.at)} KST
-                  <span className="mt-1 block text-xs text-[#a5afbb]">
+                  <span className="mt-1 block text-xs text-[var(--editorial-muted)]">
                     {updateDateTime(activation.at, 'UTC')} UTC
                   </span>
                   <a
@@ -120,7 +120,7 @@ export function DevelopmentUpdateDetail({
           </dl>
         </section>
       )}
-      <footer className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-white/10 pt-6">
+      <footer className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-[var(--editorial-line)] pt-6">
         <UpdateSourceLink entry={entry} />
         {entry.compareUrl && (
           <a
@@ -155,7 +155,7 @@ export function DevelopmentUpdateDetail({
           e.preventDefault()
           returnFocus.current?.focus()
         }}
-        className="editorial-root !min-h-0 !w-full overflow-y-auto border-white/10 !bg-[var(--discovery-surface)] !p-0 !text-[#e9edf2] sm:!max-w-[620px] [&>button]:right-5 [&>button]:top-6 [&>button]:p-2"
+        className="editorial-root !min-h-0 !w-full overflow-y-auto border-[var(--editorial-line)] !bg-[var(--discovery-surface)] !p-0 !text-[var(--editorial-strong)] sm:!max-w-[620px] [&>button]:right-5 [&>button]:top-6 [&>button]:p-2"
       >
         {content}
       </SheetContent>

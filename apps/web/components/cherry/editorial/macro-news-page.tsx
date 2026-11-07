@@ -298,7 +298,7 @@ export function MacroNewsPage({
         <div>
           {groups.map(([day, items]) => (
             <section key={day} className="mb-8">
-              <h2 className="mb-4 border-b border-white/10 pb-3 text-sm font-semibold tabular-nums text-[var(--editorial-accent)]">
+              <h2 className="mb-4 border-b border-[var(--editorial-line)] pb-3 text-sm font-semibold tabular-nums text-[var(--editorial-accent)]">
                 {day === 'unknown' ? '공개일 미제공' : day.replaceAll('-', '.')}
               </h2>
               {items.map((entry) => (
@@ -320,7 +320,7 @@ export function MacroNewsPage({
             e.preventDefault()
             returnFocus.current?.focus()
           }}
-          className="editorial-root !min-h-0 !w-full overflow-y-auto border-white/10 !bg-[var(--discovery-surface)] px-6 pt-16 sm:!max-w-[620px] sm:px-9"
+          className="editorial-root !min-h-0 !w-full overflow-y-auto border-[var(--editorial-line)] !bg-[var(--discovery-surface)] px-6 pt-16 sm:!max-w-[620px] sm:px-9"
         >
           {detail && (
             <>

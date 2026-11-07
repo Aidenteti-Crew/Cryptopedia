@@ -11,7 +11,12 @@
 export type BuilderTypeId = 'maker' | 'analyst' | 'architect' | 'connector'
 
 /** 정규 유형 순서 — 동점 유형을 나열할 때와 섞기 전 기준 순서로만 쓴다 (화면에는 노출하지 않는다) */
-export const BUILDER_TYPE_IDS: readonly BuilderTypeId[] = ['maker', 'analyst', 'architect', 'connector']
+export const BUILDER_TYPE_IDS: readonly BuilderTypeId[] = [
+  'maker',
+  'analyst',
+  'architect',
+  'connector',
+]
 
 export interface BuilderOption {
   /** 이 선택지가 1점을 주는 유형 */
@@ -54,7 +59,10 @@ export const BUILDER_QUESTIONS: readonly BuilderQuestion[] = [
       { type: 'maker', text: '작은 프로토타입부터 만들어 실험해 봅니다.' },
       { type: 'analyst', text: '공식 문서와 작동 원리를 확인합니다.' },
       { type: 'architect', text: '설계부터 다시 검토하고 개선합니다.' },
-      { type: 'connector', text: '각 시스템이 어떻게 연결되어 있는지 살펴보고 문제의 원인을 찾습니다.' },
+      {
+        type: 'connector',
+        text: '각 시스템이 어떻게 연결되어 있는지 살펴보고 문제의 원인을 찾습니다.',
+      },
     ],
   },
   {
@@ -95,7 +103,9 @@ export function resolveBuilderOutcome(answers: BuilderAnswers): BuilderOutcome {
   const scores = scoreAnswers(answers)
   const top = Math.max(...Object.values(scores))
   const leaders = BUILDER_TYPE_IDS.filter((type) => scores[type] === top)
-  return leaders.length === 1 ? { kind: 'single', type: leaders[0] } : { kind: 'tie', types: leaders }
+  return leaders.length === 1
+    ? { kind: 'single', type: leaders[0] }
+    : { kind: 'tie', types: leaders }
 }
 
 /* ── 표시 순서 섞기 ──────────────────────────────────────── */
@@ -124,11 +134,16 @@ export function createDisplayOrders(rng: () => number = Math.random): BuilderDis
     if (allDifferent) return orders
   }
   // 극히 드문 경우의 안전한 대체: 문항마다 한 칸씩 돌린 순서
-  return BUILDER_QUESTIONS.map((_, index) => BUILDER_TYPE_IDS.map((_, i) => BUILDER_TYPE_IDS[(i + index) % BUILDER_TYPE_IDS.length]))
+  return BUILDER_QUESTIONS.map((_, index) =>
+    BUILDER_TYPE_IDS.map((_, i) => BUILDER_TYPE_IDS[(i + index) % BUILDER_TYPE_IDS.length])
+  )
 }
 
 /** 표시 순서를 적용한 선택지 목록 (화면용) */
-export function optionsInDisplayOrder(question: BuilderQuestion, order: readonly BuilderTypeId[]): BuilderOption[] {
+export function optionsInDisplayOrder(
+  question: BuilderQuestion,
+  order: readonly BuilderTypeId[]
+): BuilderOption[] {
   return order.map((type) => question.options.find((option) => option.type === type)!)
 }
 
@@ -151,8 +166,15 @@ export type BuilderTestAction =
   | { type: 'back' }
   | { type: 'reset'; orders?: BuilderDisplayOrders }
 
-export function initialBuilderTestState(orders: BuilderDisplayOrders = createDisplayOrders()): BuilderTestState {
-  return { step: 0, answers: Array.from({ length: TOTAL_QUESTIONS }, () => null), orders, chosen: null }
+export function initialBuilderTestState(
+  orders: BuilderDisplayOrders = createDisplayOrders()
+): BuilderTestState {
+  return {
+    step: 0,
+    answers: Array.from({ length: TOTAL_QUESTIONS }, () => null),
+    orders,
+    chosen: null,
+  }
 }
 
 export function isBuilderTestComplete(state: BuilderTestState) {
@@ -172,11 +194,15 @@ export function getBuilderTestView(state: BuilderTestState): BuilderTestView {
   if (!isBuilderTestComplete(state)) return { kind: 'question' }
   const outcome = resolveBuilderOutcome(state.answers)
   if (outcome.kind === 'single') return { kind: 'result', type: outcome.type, fromTie: false }
-  if (state.chosen && outcome.types.includes(state.chosen)) return { kind: 'result', type: state.chosen, fromTie: true }
+  if (state.chosen && outcome.types.includes(state.chosen))
+    return { kind: 'result', type: state.chosen, fromTie: true }
   return { kind: 'choose', types: outcome.types }
 }
 
-export function builderTestReducer(state: BuilderTestState, action: BuilderTestAction): BuilderTestState {
+export function builderTestReducer(
+  state: BuilderTestState,
+  action: BuilderTestAction
+): BuilderTestState {
   switch (action.type) {
     case 'answer': {
       if (isBuilderTestComplete(state)) return state

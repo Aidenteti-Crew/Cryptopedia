@@ -1,15 +1,20 @@
 {
-  "breadcrumb": [
-    "컬렉션",
-    "탐색"
-  ],
+  "breadcrumb": ["컬렉션", "탐색"],
   "title": "체인 컬렉션",
   "subtitle": "한 체인씩 깊이 읽는 블록체인 백과사전.",
   "currentChainId": "avalanche",
   "items": [
     {
-      "id": "avalanche",
+      "id": "ethereum",
       "order": 1,
+      "name": "Ethereum",
+      "summary": "컬렉션 준비 중",
+      "status": "COMING_SOON",
+      "logoUrl": "/cryptopedia/assets/chains/ethereum.svg"
+    },
+    {
+      "id": "avalanche",
+      "order": 2,
       "name": "Avalanche",
       "summary": "핵심 개념 · 빌더 · 아카데미 · 생태계",
       "status": "AVAILABLE",
@@ -20,7 +25,7 @@
     },
     {
       "id": "injective",
-      "order": 2,
+      "order": 3,
       "name": "Injective",
       "summary": "컬렉션 준비 중",
       "status": "COMING_SOON",
@@ -31,7 +36,7 @@
     },
     {
       "id": "midnight",
-      "order": 3,
+      "order": 4,
       "name": "Midnight",
       "summary": "컬렉션 준비 중",
       "status": "COMING_SOON",

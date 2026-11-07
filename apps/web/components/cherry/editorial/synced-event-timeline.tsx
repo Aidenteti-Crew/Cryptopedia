@@ -161,7 +161,7 @@ export function SyncedDateList<T extends { id: string; startsAt: string; endsAt:
         >
           {appearance === 'timeline' && (
             <span
-              className={`absolute -left-[5px] top-1.5 h-2 w-2 rounded-full ${date === selectedDay ? 'bg-[var(--editorial-accent)]' : 'bg-[#67717e]'}`}
+              className={`absolute -left-[5px] top-1.5 h-2 w-2 rounded-full ${date === selectedDay ? 'bg-[var(--editorial-accent)]' : 'bg-[var(--editorial-faint)]'}`}
             />
           )}
           <h2

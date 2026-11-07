@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { rememberDiscoveryScroll } from './discovery-state'
 import { HUB_ENTRY_IDS, isHubEntry, type HubData } from '@/lib/cryptopedia-hub'
 
@@ -40,6 +40,9 @@ import { FeedPage } from './feed-page'
 import { ProjectDirectoryPage } from './project-directory-page'
 import { HubLibraryPage } from './hub-library-page'
 import { HubDetailPage } from './hub-detail-page'
+import { MyPathPage } from './my-path-page'
+import { MyPathMobileBar, MyPathSidebarCard } from './my-path-sidebar'
+import { KnowledgeOnboarding } from './my-path-onboarding'
 import { getEditorialBreadcrumbs, menuEntryFor } from './editorial-breadcrumb'
 import { useEditorialChain } from './editorial-chain-provider'
 import { getChainTheme } from '@/lib/chain-theme'
@@ -101,6 +104,7 @@ type LoadedView =
   | { kind: 'article'; data: ArticleDetail }
   | { kind: 'book'; data: BookDetail }
   | { kind: 'builder-test' }
+  | { kind: 'my-path' }
 
 type LoadState =
   | { status: 'loading' }
@@ -118,6 +122,7 @@ const NAV_SCREEN_IDS = new Set<ScreenId>([
   'event-archive',
   'chains',
   'ecosystem',
+  'my-path',
 ])
 
 export interface LoadEditorialOptions {
@@ -191,6 +196,9 @@ export async function loadEditorialView(
     case 'builder-test':
       // 정적 화면 — 불러올 데이터가 없다 (문항은 lib/builder-test.ts)
       return { kind: 'builder-test' }
+    case 'my-path':
+      // 경로마다 그 체인의 hub 를 따로 불러온다 (MyPathPage 가 loadHub 로)
+      return { kind: 'my-path' }
     case 'article':
     case 'book':
       throw new Error(`Invalid top-level screen: ${view.id}`)
@@ -213,6 +221,8 @@ export function EditorialApp({
   const [loadState, setLoadState] = useState<LoadState>({ status: 'loading' })
   const [retryVersion, setRetryVersion] = useState(0)
   const { activeChain, setActiveChain } = useEditorialChain()
+  // 내 학습 경로(사이드바 카드 · /my-path)가 쓰는 hub — 경로의 체인마다 따로 불러온다
+  const loadChainHub = useCallback((chainId: string) => repository.getHub(chainId), [])
 
   const chainTheme = getChainTheme(activeChain)
   const activeScreen = view.kind === 'screen' ? view.id : view.parent
@@ -307,12 +317,14 @@ export function EditorialApp({
               {...homeProps}
               chainId={activeChain.id}
               chainLogoUrl={activeChain.logoUrl}
-              onOpenProjectCategory={(category) =>
-                router.push(
-                  `${pathForEditorialView({ kind: 'screen', id: 'projects' })}${category ? `?category=${encodeURIComponent(category)}` : ''}`
-                )
-              }
             />
+          )
+          // 블록체인 지식에 처음 들어오면(경로 없음 · 나가기 안 함) 전체 화면 '내 경로 만들기'
+          content = (
+            <>
+              {content}
+              <KnowledgeOnboarding hub={loaded.hub} onCreated={() => openArticle('my-path')} />
+            </>
           )
         }
         break
@@ -395,6 +407,15 @@ export function EditorialApp({
           <BookDetailPage book={loaded.data} onOpenChapter={(id) => openArticle(id, 'projects')} />
         )
         break
+      case 'my-path':
+        content = (
+          <MyPathPage
+            loadHub={loadChainHub}
+            onOpen={(id) => openArticle(id, 'fundamentals')}
+            onOpenScreen={selectScreen}
+          />
+        )
+        break
       case 'builder-test': {
         // 홈의 CTA에서 들어온다. 체인별 콘텐츠가 없는 체인은 안내만 보여 준다.
         const homeContent = getChainHomeContent(activeChain.id)
@@ -434,13 +455,37 @@ export function EditorialApp({
       activeChainName={activeChain.name}
       activeChainLogoUrl={activeChain.logoUrl}
       chainTheme={chainTheme}
-      onLogoClick={() => router.push('/about')}
+      onLogoClick={() => router.push('/')}
       onSelectChain={(chain) => {
         setActiveChain(chain)
         selectScreen('ecosystem')
       }}
       onSelect={selectScreen}
       onOpenEntry={(id) => openArticle(id)}
+      sidebarFooter={
+        <MyPathSidebarCard
+          loadHub={loadChainHub}
+          active={view.kind === 'screen' && view.id === 'my-path'}
+          onOpenPath={() => selectScreen('my-path')}
+          onOpenStep={(step) =>
+            step.kind === 'screen'
+              ? selectScreen(step.id as ScreenId)
+              : openArticle(step.id, 'fundamentals')
+          }
+        />
+      }
+      mobileBar={
+        <MyPathMobileBar
+          loadHub={loadChainHub}
+          hidden={view.kind === 'screen' && view.id === 'my-path'}
+          onOpenPath={() => selectScreen('my-path')}
+          onOpenStep={(step) =>
+            step.kind === 'screen'
+              ? selectScreen(step.id as ScreenId)
+              : openArticle(step.id, 'fundamentals')
+          }
+        />
+      }
     >
       <EditorialPageTransition transitionKey={transitionKey}>{content}</EditorialPageTransition>
     </EditorialShell>

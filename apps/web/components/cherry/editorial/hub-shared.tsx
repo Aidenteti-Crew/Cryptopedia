@@ -34,13 +34,13 @@ export function ScopeBadge({ scope }: { scope: ContentScope }) {
   )
 }
 
-const ORIGIN_LABEL = {
+export const ORIGIN_LABEL = {
   OFFICIAL: '공식',
   STANDARD: '공통 표준·기술 문서',
   COMMUNITY: '커뮤니티',
   CURATED: '큐레이션',
 }
-const MATERIAL_LABEL = {
+export const MATERIAL_LABEL = {
   DOCS: '공식 문서',
   ACADEMY: '공식 강의',
   ACP: '공식 제안',

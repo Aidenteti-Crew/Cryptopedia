@@ -58,7 +58,7 @@ export function ReleaseHistory({
             return (
               <li
                 key={entry.id}
-                className={`relative pb-7 pl-7 last:pb-0 sm:pl-9 ${stage === 'prerelease' ? '[&_h3]:text-[#b7c1cc]' : ''}`}
+                className={`relative pb-7 pl-7 last:pb-0 sm:pl-9 ${stage === 'prerelease' ? '[&_h3]:text-[var(--editorial-muted)]' : ''}`}
               >
                 {index < entries.length - 1 && (
                   <span

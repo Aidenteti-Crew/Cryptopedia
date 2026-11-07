@@ -123,3 +123,27 @@ test('the shared Workshop card keeps legacy drag behavior and supports editorial
   assert.match(editorial, /type="checkbox"[^>]*checked=""/)
   assert.match(editorial, /지침 보기/)
 })
+
+test('structured concept fields stay inside each concept\'s own sources and relations', () => {
+  for (const concept of data.concepts) {
+    for (const point of concept.points ?? [])
+      for (const id of point.sourceIds) assert.ok(concept.sourceIds.includes(id), `${concept.id}: ${id}`)
+    for (const relation of concept.relations)
+      if (relation.type === 'PREREQUISITE') assert.ok(relation.reason, `${concept.id} → ${relation.id}`)
+  }
+})
+
+test('a concept page reads lede, prerequisites, cited points, status and audience in order', () => {
+  const html = renderToStaticMarkup(
+    <HubDetailPage id="concept-validator" data={data} onOpen={noop} onOpenInGraph={noop} />
+  )
+  const order = ['먼저 읽으면 좋아요', '핵심 포인트', '지금 상태', '누구에게 해당하나요'].map((label) =>
+    html.indexOf(label)
+  )
+  order.forEach((index) => assert.ok(index > 0))
+  assert.deepEqual([...order].sort((a, b) => a - b), order)
+  assert.match(html, /검증자는 합의에 참여하는 주체라서/)
+  assert.match(html, /href="#concept-source-2"/)
+  assert.match(html, /id="concept-source-2"/)
+  assert.match(html, /체이너리 초안 · 검토 중/)
+})

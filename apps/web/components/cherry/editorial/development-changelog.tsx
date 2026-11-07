@@ -91,7 +91,7 @@ export function DevelopmentChangelog({
                             type="button"
                             aria-label={`${p.name} 업데이트만 보기`}
                             onClick={() => onProductSelect(p.id)}
-                            className="border border-white/10 bg-white/[.035] px-2.5 py-1 text-[var(--editorial-accent)] hover:border-[var(--editorial-accent)]"
+                            className="border border-[var(--editorial-line)] bg-[var(--editorial-wash)] px-2.5 py-1 text-[var(--editorial-accent)] hover:border-[var(--editorial-accent)]"
                           >
                             {p.name}
                           </button>
@@ -100,7 +100,7 @@ export function DevelopmentChangelog({
                         <span className="text-[var(--editorial-muted)]">Avalanche 생태계</span>
                       )}
                       {entry.version && (
-                        <span className="rounded border border-white/10 px-1.5 py-0.5 font-mono text-[#cbd3dc]">
+                        <span className="rounded border border-[var(--editorial-line)] px-1.5 py-0.5 font-mono text-[var(--editorial-ink)]">
                           {entry.version}
                         </span>
                       )}

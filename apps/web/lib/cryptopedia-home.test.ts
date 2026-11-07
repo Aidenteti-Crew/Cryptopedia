@@ -43,18 +43,24 @@ test('dated news sorts by actual time and undated previews follow their editoria
 })
 
 test('project heatmap preserves project totals while grouping small categories', () => {
-  const items = getProjectHeatmapItems({
-    categories: [
-      { name: 'Wallets', count: 3 },
-      { name: 'DeFi', count: 5 },
-      { name: 'Payments', count: 2 },
-    ],
-    total: 10,
-  }, 2)
+  const items = getProjectHeatmapItems(
+    {
+      categories: [
+        { name: 'Wallets', count: 3 },
+        { name: 'DeFi', count: 5 },
+        { name: 'Payments', count: 2 },
+      ],
+      total: 10,
+    },
+    2
+  )
   assert.deepEqual(items, [
     { name: 'DeFi', category: 'DeFi', count: 5, percent: 50 },
     { name: 'Wallets', category: 'Wallets', count: 3, percent: 30 },
     { name: '그 외 1개 분야', category: null, count: 2, percent: 20 },
   ])
-  assert.equal(items.reduce((sum, item) => sum + item.count, 0), 10)
+  assert.equal(
+    items.reduce((sum, item) => sum + item.count, 0),
+    10
+  )
 })
