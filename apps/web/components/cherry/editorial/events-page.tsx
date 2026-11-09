@@ -15,6 +15,7 @@ import {
 } from './discovery-controls'
 import { DiscoveryFilterPanel, DiscoveryCheckboxGroup, DiscoveryResults } from './discovery-filters'
 import { useDiscoveryState, DiscoveryScrollRestore, useDiscoveryView } from './discovery-state'
+import { RegistrationBadge } from './registration-badge'
 
 const STATUS: Record<EventStatus, string> = {
   UPCOMING: '예정',
@@ -68,6 +69,7 @@ function EventRow({ event }: { event: EventEntry }) {
         <span data-color={statusColor} className="editorial-color-badge">
           {STATUS[event.status]}
         </span>
+        <RegistrationBadge {...event} />
       </div>
       <div className="flex items-start gap-4">
         <div className="min-w-0 flex-1">

@@ -58,8 +58,9 @@
 - **파일.** 새 `components/cherry/editorial/registration-badge.tsx` + `.test.tsx`
 - **만들 것.** `registrationStatus` + `daysUntilDeadline` → "모집중" / "마감 임박 D-2" / "마감" / 표시 안 함(UNKNOWN). 색은 `data-color` 토큰(`globals.css:512`).
 - **확인.**
-  - [ ] 테스트: 네 상태 각각 문구, UNKNOWN 은 아무것도 안 그림.
-  - [ ] `EventRow`(`events-page.tsx:34`)에 붙여 `/knowledge/events` 에서 눈으로 확인 (스냅샷에 값이 없으면 테스트 데이터로).
+  - [x] 테스트: 네 상태 문구, D-n, UNKNOWN 은 안 그림, 종료·취소 행사엔 "모집 마감" 반복 안 함, 카드에 상태 배지 옆으로 붙음 (`registration-badge.test.tsx`, `ecosystem-pages.test.tsx`; 웹 214 통과, 2026-11-09)
+  - [x] `/knowledge/events` 브라우저 확인. 스냅샷은 전부 UNKNOWN 이라 응답을 화면 안에서만 바꿔 확인("모집중"·"마감 임박 D-2"·"모집 마감"), 원래 데이터로는 배지 0개.
+  - 결정: 마감 임박은 rose (주황 "예정" 배지와 붙으면 구분 안 됨, 화면에서 확인). 모집중 blue, 모집 마감 neutral.
 
 ### A2. `/events` 목록 페이지 (Luma 구조 참고 · Chainery 디자인, `1-plan.md` §5-0)
 - **파일.** `app/(chainery)/events/page.tsx`, 새 `components/cherry/editorial/platform-events-page.tsx` + 테스트

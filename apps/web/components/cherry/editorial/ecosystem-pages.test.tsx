@@ -225,6 +225,20 @@ test('renders event calendar, list switch and readable status labels', () => {
   assert.doesNotMatch(html, /전체 보기 →/)
 })
 
+test('event cards show the registration badge next to the event status', () => {
+  const html = renderToStaticMarkup(
+    <EventsPage
+      events={[
+        event({ id: 'soon', title: 'Soon', registrationStatus: 'CLOSING_SOON', daysUntilDeadline: 3 }),
+        event({ id: 'unknown', title: 'Unknown' }),
+      ]}
+    />
+  )
+
+  assert.match(html, />예정<\/span><span data-color="rose" class="editorial-color-badge">마감 임박 D-3</)
+  assert.equal((html.match(/마감 임박/g) ?? []).length, 1)
+})
+
 test('renders the dedicated Figma event archive copy', () => {
   const html = renderToStaticMarkup(
     <EventsPage archiveMode events={[event({ id: 'past', title: 'Past', status: 'PAST' })]} />
