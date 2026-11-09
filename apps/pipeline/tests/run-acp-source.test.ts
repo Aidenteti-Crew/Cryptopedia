@@ -30,6 +30,9 @@ describe('runAcpSource', () => {
           })
         )
       }
+      if (url.pathname.endsWith('/commits')) {
+        return new Response(JSON.stringify([]))
+      }
       if (url.pathname.includes('/git/trees/head-1')) {
         return new Response(
           JSON.stringify({

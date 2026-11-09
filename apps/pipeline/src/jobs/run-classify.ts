@@ -1,8 +1,10 @@
 import { buildCategoryRecord, type CategoryRecord } from '../classify/category-records.js'
 import { classifyArticle, type ClassificationOutcome } from '../classify/classify-article.js'
 import { LlmFatalError, type LlmClient } from '../classify/llm-client.js'
+import { parseAcpHeader, protocolStageFromAcp } from '../classify/protocol-stage.js'
 import {
   fetchPendingArticles,
+  findIncludingRelease,
   insertCategoryRecord,
   isKnownTimezone,
   saveClassificationFailure,
@@ -106,6 +108,12 @@ export async function runClassify(
         )
         let record = built.record
         let skippedReason = built.skippedReason
+        const acp =
+          record?.type === 'TECH_UPDATE' && article.body ? parseAcpHeader(article.body) : null
+        if (record?.type === 'TECH_UPDATE' && acp) {
+          const includedIn = await findIncludingRelease(query, acp.number)
+          record = { ...record, stage: protocolStageFromAcp(acp, article.url, includedIn) }
+        }
         if (record?.type === 'EVENT' && !(await isKnownTimezone(query, record.timezone))) {
           record = null
           skippedReason = 'event timezone unknown to Postgres'

@@ -8,6 +8,11 @@ import type {
   TechRecord,
 } from '../classify/category-records.js'
 import type { ClassificationOutcome } from '../classify/classify-article.js'
+import {
+  acpDocumentLinkPattern,
+  pickIncludingRelease,
+  type IncludedRelease,
+} from '../classify/protocol-stage.js'
 import { findMatchingEvent, linkEventSource } from './chain-event-repository.js'
 import type { QueryFn } from './query.js'
 
@@ -138,11 +143,15 @@ async function insertMacro(query: QueryFn, articleId: string, r: MacroRecord): P
 }
 
 async function insertTech(query: QueryFn, articleId: string, r: TechRecord): Promise<boolean> {
+  const stage = r.stage
   const result = await query(
     `INSERT INTO content.tech_update
        (id, article_raw_id, kind, network, upgrade_name, version, title, change_summary,
-        activated_at, importance, published_at, chain)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        activated_at, importance, published_at, chain,
+        lifecycle_stage, stage_evidence, stage_source_url, proposal_created_at,
+        proposal_updated_at, included_in_release, included_release_url)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,
+             $13, $14, $15, $16, $17, $18, $19)
      ON CONFLICT (article_raw_id) WHERE (revoked_at IS NULL) DO NOTHING`,
     [
       uuidv7(),
@@ -157,9 +166,38 @@ async function insertTech(query: QueryFn, articleId: string, r: TechRecord): Pro
       r.importance,
       r.publishedAt,
       r.chain,
+      stage?.stage ?? null,
+      stage?.evidence ?? null,
+      stage?.sourceUrl ?? null,
+      stage?.proposalCreatedAt ?? null,
+      stage?.proposalUpdatedAt ?? null,
+      stage?.includedIn?.name ?? null,
+      stage?.includedIn?.url ?? null,
     ]
   )
   return (result.rowCount ?? 0) > 0
+}
+
+// Release notes (any collected releases.atom source) that link to the proposal's document.
+export async function findIncludingRelease(
+  query: QueryFn,
+  acpNumber: number
+): Promise<IncludedRelease | null> {
+  const result = await query(
+    `SELECT ar.title, ar.url, ar.published_at
+       FROM content.article_raw ar
+       JOIN content.source s ON s.id = ar.source_id
+      WHERE s.url_handle LIKE '%/releases.atom'
+        AND ar.content_raw ~ $1`,
+    [acpDocumentLinkPattern(acpNumber)]
+  )
+  return pickIncludingRelease(
+    result.rows.map((r) => ({
+      name: String(r.title),
+      url: String(r.url),
+      publishedAt: new Date(r.published_at as string | Date),
+    }))
+  )
 }
 
 // The same event is often announced several times, and also listed in a calendar. If an active

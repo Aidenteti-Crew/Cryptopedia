@@ -21,7 +21,10 @@ function row(id: string, title: string) {
 
 // Stub for the handful of statements run-classify issues. Category tables report "created" the
 // first time an id is seen and "already there" afterwards, like ON CONFLICT DO NOTHING.
-function fakeQuery(pending: ReturnType<typeof row>[]) {
+function fakeQuery(
+  pending: ReturnType<typeof row>[],
+  releases: { title: string; url: string; published_at: Date }[] = []
+) {
   const writes: { sql: string; params: unknown[] }[] = []
   const seen = new Set<string>()
   const query: QueryFn = async (sql, params) => {
@@ -30,6 +33,7 @@ function fakeQuery(pending: ReturnType<typeof row>[]) {
     if (text.startsWith('SELECT 1 FROM pg_timezone_names')) {
       return { rows: [], rowCount: params[0] === 'Atlantic/Reykjavik' ? 0 : 1 }
     }
+    if (text.startsWith('SELECT ar.title')) return { rows: releases, rowCount: releases.length }
     writes.push({ sql: text, params })
     if (text.startsWith('INSERT INTO content.tech_update')) {
       const key = `tech:${params[1]}`
@@ -213,5 +217,57 @@ describe('runClassify', () => {
     await runClassify(query, llm, { ...options, concurrency: 3 })
 
     expect(peak).toBe(3)
+  })
+
+  it('records the proposal stage, its dates and the release that included it', async () => {
+    const acpSource = 'https://github.com/avalanche-foundation/ACPs'
+    const acp = {
+      ...row('7', 'ACP-267'),
+      url: 'https://github.com/avalanche-foundation/ACPs/blob/abc/ACPs/267-uptime-requirement-increase/README.md',
+      body: [
+        'Event: ACP_CREATED',
+        'ACP: 267',
+        'Status: Proposed',
+        'Track: Standards',
+        'Authors: A',
+        'Created: 2026-02-02T00:00:00Z',
+        'Updated: 2026-07-30T00:00:00Z',
+        '',
+        '| ACP | 267 |',
+      ].join('\n'),
+      source_url: acpSource,
+    }
+    const { query, writes } = fakeQuery(
+      [acp],
+      [
+        { title: 'v1.15.0-fuji', url: 'https://github.com/ava-labs/avalanchego/releases/tag/v1.15.0-fuji', published_at: new Date('2026-07-21') },
+        { title: 'v1.15.0', url: 'https://github.com/ava-labs/avalanchego/releases/tag/v1.15.0', published_at: new Date('2026-09-08') },
+      ]
+    )
+
+    await runClassify(query, llmByTitle({ 'ACP-267': tech }), {
+      ...options,
+      sourcesByUrl: { [acpSource]: { contentKind: 'GOVERNANCE', chain: 'avalanche' } },
+    })
+
+    const insert = writes.find((w) => w.sql.startsWith('INSERT INTO content.tech_update'))
+    expect(insert?.params.slice(12)).toEqual([
+      'PROPOSED',
+      'Status: Proposed',
+      acp.url,
+      '2026-02-02T00:00:00Z',
+      '2026-07-30T00:00:00Z',
+      'v1.15.0',
+      'https://github.com/ava-labs/avalanchego/releases/tag/v1.15.0',
+    ])
+  })
+
+  it('leaves the stage empty for releases and other non-proposal updates', async () => {
+    const { query, writes } = fakeQuery([row('1', 'Release')])
+
+    await runClassify(query, llmByTitle({ Release: tech }), options)
+
+    const insert = writes.find((w) => w.sql.startsWith('INSERT INTO content.tech_update'))
+    expect(insert?.params.slice(12)).toEqual([null, null, null, null, null, null, null])
   })
 })
