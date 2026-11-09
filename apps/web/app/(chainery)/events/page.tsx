@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { PlatformPlaceholderPage } from '@/components/cherry/editorial/platform-placeholder-page'
+import { PlatformEventsPage } from '@/components/cherry/editorial/platform-events-page'
 
 /* 플랫폼 행사 — 모든 체인의 행사 + 운영자가 직접 올리는 행사 (체인별 크롤링 행사는 /knowledge/events) */
 export const metadata: Metadata = {
@@ -9,10 +9,5 @@ export const metadata: Metadata = {
 }
 
 export default function Page() {
-  return (
-    <PlatformPlaceholderPage
-      title="행사/이벤트"
-      description="모든 체인의 행사와 chainery가 직접 여는 행사를 이곳에 모을 예정입니다."
-    />
-  )
+  return <PlatformEventsPage />
 }

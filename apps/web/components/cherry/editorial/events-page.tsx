@@ -16,6 +16,7 @@ import {
 import { DiscoveryFilterPanel, DiscoveryCheckboxGroup, DiscoveryResults } from './discovery-filters'
 import { useDiscoveryState, DiscoveryScrollRestore, useDiscoveryView } from './discovery-state'
 import { RegistrationBadge } from './registration-badge'
+import { eventHost, eventLocation } from '@/lib/platform-events'
 
 const STATUS: Record<EventStatus, string> = {
   UPCOMING: '예정',
@@ -34,17 +35,14 @@ const CATEGORY: Record<string, string> = {
 
 function EventRow({ event }: { event: EventEntry }) {
   const [imageFailed, setImageFailed] = useState(false)
-  const hostSummary = /^Hosted by ([^\n.!?]{1,200})$/i.exec(event.summary.trim())?.[1]
-  const organizer = hostSummary ?? event.organizer
+  const { host: organizer, summaryIsHost } = eventHost(event)
   const date = new Intl.DateTimeFormat('ko-KR', {
     timeZone: 'Asia/Seoul',
     month: 'numeric',
     day: 'numeric',
     ...(event.allDay ? {} : { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' as const }),
   })
-  const location = event.isOnline
-    ? '온라인'
-    : [event.venueName, event.city].filter(Boolean).join(' · ') || '장소 정보 없음'
+  const location = eventLocation(event)
   const register = !!event.registrationUrl && ['UPCOMING', 'ONGOING'].includes(event.status)
   const primary = register ? event.registrationUrl : (event.sourceUrl ?? event.registrationUrl)
   const statusColor =
@@ -94,7 +92,7 @@ function EventRow({ event }: { event: EventEntry }) {
         <p className="mt-3 text-xs leading-5 text-[var(--editorial-muted)]">{organizer} 주최</p>
       )}
       <p className="mt-1 text-xs leading-5 text-[var(--editorial-muted)]">{location}</p>
-      {event.summary && !hostSummary && (
+      {event.summary && !summaryIsHost && (
         <p className="mt-3 whitespace-pre-line break-words text-sm leading-6 text-[var(--editorial-muted)] [overflow-wrap:anywhere]">
           {event.summary}
         </p>
