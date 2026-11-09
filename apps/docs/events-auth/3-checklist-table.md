@@ -109,13 +109,26 @@
 - **파일.** `apps/web/app/login/page.tsx`, 새 이메일 폼 컴포넌트 + 테스트
 - **만들 것.** Chainery 토큰(grape)으로 다시 그림. Google 버튼 + 이메일 입력 → `POST /api/app-user/signin` → "메일을 확인하세요". 재발송 60초 쿨다운. `?next=` 복귀 유지(`page.tsx:16`).
 - **확인.**
-  - [ ] 테스트: 잘못된 이메일 막음, 성공 시 안내 문구, 쿨다운 중 버튼 비활성.
-  - [ ] 로컬 API + 테스트 메일 주소로 메일 수신 → 링크 클릭 → 로그인 상태. (Resend 도메인 검증은 사용자 작업)
+  - [x] 테스트: 잘못된 이메일 막음, 보내는 중·보냄(15분 안내, 60초 대기)·오류 문구, 요청 본문 `{email, from: 'main'}`, 429·실패·연결 끊김 문구 (`lib/email-login.test.ts`, `components/auth/email-login-form.test.tsx`; 웹 230 통과, 2026-11-09)
+  - [x] 브라우저 `/login`: 주소가 완성될 때만 버튼 켜짐, API 꺼짐 → "서버에 연결하지 못했어요", 응답을 탭 안에서만 성공으로 바꿔 "보냈어요 + 58초 대기" 확인, 375px 가로 스크롤 없음.
+  - [ ] 로컬 API + 실제 메일 수신 → 링크 클릭 → 로그인 상태 (API `.env`·Resend 도메인 검증은 사용자 작업)
+  - 같이 바꾼 것: API `main.ts` 로그인 요청 제한에 `/api/app-user/signin` 추가(아무 주소로나 메일을 보낼 수 있는 경로라). 실행 확인은 API 를 띄운 뒤.
+  - 바뀐 동작: Google 버튼 오류(예: 로컬에 클라이언트 ID 없음)가 오류 화면으로 넘어가지 않고 버튼 아래 한 줄로 → 이메일 로그인은 계속 쓸 수 있음.
+  - 고친 버그(2026-11-09, 사용자 발견): 위 변경 때 `onError` 가 단계를 되돌리지 않아, Google 토큰을 받은 뒤 API 가 실패하면 "로그인하는 중…"에 멈춤. `onError` 에서 입력 화면으로 돌아가게 수정. 브라우저에서 GIS 를 가짜로 바꿔 토큰 콜백 → API 실패 → 입력 화면 복귀 확인.
+  - Google 버튼: `/login` 에서만 사각형·입력칸과 같은 폭(`GoogleLoginButton fill`, Google 최대 400px). `/start/login` 은 기존 알약 모양 그대로.
+  - Google 로그인 로컬 설정: 새 Google Cloud 프로젝트 `chainery`(aidenteticrew-org) 클라이언트, 승인 출처에 localhost:3001. 웹은 `apps/web/.env.local` 의 `NEXT_PUBLIC_GOOGLE_CLIENT_ID`. API 는 `apps/api/.env` 의 `GOOGLE_CLIENT_ID`(루트 `.env` 는 API 가 안 읽음). 옛 클라이언트와 바꾸면 `/start` Google 로그인이 막히므로 API 가 두 ID 를 함께 허용하거나 함께 교체.
+  - Claude 앱 안 브라우저에서는 Google 팝업이 `/gsi/transform` 에서 멈춤(팝업이 별도 탭이라 결과가 원래 창으로 못 돌아오는 것으로 추정). 확인은 일반 Chrome 에서.
+  - 남음: 로그인 메일 제목·본문이 아직 "Cherry"(API `app-user-auth.service.ts` signin). 브랜드 문구 정리는 후속.
 
 ### B2. 헤더 로그인 상태
 - **파일.** `components/cherry/editorial/about-header.tsx`, `lib/auth.ts` (`useAuthTick` :172 활용)
 - **만들 것.** 비로그인 "로그인", 로그인 시 아바타/이름 + 메뉴(내 계정 · 로그아웃). 데스크톱·모바일 시트 둘 다.
-- **확인.** [ ] 테스트(토큰 있음/없음 렌더), [ ] 브라우저에서 로그인 → 헤더 변화 → 로그아웃. 콘텐츠는 비로그인으로도 그대로 보임.
+- **확인.**
+  - [x] 테스트: 토큰 → 로그인/만료/비로그인 판정, 이니셜, `?next=` 복귀(로그인 페이지 제외), 헤더 두 상태 렌더 (`lib/session.test.ts`, `components/auth/account-control.test.tsx`; 웹 239 통과, 2026-11-09)
+  - [x] 브라우저 `/events`(데스크톱·375px): 비로그인 "로그인" → `/login?next=%2Fevents`. 서명 없는 테스트 토큰으로 이니셜 버튼·메뉴(계정 이메일·로그아웃). 로그아웃 → 서버 요청(API 꺼져 실패) 후에도 토큰 지워지고 "로그인" 복귀. 만료 토큰 → refresh 시도 실패 → 토큰 지움.
+  - 범위: 플랫폼 헤더(`about-header.tsx`, `/`·`/events`·`/login`·`/careers`). 지식 섹션(`/knowledge`, 흰 테마의 EditorialShell)에는 아직 없음 → 후속.
+  - "내 계정" 메뉴는 `/account`(B3) 생기면 추가. 지금은 없는 페이지로 가는 링크를 두지 않음.
+  - 남음: 실제 로그인(이름·사진 표시는 `/me` 로) 확인은 API 를 띄운 뒤.
 
 ### B3. `/account` + 계정 삭제
 - **API.** 새 `DELETE /api/app-user/me` (`AuthGuard('jwt')`). `revoked_at = now()`, `is_active = false`, Redis 리프레시 키 삭제, 쿠키 제거. JWT 전략이 매 요청 `revoked_at` 을 확인하므로(`role-jwt.strategy.ts`) 즉시 차단된다. 이메일·벤치 키 평문을 응답·로그에 남기지 않는다. 벤치 키 컬럼은 함께 비운다.

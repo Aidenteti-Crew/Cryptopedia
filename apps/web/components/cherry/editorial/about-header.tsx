@@ -14,6 +14,8 @@ import {
   type ScreenId,
 } from '@/lib/cryptopedia-taxonomy'
 
+import { AccountControl } from '@/components/auth/account-control'
+
 import { EditorialBrand } from './editorial-brand'
 import styles from './about-page.module.css'
 
@@ -112,8 +114,8 @@ export function AboutHeader() {
           </div>
         </nav>
 
-        {/* 오른쪽 자리는 로그인 · 내 정보가 들어올 때까지 비워 둔다 */}
         <div className={styles.headerActions}>
+          <AccountControl />
           <div className={styles.mobileOnly}>
             <PlatformMobileNav />
           </div>
