@@ -30,7 +30,7 @@
 | 행사 DB | `content.chain_event` + `chain_event_source`(한 행사·여러 출처) · `event_key` 안정 키 · `status_override`(취소/연기) · `confidence` | 모집 상태·마감일·참가 대상·참여 수준·참가비·행사 유형 컬럼 · **검수 상태** · 변경 이력 · `chain NOT NULL` 완화(KISA 행사는 체인 무관) |
 | 행사 수집 | Luma 캘린더 어댑터(`apps/pipeline/src/adapters/luma-calendar-adapter.ts`) · ICS 파서 · 중복 판별(`events/dedup.ts`: 시작시각 ±2h + 제목 유사도) · sanitize | KISA·KBIPA·ICT콤플렉스·BUIDL Korea 어댑터 · 사이트별 robots/약관 확인 · 관련성 필터 · 출처 간 병합(공공 공지 ↔ 이벤터스 신청 페이지) |
 | 행사 API | `GET /api/events` + zod 계약(`chain_feed/event-contract.ts`) · 상태를 응답 시점에 계산 | 새 필드 계약 · 필터(유형/지역/온오프/모집중/대상) · `published` 만 노출 · 상세 `GET /api/events/:id` |
-| 행사 화면 | `/events` · `/events/archive` · `editorial-calendar` · `synced-event-timeline` | Luma식 목록 카드 · 상세 페이지 · 필터 바 · 상단 메뉴 "행사" 정리 |
+| 행사 화면 | `/knowledge/events` · `/knowledge/events/archive` · `/knowledge/events/[id]` (체인별 수집 행사, 2026-11 deploy에서 이동) · `/events` 자리 표시 페이지 · `editorial-calendar` · `synced-event-timeline` | `/events` 채우기: Luma **구조 참고**·Chainery 디자인의 목록 카드 · 상세 페이지 · 필터 바 · 상단 메뉴 "행사" 정리 (§5) |
 | 소식(업데이트) | `/updates` · `official-releases.ts`(GitHub 릴리스) · `update-evidence.ts`(Fuji/Mainnet 활성화 근거) | **제안/확정/적용** 단계 표기 · 3문항 요약 포맷 · 검수→발행 |
 | 인증 | 이메일 매직링크(`signin`/`login`) · Google 로그인(`google-login`, google_sub→email 백필) · refresh(Redis+쿠키) · logout · me | 로그인 화면에 이메일 입력 복구 · 계정 설정 화면 · **계정 삭제** · 로그인으로 쓸 사용자 기능(관심 행사 저장) |
 | 운영자 | crawler_registry PR 검수 흐름(크롤러 코드용) | **콘텐츠 검수 큐**(초안 승인/반려/수정) |
@@ -102,7 +102,8 @@ fetch(어댑터) → 추출(제목·본문·게시일·URL) → 관련성 필터
 
 | 순서 | 소스 | 방식 | 관련성 필터 | 주기 | 비고 |
 |---|---|---|---|---|---|
-| 1 | **KISA** 공지/행사 | 게시판 목록 HTML → 상세 | 제목·본문 키워드: 블록체인, Web3, 분산원장, 진흥주간, NFT, 토큰, 디지털자산 | 1일 | robots/이용약관 확인 먼저 · 첨부(HWP/PDF)는 링크만 |
+| 1 | **KISA** 공지/행사 | 게시판 목록 HTML → 상세 | 제목·본문 키워드: 블록체인, Web3, 분산원장, 진흥주간, NFT, 토큰, 디지털자산 | 1일 | robots/이용약관 확인 먼저 · 첨부(HWP/PDF)는 링크만 · ⚠️ TLS 인증서 체인 문제로 보류(2-detail §7-2) |
+| 1-1 | **KISA 블록체인 포털 최신동향** (`blockchain.kisa.or.kr/bbso/bbsoAnalsList.do`) — **소식(업계 동향)**, 행사 아님 | 같은 `HTML_BOARD` (링크가 `fn_goView('ID')` → 상세 GET URL로 변환) | 키워드 필터(일반 ICT 글 소수 제외) | 1일 | 2026-11-09 사용자 요청 추가 · 주 5건 내외 · 본문은 2~3줄 요약, 자세한 내용은 첨부 |
 | 2 | **Luma** | 기존 어댑터 확장: Web3 KR 캘린더 목록(ICS) 추가 | 캘린더 단위로 이미 선별 | 6시간 | 공개 ICS만 사용 |
 | 3 | **BUIDL Korea** | `/events` 페이지 | 전부 관련 | 1일(시즌) | 연례 — 시즌 외 주 1회 |
 | 4 | **KBIPA** | 공지/행사 게시판 | 대부분 관련, 회원사 홍보 글 제외 | 1일 | |
@@ -152,13 +153,24 @@ fetch(어댑터) → 추출(제목·본문·게시일·URL) → 관련성 필터
 
 ## 5. 행사 UI (P1 목록·상세 → P2 캘린더·필터)
 
+### 5-0. 디자인 방향 — Luma는 구조만 참고 (2026-11-09 결정)
+Luma를 **똑같이 만들지 않는다.** 빠르게 훑어보기 좋은 정보 구조만 가져오고, 생김새는 Chainery 디자인 시스템(2026-11 deploy의 밝은 테마 · grape 메인 · green 보조)을 따른다.
+
+| 구분 | 내용 |
+|---|---|
+| **가져올 것 (구조)** | 날짜별 묶음 목록(왼쪽 날짜·요일, 오른쪽 카드) · 카드에 핵심만(시간·제목·주최·장소/온라인·썸네일) · 상단 간단한 필터와 목록/캘린더 전환 · 상세는 "언제·어디서·신청" 이 첫 화면에 |
+| **안 가져올 것** | Luma의 색·폰트·레이아웃 그대로 따라 하기 · 참가 신청·티켓·참석자 목록 기능 (신청은 공식 페이지로 연결만) |
+| **우리만의 것** | 모집 상태 배지(모집중 / 마감 임박 D-n / 마감) · 대상·수준·참가비(원문 근거가 있을 때만, 근거 툴팁) · 출처 표시와 여러 출처 합치기 · 관련 체인 태그 · 범위 구분(국내 Web3 / Avalanche) |
+
+**경로 (2026-11 deploy 반영):** `/events` = 모든 체인 행사 + Chainery가 직접 여는 행사(지금은 자리 표시 페이지 → S4에서 채움). 체인별 수집 행사는 `/knowledge/events`(목록·archive·상세 이미 있음). 아래 표의 경로는 이 기준.
+
 | 화면 | 경로 | 내용 |
 |---|---|---|
 | 목록 | `/events` | 카드: 대표이미지·유형 배지·제목·일정·장소/온라인·**모집 상태 배지(모집중/마감임박 D-n/마감)**·주최. 기본 정렬: 모집중 → 시작일 오름차순 |
-| 상세 | `/events/[id]` | 행사명·이미지·주최·일정(현지시간+내 시간)·장소(지도 링크)·온/오프·소개·대상·참여수준(근거 툴팁)·참가비·마감·**공식 신청 버튼(외부)**·출처 목록·최종 확인 시각 |
+| 상세 | `/events/[id]` (기존 `/knowledge/events/[id]` 화면 재사용 검토) | 행사명·이미지·주최·일정(현지시간+내 시간)·장소(지도 링크)·온/오프·소개·대상·참여수준(근거 툴팁)·참가비·마감·**공식 신청 버튼(외부)**·출처 목록·최종 확인 시각 |
 | 캘린더 | `/events?view=calendar` | 기존 `editorial-calendar` 재사용 |
 | 필터 | 목록 상단 | 유형 · 지역(서울/경기/부산/온라인) · 모집중만 · 대상 · 입문 가능 · 체인 |
-| 지난 행사 | `/events/archive` | 기존 유지 |
+| 지난 행사 | `/events/archive` | 기존 `/knowledge/events/archive` 재사용 검토 |
 | 메뉴 | `(chainery)/layout.tsx` | 상단 "행사"·"소식" 노출, 모바일 하단 탭 포함 |
 
 "내가 실제로 참여할 수 있는 행사" 원칙: 기본 필터 = **모집중 + 앞으로 30일**, 마감 지난 행사는 아래로.

@@ -132,10 +132,18 @@ LLM이 준 `evidence` 문자열이 **원문 본문 안에 실제로 있는지 �
 ### 3-3. 소식(tech_update) 요약 포맷
 LLM은 **문장만** 쓰고, 단계(제안/확정/적용)는 **코드가 공식 데이터로 판정**한다.
 
-| LLM 출력 | 내용 |
+화면 기준은 목업 `docs/chainery-redesign/mockups/learning-ux-v2.html` §5(ACP-267 상세, 2026-11-09 확정): 배지 → 제목 → 한 줄 설명 → 무엇이 바뀌나요(줄마다 근거 번호) → 지금 상태(문서 상태 · 구현 기록 · 날짜) → 누구에게 해당하나요(체이너리 해석) → 오른쪽 근거 목록.
+
+| LLM 출력 | 모양 (JSONB) | 규칙 |
+|---|---|---|
+| `what_changed` | `[{ text, source }]` 2~4줄 | `source` = 근거 번호(1부터). 줄마다 근거 문장이 원문에 실제로 있어야 저장(§3-2) |
+| `who_cares` | `[{ audience, impact, reason }]` | `audience` ∈ NODE_OPERATOR · VALIDATOR · DAPP_DEVELOPER · L1_BUILDER · USER, `impact` ∈ HIGH · LOW. 화면에 "체이너리 해석"으로 표시 |
+
+| 코드가 채우는 값 | 출처 |
 |---|---|
-| `what_changed` | 무엇이 달라졌나 (1~2문장, 한국어) |
-| `who_cares` | `(NODE_OPERATOR\|VALIDATOR\|DAPP_DEVELOPER\|L1_BUILDER\|USER)[]` + 한 줄 설명 |
+| `lifecycle_stage`, `stage_evidence`, `stage_source_url` | ACP README 상태 줄 |
+| `proposal_created_at`, `proposal_updated_at` | 처음 공개(GitHub) · 마지막 문서 수정 |
+| `included_in_release`, `included_release_url` | 그 ACP 를 언급한 릴리스 노트(예: avalanchego v1.15.0) |
 
 | 단계 | 판정 규칙 (코드) |
 |---|---|
@@ -143,6 +151,7 @@ LLM은 **문장만** 쓰고, 단계(제안/확정/적용)는 **코드가 공식 
 | 확정 `ACCEPTED` | ACP Status = Implementable · 또는 릴리스 노트에 포함됐으나 활성화 시각 전 |
 | 적용 `ACTIVATED` | ACP Status = Activated · 또는 `update-evidence` activations 시각 경과. **네트워크별 따로** (Fuji 적용 / Mainnet 예정) |
 | 보류 `STALE` | ACP Status = Stale (화면엔 "중단됨") |
+| **확인 중** (저장 안 함, API 계산) | 문서 상태와 구현 기록이 어긋날 때. 예: 문서는 Proposed 인데 릴리스 노트에 포함됨 → 배지 "제안 · 확인 중", "적용이 끝났는지는 확인하지 못했어요" 문구. 어긋남을 숨기지 않고 두 기록을 나란히 보여 준다 |
 
 출처: `source_url` 필수. 공식 출처가 없는 글(X 재게시 등)은 단계 배지 없이 "참고" 표시.
 
@@ -284,7 +293,7 @@ CANCELLED/POSTPONED 우선 → 시작 전 UPCOMING → 진행 중 ONGOING → �
 | 키워드 필터 | `apps/pipeline/src/ingestion/keyword-filter.ts` |
 | 실행기 + 파이프라인 연결 + 탈락 로그 | `apps/pipeline/src/jobs/run-html-board-source.ts`, `run-pipeline.ts`, `bin/pipeline.ts` |
 | 같은 날짜 병합 (`startsMatch`) | `apps/pipeline/src/events/dedup.ts`, `db/chain-event-repository.ts`, `db/classification-repository.ts` |
-| KISA 소스 (`enabled: false`) | `apps/pipeline/config/sources.yaml` |
+| KISA 공지사항 소스 (`enabled: false`) · KISA 블록체인 포털 최신동향 소스 | `apps/pipeline/config/sources.yaml` |
 | HTML 파서 의존성 | `node-html-parser@6.1.13` |
 
 **동작:**
@@ -303,7 +312,34 @@ CANCELLED/POSTPONED 우선 → 시작 전 UPCOMING → 진행 중 ONGOING → �
 - 해결안(권장): DigiCert 공개 중간 인증서 PEM을 저장소에 두고 pipeline 실행 시 `NODE_EXTRA_CA_CERTS`로 지정. 신뢰 추가라 사용자 승인 후 진행.
 - 쓰지 않는 안: `NODE_TLS_REJECT_UNAUTHORIZED=0`(전체 검증 끔 — 금지).
 
+**추가 소스 — KISA 블록체인 포털 최신동향 (2026-11-09, 사용자 요청):** `https://blockchain.kisa.or.kr/bbso/bbsoAnalsList.do`
+- 행사가 아니라 블록체인 기술·정책·산업 **주간 동향 요약** → B의 업계 소식. `content_kind: NEWSLETTER`, `chain: web3-kr`, 켜 둠(`enabled` 기본).
+- 링크가 `javascript:fn_goView('BBSOID_…')`라 어댑터에 `link_id_pattern` + `detail_url` 설정을 추가(ID를 뽑아 `/bbso/bbsoAnalsDetail.do?searchBbsoMngId={id}`로). 상세 페이지가 GET으로도 열림을 확인. 페이지 이동은 `?pageIndex=N`.
+- 인증서 체인 정상(Node 접속 OK). robots.txt 404(미게시).
+- 실데이터 시험(DB 없이, 2026-11-09): 2쪽 10건 중 **9건 통과**, 1건 탈락("시티버스 환경의 이동형 기지국 경로 최적화" — 6G, 블록체인 언급 없음). 본문은 140자 안팎(2~3줄 요약), 자세한 내용은 첨부 파일.
+- 이웃 메뉴 `/bbso/bbsoRsrchList.do`(연구 자료)도 있음 — 필요하면 같은 설정으로 추가 가능.
+
 **아직 안 한 것:** KISA 실데이터로 끝까지(수집 → classify → chain_event) 확인(위 인증서 해결 후), `min_interval_hours`(§1-2), robots/이용약관 — robots.txt 403(미게시), 게시물에 공공누리 표시 있음(유형별 조건은 글마다 확인 필요; 우리는 요약+원문 링크만 노출).
+
+### 7-3. D1 (2026-11-09) — 프로토콜 단계 판정
+
+| 항목 | 파일 |
+|---|---|
+| 단계 대응표·머리 줄 해석·릴리스 선택 | `apps/pipeline/src/classify/protocol-stage.ts` (+ `tests/protocol-stage.test.ts`) |
+| 문서별 처음/마지막 커밋 날짜, 글 날짜 = 문서 마지막 수정일 | `apps/pipeline/src/adapters/acp-github-adapter.ts` `documentDates` |
+| 분류 시 단계 붙이기 | `apps/pipeline/src/jobs/run-classify.ts` |
+| 단계 컬럼 저장, 포함 릴리스 조회 | `apps/pipeline/src/db/classification-repository.ts` `insertTech`, `findIncludingRelease` |
+
+**규칙.**
+- 단계는 ACP 문서 상태만 본다(Proposed→PROPOSED, Implementable→ACCEPTED, Activated→ACTIVATED, Stale→STALE). AI 판단 없음.
+- 포함 릴리스 = 노트가 ACP **문서로 링크를 건** 릴리스. 단순 언급("ACP-176 gas target" 같은 지표 설명)은 제외. 정식 태그(`v1.15.0`)를 Fuji(`v1.15.0-fuji`)보다 우선, 그다음 가장 이른 것. 실제 avalanchego 노트에서 업그레이드마다 정확히 한 묶음씩 링크됨을 확인(v1.11.0 · v1.12.0 · v1.13.0 · v1.14.0 · v1.15.0).
+- 글 날짜(`published_at`)를 저장소 최신 커밋 → **문서 마지막 수정일**로 바꿈. 첫 수집 때 ACP 36건이 전부 같은 날짜였던 원인.
+
+**실데이터 확인 (DB 없이, ACP 3건):** ACP-13 STALE · ACP-77 ACTIVATED(v1.12.0) · ACP-267 ACTIVATED(v1.15.0). 목업의 ACP-267 "제안 · 확인 중"은 지난 상태였고 2026-11-04 문서가 Activated 로 바뀜.
+
+**한계.** "처음 공개일"은 현재 경로의 첫 커밋이다. 2024-05-03 저장소 폴더 정리 이전에 만들어진 ACP(예: 13, 77)는 그날로 나온다. 화면 문구는 "문서 첫 기록"으로 쓰고, 원 제안일이 필요하면 GitHub Discussion 날짜를 따로 가져온다(후속).
+
+**적용 전제.** `insertTech` 가 새 컬럼에 쓰므로 마이그레이션 적용 전에 `pnpm classify` 를 돌리면 실패한다. 이미 저장된 ACP 행은 날짜·단계가 비어 있다 → 마이그레이션 후 ACP 소스 커서를 지우고 재수집하거나 한 번짜리 보정 스크립트(후속).
 
 ## 8. 결정 기록
 
