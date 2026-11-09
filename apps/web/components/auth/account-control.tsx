@@ -12,8 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { API_URL, clearAccessToken, getAccessToken, tryRefresh, useAuthTick } from '@/lib/auth'
-import { accountInitial, loginHref, sessionFromToken, type Session } from '@/lib/session'
+import { clearAccessToken, getAccessToken, tryRefresh, useAuthTick } from '@/lib/auth'
+import { accountInitial, loginHref, sessionFromToken, signOut, type Session } from '@/lib/session'
 
 export function AccountControlView({
   session,
@@ -53,6 +53,9 @@ export function AccountControlView({
           <span className="mt-0.5 block truncate text-sm">{session.email}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="m-0 bg-[var(--editorial-line)]" />
+        <DropdownMenuItem asChild className="rounded-none px-3 py-2.5 text-sm focus:bg-white/10 focus:text-[#f3eefb]">
+          <Link href="/account">내 계정</Link>
+        </DropdownMenuItem>
         <DropdownMenuItem
           onSelect={onSignOut}
           className="rounded-none px-3 py-2.5 text-sm focus:bg-white/10 focus:text-[#f3eefb]"
@@ -78,14 +81,6 @@ export function AccountControl() {
       if (!token) clearAccessToken()
     })
   }, [session.kind, mounted])
-
-  const signOut = async () => {
-    // The server drops the refresh cookie; the local token goes either way.
-    await fetch(`${API_URL}/api/app-user/logout`, { method: 'POST', credentials: 'include' }).catch(
-      () => undefined
-    )
-    clearAccessToken()
-  }
 
   return <AccountControlView session={session} pathname={pathname} onSignOut={signOut} />
 }

@@ -130,13 +130,14 @@
   - "내 계정" 메뉴는 `/account`(B3) 생기면 추가. 지금은 없는 페이지로 가는 링크를 두지 않음.
   - 남음: 실제 로그인(이름·사진 표시는 `/me` 로) 확인은 API 를 띄운 뒤.
 
-### B3. `/account` + 계정 삭제
-- **API.** 새 `DELETE /api/app-user/me` (`AuthGuard('jwt')`). `revoked_at = now()`, `is_active = false`, Redis 리프레시 키 삭제, 쿠키 제거. JWT 전략이 매 요청 `revoked_at` 을 확인하므로(`role-jwt.strategy.ts`) 즉시 차단된다. 이메일·벤치 키 평문을 응답·로그에 남기지 않는다. 벤치 키 컬럼은 함께 비운다.
-- **웹.** `/account`: 이메일(일부 가림)·로그인 방식·가입일, 로그아웃, "계정 삭제"(확인 대화상자).
-- **확인.**
-  - [ ] API 테스트(로컬 DB): 삭제 후 `/me` 401, refresh 실패, 재가입 시 동작 정의대로.
-  - [ ] 브라우저: 삭제 → 로그아웃 상태 → 같은 Google 계정 재로그인 시 결과 확인.
-- **결정 필요.** 삭제 후 같은 이메일 재가입을 새 계정으로 볼지(소프트 삭제 행과 충돌 여부 확인).
+### B3. `/account` (계정 정보) — 계정 삭제는 보류
+- **지금 (2026-11-09).** `/account`: 로그인한 이메일, 로그아웃. 비로그인이면 로그인 안내(`?next=/account`). 헤더 계정 메뉴에 "내 계정".
+- **확인.** [x] 화면 테스트(`account-view.test.tsx`; 웹 241 통과), [x] 브라우저: 테스트 토큰으로 이메일·로그아웃 → 비로그인 안내로 바뀜.
+- **계정 삭제(탈퇴): 사용자 결정으로 나중에.** 만들어 둔 코드는 로컬 패치로 보관 — `.git/deferred/b3-account-deletion.patch` (커밋 안 됨, 이 컴퓨터에만 있음). 다시 할 때 `git apply .git/deferred/b3-account-deletion.patch`.
+  - 패치 내용: API `DELETE /api/app-user/me`(204). 행은 남기고 이메일을 `deleted-<id>@deleted.invalid` 로 바꾸고 이름·사진·`google_sub`·회신 주소·회원 API 키·매직링크 값을 지움, `is_active=false`·`revoked_at=now`, Redis refresh 키·쿠키 삭제(`account-erasure.ts` + 테스트). 웹 `/account` 삭제 칸·확인 창.
+  - 이메일 고유 인덱스는 활성 행에만 걸려 있어(`uq_app_user_email_active`) 같은 이메일 재가입은 새 계정.
+  - 다시 할 때 남은 확인: 로컬 DB·API 로 실제 삭제 → `/me` 401, refresh 실패, 재가입. 로컬 API `CORS_ORIGINS` 에 `http://localhost:3001`.
+- **다음 후보.** `/account` 를 "마이페이지"로 넓혀 "내 학습 경로" 요약(9oodam 의 `lib/learner/store.ts`, 브라우저 저장 기록을 읽기만)과 "관심 행사"(B4) 칸 추가. 학습 기록을 계정에 저장하는 건 9oodam 과 합의 후.
 
 ### B4. 관심 행사 저장
 - **DB.** 새 테이블 `content.user_saved_event(user_id, chain_event_id, created_at)` — 마이그레이션 추가, 사용자 적용.

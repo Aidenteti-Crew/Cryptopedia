@@ -1,4 +1,4 @@
-import { decodeToken } from './auth'
+import { API_URL, clearAccessToken, decodeToken } from './auth'
 
 export type Session =
   | { kind: 'signedOut' }
@@ -21,4 +21,12 @@ export function accountInitial(email: string): string {
 // Back to the page the person was on once they sign in. /login itself is not a place to return to.
 export function loginHref(pathname: string): string {
   return pathname && pathname !== '/login' ? `/login?next=${encodeURIComponent(pathname)}` : '/login'
+}
+
+// The server drops the refresh cookie; the local token goes either way.
+export async function signOut(): Promise<void> {
+  await fetch(`${API_URL}/api/app-user/logout`, { method: 'POST', credentials: 'include' }).catch(
+    () => undefined
+  )
+  clearAccessToken()
 }
