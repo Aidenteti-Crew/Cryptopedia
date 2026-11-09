@@ -1,12 +1,14 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import type { EventEntry } from '@/lib/cryptopedia-types'
 import { cryptopediaRepository } from '@/lib/cryptopedia-repository'
-import { groupPlatformEvents } from '@/lib/platform-events'
+import { eventHref, groupPlatformEvents, listedEventIds, neighbors } from '@/lib/platform-events'
 
+import { EventDetailPanel } from './platform-event-detail'
 import { ARCHIVE_HREF, PlatformEventList } from './platform-event-list'
 import { PlatformShell } from './platform-shell'
 
@@ -27,9 +29,15 @@ export function PlatformEventsPage() {
       cancelled = true
     }
   }, [])
+  const router = useRouter()
+  const selectedId = useSearchParams().get('event')
   const now = new Date()
   const groups = state.status === 'ready' ? groupPlatformEvents(state.events, now) : null
   const hasEvents = !!groups && (groups.ongoing.length > 0 || groups.days.length > 0)
+  // Any loaded event opens, listed or not, so a shared link to a past event still works.
+  const selected = state.status === 'ready' ? (state.events.find((e) => e.id === selectedId) ?? null) : null
+  const { previous, next } = groups && selectedId ? neighbors(listedEventIds(groups), selectedId) : { previous: null, next: null }
+  const open = (id: string) => router.push(eventHref(id), { scroll: false })
   return (
     <PlatformShell>
       <main className="mx-auto w-full max-w-[760px] px-4 pb-24 pt-28 sm:px-6">
@@ -62,6 +70,14 @@ export function PlatformEventsPage() {
           </Link>
         )}
       </main>
+      <EventDetailPanel
+        event={selected}
+        previous={previous}
+        next={next}
+        onNavigate={open}
+        onClose={() => router.push('/events', { scroll: false })}
+        shareUrl={selected && typeof window !== 'undefined' ? `${window.location.origin}${eventHref(selected.id)}` : ''}
+      />
     </PlatformShell>
   )
 }

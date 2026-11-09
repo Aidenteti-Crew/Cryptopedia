@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 
 import { PlatformEventsPage } from '@/components/cherry/editorial/platform-events-page'
 
@@ -9,5 +10,10 @@ export const metadata: Metadata = {
 }
 
 export default function Page() {
-  return <PlatformEventsPage />
+  // useSearchParams (the open event) needs a Suspense boundary in the App Router.
+  return (
+    <Suspense>
+      <PlatformEventsPage />
+    </Suspense>
+  )
 }

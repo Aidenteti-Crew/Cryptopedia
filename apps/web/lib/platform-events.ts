@@ -69,3 +69,43 @@ export function scopeLabel(event: Pick<EventEntry, 'scope' | 'chain'>): string |
   const key = (event.scope ?? event.chain ?? '').toLowerCase()
   return SCOPE_LABEL[key] ?? null
 }
+
+// The order the list shows: ongoing first, then each day. Previous / next in the detail follow it.
+export function listedEventIds(groups: PlatformEventGroups): string[] {
+  return [...groups.ongoing, ...groups.days.flatMap(([, events]) => events)].map((e) => e.id)
+}
+
+export function neighbors(ids: string[], id: string): { previous: string | null; next: string | null } {
+  const at = ids.indexOf(id)
+  if (at === -1) return { previous: null, next: null }
+  return { previous: ids[at - 1] ?? null, next: ids[at + 1] ?? null }
+}
+
+export function eventHref(id: string): string {
+  return `/events?event=${encodeURIComponent(id)}`
+}
+
+const dayFormat = new Intl.DateTimeFormat('ko-KR', {
+  timeZone: 'Asia/Seoul',
+  month: 'long',
+  day: 'numeric',
+  weekday: 'long',
+})
+const timeFormat = new Intl.DateTimeFormat('ko-KR', {
+  timeZone: 'Asia/Seoul',
+  hour: 'numeric',
+  minute: '2-digit',
+})
+
+// "11월 11일 수요일" + "오후 6:00 - 오후 10:00" in Seoul time; an all-day event says 종일.
+export function eventWhen(event: Pick<EventEntry, 'startsAt' | 'endsAt' | 'allDay'>): {
+  day: string
+  time: string
+} {
+  const start = new Date(event.startsAt)
+  const end = event.endsAt ? new Date(event.endsAt) : null
+  const sameDay = !end || calendarDay(end.toISOString()) === calendarDay(start.toISOString())
+  const day = sameDay ? dayFormat.format(start) : `${dayFormat.format(start)} - ${dayFormat.format(end!)}`
+  if (event.allDay) return { day, time: '종일' }
+  return { day, time: end ? `${timeFormat.format(start)} - ${timeFormat.format(end)}` : timeFormat.format(start) }
+}

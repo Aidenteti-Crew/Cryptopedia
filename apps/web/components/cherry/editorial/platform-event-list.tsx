@@ -8,6 +8,7 @@ import type { EventEntry } from '@/lib/cryptopedia-types'
 import {
   dayHeading,
   eventHost,
+  eventHref,
   eventLocation,
   scopeLabel,
   type PlatformEventGroups,
@@ -34,14 +35,20 @@ function PlatformEventCard({ event }: { event: EventEntry }) {
         ? { href: event.sourceUrl, label: '원문 보기' }
         : null
   return (
-    <article className="flex gap-4 border border-[var(--editorial-line)] bg-[var(--editorial-wash)] p-5">
+    <article className="relative flex gap-4 border border-[var(--editorial-line)] bg-[var(--editorial-wash)] p-5 hover:border-[var(--editorial-accent)]">
       <div className="min-w-0 flex-1">
         <p className="text-sm tabular-nums text-[var(--editorial-muted)]">
           {event.allDay ? '종일' : time.format(new Date(event.startsAt))}
           {event.status === 'POSTPONED' && ' · 연기됨'}
         </p>
         <h3 className="mt-1.5 break-keep text-[18px] font-semibold leading-7 text-[var(--editorial-strong)] [overflow-wrap:anywhere]">
-          {event.title}
+          <Link
+            href={eventHref(event.id)}
+            scroll={false}
+            className="hover:text-[var(--editorial-accent)] after:absolute after:inset-0"
+          >
+            {event.title}
+          </Link>
         </h3>
         {host && <p className="mt-2 text-sm text-[var(--editorial-muted)]">{host} 주최</p>}
         <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-[var(--editorial-muted)]">
@@ -61,7 +68,7 @@ function PlatformEventCard({ event }: { event: EventEntry }) {
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 inline-flex min-h-8 items-center gap-1 text-sm text-[var(--editorial-accent)]"
+            className="relative z-10 mt-4 inline-flex min-h-8 items-center gap-1 text-sm text-[var(--editorial-accent)]"
           >
             {link.label}
             <ExternalLink size={13} aria-hidden />

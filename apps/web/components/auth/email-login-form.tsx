@@ -51,7 +51,7 @@ export function EmailLoginView({
       <button
         type="submit"
         disabled={disabled}
-        className="mt-3 h-11 w-full bg-[var(--editorial-accent)] text-sm font-semibold text-white disabled:opacity-40"
+        className="mt-3 h-11 w-full bg-[var(--editorial-accent)] text-sm font-semibold text-[#1b1326] disabled:opacity-40"
       >
         {sending ? '보내는 중…' : resendIn > 0 ? `${resendIn}초 뒤 다시 보낼 수 있어요` : '로그인 링크 받기'}
       </button>
