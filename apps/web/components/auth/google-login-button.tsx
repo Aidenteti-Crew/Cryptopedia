@@ -36,10 +36,13 @@ export function GoogleLoginButton({
   onSuccess,
   onError,
   onStart,
+  fill = false,
 }: {
   onSuccess: (accessToken: string) => void
   onError?: (message: string) => void
   onStart?: () => void
+  // Square corners and the container's width, to line up with square form fields below it.
+  fill?: boolean
 }) {
   const divRef = useRef<HTMLDivElement>(null)
 
@@ -88,9 +91,10 @@ export function GoogleLoginButton({
         theme: "outline",
         size: "large",
         text: "continue_with",
-        shape: "pill",
+        shape: fill ? "rectangular" : "pill",
         logo_alignment: "left",
-        width: 320,
+        // Google draws the button at a fixed pixel width, 400 at most.
+        width: fill ? Math.min(400, divRef.current.clientWidth || 320) : 320,
       })
     }
 
@@ -118,7 +122,7 @@ export function GoogleLoginButton({
         /* 스크립트 자체는 재사용 위해 남겨둠 */
       }
     }
-  }, [handleCredential, onError])
+  }, [handleCredential, onError, fill])
 
-  return <div ref={divRef} className="flex justify-center" />
+  return <div ref={divRef} className={fill ? "w-full" : "flex justify-center"} />
 }

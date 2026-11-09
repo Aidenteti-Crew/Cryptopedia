@@ -7,8 +7,8 @@ import type { EventEntry } from '@/lib/cryptopedia-types'
 import { cryptopediaRepository } from '@/lib/cryptopedia-repository'
 import { groupPlatformEvents } from '@/lib/platform-events'
 
-import { AboutHeader } from './about-header'
 import { ARCHIVE_HREF, PlatformEventList } from './platform-event-list'
+import { PlatformShell } from './platform-shell'
 
 type LoadState =
   | { status: 'loading' }
@@ -31,11 +31,7 @@ export function PlatformEventsPage() {
   const groups = state.status === 'ready' ? groupPlatformEvents(state.events, now) : null
   const hasEvents = !!groups && (groups.ongoing.length > 0 || groups.days.length > 0)
   return (
-    // Not the landing's .landing class: it turns on page-wide scroll snapping, wrong for a long list.
-    <div className="editorial-root editorial-dark min-h-[100dvh] bg-[#1b1326] text-[#f3eefb]">
-      {/* The shared header fades out over the landing hero; a list scrolling under it needs a solid band. */}
-      <div aria-hidden className="fixed inset-x-0 top-0 z-30 h-16 bg-[#1b1326] lg:h-[88px]" />
-      <AboutHeader />
+    <PlatformShell>
       <main className="mx-auto w-full max-w-[760px] px-4 pb-24 pt-28 sm:px-6">
         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--editorial-accent)]">
           Events
@@ -66,6 +62,6 @@ export function PlatformEventsPage() {
           </Link>
         )}
       </main>
-    </div>
+    </PlatformShell>
   )
 }
