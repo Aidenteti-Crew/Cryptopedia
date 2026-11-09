@@ -110,6 +110,9 @@ export interface SourceConfig {
   excludeTitlePatterns?: string[]
   recencyWindowDays?: number
   consecutiveFailuresThreshold: number
+  // Read at most once per this many hours, however often the pipeline runs (boards that change
+  // daily, sites that ask for gentle crawling).
+  minIntervalHours?: number
   github?: GithubMarkdownLocation
   apify?: ApifyLocation
   luma?: LumaLocation
@@ -146,6 +149,7 @@ const SourceEntrySchema = z
       .optional(),
     recency_window_days: z.number().int().positive().optional(),
     consecutive_failures_threshold: z.number().int().positive().default(3),
+    min_interval_hours: z.number().positive().optional(),
     github: z
       .object({
         owner: z.string().min(1),
@@ -265,6 +269,7 @@ function toSourceConfig(raw: z.infer<typeof SourceEntrySchema>): SourceConfig {
     excludeTitlePatterns: raw.exclude_title_patterns,
     recencyWindowDays: raw.recency_window_days,
     consecutiveFailuresThreshold: raw.consecutive_failures_threshold,
+    minIntervalHours: raw.min_interval_hours,
     github: raw.github,
     luma: raw.luma && { calendarId: raw.luma.calendar_id },
     apify: raw.apify && {

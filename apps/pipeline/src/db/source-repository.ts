@@ -123,3 +123,13 @@ export async function recordSourceFailure(
   const row = result.rows[0] as { consecutive_failures: number } | undefined
   return { consecutiveFailures: Number(row?.consecutive_failures ?? 0) }
 }
+
+export async function getSourceLastSuccess(query: QueryFn, urlHandle: string): Promise<Date | null> {
+  const result = await query(
+    `SELECT last_success_at FROM content.source
+      WHERE url_handle_hash = decode(md5($1), 'hex') AND revoked_at IS NULL`,
+    [urlHandle]
+  )
+  const value = (result.rows[0] as { last_success_at: Date | string | null } | undefined)?.last_success_at
+  return value ? new Date(value) : null
+}

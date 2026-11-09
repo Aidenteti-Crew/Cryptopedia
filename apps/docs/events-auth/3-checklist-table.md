@@ -152,9 +152,9 @@
 
 현재 상태. pipeline 의 AI 분류 결과가 `insertEvent`/`insertTech` 로 바로 들어가고 `review_state` 를 쓰지 않아 기본값 PUBLISHED 가 된다(`classification-repository.ts:140,170`). 끼울 자리는 `run-classify.ts` ~:108-118 (buildCategoryRecord 와 insert 사이).
 
-### C1. KISA 공지사항 인증서 해결 → S2 마무리
-- **만들 것.** 공개 중간 인증서 PEM 을 저장소에 두고 pipeline 실행 시 `NODE_EXTRA_CA_CERTS`. KISA `enabled: true`. (다운로드·신뢰 추가라 사용자 승인 후)
-- **확인.** [ ] 실데이터로 수집 → classify → `chain_event` 에 블록체인 진흥주간 1건, 무관 공지 0건.
+### C1. KISA 공지사항 켜기 → S2 마무리
+- **인증서:** KISA 가 11-09 기준 중간 인증서를 보내도록 고쳐 우리 쪽 조치 없이 해결. 소스 켬. 다시 깨질 때 대응은 `2-detail-design.md` §7-2.
+- **확인.** [x] 실데이터 수집(DB 없이): 20건 → 7건 통과(블록체인 진흥주간 포함), 무관 통과 1(양자내성암호 해커톤). [ ] 마이그레이션 후 수집 → classify → `chain_event` 에 진흥주간 1건, 무관 공지 0건.
 
 ### C2. AI 행사 필드 확장
 - **파일.** `apps/pipeline/src/classify/schema.ts:51`, `prompt.ts`, `category-records.ts:115`
@@ -182,7 +182,9 @@
 
 ### C7. 소스 추가와 주기
 - KISA 블록체인 포털 연구 자료(`/bbso/bbsoRsrchList.do`, 필요 시), Luma 국내 캘린더, BUIDL Korea, KBIPA, ICT콤플렉스.
-- `min_interval_hours` (소스별 최소 간격), Dokploy 스케줄 작업(6시간).
+- [x] `min_interval_hours` (소스별 최소 간격) — 2026-11-09. KISA 2곳·X 3곳 하루 한 번.
+- [x] GitHub Actions 정기 실행(하루 한 번 KST 09:00, 겹침 없음, `CHAINERY_PIPELINE_ENABLED` 스위치) — `.github/workflows/chainery-pipeline.yml`. 설정 방법은 `2-detail-design.md` §1-1.
+- [ ] 사용자: 비밀값·변수 넣기 → 마이그레이션 적용 → `main` 반영 → 수동 실행 1회로 확인 → 스위치 켜기.
 - **확인.** [ ] 소스마다 실데이터 dry-run, [ ] 두 번 돌려 중복 0.
 
 ---

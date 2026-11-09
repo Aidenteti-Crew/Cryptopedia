@@ -26,20 +26,27 @@
 
 ## 1. 수집 실행 환경
 
-### 1-1. 어디서 돌리나 — 권장: **Dokploy에 pipeline 전용 서비스(스케줄 작업) 추가**
+### 1-1. 어디서 돌리나 — **GitHub Actions 정기 실행** (2026-11-09 사용자 결정, 이전 결정 Dokploy 에서 변경)
 
 | 안 | 장점 | 단점 | 판단 |
 |---|---|---|---|
-| A. API(NestJS) `@Cron`에서 pipeline 호출 | 인프라 추가 없음 | pipeline은 별도 패키지(`node dist/...`). LLM 호출이 길어 API 응답 지연·메모리 위험, API 재배포마다 수집 중단 | ✗ |
-| **B. Dokploy 스케줄 작업 / 별도 컨테이너** | API와 격리, 실패해도 사이트 영향 없음, 기존 배포 방식 유지 | Dockerfile 1개 추가 | **권장** |
-| C. 서버 crontab | 가장 간단 | 배포·환경변수가 코드 밖으로 흩어짐 | 차선 |
+| A. API(NestJS) `@Cron`에서 pipeline 호출 | 인프라 추가 없음 | pipeline은 별도 패키지. LLM 호출이 길어 API 지연·메모리 위험, API 재배포마다 수집 중단 | ✗ |
+| B. Dokploy 스케줄 작업 / 별도 컨테이너 | API와 격리, 기존 배포 방식 | Dockerfile·서버 설정 필요 | 이전 결정 |
+| **C. GitHub Actions `schedule`** | 서버 불필요, 설정이 저장소 안에, 실행 기록·로그가 Actions 화면에 남음 | DB 주소·키를 GitHub 비밀값으로 둠, 정기 실행은 기본 브랜치(`main`)의 파일만 돈다 | **채택** |
 
-- 에이전트는 Dockerfile·실행 스크립트만 작성. **Dokploy 등록·배포는 사용자.**
-- 실행 단위: `apps/pipeline/scripts/run-cycle.sh` = `start → classify → score` (한 단계 실패해도 다음 단계는 이전 데이터로 진행).
-- 크론: **6시간마다 1회** (`0 */6 * * *`, KST 기준 0·6·12·18시).
+- 파일: `.github/workflows/chainery-pipeline.yml`. **하루 한 번**(`0 0 * * *`, KST 09:00, 2026-11-09 사용자 결정) + 수동 실행.
+- 순서: 설치 → 빌드 → 수집(`dist/src/bin/pipeline.js`) → 분류(`classify.js --limit 60 --concurrency 4`). 수집에서 한 소스가 실패해도 분류는 이미 쌓인 글로 진행.
+- **잠금:** 워크플로 `concurrency`(같은 그룹 한 번에 하나, 다음 실행은 기다림). 코드 안 advisory lock 은 두지 않는다. 사람이 로컬에서 동시에 돌리는 경우만 남는 위험.
+- **스위치:** 저장소 변수 `CHAINERY_PIPELINE_ENABLED=true` 일 때만 정기 실행이 돈다(마이그레이션 전엔 분류가 새 컬럼에 쓰다 실패하므로). 수동 실행은 언제나 가능.
+- **사용자가 할 설정 (Settings → Secrets and variables → Actions):**
+  - 비밀값: `CHAINERY_DATABASE_URL`(공유 DB), `LLM_API_KEY`, `APIFY_TOKEN`
+  - 변수: `LLM_MODEL`(예: `deepseek-ai/deepseek-v4.1-flash`), `LLM_BASE_URL`, `CRAWLER_CONTACT`(선택), 그리고 마지막에 `CHAINERY_PIPELINE_ENABLED=true`
+  - `GITHUB_TOKEN` 은 Actions 가 자동으로 줌(ACP·릴리스 소스의 GitHub API 한도 60 → 1000/시간).
+- 브랜치가 `main` 에 들어가야 정기 실행이 시작된다. 그 전엔 Actions 화면에서 이 브랜치로 수동 실행만 가능.
+- 로컬에서 `node dist/src/bin/pipeline.js` 는 루트 `.env` 의 공유 DB 주소를 읽어 **프로덕션에 바로 쓴다.** 시험은 어댑터 단위(DB 없이)로.
 
 ### 1-2. 소스별 주기 — 크론 하나 + 소스별 최소 간격
-`sources.yaml` 에 `min_interval_hours` 추가. 사이클마다 `core.run_log` 마지막 성공 시각을 보고 간격이 안 됐으면 건너뛴다.
+`sources.yaml` 의 `min_interval_hours`. 사이클마다 `content.source.last_success_at` 을 보고 간격이 안 됐으면 건너뛴다(SKIPPED "not due"). **구현 2026-11-09:** KISA 공지·블록체인 포털·X(Apify) 3개 = 23시간. 정기 실행이 하루 한 번이 된 뒤에도 남겨 둠: 수동 실행을 더 눌러도 같은 날 다시 읽지 않아 X(Apify, 조회당 최소 50트윗 과금) 비용이 늘지 않는다.
 
 | 소스 | `min_interval_hours` |
 |---|---|
@@ -308,9 +315,9 @@ CANCELLED/POSTPONED 우선 → 시작 전 UPCOMING → 진행 중 ONGOING → �
 **품질 측정 (KISA 공지 100건, 2026-06-11 ~ 10-29, 제목만):** 통과 35건. 내 판단으로 Web3 관련 글 놓친 것 0건, 무관 통과 1건("양자내성암호 해커톤" — LLM 단계에서 걸러야 함). 정답 표시는 사용자 재확인 필요. 본문까지 보면 통과가 늘 수 있음(본문 속 "토큰" 등).
 - 주의: KISA 공지의 "Avalanche"는 네트워크 성능시험 장비 이름. 키워드에 넣지 않는다.
 
-**⚠️ 막힌 것 — KISA TLS 인증서 체인:** `www.kisa.or.kr`이 중간 인증서("GeoTrust TLS RSA CA G1")를 보내지 않아 Node `fetch`가 `UNABLE_TO_VERIFY_LEAF_SIGNATURE`로 실패한다(curl·브라우저는 macOS가 보완해 성공). `--use-system-ca`로도 실패. 그래서 소스는 `enabled: false`.
-- 해결안(권장): DigiCert 공개 중간 인증서 PEM을 저장소에 두고 pipeline 실행 시 `NODE_EXTRA_CA_CERTS`로 지정. 신뢰 추가라 사용자 승인 후 진행.
-- 쓰지 않는 안: `NODE_TLS_REJECT_UNAUTHORIZED=0`(전체 검증 끔 — 금지).
+**KISA TLS 인증서 체인 — 해결됨 (2026-11-09).** 11-02 에는 `www.kisa.or.kr` 이 사이트 인증서만 보내고 중간 인증서("GeoTrust TLS RSA CA G1")를 빠뜨려 Node `fetch` 가 `UNABLE_TO_VERIFY_LEAF_SIGNATURE` 로 실패했다. 11-09 에 다시 보니 서버가 중간 인증서까지 보내 Node 에서 그대로 열린다(3회 연속 200). 우리 쪽 인증서 추가 없이 소스를 켰다(`enabled` 기본값).
+- 다시 깨지면: 같은 중간 인증서를 `blockchain.kisa.or.kr` 핸드셰이크에서 꺼낼 수 있고, Node 내장 "DigiCert Global Root G2" 로 서명이 검증됨(SHA-256 `C0:6E:30:7F:…:8A:23:0E`, 만료 2027-11-02). PEM 을 저장소에 두고 `NODE_EXTRA_CA_CERTS` 로 지정. `NODE_TLS_REJECT_UNAUTHORIZED=0` 은 쓰지 않는다.
+- 실데이터 수집(DB 없이, 11-09): 2쪽 20건 → 통과 7(블록체인 진흥주간 사전등록 포함), 탈락 13. 무관 통과 1("양자내성암호 해커톤") → AI 분류 단계에서 걸러야 함.
 
 **추가 소스 — KISA 블록체인 포털 최신동향 (2026-11-09, 사용자 요청):** `https://blockchain.kisa.or.kr/bbso/bbsoAnalsList.do`
 - 행사가 아니라 블록체인 기술·정책·산업 **주간 동향 요약** → B의 업계 소식. `content_kind: NEWSLETTER`, `chain: web3-kr`, 켜 둠(`enabled` 기본).
@@ -319,7 +326,7 @@ CANCELLED/POSTPONED 우선 → 시작 전 UPCOMING → 진행 중 ONGOING → �
 - 실데이터 시험(DB 없이, 2026-11-09): 2쪽 10건 중 **9건 통과**, 1건 탈락("시티버스 환경의 이동형 기지국 경로 최적화" — 6G, 블록체인 언급 없음). 본문은 140자 안팎(2~3줄 요약), 자세한 내용은 첨부 파일.
 - 이웃 메뉴 `/bbso/bbsoRsrchList.do`(연구 자료)도 있음 — 필요하면 같은 설정으로 추가 가능.
 
-**아직 안 한 것:** KISA 실데이터로 끝까지(수집 → classify → chain_event) 확인(위 인증서 해결 후), `min_interval_hours`(§1-2), robots/이용약관 — robots.txt 403(미게시), 게시물에 공공누리 표시 있음(유형별 조건은 글마다 확인 필요; 우리는 요약+원문 링크만 노출).
+**아직 안 한 것:** KISA 실데이터로 끝까지(수집 → classify → chain_event) 확인(마이그레이션 적용 후), `min_interval_hours`(§1-2), robots/이용약관 — robots.txt 403(미게시), 게시물에 공공누리 표시 있음(유형별 조건은 글마다 확인 필요; 우리는 요약+원문 링크만 노출).
 
 ### 7-3. D1 (2026-11-09) — 프로토콜 단계 판정
 
@@ -346,7 +353,7 @@ CANCELLED/POSTPONED 우선 → 시작 전 UPCOMING → 진행 중 ONGOING → �
 | # | 질문 | 결정 (2026-10-31) |
 |---|---|---|
 | Q1 | 공유 DB에 `content.chain_event` 등이 이미 적용돼 있나? | **미확인 — 사용자 확인 대기** |
-| Q2 | 수집 실행 위치 | ✅ Dokploy 스케줄 작업(안 B) |
+| Q2 | 수집 실행 위치 | ✅ GitHub Actions 정기 실행(안 C) — 2026-11-09 Dokploy 에서 변경 |
 | Q3 | 마감 임박 기준 | ✅ 3일 |
 | Q4 | 새 범위 이름 | ✅ `web3-kr` |
 | Q5 | 기존 NestJS 스케줄러에서 Chainery 소스 제외 | ✅ S1에서 함께 처리 |

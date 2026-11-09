@@ -73,6 +73,8 @@ sources:
     adapter: 'APIFY'
     content_kind: 'SOCIAL'
     authority: 'OFFICIAL'
+    # Apify bills per query (50 tweets at least); once a day keeps a 6-hourly schedule cheap.
+    min_interval_hours: 23
     apify:
       actor: 'apidojo~tweet-scraper'
       input:
@@ -87,6 +89,8 @@ sources:
     adapter: 'APIFY'
     content_kind: 'SOCIAL'
     authority: 'OFFICIAL_COMMUNITY'
+    # Apify bills per query (50 tweets at least); once a day keeps a 6-hourly schedule cheap.
+    min_interval_hours: 23
     apify:
       actor: 'apidojo~tweet-scraper'
       input:
@@ -101,6 +105,8 @@ sources:
     adapter: 'APIFY'
     content_kind: 'SOCIAL'
     authority: 'OFFICIAL_COMMUNITY'
+    # Apify bills per query (50 tweets at least); once a day keeps a 6-hourly schedule cheap.
+    min_interval_hours: 23
     apify:
       actor: 'apidojo~tweet-scraper'
       input:
@@ -215,9 +221,8 @@ sources:
   # KISA 공지사항: server-rendered board, no login. robots.txt answers 403 (none published);
   # read once a day, 2 list pages (~20 posts), ≥2s between requests. RSS (/rss/401) has only the
   # latest 10 titles and no body, so the board itself is read.
-  # Disabled until the TLS chain is handled: www.kisa.or.kr sends only its leaf certificate
-  # (issuer "GeoTrust TLS RSA CA G1" is not sent), which Node's fetch rejects
-  # (UNABLE_TO_VERIFY_LEAF_SIGNATURE). See apps/docs/events-auth/2-detail-design.md §7-2.
+  # Until 2026-11-09 the server sent only its leaf certificate and Node's fetch rejected it
+  # (UNABLE_TO_VERIFY_LEAF_SIGNATURE); it now sends the GeoTrust TLS RSA CA G1 intermediate too.
   - url: 'https://www.kisa.or.kr/401'
     chain: 'web3-kr'
     source_name: 'KISA 공지사항'
@@ -225,7 +230,8 @@ sources:
     adapter: 'HTML_BOARD'
     content_kind: 'NOTICE'
     authority: 'OFFICIAL'
-    enabled: false
+    # Once a day; 23 so a 6-hourly schedule that starts a little early still reads it daily.
+    min_interval_hours: 23
     board:
       list_item: 'table.tbl_board tbody tr'
       title: 'td.sbj a'
@@ -253,6 +259,7 @@ sources:
     adapter: 'HTML_BOARD'
     content_kind: 'NEWSLETTER'
     authority: 'OFFICIAL'
+    min_interval_hours: 23
     board:
       list_item: 'table.responsive-notice-table tbody tr'
       title: '.subject-text'

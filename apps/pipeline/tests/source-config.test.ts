@@ -220,4 +220,20 @@ ${extra}    include_keywords: [블록체인]
     )
     expect(source?.board?.detailUrl).toBe('/view.do?id={id}')
   })
+
+  it('reads min_interval_hours and rejects a non-positive one', () => {
+    const entry = (value: string) => `
+sources:
+  - url: https://example.com/releases.atom
+    chain: avalanche
+    source_name: Example
+    source_type: RSS
+    adapter: ATOM
+    content_kind: RELEASE
+    authority: OFFICIAL
+    min_interval_hours: ${value}
+`
+    expect(parseSourceConfig(entry('23'))[0]?.minIntervalHours).toBe(23)
+    expect(() => parseSourceConfig(entry('0'))).toThrow('Invalid source config')
+  })
 })
