@@ -97,25 +97,37 @@ ALTER TABLE content.tech_update
   ADD COLUMN IF NOT EXISTS lifecycle_stage  VARCHAR(20),
   ADD COLUMN IF NOT EXISTS stage_evidence   TEXT,
   ADD COLUMN IF NOT EXISTS stage_source_url VARCHAR(1000),
-  ADD COLUMN IF NOT EXISTS what_changed     TEXT,
-  ADD COLUMN IF NOT EXISTS who_cares        TEXT[] NOT NULL DEFAULT '{}',
-  ADD COLUMN IF NOT EXISTS who_cares_note   TEXT,
+  ADD COLUMN IF NOT EXISTS proposal_created_at  TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS proposal_updated_at  TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS included_in_release  VARCHAR(200),
+  ADD COLUMN IF NOT EXISTS included_release_url VARCHAR(1000),
+  ADD COLUMN IF NOT EXISTS what_changed     JSONB NOT NULL DEFAULT '[]',
+  ADD COLUMN IF NOT EXISTS who_cares        JSONB NOT NULL DEFAULT '[]',
   ADD COLUMN IF NOT EXISTS review_state     VARCHAR(20) NOT NULL DEFAULT 'PUBLISHED',
   ADD COLUMN IF NOT EXISTS reviewed_by      UUID,
   ADD COLUMN IF NOT EXISTS reviewed_at      TIMESTAMPTZ,
   ADD COLUMN IF NOT EXISTS content_hash     CHAR(64);
 ALTER TABLE content.tech_update
   DROP CONSTRAINT IF EXISTS ck_tech_stage,
+  DROP CONSTRAINT IF EXISTS ck_tech_what_changed,
   DROP CONSTRAINT IF EXISTS ck_tech_who_cares,
   DROP CONSTRAINT IF EXISTS ck_tech_review_state;
 ALTER TABLE content.tech_update
   -- 단계는 코드가 ACP 상태·활성화 시각으로 판정한다 (AI 판단 아님).
   ADD CONSTRAINT ck_tech_stage CHECK
     (lifecycle_stage IS NULL OR lifecycle_stage IN ('PROPOSED', 'ACCEPTED', 'ACTIVATED', 'STALE')),
-  ADD CONSTRAINT ck_tech_who_cares CHECK
-    (who_cares <@ ARRAY['NODE_OPERATOR', 'VALIDATOR', 'DAPP_DEVELOPER', 'L1_BUILDER', 'USER']::TEXT[]),
+  -- 항목 모양({text, source} · {audience, impact, reason})은 pipeline zod 가 검증한다. DB 는 배열인지만 본다.
+  ADD CONSTRAINT ck_tech_what_changed CHECK (jsonb_typeof(what_changed) = 'array'),
+  ADD CONSTRAINT ck_tech_who_cares CHECK (jsonb_typeof(who_cares) = 'array'),
   ADD CONSTRAINT ck_tech_review_state CHECK
     (review_state IN ('DRAFT', 'NEEDS_REVIEW', 'PUBLISHED', 'REJECTED'));
+
+COMMENT ON COLUMN content.tech_update.lifecycle_stage IS
+  '문서(ACP) 상태로 코드가 정한다. 릴리스 노트(included_in_release)와 어긋나면 API 가 "확인 중"으로 응답한다(저장하지 않음).';
+COMMENT ON COLUMN content.tech_update.what_changed IS
+  '무엇이 바뀌나요. [{"text": 한 줄, "source": 근거 번호(1부터)}]. 근거 문장이 원문에 있을 때만.';
+COMMENT ON COLUMN content.tech_update.who_cares IS
+  '누구에게 해당하나요(체이너리 해석). [{"audience": NODE_OPERATOR|VALIDATOR|DAPP_DEVELOPER|L1_BUILDER|USER, "impact": HIGH|LOW, "reason": 한 줄}].';
 
 -- ── 5. 수집기 표시: 기존 NestJS 스케줄러(AI 엔지니어링 평가)가 Chainery 글을 가져가지 않게 ──
 -- apps/pipeline 이 source_meta_json.collector = 'chainery' 를 남기고,
