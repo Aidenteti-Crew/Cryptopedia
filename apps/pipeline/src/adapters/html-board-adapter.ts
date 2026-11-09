@@ -42,7 +42,13 @@ function select(root: HTMLElement, spec: string): string {
   return (attr ? el.getAttribute(attr) ?? '' : el.text).replace(/\s+/g, ' ').trim()
 }
 
-function postUrl(href: string, pageUrl: string, layout: BoardLayout): string {
+function postUrl(href: string, pageUrl: string, layout: BoardLayout): string | null {
+  if (layout.linkIdPattern && layout.detailUrl) {
+    const id = new RegExp(layout.linkIdPattern).exec(href)?.[1]
+    if (!id) return null
+    return new URL(layout.detailUrl.replace('{id}', encodeURIComponent(id)), pageUrl).toString()
+  }
+  if (href.startsWith('#') || href.startsWith('javascript:')) return null
   const url = new URL(href, pageUrl)
   for (const param of layout.dropLinkParams) url.searchParams.delete(param)
   return url.toString()
@@ -61,8 +67,9 @@ export function parseBoardList(html: string, pageUrl: string, layout: BoardLayou
     const title = select(row, layout.title)
     const href = select(row, layout.link)
     const date = boardDate(select(row, layout.date))
-    if (!title || !href || !date || href.startsWith('#') || href.startsWith('javascript:')) continue
-    items.push({ title, url: postUrl(href, pageUrl, layout), date })
+    const url = href ? postUrl(href, pageUrl, layout) : null
+    if (!title || !url || !date) continue
+    items.push({ title, url, date })
   }
   return items
 }

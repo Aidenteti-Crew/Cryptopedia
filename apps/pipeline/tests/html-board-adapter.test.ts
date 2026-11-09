@@ -114,6 +114,44 @@ describe('parseBoardList', () => {
   })
 })
 
+describe('parseBoardList with script-call links', () => {
+  // Markup trimmed from blockchain.kisa.or.kr/bbso/bbsoAnalsList.do (2026-11-09).
+  const portal: BoardLayout = {
+    ...layout,
+    listItem: 'table.responsive-notice-table tbody tr',
+    title: '.subject-text',
+    link: 'a.subject-link@href',
+    date: '.item-date',
+    pageParam: 'pageIndex',
+    dropLinkParams: [],
+    linkIdPattern: "fn_goView\\('([A-Za-z0-9_]+)'\\)",
+    detailUrl: '/bbso/bbsoAnalsDetail.do?searchBbsoMngId={id}',
+  }
+
+  it('turns fn_goView ids into detail URLs and reads the labelled date', () => {
+    const html = `<table class="responsive-notice-table"><tbody>
+      <tr><td class="cell-num">1542</td><td class="cell-content">
+        <a href="javascript:fn_goView('BBSOID_0000000001808');" class="subject-link">
+          <span class="badge-weekly">주간</span>
+          <span class="subject-text">블록체인 기반 UAV 교차 도메인 인증 기술 (2026년 11월 1주 ④)</span>
+        </a>
+        <span class="meta-item item-date"><strong>등록일</strong> 2026-11-09</span>
+      </td></tr>
+      <tr><td class="cell-content"><a href="javascript:void(0)" class="subject-link">
+        <span class="subject-text">id 없음</span></a><span class="item-date">2026-11-09</span></td></tr>
+    </tbody></table>`
+    expect(
+      parseBoardList(html, 'https://blockchain.kisa.or.kr/bbso/bbsoAnalsList.do?pageIndex=1', portal)
+    ).toEqual([
+      {
+        title: '블록체인 기반 UAV 교차 도메인 인증 기술 (2026년 11월 1주 ④)',
+        url: 'https://blockchain.kisa.or.kr/bbso/bbsoAnalsDetail.do?searchBbsoMngId=BBSOID_0000000001808',
+        date: '2026-11-09',
+      },
+    ])
+  })
+})
+
 describe('parseBoardDetail', () => {
   it('keeps line breaks and drops scripts', () => {
     const text = parseBoardDetail(

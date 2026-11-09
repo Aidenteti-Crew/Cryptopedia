@@ -81,6 +81,10 @@ export interface BoardLayout {
   // Query parameters dropped from post links so a post keeps one URL as it moves down the
   // list (KISA appends the list page number to every link).
   dropLinkParams: string[]
+  // For boards whose links are script calls (javascript:fn_goView('ID')): the id is the first
+  // group of linkIdPattern, put into detailUrl's "{id}" and resolved against the list page.
+  linkIdPattern?: string
+  detailUrl?: string
   // Board dates have no time; they are read as midnight at this UTC offset.
   utcOffset: string
   encoding: string
@@ -168,6 +172,20 @@ const SourceEntrySchema = z
         page_param: z.string().min(1).default('page'),
         max_pages: z.number().int().positive().max(10).default(2),
         drop_link_params: z.array(z.string().min(1)).default([]),
+        link_id_pattern: z
+          .string()
+          .refine(
+            (pattern) => {
+              try {
+                return new RegExp(pattern).source.includes('(')
+              } catch {
+                return false
+              }
+            },
+            { message: 'must be a valid regular expression with a capture group' }
+          )
+          .optional(),
+        detail_url: z.string().includes('{id}').optional(),
         utc_offset: z
           .string()
           .regex(/^[+-]\d{2}:\d{2}$/)
@@ -204,6 +222,13 @@ const SourceEntrySchema = z
         code: z.ZodIssueCode.custom,
         path: ['board'],
         message: 'board {list_item, title, link, date, detail_body} is required for adapter HTML_BOARD',
+      })
+    }
+    if (entry.board && Boolean(entry.board.link_id_pattern) !== Boolean(entry.board.detail_url)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['board'],
+        message: 'board link_id_pattern and detail_url go together',
       })
     }
     if (entry.adapter === 'HTML_BOARD' && !entry.include_keywords?.length) {
@@ -256,6 +281,8 @@ function toSourceConfig(raw: z.infer<typeof SourceEntrySchema>): SourceConfig {
       pageParam: raw.board.page_param,
       maxPages: raw.board.max_pages,
       dropLinkParams: raw.board.drop_link_params,
+      linkIdPattern: raw.board.link_id_pattern,
+      detailUrl: raw.board.detail_url,
       utcOffset: raw.board.utc_offset,
       encoding: raw.board.encoding,
       requestDelayMs: raw.board.request_delay_ms,

@@ -241,3 +241,29 @@ sources:
       [블록체인, Web3, 웹3, 분산원장, 디지털자산, 가상자산, NFT, 토큰, DID, 진흥주간, 해커톤, BCMD, 스마트컨트랙트, 탈중앙]
     exclude_keywords: [입찰, 채용, 인사발령, 사전규격]
     consecutive_failures_threshold: 3
+
+  # KISA 블록체인 포털 최신동향(주간): weekly summaries of blockchain tech, policy and industry
+  # research — industry news, not events. robots.txt 404 (none published). 5 posts per page,
+  # ~5 a week. Posts open through a script call (fn_goView('BBSOID_…')), but the detail page also
+  # answers a plain GET with the id, so that URL is stored. TLS chain is complete (Node OK).
+  - url: 'https://blockchain.kisa.or.kr/bbso/bbsoAnalsList.do'
+    chain: 'web3-kr'
+    source_name: 'KISA 블록체인 포털 최신동향'
+    source_type: 'WEBSITE'
+    adapter: 'HTML_BOARD'
+    content_kind: 'NEWSLETTER'
+    authority: 'OFFICIAL'
+    board:
+      list_item: 'table.responsive-notice-table tbody tr'
+      title: '.subject-text'
+      link: 'a.subject-link@href'
+      date: '.item-date'
+      detail_body: 'div.spc-info-group-content'
+      page_param: 'pageIndex'
+      max_pages: 2
+      link_id_pattern: "fn_goView\\('([A-Za-z0-9_]+)'\\)"
+      detail_url: '/bbso/bbsoAnalsDetail.do?searchBbsoMngId={id}'
+    # Almost every post is about blockchain; the filter drops the few general ICT ones (6G etc.).
+    include_keywords:
+      [블록체인, Web3, 웹3, 분산원장, 디지털자산, 가상자산, NFT, 토큰, DID, 스마트컨트랙트, 탈중앙, 영지식]
+    consecutive_failures_threshold: 3

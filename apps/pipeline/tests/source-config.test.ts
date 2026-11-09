@@ -191,4 +191,33 @@ sources:
       parseSourceConfig(`${base}${board}      request_delay_ms: 500\n    include_keywords: [x]\n`)
     ).toThrow('Invalid source config')
   })
+
+  it('requires link_id_pattern and detail_url together', () => {
+    const entry = (extra: string) => `
+sources:
+  - url: https://blockchain.kisa.or.kr/bbso/bbsoAnalsList.do
+    chain: web3-kr
+    source_name: KISA 블록체인 포털
+    source_type: WEBSITE
+    adapter: HTML_BOARD
+    content_kind: NEWSLETTER
+    authority: OFFICIAL
+    board:
+      list_item: tr
+      title: .subject-text
+      link: a@href
+      date: .item-date
+      detail_body: div
+${extra}    include_keywords: [블록체인]
+`
+    expect(() => parseSourceConfig(entry("      link_id_pattern: \"fn_goView\\\\('(\\\\w+)'\\\\)\"\n"))).toThrow(
+      'go together'
+    )
+    const [source] = parseSourceConfig(
+      entry(
+        "      link_id_pattern: \"fn_goView\\\\('(\\\\w+)'\\\\)\"\n      detail_url: '/view.do?id={id}'\n"
+      )
+    )
+    expect(source?.board?.detailUrl).toBe('/view.do?id={id}')
+  })
 })
