@@ -3,7 +3,7 @@ import { existsSync } from 'node:fs'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 
-import { editorialViewFromPath, pathForEditorialView } from './cryptopedia-routes'
+import { editorialViewFromPath, navHref, pathForEditorialView } from './cryptopedia-routes'
 import type { EditorialView } from '@/components/cherry/editorial/editorial-app'
 
 test('every editorial screen has a stable direct URL', () => {
@@ -101,4 +101,10 @@ test('editorial URLs have individual Next.js route entry points', () => {
     )
     assert.ok(existsSync(routeFile), `missing route file: ${path}`)
   }
+})
+
+test('the 행사·이벤트 menu opens the platform /events page', () => {
+  assert.equal(navHref('events'), '/events')
+  assert.equal(navHref('updates'), '/updates')
+  assert.equal(navHref('ecosystem'), '/knowledge')
 })

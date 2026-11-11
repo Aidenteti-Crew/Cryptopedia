@@ -6,13 +6,8 @@ import { useRef, useState } from 'react'
 import { Menu } from 'lucide-react'
 
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
-import { pathForEditorialView } from '@/lib/cryptopedia-routes'
-import {
-  CHAPTER_NAV,
-  ECOSYSTEM_HOME_NAV,
-  PRIMARY_NAV,
-  type ScreenId,
-} from '@/lib/cryptopedia-taxonomy'
+import { navHref } from '@/lib/cryptopedia-routes'
+import { CHAPTER_NAV, ECOSYSTEM_HOME_NAV, PRIMARY_NAV } from '@/lib/cryptopedia-taxonomy'
 
 import { AccountControl } from '@/components/auth/account-control'
 
@@ -24,13 +19,12 @@ import styles from './about-page.module.css'
    데스크톱은 블록체인 지식에 hover 하면 지식 섹션의 하위 메뉴가 펼쳐지고,
    모바일은 오른쪽에서 열리는 패널에 같은 메뉴를 그린다. */
 
-const screenPath = (id: ScreenId) => pathForEditorialView({ kind: 'screen', id })
 
 /* 블록체인 지식의 하위 메뉴 — 사이드바와 같은 순서(생태계 홈 · LIVE · LEARN 챕터) */
 const KNOWLEDGE_LINKS = [
-  { label: ECOSYSTEM_HOME_NAV.label, href: screenPath('ecosystem') },
-  ...PRIMARY_NAV.map((item) => ({ label: item.label, href: screenPath(item.id) })),
-  ...CHAPTER_NAV.map((chapter) => ({ label: chapter.label, href: screenPath(chapter.id) })),
+  { label: ECOSYSTEM_HOME_NAV.label, href: navHref('ecosystem') },
+  ...PRIMARY_NAV.map((item) => ({ label: item.label, href: navHref(item.id) })),
+  ...CHAPTER_NAV.map((chapter) => ({ label: chapter.label, href: navHref(chapter.id) })),
 ]
 
 export const PLATFORM_MENUS: {
@@ -44,7 +38,7 @@ export const PLATFORM_MENUS: {
   {
     id: 'knowledge',
     label: '블록체인 지식',
-    href: screenPath('ecosystem'),
+    href: navHref('ecosystem'),
     children: KNOWLEDGE_LINKS,
   },
 ]

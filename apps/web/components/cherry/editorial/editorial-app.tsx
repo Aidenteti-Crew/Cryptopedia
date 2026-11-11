@@ -46,7 +46,7 @@ import { KnowledgeOnboarding } from './my-path-onboarding'
 import { getEditorialBreadcrumbs, menuEntryFor } from './editorial-breadcrumb'
 import { useEditorialChain } from './editorial-chain-provider'
 import { getChainTheme } from '@/lib/chain-theme'
-import { pathForEditorialView } from '@/lib/cryptopedia-routes'
+import { navHref, pathForEditorialView } from '@/lib/cryptopedia-routes'
 
 export type EditorialView =
   | { kind: 'screen'; id: ScreenId }
@@ -246,7 +246,7 @@ export function EditorialApp({
   const selectScreen = (id: ScreenId) => {
     if (view.kind === 'screen' && ['projects', 'macro', 'events', 'updates'].includes(activeScreen))
       rememberDiscoveryScroll(`${activeChain.id}:${activeScreen}`)
-    router.push(pathForEditorialView({ kind: 'screen', id }))
+    router.push(navHref(id))
   }
 
   const openArticle = (id: string, fallbackParent = activeScreen) => {

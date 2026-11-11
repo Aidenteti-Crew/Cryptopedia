@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { pathForEditorialView } from '@/lib/cryptopedia-routes'
-import { NAV_SECTION_LABELS, PRIMARY_NAV, type ScreenId } from '@/lib/cryptopedia-taxonomy'
+import { navHref } from '@/lib/cryptopedia-routes'
+import { NAV_SECTION_LABELS, PRIMARY_NAV } from '@/lib/cryptopedia-taxonomy'
 
 import { AboutHeader } from './about-header'
 import { AboutOntologyFigure } from './about-ontology-figure'
@@ -211,7 +211,7 @@ function HeroSection() {
    카드 대신 0.5px 격자선으로 나눈 한 장의 지면.
    왼쪽 LIVE 는 목차지만 줄마다 들어오는 신호(눈금)가 흘러 '지금도 수집 중'임을 보여주고,
    오른쪽 LEARN 은 핵심 개념이 모이는 구조를 고정 도판(AboutOntologyFigure)으로 보여준다. */
-const screenHref = (id: ScreenId) => pathForEditorialView({ kind: 'screen', id })
+const screenHref = navHref
 
 /* 줄마다 신호가 흐르는 속도·간격을 달리해 기계적으로 똑같아 보이지 않게 한다 */
 const LIVE_SIGNALS = [

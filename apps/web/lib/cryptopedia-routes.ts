@@ -52,6 +52,12 @@ export function pathForEditorialView(view: EditorialView): string {
   return `/articles/${encodeURIComponent(view.id)}`
 }
 
+/* 메뉴 링크. 행사·이벤트는 체인별 목록(/knowledge/events)이 아니라 모든 체인과 운영자 행사를 담은
+   플랫폼 /events 로 보낸다 — 같은 이름의 메뉴가 서로 다른 두 페이지로 가지 않게. */
+export function navHref(id: ScreenId): string {
+  return id === 'events' ? '/events' : pathForEditorialView({ kind: 'screen', id })
+}
+
 export function editorialViewFromPath(pathname: string): EditorialView | null {
   const cleanPath = pathname !== '/' ? pathname.replace(/\/$/, '') : pathname
   const screen = PATH_SCREENS.get(cleanPath)
