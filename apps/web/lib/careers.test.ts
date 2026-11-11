@@ -8,6 +8,9 @@ import {
   computeFit,
   emptyCareerProfile,
   formatMoney,
+  formatLocation,
+  formatPeriod,
+  isClosed,
   formatSalary,
   isListableJob,
   loadCurrency,
@@ -21,10 +24,14 @@ import {
   type CareerProfile,
 } from './careers'
 
-const data = careersSchema.parse(
-  JSON.parse(readFileSync(new URL('../public/cryptopedia/careers.json', import.meta.url), 'utf8'))
-)
-const byId = (id: string) => data.items.find((job) => job.id === id) as CareerJob
+const read = (path: string) =>
+  careersSchema.parse(JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')))
+
+/* 화면이 읽는 실제 수집본 — 계약에 맞는지만 본다 (내용은 수집할 때마다 바뀐다) */
+const data = read('../public/cryptopedia/careers.json')
+/* 계산 규칙 테스트는 내용이 고정된 샘플 공고로 */
+const fixture = read('./careers.fixture.json')
+const byId = (id: string) => fixture.items.find((job) => job.id === id) as CareerJob
 
 test('careers.json 은 계약에 맞고 id 가 겹치지 않는다', () => {
   assert.ok(data.items.length > 0)
@@ -161,8 +168,8 @@ test('통화 선택 — 처음에는 원화, 저장한 값은 다시 읽힌다',
 })
 
 test('검색 — 제목 · 회사 · 스킬', () => {
-  assert.equal(searchJobs(data.items, '  ').length, data.items.length)
-  const solidity = searchJobs(data.items, 'solidity')
+  assert.equal(searchJobs(fixture.items, '  ').length, fixture.items.length)
+  const solidity = searchJobs(fixture.items, 'solidity')
   assert.ok(solidity.length > 0 && solidity.every((job) => job.skills.includes('Solidity')))
 })
 
@@ -186,4 +193,27 @@ test('내 조건 저장 · 읽기 · 깨진 기록은 무시 · 예전 필드는
 
   saveCareerProfile(null, storage)
   assert.equal(loadCareerProfile(storage), null)
+})
+
+test('공고 기간 — 연도까지 같은 형식, 마감일이 없으면 채용 시 마감, 지난 공고는 목록에서 뺀다', () => {
+  assert.equal(
+    formatPeriod({ postedAt: '2026-11-06', closesAt: null }),
+    '2026.11.06 ~ 채용 시 마감'
+  )
+  assert.equal(
+    formatPeriod({ postedAt: '2026-11-06', closesAt: '2026-12-31' }),
+    '2026.11.06 ~ 2026.12.31'
+  )
+  assert.equal(formatPeriod({ postedAt: '2025-12-01' }), '2025.12.01 ~ 채용 시 마감')
+  const today = new Date('2026-11-11T09:00:00Z')
+  assert.equal(isClosed({ closesAt: '2026-11-10' }, today), true)
+  assert.equal(isClosed({ closesAt: '2026-11-11' }, today), false)
+  assert.equal(isClosed({ closesAt: null }, today), false)
+})
+
+test('위치는 장소만 — 원격인데 장소가 없으면 원격', () => {
+  assert.equal(formatLocation({ workMode: 'remote', location: '' }), '원격')
+  assert.equal(formatLocation({ workMode: 'remote', location: '아시아' }), '원격 · 아시아')
+  assert.equal(formatLocation({ workMode: 'hybrid', location: '서울' }), '서울 · 하이브리드')
+  assert.equal(formatLocation({ workMode: 'onsite', location: '' }), '지역 미기재')
 })

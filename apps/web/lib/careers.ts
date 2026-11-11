@@ -30,6 +30,14 @@ export const KOREA_ELIGIBILITY = [
   { id: 'no', label: '한국 지원 불가' },
 ] as const
 
+/* 고용 형태 — 채용 페이지가 주거나 제목에 적힌 것만 (모르면 비워 둔다) */
+export const EMPLOYMENT_TYPES = [
+  { id: 'fulltime', label: '정규직' },
+  { id: 'contract', label: '계약직' },
+  { id: 'parttime', label: '파트타임' },
+  { id: 'intern', label: '인턴' },
+] as const
+
 export const JOB_SOURCES = [
   { id: 'linkedin', label: 'LinkedIn' },
   { id: 'web3-board', label: 'Web3 잡보드' },
@@ -74,6 +82,7 @@ export type CareerRole = Ids<typeof CAREER_ROLES>
 export type WorkMode = Ids<typeof WORK_MODES>
 export type KoreaEligibility = Ids<typeof KOREA_ELIGIBILITY>
 export type JobSource = Ids<typeof JOB_SOURCES>
+export type EmploymentType = Ids<typeof EMPLOYMENT_TYPES>
 
 const idsOf = <T extends readonly { id: string }[]>(list: T) =>
   list.map((item) => item.id) as unknown as [Ids<T>, ...Ids<T>[]]
@@ -99,19 +108,26 @@ const jobSchema = z.object({
   title: z.string().min(1),
   company: z.string().min(1),
   summary: z.string(),
+  /* 본문을 AI 로 한국어 정리한 한 줄 요약 (scripts/translate-careers.ts) — 없으면 summary 를 보인다 */
+  summaryKo: z.string().optional(),
   role: z.enum(idsOf(CAREER_ROLES)),
   seniority: z.enum(['junior', 'mid', 'senior', 'lead']),
   workMode: z.enum(idsOf(WORK_MODES)),
+  /* 고용 형태 — 모르면 null */
+  employment: z.enum(idsOf(EMPLOYMENT_TYPES)).nullable().optional(),
   koreaEligible: z.enum(idsOf(KOREA_ELIGIBILITY)),
   location: z.string(),
   /* 연봉(연 기준) — 공고에 있을 때만. 공고에 적힌 통화 그대로 (한국 공고는 원화, 해외 공고는 달러) */
   salary: moneyRangeSchema.nullable(),
-  skills: z.array(z.string()).min(1),
+  /* 본문에서 찾은 스킬 — 못 찾으면 빈 목록 (적합도에서 스킬 몫은 빠진다) */
+  skills: z.array(z.string()),
   chains: z.array(z.string()),
   source: z.enum(idsOf(JOB_SOURCES)),
   /* 원문 공고 — 샘플은 null 이고 지원 버튼을 비활성으로 보인다 */
   sourceUrl: z.string().url().nullable(),
   postedAt: z.string(),
+  /* 마감일 'YYYY-MM-DD' — 대부분의 공고는 마감일 없이 채용될 때까지 열려 있다(null · 없음 = 채용 시 마감) */
+  closesAt: z.string().nullable().optional(),
   fetchedAt: z.string(),
 })
 
@@ -128,7 +144,7 @@ export type CareersData = z.infer<typeof careersSchema>
    한국에서 지원할 수 없는 공고(거주 국가 제한 등)는 화면에 올리지 않는다.
    사용자가 고르는 조건이 아니라 우리가 공고를 가져올 때 거르는 기준이다.
    'unclear'(공고에 지역 조건이 적혀 있지 않음)는 일단 올린다. */
-export const isListableJob = (job: CareerJob) => job.koreaEligible !== 'no'
+export const isListableJob = (job: CareerJob) => job.koreaEligible !== 'no' && !isClosed(job)
 
 /* ── 내 조건 ── */
 
@@ -227,7 +243,7 @@ export function computeFit(job: CareerJob, profile: CareerProfile): CareerFit {
   const matchedSkills = job.skills.filter((skill) => mine.has(skill))
   const missingSkills = job.skills.filter((skill) => !mine.has(skill))
 
-  if (profile.skills.length) {
+  if (profile.skills.length && job.skills.length) {
     possible += WEIGHTS.skills
     earned += (matchedSkills.length / job.skills.length) * WEIGHTS.skills
   }
@@ -278,7 +294,15 @@ export function searchJobs(jobs: CareerJob[], query: string): CareerJob[] {
   const needle = query.trim().toLowerCase()
   if (!needle) return jobs
   return jobs.filter((job) =>
-    [job.title, job.company, job.summary, job.location, ...job.skills, ...job.chains]
+    [
+      job.title,
+      job.company,
+      job.summary,
+      job.summaryKo ?? '',
+      job.location,
+      ...job.skills,
+      ...job.chains,
+    ]
       .join(' ')
       .toLowerCase()
       .includes(needle)
@@ -337,4 +361,24 @@ export function saveCurrency(currency: Currency, storage = browserStorage()) {
   } catch {
     // 저장하지 못해도 이번 화면에서는 고른 통화로 보인다
   }
+}
+
+/** 'YYYY-MM-DD' → 'YYYY.MM.DD' — 목록 · 상세 어디서나 연도까지 같은 형식 */
+export const formatDay = (day: string) => day.slice(0, 10).replaceAll('-', '.')
+
+/** 공고 기간 — 등록일 ~ 마감일. 마감일이 없으면(대부분) 채용될 때 내려가므로 '채용 시 마감'
+    등록일은 공고가 얼마나 오래됐는지 보여 주는 값이라 늘 보인다 */
+export function formatPeriod(job: Pick<CareerJob, 'postedAt' | 'closesAt'>) {
+  return `${formatDay(job.postedAt)} ~ ${job.closesAt ? formatDay(job.closesAt) : '채용 시 마감'}`
+}
+
+/** 마감일이 지난 공고 — 목록에 올리지 않는다 */
+export const isClosed = (job: Pick<CareerJob, 'closesAt'>, today = new Date()) =>
+  !!job.closesAt && job.closesAt < today.toISOString().slice(0, 10)
+
+/** 화면의 위치 칸 — 근무 방식과 장소를 한 칸에: '원격 · 아시아·태평양', '원격', '서울 강남구', '서울 강남구 · 하이브리드' */
+export function formatLocation(job: Pick<CareerJob, 'workMode' | 'location'>) {
+  if (job.workMode === 'remote') return job.location ? `원격 · ${job.location}` : '원격'
+  if (job.workMode === 'hybrid') return job.location ? `${job.location} · 하이브리드` : '하이브리드'
+  return job.location || '지역 미기재'
 }

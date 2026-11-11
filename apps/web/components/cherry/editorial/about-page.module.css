@@ -47,6 +47,13 @@
   pointer-events: none;
 }
 
+/* 흰 바탕 화면용 — 그라데이션 대신 흰 띠와 얇은 아래 선 */
+.headerLight::before {
+  height: 100%;
+  background: var(--editorial-paper);
+  border-bottom: 1px solid var(--editorial-line);
+}
+
 .headerBar {
   display: flex;
   align-items: center;

@@ -47,7 +47,8 @@ export const PLATFORM_MENUS: {
   },
 ]
 
-export function AboutHeader() {
+/** light — 흰 바탕 화면(채용)용: 어두운 그라데이션 대신 흰 띠 + 아래 선 */
+export function AboutHeader({ light = false }: { light?: boolean } = {}) {
   const router = useRouter()
   // 펼쳐진 하위 메뉴 — 띠는 하나만 두고 항목만 바꿔 끼워 옆 메뉴로 옮길 때 깜빡이지 않게 한다
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
@@ -59,7 +60,9 @@ export function AboutHeader() {
 
   return (
     // right-scroll-bar-position: 드롭다운이 열려 스크롤바가 사라져도 고정 헤더 폭이 그대로 (버튼이 밀리지 않게)
-    <header className={`${styles.header} right-scroll-bar-position`}>
+    <header
+      className={`${styles.header} ${light ? styles.headerLight : ''} right-scroll-bar-position`}
+    >
       <div className={styles.headerBar}>
         <EditorialBrand onHome={() => router.push('/')} className="shrink-0" />
 

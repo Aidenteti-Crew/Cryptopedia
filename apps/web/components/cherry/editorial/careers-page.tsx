@@ -1,18 +1,21 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
+import Link from 'next/link'
 import { ArrowUpRight, Check, ChevronDown, Search } from 'lucide-react'
 
 import {
   CAREER_ROLES,
   CAREER_SKILLS,
-  JOB_SOURCES,
+  EMPLOYMENT_TYPES,
   SALARY_STEPS,
   nearestSalaryStep,
   WORK_MODES,
   computeFit,
   emptyCareerProfile,
+  formatLocation,
   formatMoney,
+  formatPeriod,
   formatSalary,
   isListableJob,
   isProfileReady,
@@ -31,17 +34,15 @@ import {
 
 import { AboutHeader } from './about-header'
 
-/* 채용 (/careers) — 입구(/)와 같은 어두운 플랫폼 화면. 깊이 없이 한 화면:
+/* 채용 (/careers) — 블록체인 지식과 같은 흰 바탕 화면(읽기 쉬움이 우선). 깊이 없이 한 화면:
    왼쪽 = 내 조건(체크하는 즉시 저장 · 반영), 오른쪽 = 검색 + 공고 목록.
    조건을 체크하면 공고마다 적합도가 붙고 잘 맞는 순으로 정렬된다.
-   공고는 펼치지 않는다 — 한 줄 요약 · 스킬(내 스킬은 초록)이 바로 보이고, 오른쪽 끝에 원문 지원 버튼.
-   연봉은 원 / 달러를 바꿔 볼 수 있다 (저장은 USD, 표시만 환산).
+   공고는 펼치지 않는다 — 한국어 요약 · 이름표 붙은 정보 · 스킬(내 스킬은 초록)이 바로 보이고, 원문 지원하기 버튼.
+   연봉은 원 / 달러를 바꿔 볼 수 있다 (공고에 적힌 통화로 저장, 표시만 환산).
    한국 지원 불가 공고는 수집 단계에서 거른다(isListableJob) — 사용자가 고르는 조건이 아니다.
    크롤링 공고라 안전을 보장하지 않는다는 안내는 늘 보인다.
 
-   입구(/)의 .landing 클래스는 쓰지 않는다 — 그 클래스가 붙으면 문서 전체에 화면 단위 스냅 스크롤이 걸린다.
-   배경색만 입구와 맞춘다 (.editorial-root 배경을 덮어야 해서 인라인 스타일). */
-const PAGE_STYLE = { background: '#1b1326', color: '#f3eefb' } as const
+   입구(/)의 .landing 클래스는 쓰지 않는다 — 그 클래스가 붙으면 문서 전체에 화면 단위 스냅 스크롤이 걸린다. */
 
 /* 고정 헤더 아래 왼쪽 칸이 붙는 위치(px) — lg:top-28 과 같은 값 */
 const PANEL_TOP = 112
@@ -128,8 +129,8 @@ export function CareersPage({ data }: { data: CareersData }) {
     (profile.minSalary ? 1 : 0)
 
   return (
-    <div className="editorial-root editorial-dark" style={PAGE_STYLE}>
-      <AboutHeader />
+    <div className="editorial-root min-h-screen bg-[var(--editorial-paper)] text-[var(--editorial-ink)]">
+      <AboutHeader light />
       <main className="mx-auto w-full max-w-[1160px] px-4 pb-24 pt-24 sm:px-8 lg:pt-32">
         <h1 className="text-[30px] font-semibold leading-tight tracking-[-0.02em] text-[var(--editorial-strong)] sm:text-[36px]">
           웹3 채용
@@ -227,7 +228,8 @@ export function CareersPage({ data }: { data: CareersData }) {
             )}
 
             <p className="mt-8 text-xs leading-6 text-[var(--editorial-muted)]">
-              chainery는 채용에 관여하지 않아요. 지갑·시드 문구·선입금을 요구하면 응하지 마세요.
+              chainery는 공고를 모아 보여 줄 뿐 채용에 관여하지 않아요. 채용을 이유로 지갑 연결,
+              시드 문구, 입금을 요구한다면 사기예요.
             </p>
           </section>
         </div>
@@ -386,9 +388,9 @@ function CurrencyToggle({
   )
 }
 
-/* ── 공고 카드 — 펼치지 않는다.
-   왼쪽: 제목 · 회사/근무/연봉/출처 · 한 줄 요약 · 스킬(내 스킬은 초록 ✓)
-   오른쪽 끝: 적합도 + 원문에서 지원 버튼 ── */
+/* ── 공고 카드 — 펼치지 않는다. 누르면 한국어 상세(/careers/[id])
+   회사 → 제목 → 한국어 한 줄 요약 → 이름표 붙은 정보(위치 · 고용 형태 · 연봉 · 기간) → 스킬(내 스킬은 초록 ✓)
+   오른쪽(모바일은 아래): 적합도 + 원문에서 지원하기 ── */
 function JobRow({
   job,
   fit,
@@ -399,35 +401,56 @@ function JobRow({
   currency: Currency
 }) {
   const matched = new Set(fit?.matchedSkills)
+  const facts = [
+    { label: '위치', value: formatLocation(job) },
+    {
+      label: '고용 형태',
+      value: job.employment ? labelOf(EMPLOYMENT_TYPES, job.employment) : null,
+    },
+    { label: '연봉', value: formatSalary(job.salary, currency) },
+    { label: '기간', value: formatPeriod(job) },
+  ].filter((fact): fact is { label: string; value: string } => !!fact.value)
 
   return (
-    <article className="flex items-center gap-4 py-4 sm:px-3">
-      <div className="min-w-0 flex-1">
-        <h2 className="truncate text-[16px] font-semibold text-[var(--editorial-strong)]">
+    <article className="flex flex-col gap-4 py-6 sm:flex-row sm:items-start sm:gap-6 sm:px-4">
+      <Link href={`/careers/${job.id}`} className="group min-w-0 flex-1">
+        <p className="text-[13px] font-medium text-[var(--editorial-muted)]">{job.company}</p>
+        <h2 className="mt-1 text-[18px] font-semibold leading-snug text-[var(--editorial-strong)] group-hover:text-[var(--editorial-accent)]">
           {job.title}
         </h2>
-        <p className="mt-0.5 truncate text-[13px] text-[var(--editorial-muted)]">
-          {job.company} · {labelOf(WORK_MODES, job.workMode)} · {formatSalary(job.salary, currency)}{' '}
-          · {labelOf(JOB_SOURCES, job.source)}
+        {/* 영문 원문 요약은 보이지 않는다 — 한국어 정리가 끝난 공고만 요약이 붙는다 */}
+        <p
+          className={`mt-2 line-clamp-2 text-[14px] leading-6 ${job.summaryKo ? 'text-[var(--editorial-ink)]' : 'text-[var(--editorial-faint)]'}`}
+        >
+          {job.summaryKo ?? '한국어 요약 준비 중'}
         </p>
-        <p className="mt-1.5 line-clamp-1 text-[13px] text-[var(--editorial-ink)]">{job.summary}</p>
-        <ul aria-label="요구 스킬" className="mt-2 flex flex-wrap gap-1">
-          {job.skills.map((skill) => (
-            <li
-              key={skill}
-              className={`inline-flex items-center gap-1 border px-2 py-0.5 text-[11px] ${matched.has(skill) ? 'border-[var(--editorial-secondary)] text-[var(--editorial-secondary)]' : 'border-[var(--editorial-line)] text-[var(--editorial-muted)]'}`}
-            >
-              {matched.has(skill) && <Check size={11} aria-hidden />}
-              {skill}
-              {matched.has(skill) && <span className="sr-only">(보유)</span>}
-            </li>
+        <dl className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-[13px]">
+          {facts.map((fact) => (
+            <div key={fact.label} className="flex gap-1.5">
+              <dt className="text-[var(--editorial-muted)]">{fact.label}</dt>
+              <dd className="font-medium text-[var(--editorial-ink)]">{fact.value}</dd>
+            </div>
           ))}
-        </ul>
-      </div>
+        </dl>
+        {job.skills.length > 0 && (
+          <ul aria-label="요구 스킬" className="mt-3 flex flex-wrap gap-1.5">
+            {job.skills.map((skill) => (
+              <li
+                key={skill}
+                className={`inline-flex items-center gap-1 px-2 py-0.5 text-[12px] ${matched.has(skill) ? 'bg-[var(--editorial-secondary-soft)] text-[var(--editorial-secondary)]' : 'bg-[var(--editorial-hover)] text-[var(--editorial-muted)]'}`}
+              >
+                {matched.has(skill) && <Check size={12} aria-hidden />}
+                {skill}
+                {matched.has(skill) && <span className="sr-only">(보유)</span>}
+              </li>
+            ))}
+          </ul>
+        )}
+      </Link>
 
-      <div className="flex shrink-0 flex-col items-end gap-2 sm:flex-row sm:items-center sm:gap-4">
+      <div className="flex shrink-0 items-center justify-between gap-4 sm:flex-col sm:items-end sm:justify-start">
         {/* 하나도 안 맞는 공고는 0% 대신 비워 둔다 — 맞는 공고의 숫자만 눈에 띄게 */}
-        {fit && fit.score > 0 && <FitScore score={fit.score} />}
+        {fit && fit.score > 0 ? <FitScore score={fit.score} /> : <span />}
         {job.sourceUrl ? (
           <a
             href={job.sourceUrl}
@@ -436,7 +459,7 @@ function JobRow({
             aria-label={`${job.company} ${job.title} 원문에서 지원 (새 창)`}
             className={APPLY_BUTTON}
           >
-            지원
+            지원하기
             <ArrowUpRight size={15} aria-hidden />
           </a>
         ) : (
@@ -445,7 +468,7 @@ function JobRow({
             title="샘플 공고라 원문 링크가 없어요"
             className={`${APPLY_BUTTON} cursor-not-allowed opacity-40`}
           >
-            지원
+            지원하기
             <ArrowUpRight size={15} aria-hidden />
           </span>
         )}

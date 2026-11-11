@@ -19,3 +19,6 @@ node_modules
 # Auto-generated build artifacts
 next-env.d.ts
 *.tsbuildinfo
+
+# 채용 수집 본문 캐시 (번역 입력, scripts/crawl-careers.ts)
+/.cache/
