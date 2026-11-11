@@ -6,11 +6,14 @@ import {
   dayHeading,
   eventHost,
   eventHref,
+  eventLocation,
+  eventTitle,
   eventWhen,
   groupPlatformEvents,
   listedEventIds,
   neighbors,
   scopeLabel,
+  signUpUrl,
 } from './platform-events'
 
 const NOW = new Date('2026-11-09T03:00:00Z') // 2026-11-09 12:00 KST, a Monday
@@ -125,4 +128,30 @@ test('the detail time reads day and Seoul time range, or 종일', () => {
 
 test('an event link opens the detail on /events', () => {
   assert.equal(eventHref('01a1 x'), '/events?event=01a1%20x')
+})
+
+test('titles drop notice brackets and a closing date the card already shows', () => {
+  assert.equal(
+    eventTitle('「2026 블록체인 밋업데이(BCMD)」 31회차 교육생 모집(~11.13)'),
+    '2026 블록체인 밋업데이(BCMD) 31회차 교육생 모집'
+  )
+  assert.equal(
+    eventTitle('「2026 블록체인 진흥주간」 사전등록 안내(11/25~26, 서울 코엑스)'),
+    '2026 블록체인 진흥주간 사전등록 안내'
+  )
+  assert.equal(eventTitle('Builder Workshop: Claude & x402'), 'Builder Workshop: Claude & x402')
+  assert.equal(eventTitle('Avalanche Summit (Seoul)'), 'Avalanche Summit (Seoul)')
+})
+
+test('the place is left out when the source names none', () => {
+  assert.equal(eventLocation({ isOnline: false, venueName: null, city: null }), null)
+  assert.equal(eventLocation({ isOnline: true, venueName: null, city: null }), '온라인')
+  assert.equal(eventLocation({ isOnline: false, venueName: '코엑스', city: '서울' }), '코엑스 · 서울')
+})
+
+test('a Luma page is where people sign up; other source pages are not', () => {
+  assert.equal(signUpUrl({ registrationUrl: 'https://event-us.kr/m/1', sourceUrl: 'https://luma.com/a' }), 'https://event-us.kr/m/1')
+  assert.equal(signUpUrl({ registrationUrl: null, sourceUrl: 'https://luma.com/f95ppglk' }), 'https://luma.com/f95ppglk')
+  assert.equal(signUpUrl({ registrationUrl: null, sourceUrl: 'https://lu.ma/x' }), 'https://lu.ma/x')
+  assert.equal(signUpUrl({ registrationUrl: null, sourceUrl: 'https://www.kisa.or.kr/401' }), null)
 })

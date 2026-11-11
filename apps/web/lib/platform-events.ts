@@ -52,11 +52,28 @@ export function eventHost(event: Pick<EventEntry, 'summary' | 'organizer'>): {
   return { host: fromSummary ?? event.organizer, summaryIsHost: !!fromSummary }
 }
 
+// null when the source names no place, so the list can leave the line out.
 export function eventLocation(
   event: Pick<EventEntry, 'isOnline' | 'venueName' | 'city'>
-): string {
+): string | null {
   if (event.isOnline) return '온라인'
-  return [event.venueName, event.city].filter(Boolean).join(' · ') || '장소 정보 없음'
+  return [event.venueName, event.city].filter(Boolean).join(' · ') || null
+}
+
+// Notice boards title an event like "「2026 블록체인 밋업데이(BCMD)」 31회차 교육생 모집(~11.13)".
+// The corner brackets are dropped, and a closing "(…)" with a date in it goes because the card
+// already shows the date, the deadline badge and the place.
+const TRAILING_DATES = /\s*\([^()]*\d{1,2}\s*[./~][^()]*\)\s*$/
+export function eventTitle(title: string): string {
+  const cleaned = title.replace(/[「」『』]/g, ' ').replace(TRAILING_DATES, '').replace(/\s+/g, ' ').trim()
+  return cleaned || title
+}
+
+// Luma has no separate sign-up link: the event page is where people register.
+const LUMA_PAGE = /^https:\/\/(lu\.ma|luma\.com)\//
+export function signUpUrl(event: Pick<EventEntry, 'registrationUrl' | 'sourceUrl'>): string | null {
+  if (event.registrationUrl) return event.registrationUrl
+  return event.sourceUrl && LUMA_PAGE.test(event.sourceUrl) ? event.sourceUrl : null
 }
 
 const SCOPE_LABEL: Record<string, string> = {

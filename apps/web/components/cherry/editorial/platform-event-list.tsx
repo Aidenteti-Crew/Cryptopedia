@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { ExternalLink, MapPin } from 'lucide-react'
+import { CalendarDays, ExternalLink, MapPin } from 'lucide-react'
 
 import type { EventEntry } from '@/lib/cryptopedia-types'
 import {
@@ -10,7 +10,9 @@ import {
   eventHost,
   eventHref,
   eventLocation,
+  eventTitle,
   scopeLabel,
+  signUpUrl,
   type PlatformEventGroups,
 } from '@/lib/platform-events'
 
@@ -28,9 +30,11 @@ function PlatformEventCard({ event }: { event: EventEntry }) {
   const [imageFailed, setImageFailed] = useState(false)
   const { host } = eventHost(event)
   const scope = scopeLabel(event)
+  const location = eventLocation(event)
+  const signUp = signUpUrl(event)
   const link =
-    event.registrationUrl && event.status !== 'POSTPONED'
-      ? { href: event.registrationUrl, label: '공식 페이지에서 신청' }
+    signUp && event.status !== 'POSTPONED'
+      ? { href: signUp, label: '공식 페이지에서 신청' }
       : event.sourceUrl
         ? { href: event.sourceUrl, label: '원문 보기' }
         : null
@@ -47,14 +51,16 @@ function PlatformEventCard({ event }: { event: EventEntry }) {
             scroll={false}
             className="hover:text-[var(--editorial-accent)] after:absolute after:inset-0"
           >
-            {event.title}
+            {eventTitle(event.title)}
           </Link>
         </h3>
         {host && <p className="mt-2 text-sm text-[var(--editorial-muted)]">{host} 주최</p>}
-        <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-[var(--editorial-muted)]">
-          <MapPin size={14} aria-hidden />
-          {eventLocation(event)}
-        </p>
+        {location && (
+          <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-[var(--editorial-muted)]">
+            <MapPin size={14} aria-hidden />
+            {location}
+          </p>
+        )}
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <RegistrationBadge {...event} />
           {scope && (
@@ -75,15 +81,24 @@ function PlatformEventCard({ event }: { event: EventEntry }) {
           </a>
         )}
       </div>
-      {event.imageUrl && !imageFailed && (
+      {event.imageUrl && !imageFailed ? (
         <img
           src={event.imageUrl}
           alt=""
           loading="lazy"
           referrerPolicy="no-referrer"
           onError={() => setImageFailed(true)}
-          className="h-20 w-20 shrink-0 border border-[var(--editorial-line)] object-cover sm:h-28 sm:w-28"
+          className="h-20 w-20 shrink-0 border border-[var(--editorial-line)] bg-black/30 object-contain sm:h-28 sm:w-28"
         />
+      ) : (
+        // Same size as a cover, so cards with and without one line up.
+        <div
+          aria-hidden
+          data-testid="event-cover-placeholder"
+          className="flex h-20 w-20 shrink-0 items-center justify-center border border-[var(--editorial-line)] bg-[var(--editorial-accent)]/10 text-[var(--editorial-accent)] sm:h-28 sm:w-28"
+        >
+          <CalendarDays size={28} strokeWidth={1.5} />
+        </div>
       )}
     </article>
   )

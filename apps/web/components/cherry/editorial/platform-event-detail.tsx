@@ -5,7 +5,7 @@ import { ChevronDown, ChevronUp, ExternalLink, Link2, MapPin } from 'lucide-reac
 
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet'
 import type { EventEntry } from '@/lib/cryptopedia-types'
-import { eventHost, eventLocation, eventWhen, scopeLabel } from '@/lib/platform-events'
+import { eventHost, eventLocation, eventTitle, eventWhen, scopeLabel, signUpUrl } from '@/lib/platform-events'
 
 import { RegistrationBadge } from './registration-badge'
 
@@ -17,7 +17,8 @@ export function EventDetail({ event }: { event: EventEntry }) {
   const when = eventWhen(event)
   const { host, summaryIsHost } = eventHost(event)
   const scope = scopeLabel(event)
-  const canRegister = !!event.registrationUrl && !CLOSED.has(event.status) && event.registrationStatus !== 'CLOSED'
+  const signUp = signUpUrl(event)
+  const canRegister = !!signUp && !CLOSED.has(event.status) && event.registrationStatus !== 'CLOSED'
   const addressLine = event.isOnline ? null : event.venueAddress
   return (
     <article className="space-y-6">
@@ -50,7 +51,7 @@ export function EventDetail({ event }: { event: EventEntry }) {
           )}
         </div>
         <h2 className="mt-3 break-keep text-[24px] font-semibold leading-snug text-[var(--editorial-strong)] [overflow-wrap:anywhere]">
-          {event.title}
+          {eventTitle(event.title)}
         </h2>
         {host && <p className="mt-2 text-sm text-[var(--editorial-muted)]">{host} 주최</p>}
       </header>
@@ -65,7 +66,7 @@ export function EventDetail({ event }: { event: EventEntry }) {
           <dt className="text-xs text-[var(--editorial-muted)]">어디서</dt>
           <dd className="mt-1 inline-flex items-start gap-1.5 text-[15px] text-[var(--editorial-strong)]">
             <MapPin size={15} aria-hidden className="mt-1 shrink-0" />
-            {eventLocation(event)}
+            {eventLocation(event) ?? '장소는 원문에서 확인해 주세요'}
           </dd>
           {addressLine && <dd className="text-sm text-[var(--editorial-muted)]">{addressLine}</dd>}
         </div>
@@ -73,7 +74,7 @@ export function EventDetail({ event }: { event: EventEntry }) {
 
       {canRegister ? (
         <a
-          href={event.registrationUrl!}
+          href={signUp!}
           target="_blank"
           rel="noopener noreferrer"
           className="flex h-11 w-full items-center justify-center gap-1.5 bg-[var(--editorial-accent)] text-sm font-semibold text-[#1b1326]"
@@ -98,7 +99,7 @@ export function EventDetail({ event }: { event: EventEntry }) {
         </section>
       )}
 
-      {event.sourceUrl && (
+      {event.sourceUrl && !(canRegister && event.sourceUrl === signUp) && (
         <a
           href={event.sourceUrl}
           target="_blank"
@@ -147,7 +148,7 @@ export function EventDetailPanel({
         closeLabel="상세 닫기"
         className="editorial-root editorial-dark w-full overflow-y-auto rounded-none border-[var(--editorial-line)] bg-[#1b1326] p-0 text-[#f3eefb] sm:max-w-[560px] [&>button]:z-20 [&>button]:top-5 [&>button]:text-[#f3eefb]"
       >
-        <SheetTitle className="sr-only">{event?.title ?? '행사 상세'}</SheetTitle>
+        <SheetTitle className="sr-only">{event ? eventTitle(event.title) : '행사 상세'}</SheetTitle>
         <SheetDescription className="sr-only">행사 일정, 장소, 신청 방법</SheetDescription>
         <div className="sticky top-0 z-10 flex items-center gap-2 border-b border-[var(--editorial-line)] bg-[#1b1326] px-4 py-3 pr-14">
           <button type="button" onClick={copy} className={toolButton}>

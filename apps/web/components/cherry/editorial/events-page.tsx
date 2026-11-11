@@ -91,7 +91,7 @@ function EventRow({ event }: { event: EventEntry }) {
       {organizer && (
         <p className="mt-3 text-xs leading-5 text-[var(--editorial-muted)]">{organizer} 주최</p>
       )}
-      <p className="mt-1 text-xs leading-5 text-[var(--editorial-muted)]">{location}</p>
+      {location && <p className="mt-1 text-xs leading-5 text-[var(--editorial-muted)]">{location}</p>}
       {event.summary && !summaryIsHost && (
         <p className="mt-3 whitespace-pre-line break-words text-sm leading-6 text-[var(--editorial-muted)] [overflow-wrap:anywhere]">
           {event.summary}

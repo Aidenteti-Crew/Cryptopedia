@@ -68,7 +68,8 @@ test('events: list by day, open a detail, move between events, and close', async
 
   await panel.getByRole('button', { name: '다음 행사' }).click()
   await expect(panel.getByRole('article').getByRole('heading', { name: 'Web3 Run for Good' })).toBeVisible()
-  await expect(panel).toContainText('신청 방법은 원문에서 확인해 주세요')
+  // Luma has no separate sign-up link: its event page is where people register
+  await expect(panel.getByRole('link', { name: '공식 페이지에서 신청' })).toHaveAttribute('href', 'https://luma.com/team1')
   await expect(panel.getByRole('button', { name: '다음 행사' })).toBeDisabled()
   await panel.getByRole('button', { name: '이전 행사' }).click()
   await expect(panel.getByRole('article').getByRole('heading', { name: '2026 블록체인 진흥주간' })).toBeVisible()

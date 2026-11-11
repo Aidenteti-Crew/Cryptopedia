@@ -51,3 +51,23 @@ test('without upcoming events it says so and points to past events', () => {
   assert.match(html, /지금 모집 중이거나 다가오는 행사가 없어요/)
   assert.match(html, /href="\/knowledge\/events\/archive"/)
 })
+
+test('a Luma card shows its cover, a sign-up link and no empty place line', () => {
+  const html = render([
+    event({
+      title: 'Web3 Run for Good',
+      sourceUrl: 'https://luma.com/f95ppglk',
+      imageUrl: 'https://images.lumacdn.com/cdn-cgi/image/w/x.png',
+    }),
+  ])
+  assert.match(html, /<img src="https:\/\/images\.lumacdn\.com\/cdn-cgi\/image\/w\/x\.png"/)
+  assert.doesNotMatch(html, /event-cover-placeholder/)
+  assert.match(html, /href="https:\/\/luma\.com\/f95ppglk"[^>]*>공식 페이지에서 신청/)
+  assert.doesNotMatch(html, /장소 정보 없음/)
+})
+
+test('a card without a cover keeps the same shape with a placeholder and a tidy title', () => {
+  const html = render([event({ title: '「2026 블록체인 밋업데이(BCMD)」 31회차 교육생 모집(~11.13)' })])
+  assert.match(html, /event-cover-placeholder/)
+  assert.match(html, />2026 블록체인 밋업데이\(BCMD\) 31회차 교육생 모집</)
+})
