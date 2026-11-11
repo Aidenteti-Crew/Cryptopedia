@@ -35,7 +35,8 @@
 
 - [ ] **Q1 확인.** 공유 DB에 `content.chain_event` 가 있는가. 없으면 `docs/architecture/avalanche-categories-2026-10-12.sql` 먼저.
 - [ ] **마이그레이션 적용.** `docs/architecture/chainery-events-2026-10-31.sql`. API 배포보다 먼저.
-- [ ] **로컬 테스트 DB.** Docker Postgres + 두 마이그레이션. API·pipeline 통합 테스트는 `TEST_DATABASE_URL` 이 있을 때만 돌고 `content.*` 에 INSERT 한다. **공유 DB 주소를 절대 넣지 않는다.**
+- [x] **로컬 테스트 DB (2026-11-11).** Docker `pgvector/pgvector:0.7.4-pg16` 컨테이너 `chainery-postgres`(127.0.0.1:15432, cherry/cherry_dev/cherry_db) + `scripts/db/bootstrap.sh`(컨테이너 안에서 실행) + `avalanche-categories-2026-10-12.sql` + `chainery-events-2026-10-31.sql`. Redis 는 `chainery-redis`(127.0.0.1:16379). 우리 마이그레이션 적용·되돌리기·재적용 성공, 포함 릴리스 정규식 Postgres 에서 확인.
+  - 루트 `.env` 의 DB 는 `source_submission.analysis`(2026-09-14 마이그레이션)가 없어 API 가 뜨다 멈춤 → 프로덕션 API 가 쓰는 DB 와 다를 수 있음(미확인). API·pipeline 통합 테스트는 `TEST_DATABASE_URL` 이 있을 때만 돌고 `content.*` 에 INSERT 한다. **공유 DB 주소를 절대 넣지 않는다.**
 - [ ] **API 로컬 실행 (필요할 때).** `apps/api/.env` 는 사용자가 채운다. 공유 DB에 붙으면 부팅만으로 쓰기가 일어난다.
   - `SCHEDULER_ENABLED=false` 유지 (기사 수집 크론).
   - 플래그 없이 도는 것: `bench-key-cleanup.service.ts` (매시간 만료 키 정리 UPDATE), `source-submission.service.ts` 부팅 시 RUNNING→FAILED UPDATE.
@@ -112,7 +113,8 @@
 - **확인.**
   - [x] 테스트: 잘못된 이메일 막음, 보내는 중·보냄(15분 안내, 60초 대기)·오류 문구, 요청 본문 `{email, from: 'main'}`, 429·실패·연결 끊김 문구 (`lib/email-login.test.ts`, `components/auth/email-login-form.test.tsx`; 웹 230 통과, 2026-11-09)
   - [x] 브라우저 `/login`: 주소가 완성될 때만 버튼 켜짐, API 꺼짐 → "서버에 연결하지 못했어요", 응답을 탭 안에서만 성공으로 바꿔 "보냈어요 + 58초 대기" 확인, 375px 가로 스크롤 없음.
-  - [ ] 로컬 API + 실제 메일 수신 → 링크 클릭 → 로그인 상태 (API `.env`·Resend 도메인 검증은 사용자 작업)
+  - [ ] 로컬 API + 실제 메일 수신 → 링크 클릭 → 로그인 상태 (Resend 도메인 검증은 사용자 작업) — 이메일 로그인은 나중에(2026-11-11 결정)
+  - [x] **Google 로그인 끝까지 (2026-11-11, 로컬 DB):** 일반 Chrome 에서 로그인 → API `google-login` 201 → `core.app_user` 에 회원 생성(google_sub·이름·사진) → Redis 에 refresh 토큰 → 헤더 로그인 상태. Claude 앱 안 브라우저에선 Google 팝업이 결과를 못 돌려줌.
   - 같이 바꾼 것: API `main.ts` 로그인 요청 제한에 `/api/app-user/signin` 추가(아무 주소로나 메일을 보낼 수 있는 경로라). 실행 확인은 API 를 띄운 뒤.
   - 바뀐 동작: Google 버튼 오류(예: 로컬에 클라이언트 ID 없음)가 오류 화면으로 넘어가지 않고 버튼 아래 한 줄로 → 이메일 로그인은 계속 쓸 수 있음.
   - 고친 버그(2026-11-09, 사용자 발견): 위 변경 때 `onError` 가 단계를 되돌리지 않아, Google 토큰을 받은 뒤 API 가 실패하면 "로그인하는 중…"에 멈춤. `onError` 에서 입력 화면으로 돌아가게 수정. 브라우저에서 GIS 를 가짜로 바꿔 토큰 콜백 → API 실패 → 입력 화면 복귀 확인.
@@ -217,12 +219,14 @@
   - [ ] 이미 저장된 ACP 행 보정(재수집 또는 보정 스크립트)
   - "확인 중" 계산은 API 쪽이라 D2 에서 (문서 상태와 포함 릴리스가 어긋날 때)
 
-### D2. 소식 상세 화면 (목업 §5) + 목록 배지
-- **만들 것.**
-  - API: `listUpdates` 응답에 `lifecycleStage`·`stageNeedsCheck`·`whatChanged`·`whoCares`·`proposalCreatedAt/UpdatedAt`·`includedInRelease`. 상세 `GET /api/ecosystem/updates/:id`.
-  - 웹: 상세를 **주소로 열 수 있게** (지금 `/updates/<id>` 는 "Unknown article" — 목록에서 눌러야만 열림). 섹션 순서는 목업대로. 웹 스키마는 기본값으로 구 스냅샷 호환.
-  - 목록: "ACP 제안" 고정 라벨 대신 실제 단계 배지(제안 · 확정 · 적용 · 중단 · 확인 중).
-- **확인.** [ ] 계약·컴포넌트 테스트, [ ] 브라우저에서 ACP-267 상세가 목업과 같은 구성, 목록에서 단계가 한눈에 구분됨. 스크린샷.
+### D2. 소식 상세 "지금 상태" + 목록 단계 배지 (2026-11-11)
+- **만든 것.**
+  - API `listUpdates` 응답에 `protocolStage` = `{ stage, needsCheck, evidence, sourceUrl, proposalCreatedAt, proposalUpdatedAt, includedIn }` (`apps/api/src/modules/chain_feed/protocol-stage.ts`). "확인 중"(`needsCheck`)은 저장하지 않고 계산: 문서는 Proposed 인데 릴리스가 이미 포함.
+  - 웹: 목록에 단계 배지(제안·확정·적용·중단, 확인 중), 고정 라벨 "ACP 제안" → "ACP"(원문 링크는 "ACP 문서"). 상세에 "지금 상태"(문서 상태 · 구현 기록 · 날짜) — 목업 §5 구조. 배지는 `StageBadge` 하나를 목록 두 곳(changelog·row)이 같이 씀.
+- **확인.**
+  - [x] 테스트: API `protocol-stage.spec.ts` 3, 웹 `protocol-stage-section.test.tsx` 5 (웹 252·API chain_feed 86 통과)
+  - [x] **로컬 DB 로 끝까지:** 실제 ACP 14건·avalanchego 릴리스 수집 → AI 분류 → `tech_update` 단계 저장 → API → `/updates` 목록 배지(제안·확정·적용)와 상세 "지금 상태". 날짜도 문서별로 다르게 나옴(D1 수정 확인).
+  - 남음: 릴리스 피드(Atom)가 최근 것만 줘서 옛 릴리스(v1.12.0 등)에 들어간 ACP 는 "구현 기록"이 비어 있음 → GitHub 릴리스 목록을 한 번 받아 채우는 작업 필요. AI 분류가 NVIDIA 500·시간 초과로 자주 실패(14건 중 10건, 재시도로 보완).
 - **나중(A 담당과 합의).** "먼저 읽으면 좋아요" — 소식 ↔ 학습 개념 페이지 연결.
 
 ### D3. 검수 대상에 소식 포함
