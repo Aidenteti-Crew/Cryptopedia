@@ -10,7 +10,18 @@ import {
   updateKindLabel,
   updateProducts,
 } from '@/lib/development-discovery'
+import { stageBadge } from '@/lib/protocol-stage'
 import { updateContentColor } from './content-colors'
+
+export function StageBadge({ entry }: { entry: ContentEntry }) {
+  if (!entry.protocolStage) return null
+  const { label, color } = stageBadge(entry.protocolStage)
+  return (
+    <span data-color={color} className="editorial-color-badge">
+      {label}
+    </span>
+  )
+}
 
 export function UpdateBadges({
   entry,
@@ -31,6 +42,7 @@ export function UpdateBadges({
       <span data-color={updateContentColor(entry)} className="editorial-color-badge">
         {updateKindLabel(entry)}
       </span>
+      <StageBadge entry={entry} />
       {showVersion && entry.version && (
         <span className="rounded border border-[var(--editorial-line)] bg-[var(--editorial-wash)] px-1.5 font-mono text-[11px] text-[var(--editorial-ink)]">
           {entry.version}

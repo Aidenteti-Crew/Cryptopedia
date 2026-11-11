@@ -1,6 +1,7 @@
 import type { EventStatus } from './event-query';
 import type { RegistrationStatus } from './registration-status';
 import type { UpdateEvidence } from './update-evidence';
+import type { ProtocolStageView } from './protocol-stage';
 
 // Response shapes. EventEntry/EventFeedResponse mirror apps/web/lib/cryptopedia-types.ts;
 // the ecosystem items extend the frontend ContentEntry with the extra fields the crawler knows.
@@ -72,6 +73,8 @@ export interface ContentFeedItem {
   compareUrl?: string | null;
   changeFlags?: UpdateEvidence['changeFlags'];
   activations?: UpdateEvidence['activations'];
+  // Proposals (ACP) only: where the proposal stands, decided from its document, not by the LLM.
+  protocolStage?: ProtocolStageView | null;
 }
 
 export interface ContentFeedResponse {

@@ -59,6 +59,19 @@ export const contentEntrySchema = z.object({
       })
     )
     .optional(),
+  // Proposals (ACP) only; snapshots made before it existed parse as null.
+  protocolStage: z
+    .object({
+      stage: z.enum(['PROPOSED', 'ACCEPTED', 'ACTIVATED', 'STALE']),
+      needsCheck: z.boolean(),
+      evidence: z.string().nullable(),
+      sourceUrl: z.string().url().nullable(),
+      proposalCreatedAt: isoDateTimeSchema.nullable(),
+      proposalUpdatedAt: isoDateTimeSchema.nullable(),
+      includedIn: z.object({ name: z.string().min(1), url: z.string().url() }).nullable(),
+    })
+    .nullable()
+    .optional(),
   publishedAt: isoDateTimeSchema.optional(),
   collectedAt: isoDateTimeSchema.optional(),
   startsAt: isoDateTimeSchema.optional(),

@@ -86,14 +86,14 @@ export function updateKindLabel(entry: ContentEntry) {
       : releaseStage(entry) === 'prerelease'
         ? '출시 후보·프리릴리스'
         : '릴리스'
-  return entry.subKind === 'BLOG' ? '기술 아티클' : entry.subKind === 'ACP' ? 'ACP 제안' : '기타'
+  return entry.subKind === 'BLOG' ? '기술 아티클' : entry.subKind === 'ACP' ? 'ACP' : '기타'
 }
 export function sourceLinkLabel(entry: ContentEntry) {
   try {
     const url = new URL(entry.sourceUrl ?? '')
     if (url.hostname === 'github.com' && /\/releases\/tag\//.test(url.pathname))
       return 'GitHub 릴리스'
-    if (url.hostname === 'github.com' && /\/ACPs\//i.test(url.pathname)) return 'ACP 제안'
+    if (url.hostname === 'github.com' && /\/ACPs\//i.test(url.pathname)) return 'ACP 문서'
     if (['build.avax.network', 'builders.avax.network'].includes(url.hostname))
       return '공식 기술 블로그'
     return url.hostname

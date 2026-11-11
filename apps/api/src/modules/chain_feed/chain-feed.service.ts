@@ -15,6 +15,7 @@ import { encodeCursor, type EventQuery } from './event-query';
 import type { ContentFeedQuery, ProjectsQuery } from './feed-query';
 import { extractUpdateEvidence, releaseIdentity } from './update-evidence';
 import { officialReleases, officialCompareUrl } from './official-releases';
+import { protocolStageView, type ProtocolStageColumns } from './protocol-stage';
 
 interface MacroRow {
   importance_reason: string | null;
@@ -30,7 +31,7 @@ interface MacroRow {
   source_name: string;
 }
 
-interface TechRow {
+interface TechRow extends ProtocolStageColumns {
   content_raw: string | null;
   importance_reason: string | null;
   id: string;
@@ -248,6 +249,8 @@ export class ChainFeedService {
     const result = await this.knex.raw<{ rows: TechRow[] }>(
       `SELECT t.id, t.kind, t.network, t.upgrade_name, t.version, t.title, t.change_summary,
               t.activated_at, t.importance, t.published_at, t.created_at, a.url, a.content_raw,
+              t.lifecycle_stage, t.stage_evidence, t.stage_source_url, t.proposal_created_at,
+              t.proposal_updated_at, t.included_in_release, t.included_release_url,
               c.raw_json->>'importance_reason' AS importance_reason,
               s.name AS source_name
          FROM content.tech_update t
@@ -302,6 +305,7 @@ export class ChainFeedService {
           upgradeName: r.upgrade_name,
           version: r.version,
           activatedAt: r.activated_at ? r.activated_at.toISOString() : null,
+          protocolStage: protocolStageView(r),
           ...(() => {
             const identity = releaseIdentity(r.url);
             const release = identity

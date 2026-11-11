@@ -6,7 +6,7 @@ const KIND_LABELS: Record<string, string> = {
   COLLAB: '협업·도입',
   VOLUME: '거래·시장 지표',
   RELEASE: '릴리스',
-  ACP: 'ACP 제안',
+  ACP: 'ACP',
   BLOG: '기술 글',
 }
 

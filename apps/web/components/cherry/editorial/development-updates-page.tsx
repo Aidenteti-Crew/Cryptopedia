@@ -208,7 +208,7 @@ export function DevelopmentUpdatesPage({
                 { value: 'all', label: '전체' },
                 { value: 'RELEASE', label: '릴리스' },
                 { value: 'BLOG', label: '기술 아티클' },
-                { value: 'ACP', label: 'ACP 제안' },
+                { value: 'ACP', label: 'ACP' },
                 { value: 'OTHER', label: '기타' },
               ].filter(
                 (item) =>
