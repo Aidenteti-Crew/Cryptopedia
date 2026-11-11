@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { LumaCalendarAdapter, mapLumaEvent } from '../src/adapters/luma-calendar-adapter.js'
+import { LumaCalendarAdapter, lumaCoverUrl, mapLumaEvent } from '../src/adapters/luma-calendar-adapter.js'
 import type { SourceConfig } from '../src/config/source-config.js'
 import { parseIcsEvents } from '../src/events/ics.js'
 import {
@@ -51,6 +51,7 @@ describe('mapLumaEvent', () => {
       isOnline: false,
       sourceUrl: 'https://luma.com/f95ppglk',
       registrationUrl: null,
+      imageUrl: null,
       category: 'COMMUNITY',
       tags: ['Avalanche', 'Team1', 'Team1 Korea'],
       statusOverride: null,
@@ -176,6 +177,27 @@ describe('LumaCalendarAdapter', () => {
     expect((await changed.collect(source, first.cursor)).status).toBe('SUCCESS')
   })
 
+  it('adds each event page cover and still collects an event whose page fails', async () => {
+    const body = calendar('Team1 Korea', KOREA_EVENT, CHILE_EVENT)
+    const page =
+      '<script>{"event":{"api_id":"evt-1","cover_url":"https://images.lumacdn.com/uploads/rn/c4.png","end_at":"x"}}</script>'
+    const fetchFn = vi.fn(async (url: string) => {
+      if (url.startsWith('https://api.lu.ma/ics/')) return new Response(body)
+      if (url === 'https://luma.com/f95ppglk') return new Response(page)
+      throw new Error('page timed out')
+    })
+
+    const { events } = await new LumaCalendarAdapter(fetchFn).collect(source)
+
+    expect(events.map((e) => [e.eventKey, e.imageUrl])).toEqual([
+      [
+        'luma-evt-5I3vezpRHD0bJ1z',
+        'https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,width=480,height=480/uploads/rn/c4.png',
+      ],
+      ['luma-evt-chile', null],
+    ])
+  })
+
   it('fails clearly on an HTTP error or a non-calendar response', async () => {
     await expect(
       new LumaCalendarAdapter(async () => new Response('', { status: 404 })).collect(source)
@@ -189,5 +211,21 @@ describe('LumaCalendarAdapter', () => {
     await expect(
       new LumaCalendarAdapter(async () => new Response('')).collect({ ...source, luma: undefined })
     ).rejects.toThrow('requires adapter=LUMA_ICS')
+  })
+})
+
+describe('lumaCoverUrl', () => {
+  it('reads the event cover, not another cover on the page', () => {
+    const html =
+      '{"calendar":{"cover_url":"https://images.lumacdn.com/calendar-covers/cal.png"},' +
+      '"event":{"api_id":"evt-1","cover_url":"https://images.lumacdn.com/uploads/rn/ev.png"}}'
+    expect(lumaCoverUrl(html)).toBe(
+      'https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,width=480,height=480/uploads/rn/ev.png'
+    )
+  })
+
+  it('ignores covers outside Luma and pages without one', () => {
+    expect(lumaCoverUrl('{"event":{"cover_url":"https://evil.example/x.png"}}')).toBeNull()
+    expect(lumaCoverUrl('<html></html>')).toBeNull()
   })
 })

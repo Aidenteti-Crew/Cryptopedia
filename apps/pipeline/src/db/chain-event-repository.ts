@@ -29,9 +29,9 @@ export async function upsertChainEvents(
       `INSERT INTO content.chain_event
          (id, chain, event_key, title, summary, starts_at, ends_at, timezone, all_day, organizer,
           venue_name, venue_address, city, country, is_online, source_url, registration_url,
-          category, tags, status_override, confidence, published_at, fetched_at)
+          category, tags, status_override, confidence, published_at, image_url, fetched_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18,
-               $19, $20, $21, $22, now())
+               $19, $20, $21, $22, $23, now())
        ON CONFLICT (chain, event_key) WHERE (revoked_at IS NULL) DO UPDATE SET
          title = EXCLUDED.title,
          summary = EXCLUDED.summary,
@@ -51,6 +51,8 @@ export async function upsertChainEvents(
          tags = EXCLUDED.tags,
          status_override = EXCLUDED.status_override,
          confidence = EXCLUDED.confidence,
+         -- a page that could not be read this run keeps the cover found earlier
+         image_url = COALESCE(EXCLUDED.image_url, content.chain_event.image_url),
          fetched_at = now()
        RETURNING (xmax = 0) AS inserted`,
       [
@@ -76,6 +78,7 @@ export async function upsertChainEvents(
         e.statusOverride,
         e.confidence,
         e.publishedAt,
+        e.imageUrl,
       ]
     )
     const row = result.rows[0] as { inserted: boolean } | undefined

@@ -31,6 +31,7 @@ function calendarEvent(chain: string, title: string, startsAt: string): ChainEve
     isOnline: false,
     sourceUrl: 'https://luma.com/f95ppglk',
     registrationUrl: null,
+    imageUrl: null,
     category: 'COMMUNITY',
     tags: [],
     statusOverride: null,
