@@ -25,8 +25,23 @@ category (pick exactly one):
 ${IMPORTANCE_RUBRIC}
 
 Fields:
-- title_ko: short Korean headline, at most 80 characters.
-- summary_ko: 1-2 Korean sentences with the concrete facts (what, who, numbers, versions). No hype, nothing that is not in the text.
+- title_ko: a plain Korean headline, at most 40 characters, saying what changes for the network or its users, with the key number when there is one.
+  No proposal or version number, no product prefix, and no status words (제안, 확정, 활성화, 적용, Proposed, Activated): the page shows the number, version and status separately.
+- summary_ko: exactly 2 short Korean sentences in 해요체 (~해요, ~예요), for a reader who knows what a blockchain is but not this protocol.
+  Sentence 1: the background the reader needs (what exists today and why it matters).
+  Sentence 2: what this changes, with the concrete number or name.
+  At most 60 characters per sentence. No EIP/ACP numbers, opcode or parameter names; keep a technical term only when the reader needs it, and explain it in the same sentence.
+  No hype, nothing that is not in the text. Do not say whether it is proposed or activated: the page shows that.
+  Examples (the style to follow; the facts always come from the post):
+    ACP-267 (validator uptime requirement)
+      title_ko: "검증자 가동률 기준을 80%에서 90%로"
+      summary_ko: "Avalanche 검증자는 스테이킹 기간 동안 일정 가동률을 채워야 보상을 받아요. 이 기준을 80%에서 90%로 올려요."
+    ACP-131 (Cancun EIPs on C-Chain)
+      title_ko: "C-Chain에 이더리움 Cancun 기능 적용"
+      summary_ko: "C-Chain은 이더리움과 같은 방식으로 스마트 컨트랙트를 실행해요. 이더리움 Cancun 업그레이드의 새 기능을 켜되, 대용량 데이터 거래(블롭)는 빼요."
+    avalanchego v1.15.0 release
+      title_ko: "Helicon 업그레이드를 담은 노드 소프트웨어"
+      summary_ko: "노드 운영자는 네트워크 업그레이드 전에 노드 소프트웨어를 새 버전으로 올려야 해요. 이번 버전에는 Helicon 업그레이드에 들어가는 제안 6개가 담겼어요."
 - macro (only when category is MACRO, else null): {"kind": "COLLAB"|"VOLUME"|"OTHER", "related_project": string|null}
 - tech (only when category is TECH_UPDATE, else null): {"network": "FUJI"|"MAINNET"|"BOTH"|"OTHER", "upgrade_name": string|null, "version": string|null, "activated_at": ISO 8601 string|null}
   network: where the text says the change is deployed or activated (Fuji testnet, Mainnet, both). Use OTHER when it is not stated. Do not guess.
