@@ -19,3 +19,7 @@ node_modules
 # Auto-generated build artifacts
 next-env.d.ts
 *.tsbuildinfo
+
+# Playwright
+/test-results/
+/playwright-report/
