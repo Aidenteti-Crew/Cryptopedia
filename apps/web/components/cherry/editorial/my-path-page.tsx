@@ -41,7 +41,10 @@ export function MyPathPage({
   const { activeChain } = useEditorialChain()
   const [adding, setAdding] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [selectedConceptId, setSelectedConceptId] = useState('')
+  const conceptDescription = useRef<HTMLElement>(null)
   const path = state ? activePathOf(state) : null
+  useEffect(() => setSelectedConceptId(''), [path?.id])
   const data = useChainHub(path?.chainId ?? activeChain.id, loadHub)
   const route = useMemo(
     () =>
@@ -87,7 +90,18 @@ export function MyPathPage({
   const progressMap = new Map(
     concepts.flatMap((step) => (step.status ? [[step.id, step.status] as const] : []))
   )
-  const selected = next?.kind === 'concept' ? next.id : (concepts.at(-1)?.id ?? '')
+  const defaultConceptId = next?.kind === 'concept' ? next.id : (concepts.at(-1)?.id ?? '')
+  const selected = selectedConceptId && mapLayout.nodes.has(selectedConceptId)
+    ? selectedConceptId
+    : defaultConceptId
+  const selectedConcept = data.concepts.find((concept) => concept.id === selected)
+  const selectMapConcept = (id: string) => {
+    setSelectedConceptId(id)
+    conceptDescription.current?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+      block: 'start',
+    })
+  }
   const knownCount = route.steps.filter((step) => step.status === 'known').length
   const now = () => new Date().toISOString()
 
@@ -246,7 +260,7 @@ export function MyPathPage({
 
         <section aria-labelledby="my-path-map" className="min-w-0 lg:order-1">
           <h3 id="my-path-map" className="text-xs tracking-[0.14em] text-[var(--editorial-muted)]">
-            학습 지도 · 개념을 누르면 열려요
+            학습 지도 · 개념을 누르면 아래 설명으로 이동해요
           </h3>
           <div className="-mt-3">
             <LearningMap
@@ -254,10 +268,31 @@ export function MyPathPage({
               selected={selected}
               route={concepts.map((step) => step.id)}
               progress={progressMap}
-              onSelect={onOpen}
+              onSelect={selectMapConcept}
             />
           </div>
           <LearningMapLegend route personal />
+          {selectedConcept && (
+            <section
+              ref={conceptDescription}
+              aria-label="선택한 개념 설명"
+              className="mt-8 scroll-mt-20 border-t border-[var(--editorial-line)] pt-7"
+            >
+              <h4 className="text-2xl font-semibold text-[var(--editorial-strong)]">
+                {selectedConcept.title}
+              </h4>
+              <p className="mt-3 text-sm leading-7 text-[var(--editorial-muted)]">
+                {selectedConcept.body}
+              </p>
+              <button
+                type="button"
+                onClick={() => onOpen(selectedConcept.id)}
+                className={`${HUB_BUTTON_CLASS} mt-4`}
+              >
+                개념 자세히 보기 <ArrowRight size={16} />
+              </button>
+            </section>
+          )}
         </section>
       </div>
     </article>

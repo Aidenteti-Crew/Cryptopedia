@@ -353,6 +353,7 @@ export function EditorialApp({
             id={loaded.id}
             data={loaded.data}
             onOpen={(id) => openArticle(id)}
+            activeChainId={activeChain.id}
             onOpenInGraph={(conceptId) =>
               router.push(
                 `${pathForEditorialView({ kind: 'article', id: 'skill-graph', parent: 'academy' })}?concept=${encodeURIComponent(conceptId)}`
