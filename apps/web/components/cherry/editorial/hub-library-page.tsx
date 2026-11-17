@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { type HubData, type HubItem } from '@/lib/cryptopedia-hub'
 import {
   ConceptChips,
@@ -69,6 +69,7 @@ export function HubLibraryPage({
   const [search, setSearch] = useState('')
   const [scope, setScope] = useState('all')
   const [showRoute, setShowRoute] = useState(false)
+  const conceptDescription = useRef<HTMLElement>(null)
   const [conceptId, setConceptId] = useState(
     () =>
       data.concepts.find((item) => item.id === 'concept-primary-network')?.id ??
@@ -121,6 +122,13 @@ export function HubLibraryPage({
   const fundamentalsCourse = data.resources.find(
     (item) => item.id === 'resource-avalanche-fundamentals-course'
   )
+  const selectMapConcept = (selectedId: string) => {
+    setConceptId(selectedId)
+    conceptDescription.current?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+      block: 'start',
+    })
+  }
   return (
     <article className={HUB_PAGE_CLASS}>
       <HubHeader title={page.title} description={page.description} />
@@ -167,11 +175,11 @@ export function HubLibraryPage({
             layout={mapLayout}
             selected={conceptId}
             route={showRoute ? introRoute : null}
-            onSelect={setConceptId}
+            onSelect={selectMapConcept}
           />
           <LearningMapLegend route={showRoute} />
           {concept && (
-            <section className="mt-8 grid gap-8 border-t border-[var(--editorial-line)] pt-7 lg:grid-cols-[1fr_300px]">
+            <section ref={conceptDescription} className="mt-8 grid scroll-mt-20 gap-8 border-t border-[var(--editorial-line)] pt-7 lg:grid-cols-[1fr_300px]">
               <div>
                 <ScopeBadge scope={concept.scope} />
                 <h2 className="mt-4 text-2xl">{concept.title}</h2>

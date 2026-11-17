@@ -53,7 +53,7 @@ export function SourceList({ ids, data }: { ids: string[]; data: HubData }) {
     <section className="mt-8 border-t border-[var(--editorial-line)] pt-5">
       <h2 className="text-base">출처</h2>
       <p className="mt-2 text-xs leading-6 text-[var(--editorial-muted)]">
-        원문은 각 작성 주체가 제공하며, 학습 순서와 연결 설명은 Cryptopedia가 구성한 데모입니다.
+        원문은 각 작성 주체가 제공하며, 학습 순서와 연결 설명은 Chainery가 구성한 데모입니다.
       </p>
       <div className="mt-3 flex flex-wrap gap-3">
         {sources.map((source) => (

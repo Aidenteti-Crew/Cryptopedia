@@ -104,7 +104,7 @@ export function MyPathCard({
       {next ? (
         <div className="mt-6 border border-[var(--editorial-accent)] p-5">
           <p className="text-[10px] font-semibold uppercase tracking-[1.2px] text-[var(--editorial-accent)]">
-            다음 할 것 · {route.steps.indexOf(next) + 1}단계 · {STEP_KIND_LABEL[next.kind]}
+            다음 할 것 · {STEP_KIND_LABEL[next.kind]}
           </p>
           <p className="mt-2 text-lg font-semibold text-[var(--editorial-strong)]">{next.title}</p>
           <p className="mt-1 line-clamp-2 text-sm leading-6 text-[var(--editorial-muted)]">

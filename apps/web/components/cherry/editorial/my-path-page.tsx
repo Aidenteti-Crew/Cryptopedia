@@ -136,8 +136,7 @@ export function MyPathPage({
         <div className="mt-6 flex flex-col gap-4 border border-[var(--editorial-accent)] bg-[var(--editorial-surface)] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div className="min-w-0">
             <p className="text-[10px] font-semibold uppercase tracking-[1.2px] text-[var(--editorial-accent)]">
-              다음 할 것 · {route.steps.indexOf(next) + 1}단계 / {total} ·{' '}
-              {STEP_KIND_LABEL[next.kind]}
+              다음 할 것 · {STEP_KIND_LABEL[next.kind]}
             </p>
             <p className="mt-2 text-xl font-semibold text-[var(--editorial-strong)]">
               {next.title}

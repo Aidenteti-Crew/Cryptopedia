@@ -21,7 +21,7 @@ export function BookDetailPage({
         {book.coverAsset ? (
           <Image
             src={book.coverAsset}
-            alt={`${book.name} Cryptopedia 표지`}
+            alt={`${book.name} Chainery 표지`}
             width={187}
             height={255}
             className="mx-auto h-auto w-[154px] outline outline-1 outline-white/10 md:w-[187px]"
