@@ -71,3 +71,13 @@ test('a card without a cover keeps the same shape with a placeholder and a tidy 
   assert.match(html, /event-cover-placeholder/)
   assert.match(html, />2026 블록체인 밋업데이\(BCMD\) 31회차 교육생 모집</)
 })
+
+test('every card carries a heart that sits above the card link and starts unsaved', () => {
+  const html = render([event({ id: 'a' }), event({ id: 'b', title: 'Second' })])
+  const hearts = html.match(/<button[^>]*aria-label="관심 행사에 추가"[^>]*>/g) ?? []
+  assert.equal(hearts.length, 2)
+  for (const heart of hearts) {
+    assert.match(heart, /aria-pressed="false"/)
+    assert.match(heart, /relative z-10/)
+  }
+})

@@ -3,7 +3,8 @@ import type { ScreenId } from './cryptopedia-taxonomy'
 
 /* / 는 플랫폼 입구(랜딩)이고, 블록체인 지식 홈은 /knowledge 다.
    생태계 화면은 app/(chainery)/(ecosystem) 라우트 그룹이라 주소에 /ecosystem 이 붙지 않는다.
-   체인별 행사만 /knowledge/events 아래 — /events 는 플랫폼 전체 행사 페이지가 쓴다 */
+   행사 목록은 /events 하나다. /knowledge/events 는 /events 로 넘어가고(next.config.mjs),
+   그 아래 상세·지난 행사(/knowledge/events/:id · /archive)만 체인별 화면으로 남아 있다 */
 const SCREEN_PATHS: Partial<Record<ScreenId, string>> = {
   ecosystem: '/knowledge',
   chains: '/chains',
@@ -52,8 +53,8 @@ export function pathForEditorialView(view: EditorialView): string {
   return `/articles/${encodeURIComponent(view.id)}`
 }
 
-/* 메뉴 링크. 행사·이벤트는 체인별 목록(/knowledge/events)이 아니라 모든 체인과 운영자 행사를 담은
-   플랫폼 /events 로 보낸다 — 같은 이름의 메뉴가 서로 다른 두 페이지로 가지 않게. */
+/* 메뉴 링크. 행사·이벤트는 모든 체인과 운영자 행사를 담은 플랫폼 /events 달력으로 보낸다 —
+   체인별 목록(/knowledge/events)은 /events 로 합쳐졌다. */
 export function navHref(id: ScreenId): string {
   return id === 'events' ? '/events' : pathForEditorialView({ kind: 'screen', id })
 }

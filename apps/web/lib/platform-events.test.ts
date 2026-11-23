@@ -3,14 +3,21 @@ import test from 'node:test'
 
 import type { EventEntry } from './cryptopedia-types'
 import {
+  calendarEntries,
+  chainLabel,
+  chainOptions,
   dayHeading,
+  eventChainKeys,
   eventHost,
   eventHref,
   eventLocation,
   eventTitle,
+  eventsOnDay,
   eventWhen,
+  filterPlatformEvents,
   groupPlatformEvents,
   listedEventIds,
+  listedEvents,
   neighbors,
   scopeLabel,
   signUpUrl,
@@ -154,4 +161,76 @@ test('a Luma page is where people sign up; other source pages are not', () => {
   assert.equal(signUpUrl({ registrationUrl: null, sourceUrl: 'https://luma.com/f95ppglk' }), 'https://luma.com/f95ppglk')
   assert.equal(signUpUrl({ registrationUrl: null, sourceUrl: 'https://lu.ma/x' }), 'https://lu.ma/x')
   assert.equal(signUpUrl({ registrationUrl: null, sourceUrl: 'https://www.kisa.or.kr/401' }), null)
+})
+
+test('chain keys come from chain, scope and related chains, lowercased and without repeats', () => {
+  assert.deepEqual(eventChainKeys(event('a', '2026-11-11T09:00:00+09:00', { chain: 'Avalanche', scope: 'avalanche' })), ['avalanche'])
+  assert.deepEqual(
+    eventChainKeys(event('b', '2026-11-11T09:00:00+09:00', { chain: 'web3-kr', scope: null, relatedChains: ['Avalanche', 'web3-kr', ' '] })),
+    ['web3-kr', 'avalanche']
+  )
+  assert.deepEqual(eventChainKeys(event('c', '2026-11-11T09:00:00+09:00', { chain: null, scope: null })), [])
+})
+
+test('chain options are counted from the data, biggest first (ties by label), with readable labels', () => {
+  const options = chainOptions([
+    event('a1', '2026-11-11T09:00:00+09:00', { chain: 'avalanche', scope: 'avalanche' }),
+    event('a2', '2026-11-12T09:00:00+09:00', { chain: 'Avalanche', scope: null }),
+    event('k1', '2026-11-13T09:00:00+09:00', { chain: 'web3-kr', scope: 'web3-kr', relatedChains: ['avalanche'] }),
+    event('s1', '2026-11-14T09:00:00+09:00', { chain: 'solana', scope: null }),
+    event('s2', '2026-11-14T10:00:00+09:00', { chain: 'base', scope: null }),
+  ])
+  assert.deepEqual(options, [
+    { key: 'avalanche', label: 'Avalanche', count: 3 },
+    { key: 'web3-kr', label: '국내 Web3', count: 1 },
+    { key: 'base', label: 'Base', count: 1 },
+    { key: 'solana', label: 'Solana', count: 1 },
+  ])
+  assert.deepEqual(chainOptions([]), [])
+  assert.equal(chainLabel('web3-kr'), '국내 Web3')
+  assert.equal(chainLabel('near'), 'Near')
+})
+
+test('filtering keeps events of any selected chain and, when asked, only the saved ones', () => {
+  const events = [
+    event('a', '2026-11-11T09:00:00+09:00', { chain: 'avalanche' }),
+    event('k', '2026-11-12T09:00:00+09:00', { chain: 'web3-kr', scope: 'web3-kr' }),
+    event('both', '2026-11-13T09:00:00+09:00', { chain: 'web3-kr', scope: 'web3-kr', relatedChains: ['Avalanche'] }),
+  ]
+  const ids = (chains: string[], savedIds: ReadonlySet<string> | null) =>
+    filterPlatformEvents(events, { chains, savedIds }).map((e) => e.id)
+  assert.deepEqual(ids([], null), ['a', 'k', 'both'])
+  assert.deepEqual(ids(['avalanche'], null), ['a', 'both'])
+  assert.deepEqual(ids(['web3-kr'], null), ['k', 'both'])
+  assert.deepEqual(ids(['avalanche', 'web3-kr'], null), ['a', 'k', 'both'])
+  assert.deepEqual(ids([], new Set(['k', 'gone'])), ['k'])
+  assert.deepEqual(ids(['avalanche'], new Set(['k'])), [])
+  assert.deepEqual(ids([], new Set()), [])
+})
+
+test('the calendar lists events that are not over, whatever their day', () => {
+  const events = [
+    event('up', '2026-11-11T09:00:00+09:00'),
+    event('past', '2026-11-11T09:00:00+09:00', { status: 'PAST' }),
+    event('cancelled', '2026-11-11T09:00:00+09:00', { status: 'CANCELLED' }),
+    event('postponed', '2026-11-11T09:00:00+09:00', { status: 'POSTPONED' }),
+  ]
+  assert.deepEqual(listedEvents(events).map((e) => e.id), ['up', 'postponed'])
+})
+
+test('a multi-day event covers each of its days and an odd end date does not hide it', () => {
+  const expo = event('expo', '2026-11-10T10:00:00+09:00', { endsAt: '2026-11-12T18:00:00+09:00', title: '「엑스포」 안내(~11.12)' })
+  const backwards = event('odd', '2026-11-10T10:00:00+09:00', { endsAt: '2026-11-09T18:00:00+09:00' })
+  const oneDay = event('one', '2026-11-11T20:00:00+09:00', { endsAt: '2026-11-11T22:00:00+09:00' })
+  assert.deepEqual(calendarEntries([expo, backwards, oneDay]), [
+    { id: 'expo', title: '엑스포 안내', day: '2026-11-10', endDay: '2026-11-12' },
+    { id: 'odd', title: 'odd', day: '2026-11-10' },
+    { id: 'one', title: 'one', day: '2026-11-11' },
+  ])
+  const on = (day: string) => eventsOnDay([oneDay, expo, backwards], day).map((e) => e.id)
+  assert.deepEqual(on('2026-11-09'), [])
+  assert.deepEqual(on('2026-11-10'), ['expo', 'odd'])
+  assert.deepEqual(on('2026-11-11'), ['expo', 'one'])
+  assert.deepEqual(on('2026-11-12'), ['expo'])
+  assert.deepEqual(on('2026-11-13'), [])
 })

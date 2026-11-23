@@ -87,6 +87,85 @@ export function scopeLabel(event: Pick<EventEntry, 'scope' | 'chain'>): string |
   return SCOPE_LABEL[key] ?? null
 }
 
+// A chain with no entry in the table still gets a chip, labelled with its own key.
+export function chainLabel(key: string): string {
+  return SCOPE_LABEL[key] ?? key.charAt(0).toUpperCase() + key.slice(1)
+}
+
+// Every chain an event belongs to, lowercased: feeds spell the same chain "avalanche" and "Avalanche".
+export function eventChainKeys(event: Pick<EventEntry, 'chain' | 'scope' | 'relatedChains'>): string[] {
+  const keys = [event.chain, event.scope, ...event.relatedChains].map((key) => key?.trim().toLowerCase())
+  return [...new Set(keys.filter((key): key is string => !!key))]
+}
+
+export interface ChainOption {
+  key: string
+  label: string
+  count: number
+}
+
+export function chainOptions(events: Pick<EventEntry, 'chain' | 'scope' | 'relatedChains'>[]): ChainOption[] {
+  const counts = new Map<string, number>()
+  for (const event of events) {
+    for (const key of eventChainKeys(event)) counts.set(key, (counts.get(key) ?? 0) + 1)
+  }
+  return [...counts.entries()]
+    .map(([key, count]) => ({ key, label: chainLabel(key), count }))
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, 'ko'))
+}
+
+export interface PlatformEventFilter {
+  // Empty means every chain; otherwise an event needs one of these chains.
+  chains: string[]
+  // Non-null keeps only the saved events.
+  savedIds: ReadonlySet<string> | null
+}
+
+export function filterPlatformEvents(events: EventEntry[], filter: PlatformEventFilter): EventEntry[] {
+  const { chains, savedIds } = filter
+  return events.filter(
+    (event) =>
+      (!savedIds || savedIds.has(event.id)) &&
+      (!chains.length || eventChainKeys(event).some((key) => chains.includes(key)))
+  )
+}
+
+// What the list and the calendar both show: not yet over, not cancelled.
+export function listedEvents(events: EventEntry[]): EventEntry[] {
+  return events.filter((event) => LISTED.has(event.status))
+}
+
+// First and last Seoul day of an event; an end that falls before the start is ignored.
+function eventSpan(event: Pick<EventEntry, 'startsAt' | 'endsAt'>): { first: string; last: string } {
+  const first = calendarDay(event.startsAt)
+  const last = event.endsAt ? calendarDay(event.endsAt) : first
+  return { first, last: last < first ? first : last }
+}
+
+export interface CalendarEntry {
+  id: string
+  title: string
+  day: string
+  endDay?: string
+}
+
+export function calendarEntries(events: EventEntry[]): CalendarEntry[] {
+  return events.map((event) => {
+    const { first, last } = eventSpan(event)
+    return { id: event.id, title: eventTitle(event.title), day: first, ...(last > first ? { endDay: last } : {}) }
+  })
+}
+
+// Events that start on the day or are still running on it, in start order.
+export function eventsOnDay(events: EventEntry[], day: string): EventEntry[] {
+  return events
+    .filter((event) => {
+      const { first, last } = eventSpan(event)
+      return first <= day && day <= last
+    })
+    .sort((a, b) => a.startsAt.localeCompare(b.startsAt))
+}
+
 // The order the list shows: ongoing first, then each day. Previous / next in the detail follow it.
 export function listedEventIds(groups: PlatformEventGroups): string[] {
   return [...groups.ongoing, ...groups.days.flatMap(([, events]) => events)].map((e) => e.id)

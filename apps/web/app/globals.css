@@ -576,6 +576,21 @@
   content: ''; width: 5px; height: 5px; flex-shrink: 0; background: var(--calendar-badge);
 }
 
+/* 어두운 플랫폼 화면(행사/이벤트)에서는 달력도 어두운 면으로 — 밝은 면 위의 연한 글자가 되지 않게 */
+.editorial-root.editorial-dark .editorial-color-calendar {
+  --discovery-surface: var(--editorial-surface);
+  --discovery-line: var(--editorial-line);
+  --calendar-accent: var(--editorial-accent);
+  --editorial-muted: #CBC4CF;
+}
+.editorial-root.editorial-dark .editorial-calendar-weekdays { background: var(--editorial-sidebar); color: var(--editorial-muted); }
+.editorial-root.editorial-dark .editorial-calendar-weekdays span:first-child,
+.editorial-root.editorial-dark .editorial-calendar-cell[data-weekday='0'] .editorial-calendar-date { color: #E58AA0; }
+.editorial-root.editorial-dark .editorial-calendar-weekdays span:last-child,
+.editorial-root.editorial-dark .editorial-calendar-cell[data-weekday='6'] .editorial-calendar-date { color: #8FB4EC; }
+.editorial-root.editorial-dark .editorial-calendar-blank { background: var(--editorial-sidebar); }
+.editorial-root.editorial-dark .editorial-calendar-cell:hover { filter: brightness(1.15); }
+
 /* 배지 — 채운 색 대신 얇은 테두리 + 분류 색 사각 점 */
 .editorial-root .editorial-color-badge {
   display: inline-flex;

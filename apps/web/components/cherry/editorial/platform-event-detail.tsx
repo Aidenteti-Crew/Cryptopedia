@@ -5,8 +5,10 @@ import { ChevronDown, ChevronUp, ExternalLink, Link2, MapPin } from 'lucide-reac
 
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet'
 import type { EventEntry } from '@/lib/cryptopedia-types'
+import { useEventBookmarks } from '@/lib/event-bookmarks'
 import { eventHost, eventLocation, eventTitle, eventWhen, scopeLabel, signUpUrl } from '@/lib/platform-events'
 
+import { EventBookmarkButton } from './event-bookmark-button'
 import { RegistrationBadge } from './registration-badge'
 
 const CLOSED: ReadonlySet<EventEntry['status']> = new Set(['PAST', 'CANCELLED'])
@@ -130,6 +132,7 @@ export function EventDetailPanel({
   shareUrl: string
 }) {
   const [copied, setCopied] = useState(false)
+  const bookmarks = useEventBookmarks()
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl)
@@ -155,6 +158,13 @@ export function EventDetailPanel({
             <Link2 size={14} aria-hidden />
             {copied ? '복사했어요' : '링크 복사'}
           </button>
+          {event && (
+            <EventBookmarkButton
+              saved={bookmarks.has(event.id)}
+              onToggle={() => bookmarks.toggle(event.id)}
+              className="border border-[var(--editorial-line)] hover:border-[var(--editorial-accent)]"
+            />
+          )}
           <div className="ml-auto flex gap-1">
             <button
               type="button"

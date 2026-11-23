@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { CalendarDays, ExternalLink, MapPin } from 'lucide-react'
 
 import type { EventEntry } from '@/lib/cryptopedia-types'
+import { useEventBookmarks } from '@/lib/event-bookmarks'
 import {
   dayHeading,
   eventHost,
@@ -16,6 +17,7 @@ import {
   type PlatformEventGroups,
 } from '@/lib/platform-events'
 
+import { EventBookmarkButton } from './event-bookmark-button'
 import { RegistrationBadge } from './registration-badge'
 
 export const ARCHIVE_HREF = '/knowledge/events/archive'
@@ -26,8 +28,9 @@ const time = new Intl.DateTimeFormat('ko-KR', {
   minute: '2-digit',
 })
 
-function PlatformEventCard({ event }: { event: EventEntry }) {
+export function PlatformEventCard({ event }: { event: EventEntry }) {
   const [imageFailed, setImageFailed] = useState(false)
+  const bookmarks = useEventBookmarks()
   const { host } = eventHost(event)
   const scope = scopeLabel(event)
   const location = eventLocation(event)
@@ -41,10 +44,17 @@ function PlatformEventCard({ event }: { event: EventEntry }) {
   return (
     <article className="relative flex gap-4 border border-[var(--editorial-line)] bg-[var(--editorial-wash)] p-5 hover:border-[var(--editorial-accent)]">
       <div className="min-w-0 flex-1">
-        <p className="text-sm tabular-nums text-[var(--editorial-muted)]">
-          {event.allDay ? '종일' : time.format(new Date(event.startsAt))}
-          {event.status === 'POSTPONED' && ' · 연기됨'}
-        </p>
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-sm tabular-nums text-[var(--editorial-muted)]">
+            {event.allDay ? '종일' : time.format(new Date(event.startsAt))}
+            {event.status === 'POSTPONED' && ' · 연기됨'}
+          </p>
+          <EventBookmarkButton
+            saved={bookmarks.has(event.id)}
+            onToggle={() => bookmarks.toggle(event.id)}
+            className="relative z-10 -my-2.5 -mr-2.5"
+          />
+        </div>
         <h3 className="mt-1.5 break-keep text-[18px] font-semibold leading-7 text-[var(--editorial-strong)] [overflow-wrap:anywhere]">
           <Link
             href={eventHref(event.id)}

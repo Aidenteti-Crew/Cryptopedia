@@ -57,7 +57,7 @@ test('/ is the platform entrance and the knowledge home lives at /knowledge', ()
   assert.equal(editorialViewFromPath('/'), null)
   assert.equal(editorialViewFromPath('/about'), null)
   assert.equal(pathForEditorialView({ kind: 'screen', id: 'ecosystem' }), '/knowledge')
-  // 체인별 행사는 /knowledge/events 아래 — /events 는 플랫폼 행사 페이지
+  // 체인별 행사 상세는 /knowledge/events 아래 — 목록 /knowledge/events 는 /events 로 넘어간다
   assert.equal(
     pathForEditorialView({ kind: 'article', id: 'summit', parent: 'events' }),
     '/knowledge/events/summit'
