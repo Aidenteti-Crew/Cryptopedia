@@ -42,6 +42,7 @@ import { HubLibraryPage } from './hub-library-page'
 import { HubDetailPage } from './hub-detail-page'
 import { MyPathPage } from './my-path-page'
 import { MyPathMobileBar, MyPathSidebarCard } from './my-path-sidebar'
+import { CurrentStepCompletion } from './current-step-completion'
 import { KnowledgeOnboarding } from './my-path-onboarding'
 import { getEditorialBreadcrumbs, menuEntryFor } from './editorial-breadcrumb'
 import { useEditorialChain } from './editorial-chain-provider'
@@ -347,6 +348,7 @@ export function EditorialApp({
             id={loaded.id}
             data={loaded.data}
             onOpen={(id) => openArticle(id)}
+            activeChainId={activeChain.id}
             onOpenInGraph={(conceptId) =>
               router.push(
                 `${pathForEditorialView({ kind: 'article', id: 'skill-graph', parent: 'academy' })}?concept=${encodeURIComponent(conceptId)}`
@@ -483,6 +485,9 @@ export function EditorialApp({
       }
     >
       <EditorialPageTransition transitionKey={transitionKey}>{content}</EditorialPageTransition>
+      {loadState.status === 'ready' && (
+        <CurrentStepCompletion view={view} activeChainId={activeChain.id} loadHub={loadChainHub} />
+      )}
     </EditorialShell>
   )
 }

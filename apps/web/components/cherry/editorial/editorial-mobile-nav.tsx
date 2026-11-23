@@ -37,7 +37,7 @@ export function EditorialMobileNav({
         side="right"
         className="editorial-root w-[260px] gap-0 border-l border-[var(--editorial-line)] bg-[var(--editorial-sidebar)] p-0 pt-10 sm:max-w-[260px]"
       >
-        <SheetTitle className="sr-only">Cryptopedia 목차</SheetTitle>
+        <SheetTitle className="sr-only">Chainery 목차</SheetTitle>
         <EditorialIndex
           activeScreen={activeScreen}
           activeEntryId={activeEntryId}

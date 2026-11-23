@@ -27,12 +27,14 @@ export function HubDetailPage({
   data,
   onOpen,
   onOpenInGraph,
+  activeChainId,
 }: {
   id: string
   data: HubData
   onOpen: (id: string) => void
   /* 학습 지도를 이 개념이 선택된 상태로 연다 */
   onOpenInGraph?: (conceptId: string) => void
+  activeChainId?: string
 }) {
   const [notice, setNotice] = useState('')
   const study = data.cases.find((item) => item.id === id)
@@ -46,6 +48,7 @@ export function HubDetailPage({
         data={data}
         onOpen={onOpen}
         onOpenInGraph={onOpenInGraph}
+        activeChainId={activeChainId}
       />
     )
 

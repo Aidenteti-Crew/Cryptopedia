@@ -332,7 +332,7 @@
         "source-avalanche-mcp"
       ],
       "categoryId": "agent",
-      "detail": "공식 MCP는 읽기 전용 조회 도구입니다. Cryptopedia는 목적별 지침과 근거를 묶어 이 도구를 활용하도록 안내합니다.",
+      "detail": "공식 MCP는 읽기 전용 조회 도구입니다. Chainery는 목적별 지침과 근거를 묶어 이 도구를 활용하도록 안내합니다.",
       "website": "https://build.avax.network/docs/tooling/ai-llm/mcp-server",
       "conceptIds": [
         "concept-rpc"
@@ -524,7 +524,7 @@
         "source-ethereum"
       ],
       "kind": "ARTICLE",
-      "body": "이 글은 Cryptopedia가 구성한 데모 학습 안내입니다. 개념은 공통으로 읽고, 네트워크·도구·실행 조건은 해당 체인의 공식 자료에서 확인합니다.",
+      "body": "이 글은 Chainery가 구성한 데모 학습 안내입니다. 개념은 공통으로 읽고, 네트워크·도구·실행 조건은 해당 체인의 공식 자료에서 확인합니다.",
       "conceptIds": [],
       "caseIds": [
         "case-ecosystem-research"
@@ -634,7 +634,7 @@
         "source-avalanche-fundamentals-course"
       ],
       "kind": "COURSE",
-      "body": "공식 과정의 전체 강의와 순서는 Avalanche Academy에서 확인하세요. Cryptopedia는 관련 개념을 연결하는 학습 경로만 제공합니다.",
+      "body": "공식 과정의 전체 강의와 순서는 Avalanche Academy에서 확인하세요. Chainery는 관련 개념을 연결하는 학습 경로만 제공합니다.",
       "conceptIds": [
         "concept-primary-network",
         "concept-avalanche-l1"

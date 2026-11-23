@@ -201,7 +201,7 @@ export function EditorialIndex({
 
   return (
     <nav
-      aria-label="Cryptopedia 목차"
+      aria-label="Chainery 목차"
       className={`flex-1 overflow-y-auto px-3 pb-7 pt-3.5 ${className}`}
     >
       {SECTIONS.map((section, si) => (

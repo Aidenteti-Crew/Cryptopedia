@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 
 import { scopeLabel, type HubData } from '@/lib/cryptopedia-hub'
@@ -35,11 +36,13 @@ export function ConceptArticle({
   data,
   onOpen,
   onOpenInGraph,
+  activeChainId,
 }: {
   concept: Concept
   data: HubData
   onOpen: (id: string) => void
   onOpenInGraph?: (conceptId: string) => void
+  activeChainId?: string
 }) {
   const { state } = useLearner()
   const byId = useMemo(() => new Map(data.concepts.map((item) => [item.id, item])), [data])
@@ -64,6 +67,10 @@ export function ConceptArticle({
   )
   const stepIndex = route?.steps.findIndex((step) => step.id === concept.id) ?? -1
   const step = stepIndex >= 0 ? route!.steps[stepIndex] : null
+  const floatCurrentConcept = !!(
+    step && !step.status && route?.start?.kind === 'concept' &&
+    route.start.id === concept.id && path?.chainId === activeChainId
+  )
   const nextStep = route?.steps.slice(stepIndex + 1).find((item) => !item.status) ?? null
   const myRole = state?.profile.role ?? null
 
@@ -85,6 +92,84 @@ export function ConceptArticle({
   })()
   const draft = concept.contentStatus === 'DRAFT'
   const now = () => new Date().toISOString()
+
+  const portalRoot = typeof document === 'undefined'
+    ? null
+    : document.querySelector('.editorial-root')
+  const completionCard = step && route ? (
+    <section
+      aria-label="내 경로에서 이 개념"
+      className={floatCurrentConcept
+        ? 'fixed bottom-20 right-4 z-50 max-h-[calc(100dvh-7rem)] w-[min(360px,calc(100vw-2rem))] overflow-y-auto border border-[var(--editorial-accent)] bg-[var(--editorial-surface)] p-5 shadow-xl lg:bottom-6 lg:right-6 lg:max-h-[calc(100dvh-3rem)]'
+        : 'mt-12 border border-[var(--editorial-accent)] bg-[var(--editorial-surface)] p-5 sm:p-6'}
+    >
+      {step.status ? (
+        <p className="flex items-center gap-2 text-[15px] font-semibold text-[var(--editorial-strong)]">
+          <Check size={18} className="text-[var(--editorial-secondary)]" />
+          {step.status === 'known' ? '이미 아는 개념으로 표시했어요' : '이 개념을 마쳤어요'}
+        </p>
+      ) : (
+        <>
+          <p className="text-[15px] font-semibold text-[var(--editorial-strong)]">
+            이 개념, 이해하셨나요?
+          </p>
+          <p className="mt-1 text-sm text-[var(--editorial-muted)]">
+            표시하면 학습 지도에 ✓가 생기고 다음 단계로 넘어가요.
+          </p>
+        </>
+      )}
+      <div className="mt-4 flex flex-wrap gap-2">
+        {step.status ? (
+          <button
+            type="button"
+            onClick={() =>
+              updateLearner((current) =>
+                setProgress(
+                  current,
+                  concept.id,
+                  step.status === 'known' ? 'todo' : null,
+                  now()
+                )
+              )
+            }
+            className="border border-[var(--editorial-line)] px-4 py-2.5 text-sm text-[var(--editorial-ink)] hover:border-[var(--editorial-accent)]"
+          >
+            {step.status === 'known' ? '아직 몰라요' : '완료 취소'}
+          </button>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={() =>
+                updateLearner((current) => setProgress(current, concept.id, 'done', now()))
+              }
+              className="inline-flex items-center gap-2 bg-[var(--editorial-accent)] px-4 py-2.5 text-sm font-semibold text-[var(--editorial-on-accent)] hover:brightness-110"
+            >
+              다 읽었어요 <Check size={15} />
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                updateLearner((current) => setProgress(current, concept.id, 'known', now()))
+              }
+              className="border border-[var(--editorial-line)] px-4 py-2.5 text-sm text-[var(--editorial-ink)] hover:border-[var(--editorial-accent)]"
+            >
+              이미 알아요
+            </button>
+          </>
+        )}
+        {nextStep && step.status && (
+          <button
+            type="button"
+            onClick={() => onOpen(nextStep.kind === 'screen' ? 'my-path' : nextStep.id)}
+            className="inline-flex items-center gap-2 bg-[var(--editorial-accent)] px-4 py-2.5 text-sm font-semibold text-[var(--editorial-on-accent)] hover:brightness-110"
+          >
+            다음: {nextStep.title} <ArrowRight size={15} />
+          </button>
+        )}
+      </div>
+    </section>
+  ) : null
 
   return (
     <article className={HUB_PAGE_CLASS}>
@@ -284,78 +369,9 @@ export function ConceptArticle({
             </section>
           ) : null}
 
-          {step && route && (
-            <section
-              aria-label="내 경로에서 이 개념"
-              className="mt-12 border border-[var(--editorial-accent)] bg-[var(--editorial-surface)] p-5 sm:p-6"
-            >
-              {step.status ? (
-                <p className="flex items-center gap-2 text-[15px] font-semibold text-[var(--editorial-strong)]">
-                  <Check size={18} className="text-[var(--editorial-secondary)]" />
-                  {step.status === 'known' ? '이미 아는 개념으로 표시했어요' : '이 개념을 마쳤어요'}
-                </p>
-              ) : (
-                <>
-                  <p className="text-[15px] font-semibold text-[var(--editorial-strong)]">
-                    이 개념, 이해하셨나요?
-                  </p>
-                  <p className="mt-1 text-sm text-[var(--editorial-muted)]">
-                    표시하면 학습 지도에 ✓가 생기고 다음 단계로 넘어가요.
-                  </p>
-                </>
-              )}
-              <div className="mt-4 flex flex-wrap gap-2">
-                {step.status ? (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      updateLearner((current) =>
-                        setProgress(
-                          current,
-                          concept.id,
-                          step.status === 'known' ? 'todo' : null,
-                          now()
-                        )
-                      )
-                    }
-                    className="border border-[var(--editorial-line)] px-4 py-2.5 text-sm text-[var(--editorial-ink)] hover:border-[var(--editorial-accent)]"
-                  >
-                    {step.status === 'known' ? '아직 몰라요' : '완료 취소'}
-                  </button>
-                ) : (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        updateLearner((current) => setProgress(current, concept.id, 'done', now()))
-                      }
-                      className="inline-flex items-center gap-2 bg-[var(--editorial-accent)] px-4 py-2.5 text-sm font-semibold text-[var(--editorial-on-accent)] hover:brightness-110"
-                    >
-                      다 읽었어요 <Check size={15} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        updateLearner((current) => setProgress(current, concept.id, 'known', now()))
-                      }
-                      className="border border-[var(--editorial-line)] px-4 py-2.5 text-sm text-[var(--editorial-ink)] hover:border-[var(--editorial-accent)]"
-                    >
-                      이미 알아요
-                    </button>
-                  </>
-                )}
-                {nextStep && step.status && (
-                  <button
-                    type="button"
-                    onClick={() => onOpen(nextStep.kind === 'screen' ? 'my-path' : nextStep.id)}
-                    className="inline-flex items-center gap-2 bg-[var(--editorial-accent)] px-4 py-2.5 text-sm font-semibold text-[var(--editorial-on-accent)] hover:brightness-110"
-                  >
-                    다음: {nextStep.title} <ArrowRight size={15} />
-                  </button>
-                )}
-              </div>
-            </section>
-          )}
+          {floatCurrentConcept && completionCard && portalRoot
+            ? createPortal(completionCard, portalRoot)
+            : completionCard}
 
           <RelatedLinks title="연결된 개념" ids={others} data={data} onOpen={onOpen} />
           <RelatedLinks

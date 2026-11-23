@@ -23,7 +23,7 @@ function VolumeCard({
       {volume.coverAsset ? (
         <Image
           src={volume.coverAsset}
-          alt={`${volume.name} Cryptopedia 표지`}
+          alt={`${volume.name} Chainery 표지`}
           width={187}
           height={255}
           className="h-[255px] w-[187px] object-contain"

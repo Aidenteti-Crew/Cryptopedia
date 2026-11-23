@@ -23,3 +23,6 @@ next-env.d.ts
 # Playwright
 /test-results/
 /playwright-report/
+
+# 채용 수집 본문 캐시 (번역 입력, scripts/crawl-careers.ts)
+/.cache/
