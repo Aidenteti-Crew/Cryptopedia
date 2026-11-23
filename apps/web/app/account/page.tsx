@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
+import { AccountPasswordSection } from '@/components/auth/account-password-section'
 import { AccountView } from '@/components/auth/account-view'
 import { PlatformShell } from '@/components/cherry/editorial/platform-shell'
 import { getAccessToken, useAuthTick } from '@/lib/auth'
@@ -20,6 +21,7 @@ export default function AccountPage() {
         <h1 className="text-[28px] font-semibold text-[var(--editorial-strong)]">내 계정</h1>
         <div className="mt-8">
           <AccountView session={session} onSignOut={signOut} />
+          {session.kind === 'signedIn' && <AccountPasswordSection email={session.email} />}
         </div>
       </main>
     </PlatformShell>

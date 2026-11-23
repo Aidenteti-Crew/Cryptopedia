@@ -15,23 +15,29 @@ export function secondsUntilResend(state: EmailLoginState, now: number): number 
 }
 
 // Asks the API to e-mail a one-time sign-in link. from=main makes the link open /login (not the
-// older /start/login). The address is never logged or kept beyond this request.
+// older /start/login). intent=signup makes the link offer a password step after it signs the person
+// in. The address is never logged or kept beyond this request.
 export async function requestSignInLink(
   apiUrl: string,
   email: string,
-  fetchFn: typeof fetch = fetch
+  { intent, fetchFn = fetch }: { intent?: 'signup'; fetchFn?: typeof fetch } = {}
 ): Promise<{ ok: true } | { ok: false; message: string }> {
   try {
     const response = await fetchFn(`${apiUrl}/api/app-user/signin`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.trim(), from: 'main' }),
+      body: JSON.stringify({ email: email.trim(), from: 'main', ...(intent ? { intent } : {}) }),
     })
     if (response.ok) return { ok: true }
     if (response.status === 429) {
       return { ok: false, message: '요청이 많아요. 1분 뒤에 다시 시도해 주세요.' }
     }
-    return { ok: false, message: '로그인 메일을 보내지 못했어요. 주소를 확인하고 다시 시도해 주세요.' }
+    const kind = intent === 'signup' ? '가입' : '로그인'
+    // A 5xx is the mail service failing, not the address: asking to check it sent people the wrong way.
+    if (response.status >= 500) {
+      return { ok: false, message: `${kind} 메일을 보내는 중에 문제가 생겼어요. 잠시 뒤 다시 시도해 주세요.` }
+    }
+    return { ok: false, message: `${kind} 메일을 보내지 못했어요. 주소를 확인하고 다시 시도해 주세요.` }
   } catch {
     return { ok: false, message: '서버에 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.' }
   }
