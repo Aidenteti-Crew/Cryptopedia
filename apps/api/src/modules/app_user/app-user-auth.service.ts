@@ -1,11 +1,14 @@
 import {
+  BadRequestException,
   ConflictException,
+  ForbiddenException,
   Inject,
   Injectable,
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { compare, hash } from 'bcryptjs';
 import { OAuth2Client, type TokenPayload } from 'google-auth-library';
 import { Knex } from 'knex';
 import type { Request, Response } from 'express';
@@ -22,18 +25,29 @@ import type { SignupDto } from './input-dto/signup.dto';
 import type { SigninDto } from './input-dto/signin.dto';
 import type { LoginDto } from './input-dto/login.dto';
 import type { GoogleLoginDto } from './input-dto/google-login.dto';
+import type { PasswordLoginDto } from './input-dto/password-login.dto';
+import type { SetPasswordDto } from './input-dto/set-password.dto';
+import { passwordViolation } from './password-policy';
 import type { RefreshTokenDto } from './input-dto/refresh-token.dto';
 import type { SignupResponseDto } from './output-dto/signup-response.dto';
 import type { SigninResponseDto } from './output-dto/signin-response.dto';
 import type { LoginResponseDto, LoginUserDto } from './output-dto/login-response.dto';
 import type { MeResponseDto } from './output-dto/me-response.dto';
 
-type JwtPayload = {
+type AuthMethod = 'link' | 'google' | 'password';
+
+// How and when this session was proven. Refresh keeps both, so the 15 minute window below is
+// measured from the real sign-in and not from the last token refresh.
+type SessionOrigin = { amr?: AuthMethod; authAt?: number };
+
+type JwtPayload = SessionOrigin & {
   id: string;
   email: string;
   role: AppUserRole;
   tokenType: 'access' | 'refresh';
 };
+
+export type PasswordChangeClaims = SessionOrigin & { tokenType?: string };
 
 type RequestWithAuthData = Request & {
   cookies?: Record<string, unknown>;
@@ -41,6 +55,8 @@ type RequestWithAuthData = Request & {
 };
 
 const MAGIC_TOKEN_TTL_MS = 15 * 60 * 1000;
+const PASSWORD_HASH_COST = 12;
+const RECENT_LINK_LOGIN_MS = 15 * 60 * 1000;
 /** 벤치 키 유효기간: 등록 시점부터 72시간(3일) */
 const BENCH_KEY_TTL_MS = 72 * 60 * 60 * 1000;
 const REFRESH_COOKIE_NAME = 'cherryRefreshToken';
@@ -50,6 +66,11 @@ const REFRESH_COOKIE_PATH = '/api/app-user';
 export class AppUserAuthService {
   private readonly logger = new Logger(AppUserAuthService.name);
   private googleClient?: OAuth2Client;
+  // Compared against when no real hash exists, so unknown and known e-mails cost the same time.
+  private readonly dummyPasswordHash: Promise<string> = hash(
+    randomBytes(16).toString('hex'),
+    PASSWORD_HASH_COST,
+  );
 
   constructor(
     @Inject('KNEX_CONNECTION')
@@ -119,22 +140,135 @@ export class AppUserAuthService {
 
     const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
     const loginPath = dto.from === 'main' ? '/login' : '/start/login';
-    const loginLink = `${frontendUrl}${loginPath}?email=${encodeURIComponent(user.email)}&token=${signInToken}`;
+    const signup = dto.intent === 'signup';
+    const loginLink = `${frontendUrl}${loginPath}?email=${encodeURIComponent(user.email)}&token=${signInToken}${signup ? '&intent=signup' : ''}`;
 
-    await sendEmail(
-      user.email,
-      'Your Cherry sign-in link',
-      EMAIL_TEMPLATE(
-        'Your sign-in link',
-        'Click the button below to sign in to Cherry in the Haystack.<br/>This link is valid for 15 minutes.',
-        'Sign in',
-        loginLink,
-      ),
-    );
+    const mail = signup
+      ? {
+          subject: '가입을 확인해 주세요',
+          html: EMAIL_TEMPLATE(
+            '가입 확인',
+            '아래 버튼을 누르면 가입이 끝나고 바로 로그인돼요. 이어서 비밀번호를 정할 수 있어요.<br/>링크는 15분 동안 쓸 수 있어요.',
+            '가입 확인하기',
+            loginLink,
+          ),
+        }
+      : {
+          subject: 'Your Cherry sign-in link',
+          html: EMAIL_TEMPLATE(
+            'Your sign-in link',
+            'Click the button below to sign in to Cherry in the Haystack.<br/>This link is valid for 15 minutes.',
+            'Sign in',
+            loginLink,
+          ),
+        };
+    await sendEmail(user.email, mail.subject, mail.html);
 
     return {
       expiresAt: expiresAt.toISOString(),
     };
+  }
+
+  async passwordLogin(
+    dto: PasswordLoginDto,
+    res: Response,
+  ): Promise<LoginResponseDto> {
+    const user = await this.getActiveUserByEmail(dto.email);
+    const storedHash = user?.password_hash ?? null;
+    const matches = await compare(
+      dto.password,
+      storedHash ?? (await this.dummyPasswordHash),
+    );
+
+    if (!user || !storedHash || !matches) {
+      throw new UnauthorizedException({
+        code: 'INVALID_CREDENTIALS',
+        message: 'Invalid email or password.',
+      });
+    }
+
+    const now = new Date();
+    await this.knex('core.app_user').where({ id: user.id }).update({
+      last_login_at: now,
+      updated_at: now,
+    });
+
+    const tokens = await this.issueTokens(user, {
+      amr: 'password',
+      authAt: this.nowSeconds(),
+    });
+    this.setRefreshCookie(res, tokens.refreshToken);
+
+    return {
+      accessToken: tokens.accessToken,
+      user: this.toLoginUserDto(user),
+    };
+  }
+
+  /**
+   * Set or change the password of the signed-in member. An existing password needs the current one,
+   * except right after an e-mail link sign-in: that is the "I forgot it" path.
+   */
+  async setPassword(
+    userId: string,
+    claims: PasswordChangeClaims,
+    dto: SetPasswordDto,
+    res: Response,
+  ): Promise<{ accessToken: string; hasPassword: true }> {
+    const user = await this.getActiveUserById(userId);
+    if (!user) {
+      throw new UnauthorizedException('User not found or inactive.');
+    }
+
+    const violation = passwordViolation(dto.password, user.email);
+    if (violation) {
+      throw new BadRequestException({
+        message: 'Validation failed',
+        errors: [{ path: 'password', message: violation }],
+      });
+    }
+
+    if (user.password_hash) {
+      if (dto.currentPassword !== undefined) {
+        if (!(await compare(dto.currentPassword, user.password_hash))) {
+          throw new ForbiddenException({
+            code: 'CURRENT_PASSWORD_WRONG',
+            message: 'Current password is wrong.',
+          });
+        }
+      } else if (!this.isRecentLinkLogin(claims)) {
+        throw new ForbiddenException({
+          code: 'CURRENT_PASSWORD_REQUIRED',
+          message: 'Current password is required.',
+        });
+      }
+    }
+
+    await this.knex('core.app_user')
+      .where({ id: user.id })
+      .update({
+        password_hash: await hash(dto.password, PASSWORD_HASH_COST),
+        updated_at: new Date(),
+      });
+
+    // A new refresh token replaces the stored one, which ends the sessions on other devices.
+    const tokens = await this.issueTokens(user, {
+      amr: claims.amr,
+      authAt: claims.authAt,
+    });
+    this.setRefreshCookie(res, tokens.refreshToken);
+    return { accessToken: tokens.accessToken, hasPassword: true };
+  }
+
+  private isRecentLinkLogin(claims: PasswordChangeClaims): boolean {
+    if (claims.tokenType !== 'access' || claims.amr !== 'link') return false;
+    if (typeof claims.authAt !== 'number') return false;
+    const age = Date.now() - claims.authAt * 1000;
+    return age >= 0 && age <= RECENT_LINK_LOGIN_MS;
+  }
+
+  private nowSeconds(): number {
+    return Math.floor(Date.now() / 1000);
   }
 
   async login(
@@ -182,7 +316,10 @@ export class AppUserAuthService {
       updated_at: now,
     });
 
-    const tokens = await this.issueTokens(user);
+    const tokens = await this.issueTokens(user, {
+      amr: 'link',
+      authAt: this.nowSeconds(),
+    });
     this.setRefreshCookie(res, tokens.refreshToken);
 
     return {
@@ -217,7 +354,7 @@ export class AppUserAuthService {
       throw new UnauthorizedException('Invalid Google token.');
     }
 
-    if (!payload?.sub || !payload.email || payload.email_verified === false) {
+    if (!payload?.sub || !payload.email || payload.email_verified !== true) {
       throw new UnauthorizedException('Google account email is not verified.');
     }
 
@@ -234,7 +371,10 @@ export class AppUserAuthService {
       updated_at: now,
     });
 
-    const tokens = await this.issueTokens(user);
+    const tokens = await this.issueTokens(user, {
+      amr: 'google',
+      authAt: this.nowSeconds(),
+    });
     this.setRefreshCookie(res, tokens.refreshToken);
 
     return {
@@ -270,7 +410,10 @@ export class AppUserAuthService {
       throw new UnauthorizedException('User not found or inactive.');
     }
 
-    const tokens = await this.issueTokens(user);
+    const tokens = await this.issueTokens(user, {
+      amr: payload.amr,
+      authAt: payload.authAt,
+    });
     this.setRefreshCookie(res, tokens.refreshToken);
 
     return {
@@ -310,10 +453,14 @@ export class AppUserAuthService {
       role: user.role,
       subscriptionTier: user.subscription_tier,
       lastLoginAt: this.toDate(user.last_login_at)?.toISOString() ?? null,
+      hasPassword: Boolean(user.password_hash),
     };
   }
 
-  private async issueTokens(user: AppUserEntity): Promise<{
+  private async issueTokens(
+    user: AppUserEntity,
+    origin: SessionOrigin,
+  ): Promise<{
     accessToken: string;
     refreshToken: string;
   }> {
@@ -322,6 +469,8 @@ export class AppUserAuthService {
       email: user.email,
       role: user.role,
       tokenType: 'access',
+      amr: origin.amr,
+      authAt: origin.authAt,
     };
 
     const refreshPayload: JwtPayload = {
@@ -329,6 +478,8 @@ export class AppUserAuthService {
       email: user.email,
       role: user.role,
       tokenType: 'refresh',
+      amr: origin.amr,
+      authAt: origin.authAt,
     };
 
     const accessToken = this.jwtService.sign(accessPayload, {

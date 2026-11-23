@@ -15,7 +15,14 @@ export class RoleJwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: { id?: string; email?: string; role?: string }) {
+  async validate(payload: {
+    id?: string;
+    email?: string;
+    role?: string;
+    tokenType?: string;
+    amr?: string;
+    authAt?: number;
+  }) {
     const userId = String(payload.id ?? '').trim();
     if (!userId) {
       throw new UnauthorizedException('User not found');
@@ -46,6 +53,9 @@ export class RoleJwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       name: user.name,
       role: user.role,
       subscription_tier: user.subscription_tier,
+      tokenType: payload.tokenType,
+      amr: payload.amr,
+      authAt: payload.authAt,
     };
   }
 }
