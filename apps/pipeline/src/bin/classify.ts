@@ -7,6 +7,7 @@ import { OpenAiCompatibleClient, llmConfigFromEnv } from '../classify/llm-client
 import { loadSourceConfig } from '../config/source-config.js'
 import { createPgConnection } from '../db/pg-pool.js'
 import { runClassify, type ClassifiedItem } from '../jobs/run-classify.js'
+import { attachEventCovers } from '../events/event-covers.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 loadEnv()
@@ -54,6 +55,7 @@ async function main(): Promise<void> {
     console.log(
       `[classify] ${dryRun ? 'DRY RUN, nothing written. ' : ''}${JSON.stringify(summary)}`
     )
+    if (!dryRun) console.log(`[classify] event covers: ${JSON.stringify(await attachEventCovers(connection.query))}`)
     if (summary.stoppedEarly || summary.failed > 0) process.exitCode = 1
   } finally {
     await connection.close()

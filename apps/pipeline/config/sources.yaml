@@ -73,6 +73,8 @@ sources:
     adapter: 'APIFY'
     content_kind: 'SOCIAL'
     authority: 'OFFICIAL'
+    # Apify bills per query (50 tweets at least); once a day keeps a 6-hourly schedule cheap.
+    min_interval_hours: 23
     apify:
       actor: 'apidojo~tweet-scraper'
       input:
@@ -87,6 +89,8 @@ sources:
     adapter: 'APIFY'
     content_kind: 'SOCIAL'
     authority: 'OFFICIAL_COMMUNITY'
+    # Apify bills per query (50 tweets at least); once a day keeps a 6-hourly schedule cheap.
+    min_interval_hours: 23
     apify:
       actor: 'apidojo~tweet-scraper'
       input:
@@ -101,6 +105,8 @@ sources:
     adapter: 'APIFY'
     content_kind: 'SOCIAL'
     authority: 'OFFICIAL_COMMUNITY'
+    # Apify bills per query (50 tweets at least); once a day keeps a 6-hourly schedule cheap.
+    min_interval_hours: 23
     apify:
       actor: 'apidojo~tweet-scraper'
       input:
@@ -210,3 +216,61 @@ sources:
     enabled: false
     luma:
       calendar_id: 'cal-5x1GA3vKpLS1cRG'
+
+  # ── 국내 Web3 행사·공지 (feed scope web3-kr) ─────────────────────────────
+  # KISA 공지사항: server-rendered board, no login. robots.txt answers 403 (none published);
+  # read once a day, 2 list pages (~20 posts), ≥2s between requests. RSS (/rss/401) has only the
+  # latest 10 titles and no body, so the board itself is read.
+  # Until 2026-11-09 the server sent only its leaf certificate and Node's fetch rejected it
+  # (UNABLE_TO_VERIFY_LEAF_SIGNATURE); it now sends the GeoTrust TLS RSA CA G1 intermediate too.
+  - url: 'https://www.kisa.or.kr/401'
+    chain: 'web3-kr'
+    source_name: 'KISA 공지사항'
+    source_type: 'WEBSITE'
+    adapter: 'HTML_BOARD'
+    content_kind: 'NOTICE'
+    authority: 'OFFICIAL'
+    # Once a day; 23 so a 6-hourly schedule that starts a little early still reads it daily.
+    min_interval_hours: 23
+    board:
+      list_item: 'table.tbl_board tbody tr'
+      title: 'td.sbj a'
+      link: 'td.sbj a@href'
+      date: 'td.date'
+      detail_body: 'div.board_detail_contents'
+      max_pages: 2
+      drop_link_params: ['page', 'lang_type']
+    # Checked against 100 notices (2026-06-11 ~ 2026-10-29): titles alone kept 35, and no
+    # Web3-related post was dropped. Do not add "Avalanche": KISA uses it for a network test
+    # tool (성능평가자 양성교육 "Avalanche" 과정), not the chain.
+    include_keywords:
+      [블록체인, Web3, 웹3, 분산원장, 디지털자산, 가상자산, NFT, 토큰, DID, 진흥주간, 해커톤, BCMD, 스마트컨트랙트, 탈중앙]
+    exclude_keywords: [입찰, 채용, 인사발령, 사전규격]
+    consecutive_failures_threshold: 3
+
+  # KISA 블록체인 포털 최신동향(주간): weekly summaries of blockchain tech, policy and industry
+  # research — industry news, not events. robots.txt 404 (none published). 5 posts per page,
+  # ~5 a week. Posts open through a script call (fn_goView('BBSOID_…')), but the detail page also
+  # answers a plain GET with the id, so that URL is stored. TLS chain is complete (Node OK).
+  - url: 'https://blockchain.kisa.or.kr/bbso/bbsoAnalsList.do'
+    chain: 'web3-kr'
+    source_name: 'KISA 블록체인 포털 최신동향'
+    source_type: 'WEBSITE'
+    adapter: 'HTML_BOARD'
+    content_kind: 'NEWSLETTER'
+    authority: 'OFFICIAL'
+    min_interval_hours: 23
+    board:
+      list_item: 'table.responsive-notice-table tbody tr'
+      title: '.subject-text'
+      link: 'a.subject-link@href'
+      date: '.item-date'
+      detail_body: 'div.spc-info-group-content'
+      page_param: 'pageIndex'
+      max_pages: 2
+      link_id_pattern: "fn_goView\\('([A-Za-z0-9_]+)'\\)"
+      detail_url: '/bbso/bbsoAnalsDetail.do?searchBbsoMngId={id}'
+    # Almost every post is about blockchain; the filter drops the few general ICT ones (6G etc.).
+    include_keywords:
+      [블록체인, Web3, 웹3, 분산원장, 디지털자산, 가상자산, NFT, 토큰, DID, 스마트컨트랙트, 탈중앙, 영지식]
+    consecutive_failures_threshold: 3

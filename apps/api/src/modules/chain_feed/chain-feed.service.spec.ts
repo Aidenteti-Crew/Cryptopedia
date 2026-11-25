@@ -105,6 +105,33 @@ maybe('ChainFeedService.listEvents (real Postgres)', () => {
     ]);
   });
 
+  // Needs docs/architecture/chainery-events-2026-10-31.sql as well.
+  it('hides unpublished events and computes the recruiting status', async () => {
+    await db.raw(
+      `INSERT INTO content.chain_event
+         (id, event_key, title, summary, starts_at, timezone, chain, review_state, registration_deadline)
+       VALUES (gen_random_uuid(), 'draft', 'Event draft', '요약', '2026-11-20T00:00:00Z', 'UTC', ?, 'DRAFT', NULL),
+              (gen_random_uuid(), 'closing', 'Event closing', '요약', '2026-11-20T00:00:00Z', 'UTC', ?, 'PUBLISHED',
+               '2026-10-17T00:00:00Z')`,
+      [CHAIN, CHAIN],
+    );
+    try {
+      const items = (await list({ status: 'upcoming' })).items;
+      expect(items.map((e) => e.id)).not.toContain('draft');
+      const closing = items.find((e) => e.id === 'closing');
+      expect(closing?.registrationStatus).toBe('CLOSING_SOON');
+      expect(closing?.daysUntilDeadline).toBe(2);
+      expect(items.find((e) => e.id === 'upcoming-seoul')?.registrationStatus).toBe(
+        'UNKNOWN',
+      );
+    } finally {
+      await db.raw(
+        `DELETE FROM content.chain_event WHERE chain = ? AND event_key IN ('draft', 'closing')`,
+        [CHAIN],
+      );
+    }
+  });
+
   it('computes status at request time, with cancel/postpone overriding the clock', async () => {
     expect(keys(await list({ status: 'upcoming' }))).toEqual([
       'upcoming-seoul',

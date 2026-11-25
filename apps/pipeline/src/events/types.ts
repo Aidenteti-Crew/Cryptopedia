@@ -17,6 +17,7 @@ export interface ChainEventInput {
   isOnline: boolean
   sourceUrl: string | null
   registrationUrl: string | null
+  imageUrl: string | null
   category: string
   tags: string[]
   statusOverride: 'CANCELLED' | 'POSTPONED' | null

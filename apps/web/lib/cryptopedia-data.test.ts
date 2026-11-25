@@ -96,6 +96,14 @@ function event(overrides: Partial<EventEntry>): EventEntry {
     publishedAt: null,
     fetchedAt: '2026-10-01T00:00:00+09:00',
     confidence: null,
+    registrationDeadline: null,
+    registrationStatus: "UNKNOWN",
+    daysUntilDeadline: null,
+    audience: [],
+    level: null,
+    fee: null,
+    relatedChains: [],
+    scope: null,
     ...overrides,
   }
 }

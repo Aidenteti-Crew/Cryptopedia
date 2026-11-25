@@ -4,13 +4,20 @@ import { useCallback, useEffect, useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { API_URL, setAccessToken } from "@/lib/auth"
 import { GoogleLoginButton } from "@/components/auth/google-login-button"
+import { EmailLoginForm } from "@/components/auth/email-login-form"
+import { PasswordLoginForm, type PasswordFormMode } from "@/components/auth/password-login-form"
+import { SetPasswordStep } from "@/components/auth/set-password-step"
+import { accountHasNoPassword } from "@/lib/password-login"
+import { PlatformShell } from "@/components/cherry/editorial/platform-shell"
 
 function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const [step, setStep] = useState<"input" | "verifying" | "error">("input")
+  const [step, setStep] = useState<"input" | "verifying" | "setPassword" | "error">("input")
   const [errorMsg, setErrorMsg] = useState("")
+  const [mode, setMode] = useState<PasswordFormMode>("login")
+  const [showLinkLogin, setShowLinkLogin] = useState(false)
 
   // 로그인 성공 후 돌아갈 경로 — /login?next=/start 저장
   useEffect(() => {
@@ -33,10 +40,11 @@ function LoginContent() {
   }, [router])
 
   // 매직링크(?token=&email=) 자동 로그인 — 백엔드 매직링크는 유지되므로 그대로 처리
+  const emailFromUrl = searchParams.get("email") ?? ""
   useEffect(() => {
     const tokenFromUrl = searchParams.get("token")
-    const emailFromUrl = searchParams.get("email")
     if (!tokenFromUrl || !emailFromUrl) return
+    const signupIntent = searchParams.get("intent") === "signup"
 
     setStep("verifying")
     fetch(`${API_URL}/api/app-user/login`, {
@@ -46,85 +54,94 @@ function LoginContent() {
       body: JSON.stringify({ email: emailFromUrl, signInToken: tokenFromUrl }),
     })
       .then((res) => res.json())
-      .then((data) => {
+      .then(async (data) => {
         if (data.accessToken) {
           setAccessToken(data.accessToken)
+          if (signupIntent && (await accountHasNoPassword(API_URL))) {
+            setStep("setPassword")
+            return
+          }
           goAfterLogin()
         } else {
-          setErrorMsg(data.message ?? "로그인에 실패했습니다.")
+          setErrorMsg(data.message ?? "로그인 링크가 만료됐거나 이미 사용됐어요.")
           setStep("error")
         }
       })
       .catch(() => {
-        setErrorMsg("서버 연결에 실패했습니다.")
+        setErrorMsg("서버에 연결하지 못했어요.")
         setStep("error")
       })
-  }, [searchParams, goAfterLogin])
+  }, [searchParams, emailFromUrl, goAfterLogin])
 
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#FBFAF8" }}>
-      <div className="w-full max-w-md" style={{ paddingLeft: 24, paddingRight: 24 }}>
-        {/* 로고 */}
-        <div className="text-center" style={{ marginBottom: 40 }}>
-          <div className="flex items-center justify-center" style={{ gap: 8, marginBottom: 12 }}>
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-              <circle cx="14" cy="14" r="14" fill="#C94B6E" />
-              <circle cx="14" cy="11" r="5" fill="white" />
-              <rect x="11" y="18" width="6" height="1.5" rx="0.75" fill="white" />
-            </svg>
-            <span className="text-[22px] font-extrabold text-[#1A1626] tracking-tight">Cherry</span>
-          </div>
-          <p className="text-[13px] text-[#7B7599]">Knowledge Platform for AI Engineers</p>
-        </div>
-
-        {/* 카드 */}
-        <div className="bg-white rounded-2xl shadow-sm border border-[#E4E1EE] p-8">
-
-          {step === "input" && (
-            <>
-              <h2 className="text-[18px] font-bold text-[#1A1626] mb-1">로그인 / 가입</h2>
-              <p className="text-[13px] text-[#7B7599] mb-6">
-                Google 계정으로 로그인하세요.<br />
-                처음 이용하시면 자동으로 가입됩니다.
-              </p>
-              <div className="flex flex-col items-center gap-3">
-                <GoogleLoginButton
-                  onStart={() => setStep("verifying")}
-                  onSuccess={goAfterLogin}
-                  onError={(m) => { setErrorMsg(m); setStep("error") }}
-                />
-                {errorMsg && (
-                  <p className="text-[12px] text-[#C94B6E]">{errorMsg}</p>
-                )}
+    <PlatformShell>
+      <main className="mx-auto flex min-h-[100dvh] w-full max-w-[420px] flex-col justify-center px-4 pb-16 pt-28">
+        {step === "input" && (
+          <>
+            <h1 className="text-[28px] font-semibold leading-tight text-[var(--editorial-strong)]">
+              {mode === "login" ? "로그인" : "회원가입"}
+            </h1>
+            <p className="mt-3 text-[15px] leading-7 text-[var(--editorial-muted)]">
+              소식과 행사는 로그인하지 않아도 볼 수 있어요.
+            </p>
+            <div className="mt-8">
+              <PasswordLoginForm mode={mode} onModeChange={setMode} onSuccess={goAfterLogin} />
+            </div>
+            <div className="my-6 flex items-center gap-3 text-xs text-[var(--editorial-muted)]">
+              <span className="h-px flex-1 bg-[var(--editorial-line)]" />
+              또는
+              <span className="h-px flex-1 bg-[var(--editorial-line)]" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <GoogleLoginButton
+                fill
+                onStart={() => setStep("verifying")}
+                onSuccess={goAfterLogin}
+                onError={(m) => { setErrorMsg(m); setStep("input") }}
+              />
+              {errorMsg && <p className="text-sm text-[#e58a9c]">{errorMsg}</p>}
+            </div>
+            <p className="mt-3 text-xs leading-5 text-[var(--editorial-muted)]">
+              Google이나 이메일 링크로는 처음이어도 자동으로 가입돼요.
+            </p>
+            <button
+              type="button"
+              aria-expanded={showLinkLogin}
+              onClick={() => setShowLinkLogin((open) => !open)}
+              className="mt-5 self-start text-sm text-[var(--editorial-accent)]"
+            >
+              이메일 링크로 로그인
+            </button>
+            {showLinkLogin && (
+              <div className="mt-3">
+                <EmailLoginForm />
               </div>
-            </>
-          )}
+            )}
+          </>
+        )}
 
-          {/* 매직링크 처리 중 */}
-          {step === "verifying" && (
-            <div className="text-center py-4">
-              <div className="text-4xl mb-4 animate-spin">⏳</div>
-              <h2 className="text-[18px] font-bold text-[#1A1626]">로그인 중...</h2>
-            </div>
-          )}
+        {step === "setPassword" && <SetPasswordStep email={emailFromUrl} onDone={goAfterLogin} />}
 
-          {/* 에러 */}
-          {step === "error" && (
-            <div className="text-center py-4">
-              <div className="text-4xl mb-4">❌</div>
-              <h2 className="text-[18px] font-bold text-[#1A1626] mb-2">로그인 실패</h2>
-              <p className="text-[13px] text-[#7B7599] mb-6">{errorMsg}</p>
-              <button
-                onClick={() => { setErrorMsg(""); setStep("input") }}
-                className="text-[13px] text-[#C94B6E] hover:underline"
-              >
-                다시 시도하기
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+        {step === "verifying" && (
+          <p role="status" className="text-[15px] text-[var(--editorial-strong)]">
+            로그인하는 중…
+          </p>
+        )}
+
+        {step === "error" && (
+          <div>
+            <h1 className="text-[22px] font-semibold text-[var(--editorial-strong)]">로그인하지 못했어요</h1>
+            <p className="mt-3 text-[15px] leading-7 text-[var(--editorial-muted)]">{errorMsg}</p>
+            <button
+              onClick={() => { setErrorMsg(""); setStep("input") }}
+              className="mt-6 text-sm text-[var(--editorial-accent)]"
+            >
+              다시 시도하기
+            </button>
+          </div>
+        )}
+      </main>
+    </PlatformShell>
   )
 }
 

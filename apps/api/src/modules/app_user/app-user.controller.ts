@@ -23,6 +23,8 @@ import { LoginDto } from './input-dto/login.dto';
 import { GoogleLoginDto } from './input-dto/google-login.dto';
 import { BenchKeyDto } from './input-dto/bench-key.dto';
 import { RefreshTokenDto } from './input-dto/refresh-token.dto';
+import { PasswordLoginDto } from './input-dto/password-login.dto';
+import { SetPasswordDto } from './input-dto/set-password.dto';
 import type { SignupResponseDto } from './output-dto/signup-response.dto';
 import type { SigninResponseDto } from './output-dto/signin-response.dto';
 import type { LoginResponseDto } from './output-dto/login-response.dto';
@@ -31,6 +33,9 @@ import type { MeResponseDto } from './output-dto/me-response.dto';
 type RequestWithJwtUser = Request & {
   user?: {
     id?: string;
+    tokenType?: string;
+    amr?: 'link' | 'google' | 'password';
+    authAt?: number;
   };
 };
 
@@ -70,6 +75,36 @@ export class AppUserController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<LoginResponseDto> {
     return this.appUserService.login(dto, req, res);
+  }
+
+  @Post('password/login')
+  @ApiOperation({ summary: 'Sign in with e-mail and password' })
+  @ApiBody({ type: PasswordLoginDto })
+  async passwordLogin(
+    @Body(new ZodValidationPipe(PasswordLoginDto.schema)) dto: PasswordLoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<LoginResponseDto> {
+    return this.appUserService.passwordLogin(dto, res);
+  }
+
+  @Post('password')
+  @HttpCode(200)
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Set or change the password of the signed-in member' })
+  @ApiBody({ type: SetPasswordDto })
+  async setPassword(
+    @Body(new ZodValidationPipe(SetPasswordDto.schema)) dto: SetPasswordDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { tokenType, amr, authAt } = (req as RequestWithJwtUser).user ?? {};
+    return this.appUserService.setPassword(
+      this.requireUserId(req),
+      { tokenType, amr, authAt },
+      dto,
+      res,
+    );
   }
 
   @Post('google-login')

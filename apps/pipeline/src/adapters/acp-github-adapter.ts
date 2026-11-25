@@ -86,13 +86,25 @@ function isAcpDocument(path: string): boolean {
   return /^ACPs\/[^/]+\/README\.md$/i.test(path)
 }
 
-function eventBody(event: AcpEventType, metadata: AcpMetadata, markdown: string): string {
+export interface DocumentDates {
+  createdAt: string
+  updatedAt: string
+}
+
+// The header is read back by classify/protocol-stage.ts parseAcpHeader; keep the line format.
+function eventBody(
+  event: AcpEventType,
+  metadata: AcpMetadata,
+  markdown: string,
+  dates: DocumentDates | undefined
+): string {
   return [
     `Event: ${event}`,
     `ACP: ${metadata.number}`,
     `Status: ${metadata.status}`,
     `Track: ${metadata.track}`,
     `Authors: ${metadata.authors}`,
+    ...(dates ? [`Created: ${dates.createdAt}`, `Updated: ${dates.updatedAt}`] : []),
     '',
     markdown,
   ].join('\n')
@@ -134,7 +146,7 @@ export class AcpGitHubAdapter {
     const paths = cursor.value
       ? await this.changedPaths(cursor.value, head.sha)
       : await this.initialPaths(head.sha)
-    const publishedAt =
+    const headDate =
       head.commit.committer?.date ?? head.commit.author?.date ?? new Date().toISOString()
     const articles: NormalizedArticle[] = []
 
@@ -166,6 +178,7 @@ export class AcpGitHubAdapter {
         }
       }
       const event = classifyAcpEvent(previous, metadata)
+      const dates = await this.documentDates(path, head.sha)
       const canonicalUrl = `https://github.com/${this.owner}/${this.repo}/blob/${this.branch}/${path}`
       const eventUrl = `https://github.com/${this.owner}/${this.repo}/blob/${head.sha}/${path}`
 
@@ -179,8 +192,10 @@ export class AcpGitHubAdapter {
         url: eventUrl,
         normalizedUrl: eventUrl,
         canonicalUrl,
-        body: eventBody(event, metadata, markdown),
-        publishedAt,
+        body: eventBody(event, metadata, markdown, dates),
+        // When this document last changed, not when the repository did: a first sync would
+        // otherwise date every ACP to the same head commit.
+        publishedAt: dates?.updatedAt ?? headDate,
         author: metadata.authors,
       })
     }
@@ -193,6 +208,19 @@ export class AcpGitHubAdapter {
         etag: headResponse.headers.get('etag') ?? cursor.etag,
       },
     }
+  }
+
+  // First and latest commit touching the document. ACP documents have a handful of commits, so
+  // one page (newest first) covers the whole history.
+  private async documentDates(path: string, sha: string): Promise<DocumentDates | undefined> {
+    const response = await this.request(
+      `/repos/${this.owner}/${this.repo}/commits?path=${encodeURIComponent(path)}&sha=${encodeURIComponent(sha)}&per_page=100`
+    )
+    const commits = await this.json<GitHubCommit[]>(response)
+    const date = (c: GitHubCommit | undefined) => c?.commit.committer?.date ?? c?.commit.author?.date
+    const updatedAt = date(commits[0])
+    const createdAt = date(commits.at(-1))
+    return updatedAt && createdAt ? { createdAt, updatedAt } : undefined
   }
 
   private async initialPaths(sha: string): Promise<string[]> {

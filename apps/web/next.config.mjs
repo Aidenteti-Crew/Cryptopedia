@@ -22,9 +22,11 @@ const nextConfig = {
       { source: '/chapters/fundamentals/:path*', destination: '/concepts/:path*', permanent: true },
       { source: '/chapters/builders/:path*', destination: '/skills/:path*', permanent: true },
       { source: '/chapters/academy/:path*', destination: '/academy/:path*', permanent: true },
-      // / 가 플랫폼 입구가 되며 예전 /about 랜딩은 / 로, 체인별 행사는 /knowledge/events 로 옮겼다
-      // (/events 자체는 플랫폼 행사 페이지라 넘기지 않는다)
+      // / 가 플랫폼 입구가 되며 예전 /about 랜딩은 / 로 옮겼다
       { source: '/about', destination: '/', permanent: true },
+      // 체인별 행사 목록은 플랫폼 /events 달력 하나로 합쳤다. 상세(/knowledge/events/:id)와 지난 행사
+      // (/knowledge/events/archive)는 그대로 둔다 — 정확히 이 경로만 넘긴다
+      { source: '/knowledge/events', destination: '/events', permanent: true },
       // 내 학습 경로는 아카데미 하위에서 컬렉션 밖 독립 화면으로 옮겼다
       { source: '/academy/my-path', destination: '/my-path', permanent: true },
       { source: '/events/:path+', destination: '/knowledge/events/:path+', permanent: true },

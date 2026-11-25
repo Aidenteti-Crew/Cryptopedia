@@ -86,6 +86,14 @@ function event(overrides: Partial<EventEntry>): EventEntry {
     publishedAt: null,
     fetchedAt: '2026-10-01T00:00:00+09:00',
     confidence: null,
+    registrationDeadline: null,
+    registrationStatus: 'UNKNOWN',
+    daysUntilDeadline: null,
+    audience: [],
+    level: null,
+    fee: null,
+    relatedChains: [],
+    scope: null,
     ...overrides,
   }
 }
@@ -215,6 +223,20 @@ test('renders event calendar, list switch and readable status labels', () => {
   assert.doesNotMatch(html, /href="null"/)
   assert.doesNotMatch(html, /editorial-display[^>]*>행사 및 이벤트/)
   assert.doesNotMatch(html, /전체 보기 →/)
+})
+
+test('event cards show the registration badge next to the event status', () => {
+  const html = renderToStaticMarkup(
+    <EventsPage
+      events={[
+        event({ id: 'soon', title: 'Soon', registrationStatus: 'CLOSING_SOON', daysUntilDeadline: 3 }),
+        event({ id: 'unknown', title: 'Unknown' }),
+      ]}
+    />
+  )
+
+  assert.match(html, />예정<\/span><span data-color="rose" class="editorial-color-badge">마감 임박 D-3</)
+  assert.equal((html.match(/마감 임박/g) ?? []).length, 1)
 })
 
 test('renders the dedicated Figma event archive copy', () => {

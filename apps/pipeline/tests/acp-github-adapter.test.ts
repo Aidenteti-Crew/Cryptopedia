@@ -31,6 +31,11 @@ function document(status: string, suffix = ''): string {
 Proposal body${suffix}`
 }
 
+// GitHub lists commits newest first.
+function documentCommits(...dates: string[]) {
+  return dates.map((date, i) => ({ sha: `c${i}`, commit: { committer: { date } } }))
+}
+
 function response(body: unknown, status = 200, headers: Record<string, string> = {}): Response {
   return new Response(typeof body === 'string' ? body : JSON.stringify(body), {
     status,
@@ -83,6 +88,11 @@ describe('AcpGitHubAdapter', () => {
       if (url.pathname.includes('/contents/ACPs/13-subnet-only-validators/README.md')) {
         return response(document('Proposed'))
       }
+      if (url.pathname.endsWith('/commits')) {
+        expect(url.searchParams.get('path')).toBe('ACPs/13-subnet-only-validators/README.md')
+        expect(url.searchParams.get('sha')).toBe('head-1')
+        return response(documentCommits('2026-07-30T00:00:00Z', '2026-02-02T00:00:00Z'))
+      }
       throw new Error(`unexpected URL: ${url}`)
     })
 
@@ -95,8 +105,12 @@ describe('AcpGitHubAdapter', () => {
       title: '[ACP_CREATED] ACP-13: Subnet-Only Validators (SOVs)',
       url: expect.stringContaining('/blob/head-1/ACPs/13-subnet-only-validators/README.md'),
       canonicalUrl: expect.stringContaining('/blob/main/ACPs/13-subnet-only-validators/README.md'),
-      publishedAt: '2026-09-25T00:00:00Z',
+      // The document's own last change, not the repository head (2026-09-25).
+      publishedAt: '2026-07-30T00:00:00Z',
     })
+    expect(result.articles[0]?.body).toContain(
+      'Status: Proposed\nTrack: Standards\nAuthors: Patrick O\'Grady\nCreated: 2026-02-02T00:00:00Z\nUpdated: 2026-07-30T00:00:00Z\n'
+    )
   })
 
   it('compares the previous document and emits a status event', async () => {
@@ -120,6 +134,7 @@ describe('AcpGitHubAdapter', () => {
           url.searchParams.get('ref') === 'base' ? document('Proposed') : document('Activated')
         )
       }
+      if (url.pathname.endsWith('/commits')) return response(documentCommits('2026-09-26T00:00:00Z'))
       throw new Error(`unexpected URL: ${url}`)
     })
 

@@ -63,6 +63,14 @@ const event = (id: string, overrides: Partial<EventEntry> = {}): EventEntry => (
   publishedAt: null,
   fetchedAt: '2026-10-14T00:00:00Z',
   confidence: null,
+  registrationDeadline: null,
+  registrationStatus: 'UNKNOWN',
+  daysUntilDeadline: null,
+  audience: [],
+  level: null,
+  fee: null,
+  relatedChains: [],
+  scope: null,
   ...overrides,
 })
 

@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import type { Request, Response } from 'express';
 
-import { AppUserAuthService } from './app-user-auth.service';
+import {
+  AppUserAuthService,
+  type PasswordChangeClaims,
+} from './app-user-auth.service';
 import type { SignupDto } from './input-dto/signup.dto';
 import type { SigninDto } from './input-dto/signin.dto';
 import type { LoginDto } from './input-dto/login.dto';
 import type { GoogleLoginDto } from './input-dto/google-login.dto';
 import type { RefreshTokenDto } from './input-dto/refresh-token.dto';
+import type { PasswordLoginDto } from './input-dto/password-login.dto';
+import type { SetPasswordDto } from './input-dto/set-password.dto';
 import type { SignupResponseDto } from './output-dto/signup-response.dto';
 import type { SigninResponseDto } from './output-dto/signin-response.dto';
 import type { LoginResponseDto } from './output-dto/login-response.dto';
@@ -38,6 +43,22 @@ export class AppUserService {
     res: Response,
   ): Promise<LoginResponseDto> {
     return this.appUserAuthService.googleLogin(dto, req, res);
+  }
+
+  async passwordLogin(
+    dto: PasswordLoginDto,
+    res: Response,
+  ): Promise<LoginResponseDto> {
+    return this.appUserAuthService.passwordLogin(dto, res);
+  }
+
+  async setPassword(
+    userId: string,
+    claims: PasswordChangeClaims,
+    dto: SetPasswordDto,
+    res: Response,
+  ) {
+    return this.appUserAuthService.setPassword(userId, claims, dto, res);
   }
 
   async setBenchKey(userId: string, apiKey: string) {

@@ -59,4 +59,15 @@ describe.skipIf(!url)('chain-event-repository (real Postgres)', () => {
       },
     ])
   })
+
+  it('keeps the cover found earlier when a later run could not read the page', async () => {
+    const withCover = { ...event, imageUrl: 'https://images.lumacdn.com/cdn-cgi/image/x/a.png' }
+    await upsertChainEvents(connection.query, [withCover])
+    await upsertChainEvents(connection.query, [{ ...event, imageUrl: null }])
+    const rows = await connection.query(
+      'SELECT image_url FROM content.chain_event WHERE chain = $1',
+      [CHAIN]
+    )
+    expect(rows.rows).toEqual([{ image_url: withCover.imageUrl }])
+  })
 })

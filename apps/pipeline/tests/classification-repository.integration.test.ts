@@ -118,6 +118,7 @@ describe.skipIf(!url)('classification-repository (real Postgres)', () => {
       activatedAt: null,
       importance: 3,
       publishedAt: new Date('2026-10-01T00:00:00Z'),
+      stage: null,
     }
     expect(await insertCategoryRecord(connection.query, articleId, tech)).toBe(true)
     expect(await insertCategoryRecord(connection.query, articleId, tech)).toBe(false)

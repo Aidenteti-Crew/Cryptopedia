@@ -19,6 +19,10 @@ interface CreateSourceInput {
   type: ContentSourceType
 }
 
+// Marks a source as this pipeline's. apps/api's ArticleIngestionService skips articles from
+// sources marked so, keeping them out of the AI-engineering evaluation queue (and its LLM bill).
+export const COLLECTOR = 'chainery'
+
 // content.source has a partial unique index on url_handle_hash (WHERE revoked_at IS NULL),
 // so lookup-and-create is done as a single atomic upsert rather than SELECT-then-INSERT.
 // A pre-check SELECT is a race condition under concurrent runs; ON CONFLICT is not.
@@ -28,20 +32,24 @@ export async function getOrCreateSource(
 ): Promise<SourceRecord> {
   const candidateId = uuidv7()
   const inserted = await query(
-    `INSERT INTO content.source (id, type, name, url_handle, is_active)
-     VALUES ($1, $2, $3, $4, true)
+    `INSERT INTO content.source (id, type, name, url_handle, is_active, source_meta_json)
+     VALUES ($1, $2, $3, $4, true, jsonb_build_object('collector', $5::text))
      ON CONFLICT (url_handle_hash) WHERE (revoked_at IS NULL) DO NOTHING
      RETURNING id`,
-    [candidateId, input.type, input.name, input.urlHandle]
+    [candidateId, input.type, input.name, input.urlHandle, COLLECTOR]
   )
   const insertedRow = inserted.rows[0] as { id: string } | undefined
   if (insertedRow) return { id: insertedRow.id }
 
+  // Sources created before the collector mark existed get it here. A mark already there is kept,
+  // so a source another collector registered first stays in that collector's queue.
   const existing = await query(
-    `SELECT id FROM content.source
+    `UPDATE content.source
+     SET source_meta_json = jsonb_set(coalesce(source_meta_json, '{}'::jsonb), '{collector}',
+                                      coalesce(source_meta_json -> 'collector', to_jsonb($2::text)), true)
      WHERE url_handle_hash = decode(md5($1), 'hex') AND revoked_at IS NULL
-     LIMIT 1`,
-    [input.urlHandle]
+     RETURNING id`,
+    [input.urlHandle, COLLECTOR]
   )
   const existingRow = existing.rows[0] as { id: string } | undefined
   if (!existingRow) {
@@ -114,4 +122,14 @@ export async function recordSourceFailure(
   )
   const row = result.rows[0] as { consecutive_failures: number } | undefined
   return { consecutiveFailures: Number(row?.consecutive_failures ?? 0) }
+}
+
+export async function getSourceLastSuccess(query: QueryFn, urlHandle: string): Promise<Date | null> {
+  const result = await query(
+    `SELECT last_success_at FROM content.source
+      WHERE url_handle_hash = decode(md5($1), 'hex') AND revoked_at IS NULL`,
+    [urlHandle]
+  )
+  const value = (result.rows[0] as { last_success_at: Date | string | null } | undefined)?.last_success_at
+  return value ? new Date(value) : null
 }

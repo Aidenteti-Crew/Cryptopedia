@@ -21,7 +21,8 @@ export interface EventCursor {
 }
 
 export interface EventQuery {
-  chain: string;
+  // Null means every feed (scope=all).
+  chain: string | null;
   status: EventStatus | null;
   // Inclusive lower bound and exclusive upper bound on starts_at, both UTC midnights.
   from: Date | null;
@@ -94,8 +95,15 @@ export function parseChain(raw: Record<string, unknown>): string {
   return chain;
 }
 
+// Events take `scope` (avalanche, web3-kr, all); `chain` stays as its alias for older callers.
+function parseScope(raw: Record<string, unknown>): string | null {
+  const scope = single(raw.scope, 'scope')?.toLowerCase();
+  if (scope === 'all') return null;
+  return parseChain(scope === undefined ? raw : { chain: scope });
+}
+
 export function parseEventQuery(raw: Record<string, unknown>): EventQuery {
-  const chain = parseChain(raw);
+  const chain = parseScope(raw);
 
   const statusText = single(raw.status, 'status')?.toUpperCase();
   if (

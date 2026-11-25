@@ -1,10 +1,13 @@
 import type { SourceAdapter, SourceConfig } from '../config/source-config.js'
 import type { QueryFn } from '../db/query.js'
+import { getSourceLastSuccess } from '../db/source-repository.js'
+import { isDue } from './schedule.js'
 import { runAcpSource, type RunAcpSourceResult } from './run-acp-source.js'
 import { runApifySource, type RunApifySourceResult } from './run-apify-source.js'
 import { runLumaSource, type RunLumaSourceResult } from './run-luma-source.js'
 import { runEcoProjectSource, type RunEcoProjectSourceResult } from './run-eco-project-source.js'
 import { runAtomSource, type RunAtomSourceResult } from './run-atom-source.js'
+import { runHtmlBoardSource, type RunHtmlBoardSourceResult } from './run-html-board-source.js'
 import {
   runGithubMarkdownSource,
   type RunGithubMarkdownSourceResult,
@@ -25,6 +28,7 @@ export interface PipelineSourceSummary {
     | RunApifySourceResult
     | RunLumaSourceResult
     | RunEcoProjectSourceResult
+    | RunHtmlBoardSourceResult
   error?: string
 }
 
@@ -36,6 +40,9 @@ export interface RunPipelineDeps {
   runApifySource?: typeof runApifySource
   runLumaSource?: typeof runLumaSource
   runEcoProjectSource?: typeof runEcoProjectSource
+  runHtmlBoardSource?: typeof runHtmlBoardSource
+  lastSuccessAt?: (urlHandle: string) => Promise<Date | null>
+  now?: Date
 }
 
 // Adapters with a wired runner in this switch. Adapters listed in SOURCE_ADAPTERS but not here
@@ -53,6 +60,9 @@ export async function runPipeline(
   const apifyRunner = deps.runApifySource ?? runApifySource
   const lumaRunner = deps.runLumaSource ?? runLumaSource
   const ecoProjectRunner = deps.runEcoProjectSource ?? runEcoProjectSource
+  const boardRunner = deps.runHtmlBoardSource ?? runHtmlBoardSource
+  const lastSuccessAt = deps.lastSuccessAt ?? ((url: string) => getSourceLastSuccess(query, url))
+  const now = deps.now ?? new Date()
   const summaries: PipelineSourceSummary[] = []
 
   for (const source of sources) {
@@ -62,6 +72,18 @@ export async function runPipeline(
     }
 
     try {
+      if (source.minIntervalHours !== undefined) {
+        const last = await lastSuccessAt(source.url)
+        if (!isDue(last, source.minIntervalHours, now)) {
+          summaries.push({
+            sourceName: source.sourceName,
+            adapter: source.adapter,
+            status: 'SKIPPED',
+            error: `not due: read ${last?.toISOString()}, every ${source.minIntervalHours}h`,
+          })
+          continue
+        }
+      }
       switch (source.adapter) {
         case 'ATOM': {
           const result = await atomRunner(query, source)
@@ -115,6 +137,16 @@ export async function runPipeline(
         }
         case 'APIFY': {
           const result = await apifyRunner(query, source)
+          summaries.push({
+            sourceName: source.sourceName,
+            adapter: source.adapter,
+            status: result.status,
+            detail: result,
+          })
+          break
+        }
+        case 'HTML_BOARD': {
+          const result = await boardRunner(query, source)
           summaries.push({
             sourceName: source.sourceName,
             adapter: source.adapter,

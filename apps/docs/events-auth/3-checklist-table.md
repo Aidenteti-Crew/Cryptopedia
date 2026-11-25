@@ -1,0 +1,282 @@
+# B 영역 개발 체크리스트 (소식·행사·로그인)
+
+작성 2026-11-09. 근거: 코드 흐름 조사(웹 · API · pipeline), `1-plan.md`, `2-detail-design.md`.
+
+**목표.** 국내 Web3 행사와 체인 소식을 자동으로 모아 검수 후 보여 주고, 로그인 없이도 볼 수 있게 하되 로그인하면 관심 행사 저장·계정 관리를 할 수 있게 한다.
+
+**담당 범위 (설계서 B + 로그인, 2026-11-09 확인).** 프로토콜 변경 · 공식 문서 변경 · 개발 릴리스 · 생태계 프로젝트 소식 · 해커톤·컨퍼런스. AI 요약은 "무엇이 달라졌나 / 누구에게 중요한가 / 출처" 중심, 제안·확정·적용 구분. 여기에 로그인·계정 관리·계정 삭제.
+
+| 설계서 항목 | 칸 |
+|---|---|
+| 프로토콜 변경 (ACP/EIP) | D1 · D2 |
+| 공식 문서 변경 | D5 (D 담당과 합의 후) |
+| 개발 릴리스 | D0 · D2 (이미 수집·표시 중) |
+| 생태계 프로젝트 소식 | D4 |
+| 해커톤·컨퍼런스 | A · C |
+| 3문항 요약 · 단계 구분 | D0 (모든 소식 공통) · D1 |
+| 로그인·계정 | B |
+
+**진행 방식.** 한 칸 = 작은 변경 하나. 칸마다 "확인"을 통과해야 다음 칸으로 간다. 확인은 테스트만이 아니라 실제 화면이나 실제 응답을 본다. 커밋은 칸 단위로 한다.
+
+**트랙.** 세 트랙은 서로 독립이라 순서를 바꿔도 된다.
+
+| 트랙 | 칸 | DB 마이그레이션 필요 |
+|---|---|---|
+| A. 행사 화면 | A1 ~ A5 | A1·A2 불필요(스냅샷으로 개발), A3부터 필요 |
+| B. 로그인·계정 | B1 ~ B4 | B1~B3 불필요, B4(관심 저장)만 새 테이블 |
+| C. 수집·AI·검수 | C1 ~ C7 | C2부터 필요 |
+| D. 소식 | D0 ~ D5 | 필요 |
+
+**추천 순서.** A1 → A2 → B1 → B2 → (마이그레이션 적용) → D0 → D1 → A3 → C1 → … 행사 화면과 로그인 앞부분은 DB 없이 바로 시작할 수 있고, 마이그레이션 뒤에는 소식(D0·D1)을 앞당겨 소식과 행사가 같이 자리 잡게 한다.
+
+---
+
+## 0. 준비 (사용자 작업 포함)
+
+- [ ] **Q1 확인.** 공유 DB에 `content.chain_event` 가 있는가. 없으면 `docs/architecture/avalanche-categories-2026-10-12.sql` 먼저.
+- [ ] **마이그레이션 적용.** `docs/architecture/chainery-events-2026-10-31.sql`. API 배포보다 먼저.
+- [x] **로컬 테스트 DB (2026-11-11).** Docker `pgvector/pgvector:0.7.4-pg16` 컨테이너 `chainery-postgres`(127.0.0.1:15432, cherry/cherry_dev/cherry_db) + `scripts/db/bootstrap.sh`(컨테이너 안에서 실행) + `avalanche-categories-2026-10-12.sql` + `chainery-events-2026-10-31.sql`. Redis 는 `chainery-redis`(127.0.0.1:16379). 우리 마이그레이션 적용·되돌리기·재적용 성공, 포함 릴리스 정규식 Postgres 에서 확인.
+  - 루트 `.env` 의 DB 는 `source_submission.analysis`(2026-09-14 마이그레이션)가 없어 API 가 뜨다 멈춤 → 프로덕션 API 가 쓰는 DB 와 다를 수 있음(미확인). API·pipeline 통합 테스트는 `TEST_DATABASE_URL` 이 있을 때만 돌고 `content.*` 에 INSERT 한다. **공유 DB 주소를 절대 넣지 않는다.**
+- [ ] **API 로컬 실행 (필요할 때).** `apps/api/.env` 는 사용자가 채운다. 공유 DB에 붙으면 부팅만으로 쓰기가 일어난다.
+  - `SCHEDULER_ENABLED=false` 유지 (기사 수집 크론).
+  - 플래그 없이 도는 것: `bench-key-cleanup.service.ts` (매시간 만료 키 정리 UPDATE), `source-submission.service.ts` 부팅 시 RUNNING→FAILED UPDATE.
+  - `RESEND_API_KEY` 가 있으면 로그인 메일이 실제로 나간다.
+- [ ] **웹 로컬 실행.** `pnpm --dir apps/web dev`. `NEXT_PUBLIC_API_URL` 이 없으면 `public/cryptopedia/live/*.json` 스냅샷을 읽는다 (빌드 시점에 결정, 실패 시 자동 전환 없음).
+
+**테스트 명령.**
+- 웹: `cd apps/web && npx tsx --test components/cherry/editorial/*.test.tsx components/cherry/editorial/*.test.ts lib/*.test.ts`
+- API: `cd apps/api && npx jest chain_feed` (또는 해당 모듈)
+- pipeline: `cd apps/pipeline && pnpm test`
+- 타입: 각 앱에서 `npx tsc --noEmit`
+
+---
+
+## A. 행사 화면
+
+현재 상태. `/events` 는 준비 중 페이지(`app/(chainery)/events/page.tsx:12`). 상단 메뉴 "행사/이벤트"가 여기를 가리킨다(`about-header.tsx:41`). 체인별 수집 행사는 `/knowledge/events` 에 실제로 있다(`EventsPage`, `events-page.tsx:137`). 모집 상태 필드는 스키마에만 있고 화면에서 안 쓴다.
+
+### A1. 모집 상태 배지 컴포넌트
+- **파일.** 새 `components/cherry/editorial/registration-badge.tsx` + `.test.tsx`
+- **만들 것.** `registrationStatus` + `daysUntilDeadline` → "모집중" / "마감 임박 D-2" / "마감" / 표시 안 함(UNKNOWN). 색은 `data-color` 토큰(`globals.css:512`).
+- **확인.**
+  - [x] 테스트: 네 상태 문구, D-n, UNKNOWN 은 안 그림, 종료·취소 행사엔 "모집 마감" 반복 안 함, 카드에 상태 배지 옆으로 붙음 (`registration-badge.test.tsx`, `ecosystem-pages.test.tsx`; 웹 214 통과, 2026-11-09)
+  - [x] `/knowledge/events` 브라우저 확인. 스냅샷은 전부 UNKNOWN 이라 응답을 화면 안에서만 바꿔 확인("모집중"·"마감 임박 D-2"·"모집 마감"), 원래 데이터로는 배지 0개.
+  - 결정: 마감 임박은 rose (주황 "예정" 배지와 붙으면 구분 안 됨, 화면에서 확인). 모집중 blue, 모집 마감 neutral.
+
+### A2. `/events` 목록 페이지 (Luma 구조 참고 · Chainery 디자인, `1-plan.md` §5-0)
+- **파일.** `app/(chainery)/events/page.tsx`, 새 `components/cherry/editorial/platform-events-page.tsx` + 테스트
+- **만들 것.**
+  - 레이아웃: `AboutHeader` + 다크 루트(`platform-placeholder-page.tsx:9` 와 같은 틀).
+  - 날짜별 묶음 목록(왼쪽 날짜·요일, 오른쪽 카드). 묶음은 `lib/event-timeline.ts:3` 재사용.
+  - 카드: 시간 · 제목 · 주최 · 장소/온라인 · 모집 배지(A1) · 범위 태그(국내 Web3 / Avalanche).
+  - 데이터: `getEvents` 를 `scope=all` 로. 스냅샷 모드에선 지금 avalanche 파일뿐이라 우선 그걸로 보이고, A5에서 all 스냅샷 추가.
+  - 기본: 다가오는 행사 + 진행 중, 지난 행사는 아래 링크로.
+- **확인.**
+  - [x] 테스트: 서울 날짜로 묶음·시간순, 시작 지난 진행 중 행사는 맨 위 한 번, 종료·취소 제외·연기 포함, "오늘/내일/11월 11일 수요일", 카드 내용·공식 링크, 빈 목록 안내 (`lib/platform-events.test.ts`, `platform-event-list.test.tsx`; 웹 222 통과, 2026-11-09)
+  - [x] 브라우저 `/events`: 실제 스냅샷은 다가오는 행사 0건 → 빈 화면 안내 + 지난 행사 링크. 응답을 화면 안에서만 바꿔 날짜 묶음·배지 확인. 375px·1280px 가로 스크롤 없음.
+  - 화면 보고 고친 것: 공용 헤더가 투명 그라데이션이라 목록이 비쳐 보여 헤더 높이만큼 불투명 바탕을 깔았고, 랜딩용 `.landing`(문서 전체 scroll-snap)을 쓰지 않음. 빈 화면에서 "지난 행사" 링크가 두 번 보여 아래쪽은 목록이 있을 때만.
+  - 남음: 썸네일은 스냅샷에 이미지가 없어 화면 확인 못 함(코드·실패 시 숨김은 기존 카드와 같음). 실제 국내 Web3 행사는 마이그레이션 + `scope=all` 스냅샷(A5) 후.
+
+### A3. 행사 상세 API `GET /api/events/:id`
+- **파일.** `apps/api/src/modules/chain_feed/chain-feed.controller.ts`, `chain-feed.service.ts`, 테스트
+- **만들 것.** `EventEntry` + 근거(`audience/level/fee` evidence) + 출처 목록(`chain_event_source`) + `lastCheckedAt`. PUBLISHED 만, 없으면 404. 계약은 `2-detail-design.md` §4-3.
+- **확인.**
+  - [ ] 서비스 테스트(로컬 Docker DB): 발행본 200, DRAFT·없는 id 404.
+  - [ ] 로컬 API에서 `curl localhost:4000/api/events/<id>` 응답 확인.
+
+### A4. 행사 상세 — 옆 패널 (Luma 구조)
+- **만든 것 (2026-11-09).** `/events` 카드를 누르면 옆 패널로 상세가 열림(목록 유지). 주소 `/events?event=<id>` 라 링크 복사·새로 열기 동작, 불러온 모든 행사(지난 행사 포함)를 찾음. 패널: 링크 복사 · 이전/다음(목록 순서: 진행 중 → 날짜순) · 닫기. 내용 순서: 배지(모집·범위·취소/연기) → 제목·주최 → 언제/어디서 상자(한국시간, 주소) → "공식 페이지에서 신청"(끝난 행사·마감·링크 없음이면 이유 안내) → 소개 → 원문 보기.
+  - 상세 API(A3) 없이 목록 데이터로 그림. A3 이 생기면 출처 목록·근거(대상·수준·참가비)를 같은 패널에 추가.
+  - 기존 `/knowledge/events/[id]`(기사 JSON) 는 손대지 않음.
+- **확인.**
+  - [x] 테스트: 목록 순서·이전/다음, 시간 표기(같은 날·종일·여러 날), 링크, 상세 내용 순서와 신청 버튼 조건 (`lib/platform-events.test.ts`, `platform-event-detail.test.tsx`; 웹 247 통과)
+  - [x] 브라우저: 카드 → 패널(`?event=`), 이전·다음이 목록 순서와 같음, 닫기 → `/events`, 375px 에서 복사한 링크로 지난 행사 새로 열기 → 전체 화면 패널·"신청이 끝난 행사예요"·이전/다음 꺼짐.
+  - 화면 보고 고친 것: 도구 줄이 닫기(X)를 가림 → 닫기를 위로. 연보라 강조 버튼의 흰 글씨 대비 2.46:1 → 어두운 글씨 7.32:1(로그인 버튼도 같이).
+
+### A5. 스냅샷에 `scope=all` 추가
+- **파일.** `apps/web/scripts/snapshot-live-feed.mjs`, `lib/cryptopedia-live-snapshot.ts:8`
+- **만들 것.** `events-all-<status>.json` 생성·읽기. API 없이 배포해도 `/events` 가 국내 Web3 행사까지 보이게.
+- **확인.** [ ] 스냅샷 테스트, [ ] API 없는 빌드에서 `/events` 에 web3-kr 행사 표시.
+
+### (P2) A6 필터 바 · 캘린더 보기 · 검색
+`EventsPage` 의 `DiscoveryFilterPanel`·`EditorialCalendar` 재사용. 필터: 유형 · 지역 · 모집중만 · 대상 · 입문 가능 · 체인.
+
+---
+
+## B. 로그인·계정
+
+현재 상태. API: `signup/signin(매직링크 메일)/login/google-login/refresh/logout/me` 가 있다(`app-user.controller.ts:42~107`). 계정 삭제·프로필 수정 엔드포인트는 없다. 웹: `/login` 에 Google 버튼과 매직링크 URL 처리만 있고 **이메일 입력 폼이 없다**. 옛 Cherry 디자인(`#C94B6E`). 헤더에 로그인 상태 표시가 없다(`about-header.tsx` 오른쪽 자리는 로그인용으로 비워 둠, ~:115).
+
+### B1. 로그인 페이지 새 디자인 + 이메일 입력
+- **파일.** `apps/web/app/login/page.tsx`, 새 이메일 폼 컴포넌트 + 테스트
+- **만들 것.** Chainery 토큰(grape)으로 다시 그림. Google 버튼 + 이메일 입력 → `POST /api/app-user/signin` → "메일을 확인하세요". 재발송 60초 쿨다운. `?next=` 복귀 유지(`page.tsx:16`).
+- **확인.**
+  - [x] 테스트: 잘못된 이메일 막음, 보내는 중·보냄(15분 안내, 60초 대기)·오류 문구, 요청 본문 `{email, from: 'main'}`, 429·실패·연결 끊김 문구 (`lib/email-login.test.ts`, `components/auth/email-login-form.test.tsx`; 웹 230 통과, 2026-11-09)
+  - [x] 브라우저 `/login`: 주소가 완성될 때만 버튼 켜짐, API 꺼짐 → "서버에 연결하지 못했어요", 응답을 탭 안에서만 성공으로 바꿔 "보냈어요 + 58초 대기" 확인, 375px 가로 스크롤 없음.
+  - [ ] 로컬 API + 실제 메일 수신 → 링크 클릭 → 로그인 상태 (Resend 도메인 검증은 사용자 작업) — 이메일 로그인은 나중에(2026-11-11 결정)
+  - [x] **Google 로그인 끝까지 (2026-11-11, 로컬 DB):** 일반 Chrome 에서 로그인 → API `google-login` 201 → `core.app_user` 에 회원 생성(google_sub·이름·사진) → Redis 에 refresh 토큰 → 헤더 로그인 상태. Claude 앱 안 브라우저에선 Google 팝업이 결과를 못 돌려줌.
+  - 같이 바꾼 것: API `main.ts` 로그인 요청 제한에 `/api/app-user/signin` 추가(아무 주소로나 메일을 보낼 수 있는 경로라). 실행 확인은 API 를 띄운 뒤.
+  - 바뀐 동작: Google 버튼 오류(예: 로컬에 클라이언트 ID 없음)가 오류 화면으로 넘어가지 않고 버튼 아래 한 줄로 → 이메일 로그인은 계속 쓸 수 있음.
+  - 고친 버그(2026-11-09, 사용자 발견): 위 변경 때 `onError` 가 단계를 되돌리지 않아, Google 토큰을 받은 뒤 API 가 실패하면 "로그인하는 중…"에 멈춤. `onError` 에서 입력 화면으로 돌아가게 수정. 브라우저에서 GIS 를 가짜로 바꿔 토큰 콜백 → API 실패 → 입력 화면 복귀 확인.
+  - Google 버튼: `/login` 에서만 사각형·입력칸과 같은 폭(`GoogleLoginButton fill`, Google 최대 400px). `/start/login` 은 기존 알약 모양 그대로.
+  - Google 로그인 로컬 설정: 새 Google Cloud 프로젝트 `chainery`(aidenteticrew-org) 클라이언트, 승인 출처에 localhost:3001. 웹은 `apps/web/.env.local` 의 `NEXT_PUBLIC_GOOGLE_CLIENT_ID`. API 는 `apps/api/.env` 의 `GOOGLE_CLIENT_ID`(루트 `.env` 는 API 가 안 읽음). 옛 클라이언트와 바꾸면 `/start` Google 로그인이 막히므로 API 가 두 ID 를 함께 허용하거나 함께 교체.
+  - Claude 앱 안 브라우저에서는 Google 팝업이 `/gsi/transform` 에서 멈춤(팝업이 별도 탭이라 결과가 원래 창으로 못 돌아오는 것으로 추정). 확인은 일반 Chrome 에서.
+  - 남음: 로그인 메일 제목·본문이 아직 "Cherry"(API `app-user-auth.service.ts` signin). 브랜드 문구 정리는 후속.
+
+### B2. 헤더 로그인 상태
+- **파일.** `components/cherry/editorial/about-header.tsx`, `lib/auth.ts` (`useAuthTick` :172 활용)
+- **만들 것.** 비로그인 "로그인", 로그인 시 아바타/이름 + 메뉴(내 계정 · 로그아웃). 데스크톱·모바일 시트 둘 다.
+- **확인.**
+  - [x] 테스트: 토큰 → 로그인/만료/비로그인 판정, 이니셜, `?next=` 복귀(로그인 페이지 제외), 헤더 두 상태 렌더 (`lib/session.test.ts`, `components/auth/account-control.test.tsx`; 웹 239 통과, 2026-11-09)
+  - [x] 브라우저 `/events`(데스크톱·375px): 비로그인 "로그인" → `/login?next=%2Fevents`. 서명 없는 테스트 토큰으로 이니셜 버튼·메뉴(계정 이메일·로그아웃). 로그아웃 → 서버 요청(API 꺼져 실패) 후에도 토큰 지워지고 "로그인" 복귀. 만료 토큰 → refresh 시도 실패 → 토큰 지움.
+  - 범위: 플랫폼 헤더(`about-header.tsx`, `/`·`/events`·`/login`·`/careers`). 지식 섹션(`/knowledge`, 흰 테마의 EditorialShell)에는 아직 없음 → 후속.
+  - "내 계정" 메뉴는 `/account`(B3) 생기면 추가. 지금은 없는 페이지로 가는 링크를 두지 않음.
+  - 남음: 실제 로그인(이름·사진 표시는 `/me` 로) 확인은 API 를 띄운 뒤.
+
+### B3. `/account` (계정 정보) — 계정 삭제는 보류
+- **지금 (2026-11-09).** `/account`: 로그인한 이메일, 로그아웃. 비로그인이면 로그인 안내(`?next=/account`). 헤더 계정 메뉴에 "내 계정".
+- **확인.** [x] 화면 테스트(`account-view.test.tsx`; 웹 241 통과), [x] 브라우저: 테스트 토큰으로 이메일·로그아웃 → 비로그인 안내로 바뀜.
+- **계정 삭제(탈퇴): 사용자 결정으로 나중에.** 만들어 둔 코드는 로컬 패치로 보관 — `.git/deferred/b3-account-deletion.patch` (커밋 안 됨, 이 컴퓨터에만 있음). 다시 할 때 `git apply .git/deferred/b3-account-deletion.patch`.
+  - 패치 내용: API `DELETE /api/app-user/me`(204). 행은 남기고 이메일을 `deleted-<id>@deleted.invalid` 로 바꾸고 이름·사진·`google_sub`·회신 주소·회원 API 키·매직링크 값을 지움, `is_active=false`·`revoked_at=now`, Redis refresh 키·쿠키 삭제(`account-erasure.ts` + 테스트). 웹 `/account` 삭제 칸·확인 창.
+  - 이메일 고유 인덱스는 활성 행에만 걸려 있어(`uq_app_user_email_active`) 같은 이메일 재가입은 새 계정.
+  - 다시 할 때 남은 확인: 로컬 DB·API 로 실제 삭제 → `/me` 401, refresh 실패, 재가입. 로컬 API `CORS_ORIGINS` 에 `http://localhost:3001`.
+- **다음 후보.** `/account` 를 "마이페이지"로 넓혀 "내 학습 경로" 요약(9oodam 의 `lib/learner/store.ts`, 브라우저 저장 기록을 읽기만)과 "관심 행사"(B4) 칸 추가. 학습 기록을 계정에 저장하는 건 9oodam 과 합의 후.
+
+### B4. 관심 행사 저장
+- **DB.** 새 테이블 `content.user_saved_event(user_id, chain_event_id, created_at)` — 마이그레이션 추가, 사용자 적용.
+- **API.** `GET/PUT/DELETE /api/me/saved-events[/:eventId]`.
+- **웹.** 카드·상세의 저장 버튼(비로그인 시 로그인으로 보냄, `?next=` 로 복귀), `/account` 에 저장 목록.
+- **확인.** [ ] API 테스트, [ ] 브라우저: 저장 → 새로고침 후 유지 → 해제.
+
+### B5. 이메일 + 비밀번호 로그인 (2026-11-23 결정 · 구현, DB 적용 전)
+- **결정 변경.** `1-plan.md` D2 의 "매직링크 유지, 비밀번호 없음"을 바꿔, 이메일 주소를 아이디로 하는 비밀번호 로그인을 더한다. 매직링크와 Google 은 그대로 남는다. 사용자 결정: 아이디는 이메일(별도 아이디 없음), 비밀번호는 회원 테이블에 저장, DB 는 마이그레이션 파일만 쓰고 공유 DB 적용은 사용자가 한다.
+- **가입 흐름(2026-11-23 재설계).** 비밀번호는 메일함이 확인된 뒤에만 저장한다. 확인 전에는 해시를 어디에도 쓰지 않는다.
+  1. `/login` 회원가입은 이메일만 받는다. 기존 `POST /api/app-user/signin` 에 `intent: 'signup'` 을 붙여 보낸다. 링크 끝에 `&intent=signup` 이 붙고 메일 제목·본문이 `가입 확인` 으로 바뀌는 것 말고는 일반 링크 요청과 같다. 새 주소와 이미 있는 주소의 응답이 같다.
+  2. 메일 버튼을 누르면 `/login` 이 토큰을 교환해 로그인시킨다(`amr=link`). URL 에 `intent=signup` 이 있고 `/me` 가 `hasPassword: false` 를 주면 `비밀번호 정하기` 단계(새 비밀번호·확인·규칙 문구)를 보여준다. 저장은 `POST /api/app-user/password` 를 현재 비밀번호 없이 부른다(링크 로그인 15분 안이라 허용).
+  3. `나중에 할게요` 는 저장 없이 `next` 로 간다. 계정은 링크·Google 로 쓰고 비밀번호는 `/account` 에서 언제든 정한다. 이미 비밀번호가 있거나 `/me` 가 실패하면 단계를 건너뛰고 평소처럼 `next` 로 간다.
+  - 전에 있던 `POST /api/app-user/password/signup`(미확인 해시 저장)과 그 DTO·테스트는 지웠다.
+- **DB.** `core.app_user` 에 `password_hash TEXT NULL` 하나. `docs/architecture/chainery-password-login-2026-11-23.sql` 과 `.rollback.sql`. 기존 행은 건드리지 않는다. `email_verified_at` 은 없앴다. 해시를 쓸 수 있는 길이 링크로 메일함을 증명한 세션과 현재 비밀번호를 아는 세션뿐이라 따로 표시할 필요가 없다.
+  - **배포 순서.** 회원 조회가 `select *` 라 컬럼이 없어도 새 API 의 이메일 링크·Google 로그인, refresh, `/me`(`hasPassword: false`)는 동작한다. 비밀번호 로그인은 모두 같은 401, 비밀번호 정하기는 500 이 된다. 그래서 비밀번호 기능을 쓰기 전에만 적용하면 된다. 테스트 `an API deployed before the password_hash migration` 이 이것을 확인한다(가짜 DB 가 그 컬럼을 없는 것으로 다룬다).
+- **규칙.** (1) 로그인 `POST /api/app-user/password/login`: 활성이고 탈퇴하지 않았고 해시가 있고 bcrypt 가 맞을 때만. 없는 이메일·틀린 비밀번호·비밀번호 없음·비활성·탈퇴는 같은 401. 없는 사용자도 더미 해시와 비교해 시간을 맞춘다. (2) `POST /api/app-user/password`(JWT): 비밀번호가 있으면 현재 비밀번호 필요. 이메일 링크로 로그인한 지 15분 안이면 생략 가능. 성공하면 새 토큰을 내려 다른 기기 세션(refresh)을 끊는다.
+- **토큰.** 액세스·리프레시 토큰에 `amr`(`link`·`google`·`password`)과 `authAt`(로그인 시각, 초)을 넣는다. refresh 는 둘을 그대로 이어받아 15분 창이 늘어나지 않는다. 비밀번호 변경은 `tokenType=access` 이고 `amr=link` 이며 `authAt` 이 15분 안일 때만 현재 비밀번호를 생략한다.
+- **정책.** 8자 이상 + 72바이트 이하(bcrypt 한계), 문자와 숫자 각 1개 이상, 이메일과 같지 않을 것. 400 응답 `errors[].message` 가 `PASSWORD_TOO_SHORT`·`PASSWORD_TOO_LONG`·`PASSWORD_NEEDS_LETTER_AND_DIGIT`·`PASSWORD_SAME_AS_EMAIL`.
+- **요청 제한.** `main.ts` 로그인 제한 묶음(분당 10회, IP 기준)에 `/api/app-user/password` 접두를 추가해 로그인·정하기 경로를 덮는다. 가입은 `signin` 이라 원래 묶음에 있다. 이메일별 제한은 없다(기존에 그런 패턴이 없어 IP 기준만).
+- **웹.** `/login` 은 이메일 + 비밀번호 로그인이 기본, `계정이 없나요? 회원가입` 으로 이메일만 받는 가입 폼(`가입 메일 받기`) 전환, Google 과 `이메일 링크로 로그인` 은 아래. 가입 메일 링크로 들어오면 `비밀번호 정하기` 단계. `/account` 에 `비밀번호` 칸(정하기·바꾸기, 잊었을 때 이메일 링크 안내).
+- **Google 토큰 검사 강화.** `email_verified` 가 `true` 가 아니면(없는 경우 포함) 거절한다. 전에는 `false` 만 거절했다.
+- **함께 바꾼 것.** API `package.json` jest 설정에 `moduleNameMapper`(`src/` 경로)를 추가했다. 서비스 단위 테스트가 `src/...` 임포트를 풀기 위해서다.
+- **확인.**
+  - [x] API 테스트 `npx jest app_user`(30 통과): 가입 링크에 `intent=signup`·해시 없음, 일반 링크엔 intent 없음, 아는 주소·모르는 주소 같은 응답·기존 비밀번호 보존, 링크 로그인 뒤 현재 비밀번호 없이 정하기 → 비밀번호 로그인, 실패 종류별 동일 401, Google `email_verified` 검사, 정책, 변경 규칙(15분·refresh 토큰·다른 amr), 마이그레이션 전 API, HTTP 흐름(옛 가입 경로 404 포함, 응답에 비밀번호·해시 없음).
+  - [x] 웹 테스트·타입·Playwright(11 통과, API 응답은 가짜): 가입 메일 요청, 링크로 들어와 비밀번호 정하기 → `next`, `나중에 할게요` → `next`, 비밀번호 있는 계정은 단계 없음, 비밀번호 로그인.
+  - [x] 마이그레이션: 로컬 Docker 가 꺼져 있어 `chainery-postgres` 에는 못 했다. 메모리 Postgres(pglite)에 `core.app_user` 형태를 만들어 적용·재적용·되돌리기·다시 적용을 확인.
+  - [ ] **사용자 작업.** 공유 DB 에 마이그레이션 적용(비밀번호 기능을 쓰기 전) · Resend 키·도메인(가입 메일이 나가야 가입이 끝난다) · 로컬 Docker 로 실제 DB·Redis 와 끝까지 한 번.
+  - 남은 위험. 계정별 로그인 실패 잠금 없음(IP 기준 분당 10회만). `main.ts` 에 `trust proxy` 설정이 없다. Dokploy 프록시 뒤라면 모든 요청이 프록시 IP 하나로 잡혀 한 사람의 시도가 모두의 제한을 채울 수 있다(추정, 배포 환경에서 확인 필요). 비밀번호 재설정 전용 경로 없음(이메일 링크 로그인 뒤 변경). 비활성 계정 주소로 가입하면 `signin` 이 409 를 줘서 그 주소가 있다는 것이 드러난다(이번 변경 전부터 있던 동작).
+
+---
+
+## C. 수집·AI·검수
+
+현재 상태. pipeline 의 AI 분류 결과가 `insertEvent`/`insertTech` 로 바로 들어가고 `review_state` 를 쓰지 않아 기본값 PUBLISHED 가 된다(`classification-repository.ts:140,170`). 끼울 자리는 `run-classify.ts` ~:108-118 (buildCategoryRecord 와 insert 사이).
+
+### C1. KISA 공지사항 켜기 → S2 마무리
+- **인증서:** KISA 가 11-09 기준 중간 인증서를 보내도록 고쳐 우리 쪽 조치 없이 해결. 소스 켬. 다시 깨질 때 대응은 `2-detail-design.md` §7-2.
+- **확인.** [x] 실데이터 수집(DB 없이): 20건 → 7건 통과(블록체인 진흥주간 포함), 무관 통과 1(양자내성암호 해커톤). [ ] 마이그레이션 후 수집 → classify → `chain_event` 에 진흥주간 1건, 무관 공지 0건.
+
+### C2. AI 행사 필드 확장
+- **파일.** `apps/pipeline/src/classify/schema.ts:51`, `prompt.ts`, `category-records.ts:115`
+- **만들 것.** `registration_deadline`, `audience/level/fee` (각 `{value, evidence}`), `related_chains`, category 확장(MEETUP·EDUCATION·CONTEST·SUPPORT_PROGRAM). `2-detail-design.md` §3-1.
+- **확인.** [ ] 스키마 테스트, [ ] KISA 글 5건 `--dry-run` 결과 눈으로 확인.
+
+### C3. 근거 검증
+- **파일.** 새 `apps/pipeline/src/classify/evidence.ts` + 테스트, `run-classify.ts`
+- **만들 것.** evidence 문자열이 원문 본문에 실제로 있는지(NFKC·공백 정규화 후 부분일치). 없으면 그 필드를 null 로 버리고 기록. DB CHECK(`ck_chev_evidence`)는 마지막 방어선.
+- **확인.** [ ] 테스트: 원문에 있는 근거 통과, 지어낸 근거 버림, 전각·공백 차이 통과.
+
+### C4. 초안으로 저장 (`review_state = DRAFT`)
+- **파일.** `classification-repository.ts` `insertEvent`/`insertTech`, 마이그레이션 기본값 변경 SQL
+- **만들 것.** 새 행사·소식은 DRAFT. **같이 고칠 것:** `listUpdates`(`chain-feed.service.ts:230`)·`listMacro`·`listGeneral` 에 PUBLISHED 필터 추가 (지금은 행사만 거른다).
+- **확인.** [ ] 통합 테스트(로컬 DB): 분류 직후 공개 API 에 안 보임.
+
+### C5. 검수 API `/api/admin/review`
+- **파일.** 새 `apps/api/src/modules/review/` — `source_submission/admin-submission.controller.ts:33` 패턴 그대로 (경로별 `@UseGuards(AuthGuard('jwt'), RolesGuard)` + `@Roles(Role.ADMIN)`).
+- **만들 것.** 목록 · 상세(원문 + 초안 + 근거) · 수정 · 발행(`reviewed_by = req.user.id`) · 반려. `2-detail-design.md` §4-4.
+- **확인.** [ ] 테스트: 일반 사용자 403, 발행 후 공개 API 에 보임.
+
+### C6. 검수 화면 `/admin/review`
+- **웹.** 큐 목록 → 원문/초안 나란히 → 수정 · 발행 · 반려. 근거 문장을 원문에서 강조.
+- **확인.** [ ] 브라우저(본인 계정 role=admin): 초안 1건 발행 → `/events` 에 나타남. 스크린샷.
+
+### C7. 소스 추가와 주기
+- KISA 블록체인 포털 연구 자료(`/bbso/bbsoRsrchList.do`, 필요 시), Luma 국내 캘린더, BUIDL Korea, KBIPA, ICT콤플렉스.
+- [x] `min_interval_hours` (소스별 최소 간격) — 2026-11-09. KISA 2곳·X 3곳 하루 한 번.
+- [x] GitHub Actions 정기 실행(하루 한 번 KST 09:00, 겹침 없음, `CHAINERY_PIPELINE_ENABLED` 스위치) — `.github/workflows/chainery-pipeline.yml`. 설정 방법은 `2-detail-design.md` §1-1.
+- [ ] 사용자: 비밀값·변수 넣기 → 마이그레이션 적용 → `main` 반영 → 수동 실행 1회로 확인 → 스위치 켜기.
+- **확인.** [ ] 소스마다 실데이터 dry-run, [ ] 두 번 돌려 중복 0.
+
+---
+
+## D. 소식 (프로토콜 변경 · 개발 릴리스 · 프로젝트 소식 · 문서 변경)
+
+현재 상태. 개발 릴리스(avalanchego·coreth·subnet-evm Atom)와 ACP 는 이미 수집되어 `/knowledge/updates` 에 보인다(`listUpdates`, `chain-feed.service.ts:230`). 업계 소식은 `/macro`. 웹 스키마에 단계 필드가 없고 활성화(`activations` MAINNET/FUJI)만 있다(`cryptopedia-types.ts:52`). ACP 어댑터는 상태(Proposed·Implementable·Activated·Stale)를 읽지만 글 본문 텍스트로만 넘긴다(`acp-github-adapter.ts:6,59,93`). 요약은 `summary_ko` 한 덩어리다.
+
+### D0. 소식 공통 요약 형식 (모든 소식)
+- **화면 기준.** 목업 `docs/chainery-redesign/mockups/learning-ux-v2.html` §5 (ACP-267 상세).
+- **만들 것.** 모든 소식(릴리스 · 프로토콜 · 프로젝트 소식 · 업계 동향)에 같은 형식:
+  - 한 줄 설명 (기존 `summary`)
+  - 무엇이 바뀌나요 `what_changed` = `[{ text, source }]` 2~4줄, 줄마다 근거 번호
+  - 누구에게 해당하나요 `who_cares` = `[{ audience, impact(HIGH·LOW), reason }]` — 화면에 "체이너리 해석"
+  - 근거 목록 (원문, 관련 릴리스 노트)
+- **파일.** `apps/pipeline/src/classify/schema.ts` · `prompt.ts` · `category-records.ts`, `classification-repository.ts` `insertTech`. 근거 검증은 C3 재사용(줄마다 원문에 있는지).
+- **확인.** [ ] zod·근거 테스트, [ ] 릴리스 · ACP · 블록체인 포털 동향 각 3건 `--dry-run` 을 사람이 읽고 판단.
+
+### D1. 프로토콜 단계 판정 (코드가 판정, AI 아님)
+- **만들 것.**
+  - ACP 상태: Proposed→PROPOSED(제안), Implementable→ACCEPTED(확정), Activated→ACTIVATED(적용), Stale→STALE. `stage_evidence`·`stage_source_url`.
+  - 날짜: `proposal_created_at`(처음 공개) · `proposal_updated_at`(마지막 수정).
+  - 구현 기록: 릴리스 노트(avalanchego 등)에서 `ACP-<번호>` 언급을 찾아 `included_in_release`·`included_release_url`.
+  - **확인 중**: 문서 상태와 구현 기록이 어긋나면(예: Proposed 인데 릴리스에 포함) API 가 "확인 중"으로 응답. 저장하지 않고 계산.
+  - 네트워크별 적용(Fuji·Mainnet)은 기존 activations 유지. 이더리움 EIP(Draft·Review·Last Call·Final)·하드포크도 같은 단계에 대응(체인 추가 시).
+- **확인.**
+  - [x] 매핑·머리 줄·릴리스 선택 테스트, 분류 시 단계 저장 테스트 (pipeline 198 통과, 2026-11-09)
+  - [x] 실제 ACP 3건(13 · 77 · 267) GitHub 실데이터로 단계·날짜·포함 릴리스 확인
+  - [ ] 마이그레이션 적용 후 실제 DB 에 classify → `tech_update` 단계 컬럼 확인
+  - [ ] 이미 저장된 ACP 행 보정(재수집 또는 보정 스크립트)
+  - "확인 중" 계산은 API 쪽이라 D2 에서 (문서 상태와 포함 릴리스가 어긋날 때)
+
+### D2. 소식 상세 "지금 상태" + 목록 단계 배지 (2026-11-11)
+- **만든 것.**
+  - API `listUpdates` 응답에 `protocolStage` = `{ stage, needsCheck, evidence, sourceUrl, proposalCreatedAt, proposalUpdatedAt, includedIn }` (`apps/api/src/modules/chain_feed/protocol-stage.ts`). "확인 중"(`needsCheck`)은 저장하지 않고 계산: 문서는 Proposed 인데 릴리스가 이미 포함.
+  - 웹: 목록에 단계 배지(제안·확정·적용·중단, 확인 중), 고정 라벨 "ACP 제안" → "ACP"(원문 링크는 "ACP 문서"). 상세에 "지금 상태"(문서 상태 · 구현 기록 · 날짜) — 목업 §5 구조. 배지는 `StageBadge` 하나를 목록 두 곳(changelog·row)이 같이 씀.
+- **확인.**
+  - [x] 테스트: API `protocol-stage.spec.ts` 3, 웹 `protocol-stage-section.test.tsx` 5 (웹 252·API chain_feed 86 통과)
+  - [x] **로컬 DB 로 끝까지:** 실제 ACP 14건·avalanchego 릴리스 수집 → AI 분류 → `tech_update` 단계 저장 → API → `/updates` 목록 배지(제안·확정·적용)와 상세 "지금 상태". 날짜도 문서별로 다르게 나옴(D1 수정 확인).
+  - 남음: 릴리스 피드(Atom)가 최근 것만 줘서 옛 릴리스(v1.12.0 등)에 들어간 ACP 는 "구현 기록"이 비어 있음 → GitHub 릴리스 목록을 한 번 받아 채우는 작업 필요. AI 분류가 NVIDIA 500·시간 초과로 자주 실패(14건 중 10건, 재시도로 보완).
+- **나중(A 담당과 합의).** "먼저 읽으면 좋아요" — 소식 ↔ 학습 개념 페이지 연결.
+
+### D3. 검수 대상에 소식 포함
+- C4·C5·C6 이 행사와 소식을 같이 다루는지 확인(검수 큐 `kind=update`). 소식 API 에 PUBLISHED 필터.
+- **확인.** [ ] 소식 초안이 공개 API 에 안 보이고, 발행 후 보임.
+
+### D4. 생태계 프로젝트 소식
+- **먼저 정할 것 (D 담당과).** 프로젝트 목록·히트맵은 D, 프로젝트 소식은 B. 어떤 출처(프로젝트 공식 블로그·X·GitHub 릴리스)를 어느 프로젝트까지 모을지, 프로젝트 id 를 어떻게 공유할지.
+- **만들 것.** 합의된 출처를 `sources.yaml` 에 추가(기존 ATOM·APIFY·HTML_BOARD 재사용), 소식에 프로젝트 id 연결, 프로젝트 화면에서 해당 소식 보기.
+- **확인.** [ ] 프로젝트 2곳 실데이터 수집, [ ] 프로젝트 화면에 소식 표시.
+
+### D5. 공식 문서 변경 소식 (P2)
+- D 가 가져온 공식 문서의 버전(수정일·커밋 SHA)을 비교 → 바뀐 부분 요약 초안 → 검수. D 의 저장 형식 확정 후.
+
+---
+
+## 나중 (P2)
+
+- 변경 감지: `content_hash` · `chain_event_revision` · 바뀐 발행본은 NEEDS_REVIEW 로 (`2-detail-design.md` §5-4).
+- 마감 알림 메일 (관심 저장 B4 이후).
+
+## 위험
+
+| 위험 | 어디서 | 지킬 것 |
+|---|---|---|
+| 공유 DB 오염 | 0, C 전부 | 통합 테스트는 로컬 Docker DB 만. 로컬 pipeline 실행은 프로덕션에 쓴다 |
+| 마이그레이션 전 API 배포 | A3, C4 | `/api/events` 가 `review_state` 를 읽어 실패. 항상 DB 먼저 |
+| 초안 기본값 전환 시 소식이 그대로 공개 | C4 | updates·macro·general 에도 PUBLISHED 필터 |
+| 회원 정보 노출 | B 전부 | 이메일·키·지갑을 응답·로그·GA 에 평문으로 남기지 않음 |
+| 옛 상세 경로 혼동 | A4 | `/knowledge/events/[id]` 는 기사 JSON. 새 상세는 `/events/[id]` |

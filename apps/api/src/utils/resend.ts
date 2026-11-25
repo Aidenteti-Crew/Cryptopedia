@@ -8,12 +8,17 @@ import { Resend } from 'resend';
  */
 const sendEmail = async (to: string, subject: string, html: string) => {
   const resend = new Resend(process.env.RESEND_API_KEY);
-  await resend.emails.send({
+  // The SDK reports a refused send in `error` instead of throwing, so a bad domain or key looked
+  // like success. The recipient stays out of the message: addresses must not reach the logs.
+  const { error } = await resend.emails.send({
     from: process.env.RESEND_FROM_EMAIL ?? 'no-reply@solteti.site',
     to,
     subject,
     html,
   });
+  if (error) {
+    throw new Error(`Resend refused the e-mail: ${error.name}: ${error.message}`);
+  }
 };
 
 /**

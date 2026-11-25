@@ -10,7 +10,7 @@ import {
   updateKindLabel,
   updateProducts,
 } from '@/lib/development-discovery'
-import { UpdateSourceLink } from './development-update-row'
+import { StageBadge, UpdateSourceLink } from './development-update-row'
 import { updateContentColor } from './content-colors'
 
 export function DevelopmentChangelog({
@@ -67,6 +67,7 @@ export function DevelopmentChangelog({
                     >
                       {updateKindLabel(entry)}
                     </span>
+                    <StageBadge entry={entry} />
                   </div>
                   <article className="min-w-0">
                     <button

@@ -136,4 +136,104 @@ sources:
       calendarId: 'cal-pE5SNzqEFCTNpRU',
     })
   })
+
+  it('parses an HTML_BOARD source with board defaults and keywords', () => {
+    const [source] = parseSourceConfig(`
+sources:
+  - url: https://www.kisa.or.kr/401
+    chain: web3-kr
+    source_name: KISA 공지사항
+    source_type: WEBSITE
+    adapter: HTML_BOARD
+    content_kind: NOTICE
+    authority: OFFICIAL
+    board:
+      list_item: 'table.tbl_board tbody tr'
+      title: 'td.sbj a'
+      link: 'td.sbj a@href'
+      date: 'td.date'
+      detail_body: 'div.board_detail_contents'
+    include_keywords: [블록체인]
+`)
+    expect(source?.board).toMatchObject({
+      pageParam: 'page',
+      maxPages: 2,
+      dropLinkParams: [],
+      utcOffset: '+09:00',
+      encoding: 'utf-8',
+      requestDelayMs: 2000,
+    })
+    expect(source?.keywords).toEqual({ include: ['블록체인'], exclude: [] })
+  })
+
+  it('requires board selectors and include_keywords for HTML_BOARD, and a polite delay', () => {
+    const base = `
+sources:
+  - url: https://www.kisa.or.kr/401
+    chain: web3-kr
+    source_name: KISA
+    source_type: WEBSITE
+    adapter: HTML_BOARD
+    content_kind: NOTICE
+    authority: OFFICIAL
+`
+    const board = `
+    board:
+      list_item: tr
+      title: a
+      link: a@href
+      date: td
+      detail_body: div
+`
+    expect(() => parseSourceConfig(`${base}    include_keywords: [블록체인]\n`)).toThrow('board')
+    expect(() => parseSourceConfig(`${base}${board}`)).toThrow('include_keywords')
+    expect(() =>
+      parseSourceConfig(`${base}${board}      request_delay_ms: 500\n    include_keywords: [x]\n`)
+    ).toThrow('Invalid source config')
+  })
+
+  it('requires link_id_pattern and detail_url together', () => {
+    const entry = (extra: string) => `
+sources:
+  - url: https://blockchain.kisa.or.kr/bbso/bbsoAnalsList.do
+    chain: web3-kr
+    source_name: KISA 블록체인 포털
+    source_type: WEBSITE
+    adapter: HTML_BOARD
+    content_kind: NEWSLETTER
+    authority: OFFICIAL
+    board:
+      list_item: tr
+      title: .subject-text
+      link: a@href
+      date: .item-date
+      detail_body: div
+${extra}    include_keywords: [블록체인]
+`
+    expect(() => parseSourceConfig(entry("      link_id_pattern: \"fn_goView\\\\('(\\\\w+)'\\\\)\"\n"))).toThrow(
+      'go together'
+    )
+    const [source] = parseSourceConfig(
+      entry(
+        "      link_id_pattern: \"fn_goView\\\\('(\\\\w+)'\\\\)\"\n      detail_url: '/view.do?id={id}'\n"
+      )
+    )
+    expect(source?.board?.detailUrl).toBe('/view.do?id={id}')
+  })
+
+  it('reads min_interval_hours and rejects a non-positive one', () => {
+    const entry = (value: string) => `
+sources:
+  - url: https://example.com/releases.atom
+    chain: avalanche
+    source_name: Example
+    source_type: RSS
+    adapter: ATOM
+    content_kind: RELEASE
+    authority: OFFICIAL
+    min_interval_hours: ${value}
+`
+    expect(parseSourceConfig(entry('23'))[0]?.minIntervalHours).toBe(23)
+    expect(() => parseSourceConfig(entry('0'))).toThrow('Invalid source config')
+  })
 })

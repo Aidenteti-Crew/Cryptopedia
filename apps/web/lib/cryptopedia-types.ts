@@ -59,6 +59,19 @@ export const contentEntrySchema = z.object({
       })
     )
     .optional(),
+  // Proposals (ACP) only; snapshots made before it existed parse as null.
+  protocolStage: z
+    .object({
+      stage: z.enum(['PROPOSED', 'ACCEPTED', 'ACTIVATED', 'STALE']),
+      needsCheck: z.boolean(),
+      evidence: z.string().nullable(),
+      sourceUrl: z.string().url().nullable(),
+      proposalCreatedAt: isoDateTimeSchema.nullable(),
+      proposalUpdatedAt: isoDateTimeSchema.nullable(),
+      includedIn: z.object({ name: z.string().min(1), url: z.string().url() }).nullable(),
+    })
+    .nullable()
+    .optional(),
   publishedAt: isoDateTimeSchema.optional(),
   collectedAt: isoDateTimeSchema.optional(),
   startsAt: isoDateTimeSchema.optional(),
@@ -145,6 +158,16 @@ export const eventEntrySchema = z.object({
   publishedAt: isoDateTimeSchema.nullable(),
   fetchedAt: isoDateTimeSchema,
   confidence: z.number().min(0).max(1).nullable(),
+  // Added 2026-10-31 (apps/docs/events-auth/2-detail-design.md §4-1). Defaults keep older
+  // snapshots in public/cryptopedia/live/ parsing until they are regenerated.
+  registrationDeadline: isoDateTimeSchema.nullable().default(null),
+  registrationStatus: z.enum(["OPEN", "CLOSING_SOON", "CLOSED", "UNKNOWN"]).default("UNKNOWN"),
+  daysUntilDeadline: z.number().int().positive().nullable().default(null),
+  audience: z.array(z.enum(["STUDENT", "DEVELOPER", "STARTUP", "RESEARCHER", "ANYONE"])).default([]),
+  level: z.enum(["BEGINNER_OK", "EXPERIENCE_RECOMMENDED", "ADVANCED"]).nullable().default(null),
+  fee: z.enum(["FREE", "PAID"]).nullable().default(null),
+  relatedChains: z.array(z.string().min(1)).default([]),
+  scope: z.string().min(1).nullable().default(null),
 })
 
 export const eventFeedResponseSchema = z.object({

@@ -166,6 +166,7 @@ export function mapLumaEvent(
       // on the same page, which the contract says to leave as null.
       sourceUrl: pageUrl ?? (locationIsUrl ? safePublicUrl(location) : null),
       registrationUrl: null,
+      imageUrl: null,
       category: categoryOf(title),
       tags: cleanTags(['Avalanche', 'Team1', context.calendarName]),
       statusOverride: status === 'CANCELLED' ? 'CANCELLED' : null,
@@ -174,6 +175,17 @@ export function mapLumaEvent(
     },
   }
 }
+
+// The event page embeds the event as JSON with the host's cover. The raw upload can be a few MB,
+// so the stored URL goes through Luma's image resizer (480px square, the shape covers use).
+const COVER = /"event":\{[^{}]*?"cover_url":"https:\/\/images\.lumacdn\.com\/([^"]+)"/
+export function lumaCoverUrl(html: string): string | null {
+  const path = COVER.exec(html)?.[1]
+  if (!path || path.includes('..')) return null
+  return `https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,width=480,height=480/${path}`
+}
+
+const LUMA_PAGE = /^https:\/\/(lu\.ma|luma\.com)\//
 
 // DTSTAMP is the export time and changes on every request, so it is left out of the hash that
 // decides whether the calendar changed.
@@ -221,6 +233,27 @@ export class LumaCalendarAdapter {
       if ('event' in mapped) events.push(mapped.event)
       else skipped[mapped.skippedReason] = (skipped[mapped.skippedReason] ?? 0) + 1
     }
+    await this.attachCovers(events)
     return { status: 'SUCCESS', events, skipped, cursor: { value: hash } }
+  }
+
+  // A cover is decoration: a page that fails or has none leaves imageUrl null and the event is
+  // still collected. Three pages at a time keeps a calendar of a few dozen events quick.
+  private async attachCovers(events: ChainEventInput[]): Promise<void> {
+    const queue = events.filter((e) => e.sourceUrl && LUMA_PAGE.test(e.sourceUrl))
+    const worker = async (): Promise<void> => {
+      for (let e = queue.shift(); e; e = queue.shift()) {
+        try {
+          const page = await this.fetchFn(e.sourceUrl!, {
+            headers: { 'User-Agent': 'cryptopedia-crawler', Accept: 'text/html' },
+            signal: AbortSignal.timeout(20_000),
+          })
+          if (page.ok) e.imageUrl = lumaCoverUrl(await page.text())
+        } catch {
+          e.imageUrl = null
+        }
+      }
+    }
+    await Promise.all([worker(), worker(), worker()])
   }
 }

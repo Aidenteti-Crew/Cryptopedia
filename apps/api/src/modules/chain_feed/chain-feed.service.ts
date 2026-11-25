@@ -15,6 +15,7 @@ import { encodeCursor, type EventQuery } from './event-query';
 import type { ContentFeedQuery, ProjectsQuery } from './feed-query';
 import { extractUpdateEvidence, releaseIdentity } from './update-evidence';
 import { officialReleases, officialCompareUrl } from './official-releases';
+import { protocolStageView, type ProtocolStageColumns } from './protocol-stage';
 
 interface MacroRow {
   importance_reason: string | null;
@@ -30,7 +31,7 @@ interface MacroRow {
   source_name: string;
 }
 
-interface TechRow {
+interface TechRow extends ProtocolStageColumns {
   content_raw: string | null;
   importance_reason: string | null;
   id: string;
@@ -89,7 +90,9 @@ export class ChainFeedService {
     now: Date = new Date(),
   ): Promise<EventFeedResponse> {
     const descending = query.status === 'PAST';
-    const bindings: Knex.RawBinding[] = [query.chain, now, now];
+    const bindings: Knex.RawBinding[] = query.chain
+      ? [query.chain, now, now]
+      : [now, now];
     const where: string[] = [];
 
     if (query.status) {
@@ -119,7 +122,8 @@ export class ChainFeedService {
                 ((date_trunc('day', c.starts_at AT TIME ZONE c.timezone) + interval '1 day')
                   AT TIME ZONE c.timezone) AS day_end
            FROM content.chain_event c
-          WHERE c.revoked_at IS NULL AND c.chain = ?
+          WHERE c.revoked_at IS NULL AND c.review_state = 'PUBLISHED'
+                ${query.chain ? 'AND c.chain = ?' : ''}
        ), s AS (
          SELECT e.*,
                 CASE
@@ -141,7 +145,7 @@ export class ChainFeedService {
     const page = rows.slice(0, query.limit);
     const last = page[page.length - 1];
     return {
-      items: page.map(toEventEntry).filter((entry) => {
+      items: page.map((row) => toEventEntry(row, now)).filter((entry) => {
         const valid = eventEntryContract.safeParse(entry).success;
         // Only the id is logged: event text is crawled content and stays out of the logs.
         if (!valid)
@@ -245,6 +249,8 @@ export class ChainFeedService {
     const result = await this.knex.raw<{ rows: TechRow[] }>(
       `SELECT t.id, t.kind, t.network, t.upgrade_name, t.version, t.title, t.change_summary,
               t.activated_at, t.importance, t.published_at, t.created_at, a.url, a.content_raw,
+              t.lifecycle_stage, t.stage_evidence, t.stage_source_url, t.proposal_created_at,
+              t.proposal_updated_at, t.included_in_release, t.included_release_url,
               c.raw_json->>'importance_reason' AS importance_reason,
               s.name AS source_name
          FROM content.tech_update t
@@ -299,6 +305,7 @@ export class ChainFeedService {
           upgradeName: r.upgrade_name,
           version: r.version,
           activatedAt: r.activated_at ? r.activated_at.toISOString() : null,
+          protocolStage: protocolStageView(r),
           ...(() => {
             const identity = releaseIdentity(r.url);
             const release = identity

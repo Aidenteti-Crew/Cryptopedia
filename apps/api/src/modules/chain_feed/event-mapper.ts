@@ -1,6 +1,7 @@
 import type { EventEntry } from './chain-feed.types';
 import { toLocalIso } from './event-format';
 import type { EventStatus } from './event-query';
+import { registrationStatus } from './registration-status';
 
 // A row of the status-annotated chain_event query in ChainFeedService.listEvents.
 export interface EventRow {
@@ -29,6 +30,13 @@ export interface EventRow {
   confidence: string | number | null;
   importance: number | null;
   importance_reason: string | null;
+  // Columns from chainery-events-2026-10-31.sql.
+  registration_deadline: Date | null;
+  registration_status_override: string | null;
+  audience: string[] | null;
+  level: string | null;
+  fee: string | null;
+  related_chains: string[] | null;
   status: EventStatus;
 }
 
@@ -36,7 +44,15 @@ function displayChain(chain: string): string {
   return chain.charAt(0).toUpperCase() + chain.slice(1);
 }
 
-export function toEventEntry(row: EventRow): EventEntry {
+export function toEventEntry(row: EventRow, now: Date): EventEntry {
+  const registration = registrationStatus(
+    {
+      eventStatus: row.status,
+      deadline: row.registration_deadline,
+      override: row.registration_status_override,
+    },
+    now,
+  );
   return {
     id: row.event_key,
     title: row.title,
@@ -62,6 +78,16 @@ export function toEventEntry(row: EventRow): EventEntry {
     publishedAt: row.published_at ? row.published_at.toISOString() : null,
     fetchedAt: row.fetched_at.toISOString(),
     confidence: row.confidence === null ? null : Number(row.confidence),
+    registrationDeadline: row.registration_deadline
+      ? toLocalIso(row.registration_deadline, row.timezone)
+      : null,
+    registrationStatus: registration.status,
+    daysUntilDeadline: registration.daysUntilDeadline,
+    audience: row.audience ?? [],
+    level: row.level,
+    fee: row.fee,
+    relatedChains: row.related_chains ?? [],
+    scope: row.chain,
     importance: row.importance ?? null,
     importanceReason: row.importance_reason ?? null,
   };

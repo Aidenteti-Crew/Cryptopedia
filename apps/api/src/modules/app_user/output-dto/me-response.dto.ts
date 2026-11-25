@@ -19,4 +19,7 @@ export class MeResponseDto {
 
   @ApiProperty({ nullable: true, description: 'ISO timestamp' })
   lastLoginAt!: string | null;
+
+  @ApiProperty({ description: 'Whether a password is set (the hash is never returned)' })
+  hasPassword!: boolean;
 }

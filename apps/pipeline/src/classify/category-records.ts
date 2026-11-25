@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
 
 import { cleanTags, nonEmpty, safePublicUrl } from '../events/sanitize.js'
+import type { ProtocolStage } from './protocol-stage.js'
 import type { Classification } from './schema.js'
 
 export interface RecordArticle {
@@ -34,6 +35,8 @@ export interface TechRecord {
   activatedAt: string | null
   importance: number
   publishedAt: Date
+  // Proposals only (ACP); set from the document by run-classify, not from the classification.
+  stage: ProtocolStage | null
 }
 
 export interface EventRecord {
@@ -198,6 +201,7 @@ export function buildCategoryRecord(
           activatedAt: c.tech?.activated_at ?? null,
           importance: c.importance,
           publishedAt: article.publishedAt,
+          stage: null,
         },
       }
     case 'EVENT':

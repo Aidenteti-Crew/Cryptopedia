@@ -24,6 +24,11 @@ export interface AppUserEntity {
   bench_api_key_enc: string | null;
   /** 벤치 키 만료 시각(등록 + 72h). NULL이면 만료로 간주한다(fail-safe). */
   bench_api_key_expires_at: Date | null;
+  /**
+   * bcrypt hash. Never put in a response or log. Written only by a link-proven session or with the
+   * current password. Undefined (not null) while the 2026-11-23 migration is not applied.
+   */
+  password_hash?: string | null;
   created_at: Date;
   updated_at: Date;
   revoked_at: Date | null;

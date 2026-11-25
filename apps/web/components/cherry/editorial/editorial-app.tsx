@@ -5,8 +5,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { rememberDiscoveryScroll } from './discovery-state'
 import { HUB_ENTRY_IDS, isHubEntry, type HubData } from '@/lib/cryptopedia-hub'
 
-import { createCryptopediaRepository, type CryptopediaRepository } from '@/lib/cryptopedia-data'
-import { createSnapshotFetch } from '@/lib/cryptopedia-live-snapshot'
+import type { CryptopediaRepository } from '@/lib/cryptopedia-data'
+import { cryptopediaRepository as repository } from '@/lib/cryptopedia-repository'
 import {
   CHAPTER_NAV,
   PRIMARY_NAV,
@@ -47,7 +47,7 @@ import { KnowledgeOnboarding } from './my-path-onboarding'
 import { getEditorialBreadcrumbs, menuEntryFor } from './editorial-breadcrumb'
 import { useEditorialChain } from './editorial-chain-provider'
 import { getChainTheme } from '@/lib/chain-theme'
-import { pathForEditorialView } from '@/lib/cryptopedia-routes'
+import { navHref, pathForEditorialView } from '@/lib/cryptopedia-routes'
 
 export type EditorialView =
   | { kind: 'screen'; id: ScreenId }
@@ -111,11 +111,6 @@ type LoadState =
   | { status: 'loading' }
   | { status: 'ready'; view: LoadedView }
   | { status: 'error'; message: string }
-
-/* API 주소가 없는 배포(Vercel 데모)는 LIVE 화면을 굳힌 응답(public/cryptopedia/live)으로 그린다 */
-const repository = process.env.NEXT_PUBLIC_API_URL
-  ? createCryptopediaRepository()
-  : createCryptopediaRepository(createSnapshotFetch(), '')
 
 const NAV_SCREEN_IDS = new Set<ScreenId>([
   ...PRIMARY_NAV.map((item) => item.id),
@@ -252,7 +247,7 @@ export function EditorialApp({
   const selectScreen = (id: ScreenId) => {
     if (view.kind === 'screen' && ['projects', 'macro', 'events', 'updates'].includes(activeScreen))
       rememberDiscoveryScroll(`${activeChain.id}:${activeScreen}`)
-    router.push(pathForEditorialView({ kind: 'screen', id }))
+    router.push(navHref(id))
   }
 
   const openArticle = (id: string, fallbackParent = activeScreen) => {

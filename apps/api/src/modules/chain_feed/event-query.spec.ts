@@ -35,6 +35,16 @@ describe('parseEventQuery', () => {
     expect(q.limit).toBe(50);
   });
 
+  it.each([
+    [{ scope: 'all' }, null],
+    [{ scope: 'ALL', chain: 'avalanche' }, null],
+    [{ scope: 'web3-kr' }, 'web3-kr'],
+    [{ scope: 'web3-kr', chain: 'avalanche' }, 'web3-kr'],
+    [{ chain: 'web3-kr' }, 'web3-kr'],
+  ])('reads scope %j as chain %p', (input, chain) => {
+    expect(parseEventQuery(input).chain).toBe(chain);
+  });
+
   it('allows from equal to to (a single day)', () => {
     expect(() =>
       parseEventQuery({ from: '2026-11-28', to: '2026-11-28' }),
@@ -52,6 +62,7 @@ describe('parseEventQuery', () => {
     [{ limit: '2.5' }, 'limit must be'],
     [{ limit: 'abc' }, 'limit must be'],
     [{ chain: 'bad chain!' }, 'chain is not valid'],
+    [{ scope: 'bad scope!' }, 'chain is not valid'],
     [{ status: ['upcoming', 'past'] }, 'must be given once'],
     [{ cursor: 'not-a-cursor' }, 'cursor is not valid'],
   ])('rejects %j', (input, message) => {

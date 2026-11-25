@@ -59,8 +59,15 @@ async function bootstrap() {
   );
 
   // Stricter limits on auth + purchase paths (brute force / abuse vectors).
+  // signin e-mails a sign-in link to any address it is given, so it gets the same cap.
+  // /password covers password/login and the set-password route.
   app.use(
-    ['/api/app-user/login', '/api/app-user/signup'],
+    [
+      '/api/app-user/login',
+      '/api/app-user/signup',
+      '/api/app-user/signin',
+      '/api/app-user/password',
+    ],
     rateLimit({
       windowMs: 60_000,
       limit: 10,

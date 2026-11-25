@@ -7,6 +7,7 @@ import type { ContentEntry } from '@/lib/cryptopedia-types'
 import { calendarDay } from '@/lib/editorial-discovery'
 import { CHANGE_LABELS, NETWORK_LABELS, updateDateTime } from '@/lib/development-discovery'
 import { UpdateBadges, UpdateSourceLink } from './development-update-row'
+import { ProtocolStageSection } from './protocol-stage-section'
 
 export function DevelopmentUpdateDetail({
   entry,
@@ -61,6 +62,7 @@ export function DevelopmentUpdateDetail({
           {entry.summary || '요약이 제공되지 않았습니다. 공식 원문에서 변경 내용을 확인하세요.'}
         </p>
       </section>
+      {entry.protocolStage && <ProtocolStageSection stage={entry.protocolStage} />}
       {!!evidenceGroups.length && (
         <section className="mt-8 border-t border-[var(--editorial-line)] pt-6">
           <h3 className="text-sm font-semibold">영향 및 공식 근거</h3>

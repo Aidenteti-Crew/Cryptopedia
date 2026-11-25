@@ -26,6 +26,7 @@ export const SOURCE_ADAPTERS = [
   'CRAWL4AI',
   'X_API',
   'BROWSER_USE',
+  'HTML_BOARD',
 ] as const
 
 export const CONTENT_KINDS = [
@@ -38,6 +39,9 @@ export const CONTENT_KINDS = [
   'DOCUMENTATION',
   'PROJECT',
   'EVENT',
+  // An organization's notice board (public agencies' 공지사항): events, programs and unrelated
+  // notices mixed together, so a keyword filter runs before anything is stored.
+  'NOTICE',
 ] as const
 
 export const SOURCE_AUTHORITIES = ['OFFICIAL', 'OFFICIAL_COMMUNITY', 'THIRD_PARTY'] as const
@@ -64,6 +68,34 @@ export interface LumaLocation {
   calendarId: string
 }
 
+// Where things are on a server-rendered notice board. A selector ending in "@attr" reads that
+// attribute instead of the text (e.g. "td.sbj a@href").
+export interface BoardLayout {
+  listItem: string
+  title: string
+  link: string
+  date: string
+  detailBody: string
+  pageParam: string
+  maxPages: number
+  // Query parameters dropped from post links so a post keeps one URL as it moves down the
+  // list (KISA appends the list page number to every link).
+  dropLinkParams: string[]
+  // For boards whose links are script calls (javascript:fn_goView('ID')): the id is the first
+  // group of linkIdPattern, put into detailUrl's "{id}" and resolved against the list page.
+  linkIdPattern?: string
+  detailUrl?: string
+  // Board dates have no time; they are read as midnight at this UTC offset.
+  utcOffset: string
+  encoding: string
+  requestDelayMs: number
+}
+
+export interface KeywordFilter {
+  include: string[]
+  exclude: string[]
+}
+
 export interface SourceConfig {
   url: string
   // Which chain's ecosystem the source belongs to (e.g. avalanche). Stored on every derived row.
@@ -78,9 +110,14 @@ export interface SourceConfig {
   excludeTitlePatterns?: string[]
   recencyWindowDays?: number
   consecutiveFailuresThreshold: number
+  // Read at most once per this many hours, however often the pipeline runs (boards that change
+  // daily, sites that ask for gentle crawling).
+  minIntervalHours?: number
   github?: GithubMarkdownLocation
   apify?: ApifyLocation
   luma?: LumaLocation
+  board?: BoardLayout
+  keywords?: KeywordFilter
 }
 
 const SourceEntrySchema = z
@@ -112,6 +149,7 @@ const SourceEntrySchema = z
       .optional(),
     recency_window_days: z.number().int().positive().optional(),
     consecutive_failures_threshold: z.number().int().positive().default(3),
+    min_interval_hours: z.number().positive().optional(),
     github: z
       .object({
         owner: z.string().min(1),
@@ -128,6 +166,41 @@ const SourceEntrySchema = z
         include_retweets: z.boolean().default(false),
       })
       .optional(),
+    board: z
+      .object({
+        list_item: z.string().min(1),
+        title: z.string().min(1),
+        link: z.string().min(1),
+        date: z.string().min(1),
+        detail_body: z.string().min(1),
+        page_param: z.string().min(1).default('page'),
+        max_pages: z.number().int().positive().max(10).default(2),
+        drop_link_params: z.array(z.string().min(1)).default([]),
+        link_id_pattern: z
+          .string()
+          .refine(
+            (pattern) => {
+              try {
+                return new RegExp(pattern).source.includes('(')
+              } catch {
+                return false
+              }
+            },
+            { message: 'must be a valid regular expression with a capture group' }
+          )
+          .optional(),
+        detail_url: z.string().includes('{id}').optional(),
+        utc_offset: z
+          .string()
+          .regex(/^[+-]\d{2}:\d{2}$/)
+          .default('+09:00'),
+        encoding: z.string().min(1).default('utf-8'),
+        // Public agency sites are small; one request every 2 seconds at most.
+        request_delay_ms: z.number().int().min(2000).default(2000),
+      })
+      .optional(),
+    include_keywords: z.array(z.string().min(1)).optional(),
+    exclude_keywords: z.array(z.string().min(1)).optional(),
   })
   .superRefine((entry, ctx) => {
     if (
@@ -146,6 +219,27 @@ const SourceEntrySchema = z
         code: z.ZodIssueCode.custom,
         path: ['luma'],
         message: 'luma {calendar_id} is required for adapter LUMA_ICS',
+      })
+    }
+    if (entry.adapter === 'HTML_BOARD' && !entry.board) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['board'],
+        message: 'board {list_item, title, link, date, detail_body} is required for adapter HTML_BOARD',
+      })
+    }
+    if (entry.board && Boolean(entry.board.link_id_pattern) !== Boolean(entry.board.detail_url)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['board'],
+        message: 'board link_id_pattern and detail_url go together',
+      })
+    }
+    if (entry.adapter === 'HTML_BOARD' && !entry.include_keywords?.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['include_keywords'],
+        message: 'include_keywords is required for adapter HTML_BOARD (a board mixes unrelated notices)',
       })
     }
     if (entry.adapter === 'APIFY' && !entry.apify) {
@@ -175,12 +269,32 @@ function toSourceConfig(raw: z.infer<typeof SourceEntrySchema>): SourceConfig {
     excludeTitlePatterns: raw.exclude_title_patterns,
     recencyWindowDays: raw.recency_window_days,
     consecutiveFailuresThreshold: raw.consecutive_failures_threshold,
+    minIntervalHours: raw.min_interval_hours,
     github: raw.github,
     luma: raw.luma && { calendarId: raw.luma.calendar_id },
     apify: raw.apify && {
       actor: raw.apify.actor,
       input: raw.apify.input,
       includeRetweets: raw.apify.include_retweets,
+    },
+    board: raw.board && {
+      listItem: raw.board.list_item,
+      title: raw.board.title,
+      link: raw.board.link,
+      date: raw.board.date,
+      detailBody: raw.board.detail_body,
+      pageParam: raw.board.page_param,
+      maxPages: raw.board.max_pages,
+      dropLinkParams: raw.board.drop_link_params,
+      linkIdPattern: raw.board.link_id_pattern,
+      detailUrl: raw.board.detail_url,
+      utcOffset: raw.board.utc_offset,
+      encoding: raw.board.encoding,
+      requestDelayMs: raw.board.request_delay_ms,
+    },
+    keywords: raw.include_keywords && {
+      include: raw.include_keywords,
+      exclude: raw.exclude_keywords ?? [],
     },
   }
 }

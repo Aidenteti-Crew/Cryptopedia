@@ -65,6 +65,8 @@ export class ArticleIngestionService {
   /**
    * user_article_state가 없는 article_raw 전체를 INSERT...SELECT 단일 쿼리로 처리한다.
    * Node.js 메모리를 사용하지 않고 DB 내부에서 완결된다.
+   * Chainery 수집기(apps/pipeline)가 표시한 소스(source_meta_json.collector = 'chainery')의 글은
+   * 이쪽 AI 평가 대상이 아니므로 건너뛴다 — 자체 분류(apps/pipeline classify)를 거친다.
    *
    * @returns 생성된 건수
    */
@@ -84,6 +86,11 @@ export class ArticleIngestionService {
         NOW(), NOW()
       FROM content.article_raw ar
       WHERE ar.storage_state = 'ACTIVE'
+        AND NOT EXISTS (
+          SELECT 1 FROM content.source s
+          WHERE s.id = ar.source_id
+            AND s.source_meta_json ->> 'collector' = 'chainery'
+        )
         AND NOT EXISTS (
           SELECT 1 FROM content.user_article_state uas
           WHERE uas.article_raw_id = ar.id

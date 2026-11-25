@@ -1,0 +1,55 @@
+# Chainery collection: read the sources in apps/pipeline/config/sources.yaml, then classify what
+# came in. Writes to the shared Supabase database (production), so the schedule does nothing until
+# the repository variable CHAINERY_PIPELINE_ENABLED is 'true' (set it after the 2026-10-31
+# migration is applied; classify writes its columns). A manual run is always allowed.
+name: Chainery pipeline
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # once a day, 00:00 UTC = 09:00 KST
+  workflow_dispatch:
+
+# One run at a time; a run that starts while another is going waits instead of overlapping.
+concurrency:
+  group: chainery-pipeline
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  collect-and-classify:
+    if: github.event_name == 'workflow_dispatch' || vars.CHAINERY_PIPELINE_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      DATABASE_URL: ${{ secrets.CHAINERY_DATABASE_URL }}
+      LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+      LLM_MODEL: ${{ vars.LLM_MODEL }}
+      LLM_BASE_URL: ${{ vars.LLM_BASE_URL }}
+      APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+      # Raises the GitHub API limit for the ACP and release sources from 60 to 1000 requests an hour.
+      GITHUB_TOKEN: ${{ github.token }}
+      CRAWLER_CONTACT: ${{ vars.CRAWLER_CONTACT }}
+    defaults:
+      run:
+        working-directory: apps/pipeline
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile --filter @cryptopedia/pipeline...
+      - name: Build
+        id: build
+        run: pnpm build
+      - name: Collect
+        id: collect
+        run: node dist/src/bin/pipeline.js
+      # Classify whatever was stored even when a source failed to collect this time.
+      - name: Classify
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: node dist/src/bin/classify.js --limit 60 --concurrency 4
